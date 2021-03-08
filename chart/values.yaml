@@ -659,10 +659,11 @@ addons:
     # -- Toggle deployment of Velero.
     enabled: false
     git:
-    git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/velero.git
       path: "./chart"
-      tag: "0.1.6-bb.3"
+      # tag: "1.1.0"
+      branch: "velero-1"
+      commit: "4685ea1b7cabeaf8394be2737f9e7ce1b2e8c05f"
 
     values:
       # Requires at least one plugin installed. Current supported values: aws, azure
