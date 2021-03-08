@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
+{{- if .Values.addons.velero.enabled }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -18,4 +18,5 @@ metadata:
 type: kubernetes.io/dockerconfigjson
 data:
   .dockerconfigjson: {{ template "imagePullSecret" . }}
+{{- end }}
 {{- end }}
