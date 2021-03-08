@@ -1,0 +1,21 @@
+{{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero
+  {{- if .Values.istio.enabled }}
+  labels:
+    istio-injection: enabled
+  {{- end }}
+
+{{- if ( include "imagePullSecret" . ) }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: private-registry
+  namespace: authservice
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: {{ template "imagePullSecret" . }}
+{{- end }}

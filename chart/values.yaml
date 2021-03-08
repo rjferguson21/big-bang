@@ -654,6 +654,20 @@ addons:
 
     # -- Values to passthrough to the Mattermost chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/chart/values.yaml
     values: {}
+
+  velero:
+    # -- Toggle deployment of Velero.
+    enabled: false
+    git:
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/velero.git
+      path: "./chart"
+      tag: "0.1.6-bb.3"
+
+    values:
+      # Requires at least one plugin installed. Current supported values: aws, azure
+      plugins: []
+      # - aws
   #
   # ----------------------------------------------------------------------------------------------------------------------
   #
