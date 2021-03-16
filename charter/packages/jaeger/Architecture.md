@@ -9,19 +9,19 @@
 ```mermaid
 graph TB
   subgraph "jaeger"
-  jaegerpods("Jeager-AllInOne")
-  elasticcredentials --> jaegerpods("Jeager-AllInOne")
+  jaegerpods("Jaeger-AllInOne")
+  elasticcredentials --> jaegerpods("Jaeger-AllInOne")
   end      
 
   subgraph "ingress"
-    ingressgateway --> jaegerpods("Jeager-AllInOne")
+    ingressgateway --> jaegerpods("Jaeger-AllInOne")
   end
 
   subgraph "logging"
     subgraph "elasticsearch"
     
     credentials --> elasticcredentials
-    jaegerpods("Jeager-AllInOne") --> logging-ek-es-http
+    jaegerpods("Jaeger-AllInOne") --> logging-ek-es-http
     logging-ek-es-http --> LoggingElastic(Elasticsearch Storage )
     end
   end
