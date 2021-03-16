@@ -19,7 +19,7 @@ stringData:
       kiali:
         client_secret: "{{ .Values.istio.sso.kiali.client_secret }}"
       jaeger:
-        client_secret: "{{ .Values.istio.sso.jaeger.client_secret }}"
+        client_secret: "{{ .Values.jaeger.sso.client_secret }}"
       prometheus:
         client_secret: "{{ .Values.monitoring.sso.prometheus.client_secret }}"
       alertmanager:
@@ -29,6 +29,8 @@ stringData:
 {{- end }}
   istio.yaml: |
 {{ toYaml .Values.istio.values | indent 4  }}
+  jaeger.yaml: |
+{{ toYaml .Values.jaeger.values | indent 4 }}
   gatekeeper.yaml: |
 {{ toYaml .Values.gatekeeper.values | indent 4 }}
   gitlab-runner.yaml: |

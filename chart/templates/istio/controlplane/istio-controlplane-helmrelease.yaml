@@ -48,7 +48,8 @@ spec:
     imagePullSecrets:
       - private-registry
     openshift: {{ .Values.openshift }}
-
+    tracing:
+      enabled: {{ .Values.jaeger.enabled }}
 {{- if .Values.istio.sso.enabled }}
     ingress:
       kiali:

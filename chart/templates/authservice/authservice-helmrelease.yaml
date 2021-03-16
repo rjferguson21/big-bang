@@ -70,7 +70,7 @@ spec:
         match:
           header: ":authority"
           prefix: "tracing"
-        client_id: "{{ .Values.istio.sso.jaeger.client_id }}"
+        client_id: "{{ .Values.jaeger.sso.client_id }}"
         callback_uri: https://tracing.{{ .Values.hostname }}/login
       prometheus:
         match:

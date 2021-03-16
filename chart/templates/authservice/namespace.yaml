@@ -121,21 +121,16 @@ spec:
         http-request set-header X-Amzn-Trace-Id Root=%[unique-id,lower]
         bind :8080
         acl host_kiali hdr(host) -i kiali.{{ .Values.hostname }}
-        acl host_tracing hdr(host) -i tracing.{{ .Values.hostname }}
         acl host_alertmanager hdr(host) -i alertmanager.{{ .Values.hostname }}
         acl host_prometheus hdr(host) -i prometheus.{{ .Values.hostname }}
 
         option forwardfor
         use_backend kiali_main if host_kiali
-        use_backend tracing_main if host_tracing
         use_backend alertmanager_main if host_alertmanager
         use_backend prometheus_main if host_prometheus
       backend kiali_main
         mode http
         server kiali kiali.istio-system.svc.cluster.local:20001
-      backend tracing_main
-        mode http
-        server jaeger tracing.istio-system.svc.cluster.local:80
       backend alertmanager_main
         mode http
         option forwardfor
