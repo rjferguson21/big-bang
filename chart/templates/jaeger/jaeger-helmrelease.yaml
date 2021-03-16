@@ -56,8 +56,6 @@ spec:
         query:
           labels:
             protect: keycloak
-        labels:
-          protect: keycloak
     {{- end }}
   {{ if or .Values.istio.enabled .Values.monitoring.enabled }}
   dependsOn:
@@ -67,6 +65,10 @@ spec:
   {{- end }}
   {{- if .Values.monitoring.enabled }}
     - name: monitoring
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if .Values.jaeger.sso.enabled }}
+    - name: authservice
       namespace: {{ .Release.Namespace }}
   {{- end }}
   {{- end }}
