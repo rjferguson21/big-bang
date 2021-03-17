@@ -37,8 +37,9 @@ spec:
   {{- end }}
 
   valuesFrom:
-    - name: values
+    - name: {{ .Release.Name }}-istio-values
       kind: Secret
+<<<<<<< HEAD
       valuesKey: "istio.yaml"
   values:
     hostname: {{ .Values.hostname }}
@@ -61,6 +62,15 @@ spec:
         port: 8080
         namespace: authservice
 {{- end }}
+=======
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-istio-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-istio-values
+      kind: Secret
+      valuesKey: "overlays"
+>>>>>>> origin/master
 
   dependsOn:
     - name: istio-operator

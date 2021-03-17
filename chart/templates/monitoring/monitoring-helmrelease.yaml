@@ -37,8 +37,9 @@ spec:
   {{- end }}
 
   valuesFrom:
-    - name: values
+    - name: {{ .Release.Name }}-monitoring-values
       kind: Secret
+<<<<<<< HEAD
       valuesKey: "monitoring.yaml"
 
   values:
@@ -106,6 +107,15 @@ spec:
     kube-state-metrics:
       imagePullSecrets:
       - name: private-registry
+=======
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-monitoring-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-monitoring-values
+      kind: Secret
+      valuesKey: "overlays"
+>>>>>>> origin/master
 
   # TODO: DRY this up
   {{- if or .Values.gatekeeper.enabled .Values.istio.enabled }}

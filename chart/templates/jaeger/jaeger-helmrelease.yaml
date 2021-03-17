@@ -37,30 +37,16 @@ spec:
   {{- end }}
 
   valuesFrom:
-    - name: values
+    - name: {{ .Release.Name }}-jaeger-values
       kind: Secret
-      valuesKey: "jaeger.yaml"
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-jaeger-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-jaeger-values
+      kind: Secret
+      valuesKey: "overlays"
 
-  values:
-    imagePullSecrets:
-      - name: private-registry
-    hostname: {{ .Values.hostname }}
-    istio:
-      enabled: {{ .Values.istio.enabled }}
-    monitoring:
-      enabled: {{ .Values.monitoring.enabled }}
-    elasticsearch:
-      enabled: {{ .Values.logging.enabled }}
-    {{- if .Values.jaeger.sso.enabled }}
-    jaeger:
-      spec:
-        allInOne:
-          labels:
-            protect: keycloak
-        query:
-          labels:
-            protect: keycloak
-    {{- end }}
   {{ if or ( or .Values.istio.enabled .Values.monitoring.enabled) .Values.logging.enabled }}
   dependsOn:
   {{- if .Values.istio.enabled }}

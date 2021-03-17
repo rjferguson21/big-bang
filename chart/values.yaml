@@ -343,15 +343,13 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "2.0.9-bb.3"
+      tag: "2.0.9-bb.5"
 
-    # Provide a specific name for the minio instance.
-    name: minio
+    # -- Default access key to use for minio.
+    accesskey: ""
 
-    # Settings to enable/disable and name the minio virtual service for external access to the minio UI.
-    virtualService:
-      enabled: true
-      name: minio
+    # -- Default secret key to intstantiate with minio, you should change/delete this after installation.
+    secretkey: ""
 
     # -- Values to passthrough to the minio instance chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
     values: {}
@@ -367,7 +365,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.8.0-bb.2"
+      tag: "4.8.0-bb.3"
 
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.
@@ -432,7 +430,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
       path: "./chart"
-      tag: "0.19.2-bb.3"
+      tag: "0.26.0-bb.0"
 
     # -- Values to passthrough to the gitlab runner chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
     values: {}
@@ -508,7 +506,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.11.0-bb.3"
+      tag: "1.12.4-bb.0"
 
     # -- Initial admin password used to authenticate to Anchore.
     adminPassword: ""
