@@ -4,6 +4,10 @@ kind: HelmRelease
 metadata:
   name: jaeger
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
 spec:
   targetNamespace: jaeger
   chart:
@@ -46,7 +50,7 @@ spec:
     monitoring:
       enabled: {{ .Values.monitoring.enabled }}
     elasticsearch:
-      enabled: true
+      enabled: {{ .Values.logging.enabled }}
     {{- if .Values.jaeger.sso.enabled }}
     jaeger:
       spec:
@@ -57,7 +61,7 @@ spec:
           labels:
             protect: keycloak
     {{- end }}
-  {{ if or .Values.istio.enabled .Values.monitoring.enabled }}
+  {{ if or ( or .Values.istio.enabled .Values.monitoring.enabled) .Values.logging.enabled }}
   dependsOn:
   {{- if .Values.istio.enabled }}
     - name: istio
@@ -69,6 +73,10 @@ spec:
   {{- end }}
   {{- if .Values.jaeger.sso.enabled }}
     - name: authservice
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if .Values.logging.enabled }}
+    - name: ek
       namespace: {{ .Release.Namespace }}
   {{- end }}
   {{- end }}
