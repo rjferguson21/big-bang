@@ -1,6 +1,7 @@
 {{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
+{{- $hostname := .Values.hostname -}}
 
 {{- define "bigbang.defaults.authservice" -}}
 imagePullSecrets:
@@ -38,7 +39,7 @@ chains:
       prefix: "kiali"
     client_id: {{ .Values.istio.sso.kiali.client_id }}
     client_secret: "{{ .Values.istio.sso.kiali.client_secret }}"
-    callback_uri: https://kiali.{{ .Values.hostname }}/login
+    callback_uri: {{ .Values.istio.sso.kiali.uri }}/login
 
   jaeger:
     match:
@@ -46,7 +47,7 @@ chains:
       prefix: "tracing"
     client_id: "{{ .Values.istio.sso.jaeger.client_id }}"
     client_secret: "{{ .Values.istio.sso.jaeger.client_secret }}"
-    callback_uri: https://tracing.{{ .Values.hostname }}/login
+    callback_uri: {{ .Values.istio.sso.jaeger.uri }}/login
 
   prometheus:
     match:
