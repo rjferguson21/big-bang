@@ -18,9 +18,5 @@ ingress:
     service: authservice-haproxy-sso
     port: 8080
     namespace: authservice
-  jaeger:
-    service: authservice-haproxy-sso
-    port: 8080
-    namespace: authservice
 {{- end }}
 {{- end -}}
