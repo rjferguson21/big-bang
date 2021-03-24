@@ -217,7 +217,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "11.0.0-bb.13"
+    tag: "11.0.0-bb.15"
 
   sso:
     # -- Toggle SSO for monitoring components on and off
@@ -261,7 +261,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.0.3-bb.0"
+    tag: "0.0.3-bb.1"
 
   # -- Values to passthrough to the twistlock chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
   values: {}
@@ -276,7 +276,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "2.14.7-bb.0"
+      tag: "2.14.7-bb.1"
     sso:
       # -- Toggle SSO for ArgoCD on and off
       enabled: false
@@ -309,7 +309,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.1.6-bb.3"
+      tag: "0.1.6-bb.4"
 
     # -- Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/authservice.git
     values: {}
@@ -433,7 +433,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.2.6-bb.2"
+      tag: "9.2.6-bb.4"
 
     sso:
       # -- Toggle OIDC SSO for SonarQube.
@@ -498,7 +498,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.12.4-bb.0"
+      tag: "1.12.4-bb.1"
 
     # -- Initial admin password used to authenticate to Anchore.
     adminPassword: ""
