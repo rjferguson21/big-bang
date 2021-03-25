@@ -1,7 +1,6 @@
 {{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
-{{- $hostname := .Values.hostname -}}
 
 {{- define "bigbang.defaults.authservice" -}}
 imagePullSecrets:
