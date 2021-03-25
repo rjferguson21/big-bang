@@ -578,7 +578,8 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.1.1-bb.2"
+      #tag: "0.1.1-bb.3"
+      branch: "minio-vs"
 
     # -- Mattermost Enterprise functionality.
     enterprise:
