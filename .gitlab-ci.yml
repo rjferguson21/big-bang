@@ -37,6 +37,7 @@ variables:
   tags:
     - bigbang
     - dogfood
+    - generic
 
 .bigbang:
   image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k3d-builder:0.0.1
@@ -120,7 +121,8 @@ clean install:
       - images.txt
       - "cypress-tests/*/tests/cypress/screenshots"
       - "cypress-tests/*/tests/cypress/videos"
-    expire_in: 7 days 
+    expire_in: 7 days
+    when: always
 
 upgrade:
   stage: smoke tests
@@ -166,14 +168,14 @@ upgrade:
   stage: network up
   rules:
     # Run on scheduled jobs OR when `test-ci` label is assigned
-    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ "test-ci::infra"'
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
       allow_failure: false
 
 # Abstract for jobs responsible for creating infrastructure
 .infra create:
   rules:
     # Run on scheduled jobs OR when `test-ci` label is assigned
-    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ "test-ci::infra"'
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
     # skip job when branch name starts with "hotfix" or "patch"
     - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(hotfix|patch)/'
       when: never
@@ -182,7 +184,7 @@ upgrade:
 .infra cleanup:
   rules:
     # Run on scheduled jobs
-    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ "test-ci::infra"'
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
       allow_failure: true
       when: always
 
@@ -246,6 +248,14 @@ aws/rke2/bigbang up:
     - cp ${CI_PROJECT_DIR}/rke2.yaml ~/.kube/config
     # Deploy a default storage class for aws
     - kubectl apply -f ${CI_PROJECT_DIR}/.gitlab-ci/jobs/rke2/dependencies/k8s-resources/aws/default-ebs-sc.yaml
+    - echo "Patching default rke2 PSPs to be less restrictive so OPA Gatekeeper can successfully deploy"
+    - |
+      kubectl --kubeconfig rke2.yaml patch psp global-unrestricted-psp  -p '{"metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
+    - |
+      kubectl --kubeconfig rke2.yaml patch psp system-unrestricted-psp  -p '{ "metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
+    - |
+      kubectl --kubeconfig rke2.yaml patch psp global-restricted-psp  -p '{ "metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
+
   script:
     - *deploy_bigbang
   environment:
@@ -353,7 +363,7 @@ package:
     # Publish packages to s3 release
     - |
       if [ -z $CI_COMMIT_TAG ]; then
-        aws s3 sync --quiet release/ s3://umbrella-bigbang-releases/umbrella/tests/${CI_COMMIT_SHA}
+        aws s3 sync --quiet release/ s3://umbrella-bigbang-releases/tests/${CI_COMMIT_SHA}
       else
         aws s3 sync --quiet release/ s3://umbrella-bigbang-releases/umbrella/${CI_COMMIT_TAG}
       fi
@@ -373,7 +383,7 @@ release:
     # Use release-cli to cut a release in Gitlab or simulate a dry-run & print asset links
     - |
       if [ -z $CI_COMMIT_TAG ]; then
-        RELEASE_ENDPOINT="https://${RELEASE_BUCKET}.s3-${AWS_DEFAULT_REGION}.amazonaws.com/umbrella/tests/${CI_COMMIT_SHA}"
+        RELEASE_ENDPOINT="https://${RELEASE_BUCKET}.s3-${AWS_DEFAULT_REGION}.amazonaws.com/tests/${CI_COMMIT_SHA}"
         printf "Release will run: \n\
           release-cli create --name \"Big Bang \${CI_COMMIT_TAG}\" --tag-name \${CI_COMMIT_TAG} \n\
           --description \"Automated release notes are a WIP.\" \n\
