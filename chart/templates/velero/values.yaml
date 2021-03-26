@@ -1,0 +1,8 @@
+{{- if .Values.velero.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.velero "name" "velero" "defaults" (include "bigbang.defaults.velero" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.velero" -}}
+imagePullSecrets:
+- name: private-registry
+{{- end -}}

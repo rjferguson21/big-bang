@@ -35,12 +35,16 @@ spec:
     timeout: {{ .rollback.timeout }}
     cleanupOnFail: {{ .rollback.cleanupOnFail }}
   {{- end }}
-  values:
-    imagePullSecrets:
-    - name: private-registry
 
   valuesFrom:
-    - name: values
+    - name: {{ .Release.Name }}-velero-values
       kind: Secret
-      valuesKey: "velero.yaml"
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-velero-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-velero-values
+      kind: Secret
+      valuesKey: "overlays"
+    
 {{- end }}
