@@ -19,7 +19,7 @@ COPY --from=builder /go/synker/synker /usr/local/bin/synker
 RUN yum install -y unzip git jq
 
 # Install yq
-RUN curl -sfL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 && \
+RUN curl -sfL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.1/yq_linux_amd64 && \
     chmod +x /usr/local/bin/yq
 
 # Install aws cli
@@ -28,6 +28,13 @@ RUN curl -sL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/aw
     /tmp/aws/install && \
     rm -rf /tmp/aws*
 
+# Install crane
+RUN curl -sL https://github.com/google/go-containerregistry/releases/download/v0.4.1/go-containerregistry_Linux_x86_64.tar.gz -o /tmp/crane.tar.gz && \
+    mkdir -p /tmp/crane && \
+    tar -zxf /tmp/crane.tar.gz -C /tmp/crane && \
+    mv /tmp/crane/crane /usr/local/bin/crane && \
+    chmod +x /usr/local/bin/crane && \
+    rm -rf /tmp/crane*
+
 RUN yum clean all && \
     rm -r /var/cache/dnf
-
