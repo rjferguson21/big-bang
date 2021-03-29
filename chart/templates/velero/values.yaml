@@ -1,5 +1,5 @@
-{{- if .Values.velero.enabled }}
-{{- include "values-secret" (dict "root" $ "package" .Values.velero "name" "velero" "defaults" (include "bigbang.defaults.velero" .)) }}
+{{- if .Values.addons.velero.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.velero "name" "velero" "defaults" (include "bigbang.defaults.velero" .)) }}
 {{- end }}
 
 {{- define "bigbang.defaults.velero" -}}
