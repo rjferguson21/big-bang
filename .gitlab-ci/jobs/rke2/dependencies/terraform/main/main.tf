@@ -38,6 +38,12 @@ module "rke2" {
   controlplane_internal = var.controlplane_internal
   rke2_version          = var.rke2_version
 
+  rke2_config = <<EOF
+disable:
+  - rke2-ingress-nginx
+  - rke2-metrics-server
+EOF
+
   enable_ccm = var.enable_ccm
   download   = var.download
 
@@ -63,7 +69,6 @@ module "generic_agents" {
   enable_autoscaler = var.enable_autoscaler
   download          = var.download
 
-  # TODO: These need to be set in pre-baked ami's
   pre_userdata = local.os_prep
 
   # Required data for identifying cluster to join
