@@ -3,10 +3,13 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: velero
-  {{- if .Values.istio.enabled }}
   labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/component: "cluster-utility"
+    {{- include "commonLabels" . | nindent 4 }}
+    {{- if .Values.istio.enabled }}
     istio-injection: enabled
-  {{- end }}
+    {{- end }}
 
 {{- if ( include "imagePullSecret" . ) }}
 ---
@@ -15,6 +18,10 @@ kind: Secret
 metadata:
   name: private-registry
   namespace: velero
+  labels:
+    app.kubernetes.io/name: twistlock
+    app.kubernetes.io/component: "security"
+    {{- include "commonLabels" . | nindent 4 }}
 type: kubernetes.io/dockerconfigjson
 data:
   .dockerconfigjson: {{ template "imagePullSecret" . }}
