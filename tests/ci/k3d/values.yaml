@@ -358,7 +358,7 @@ addons:
         # TODO: Bucket for this
         backupStorageLocation:
           bucket: bigbang-dogfood-velero
-          prefix: k3d
+          prefix: ci
       #    config:
       #      region: us-west-1
       #      profile: test
