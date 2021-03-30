@@ -348,7 +348,7 @@ addons:
         volumesPerServer: 1
 
   velero:
-    enabled: true
+    enabled: false
     values:
       installCRDs: true
 
