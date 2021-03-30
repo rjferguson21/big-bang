@@ -6,7 +6,7 @@ flux:
     cleanupOnFail: false
 
 logging:
-  enabled: true
+  enabled: false
   values:
     elasticsearch:
       master:
@@ -35,7 +35,7 @@ istio:
           strategy: "anonymous"
 
 clusterAuditor:
-  enabled: true
+  enabled: false
   values:
     resources:
       requests:
@@ -96,7 +96,7 @@ gatekeeper:
       limits: {}
 
 twistlock:
-  enabled: true
+  enabled: false
   values:
     console:
       persistence:
@@ -348,7 +348,7 @@ addons:
         volumesPerServer: 1
 
   velero:
-    enabled: false
+    enabled: true
     values:
       installCRDs: true
 
@@ -356,8 +356,9 @@ addons:
       configuration:
         provider: aws
         # TODO: Bucket for this
-      #  backupStorageLocation:
-      #    bucket: velero
+        backupStorageLocation:
+          bucket: bigbang-dogfood-velero
+          prefix: k3d
       #    config:
       #      region: us-west-1
       #      profile: test
