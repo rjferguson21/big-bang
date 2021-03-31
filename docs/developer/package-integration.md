@@ -20,26 +20,26 @@
      appConfig:
      {{- end }}
 
-     {{- if .Values.addons.gitlab.sso.enabled }}
-     omniauth:
-       enabled: true
-       {{- $global := .Values.addons.gitlab.values.global | default dict }}
-       {{- $appConfig := $global.appConfig | default dict }}
-       {{- $omniauth := $appConfig.omniauth | default dict }}
-       {{- if hasKey $omniauth "allowSingleSignOn" }}
-       allowSingleSignOn: {{ .Values.addons.gitlab.values.global.appConfig.omniauth.allowSingleSignOn }}
-       {{- else }}
-       allowSingleSignOn: ['openid_connect']
-       {{- end }}
-       {{- if hasKey $omniauth "blockAutoCreatedUsers" }}
-       blockAutoCreatedUsers: {{ .Values.addons.gitlab.values.global.appConfig.omniauth.blockAutoCreatedUsers }}
-       {{- else }}
-       blockAutoCreatedUsers: false
-       {{- end }}
+       {{- if .Values.addons.gitlab.sso.enabled }}
+       omniauth:
+         enabled: true
+         {{- $global := .Values.addons.gitlab.values.global | default dict }}
+         {{- $appConfig := $global.appConfig | default dict }}
+         {{- $omniauth := $appConfig.omniauth | default dict }}
+         {{- if hasKey $omniauth "allowSingleSignOn" }}
+         allowSingleSignOn: {{ .Values.addons.gitlab.values.global.appConfig.omniauth.allowSingleSignOn }}
+         {{- else }}
+         allowSingleSignOn: ['openid_connect']
+         {{- end }}
+         {{- if hasKey $omniauth "blockAutoCreatedUsers" }}
+         blockAutoCreatedUsers: {{ .Values.addons.gitlab.values.global.appConfig.omniauth.blockAutoCreatedUsers }}
+         {{- else }}
+         blockAutoCreatedUsers: false
+         {{- end }}
 
-       providers:
-         - secret: gitlab-sso-provider
-           key: gitlab-sso.json
+         providers:
+           - secret: gitlab-sso-provider
+             key: gitlab-sso.json
      {{- end }}
 
    ```
