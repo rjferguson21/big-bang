@@ -14,3 +14,4 @@ monitoring:
       allowed_domains: <allowed_domains>
       auth_url: https://accounts.google.com/o/oauth2/auth
       token_url: https://oauth2.googleapis.com/token
+      signout_redirect_url: https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://grafana.bigbang.dev
