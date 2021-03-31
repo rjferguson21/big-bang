@@ -11,6 +11,9 @@ resources:
   - gitrepository.yaml
   - helmrelease.yaml
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: common
     behavior: create
