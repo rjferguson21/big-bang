@@ -28,6 +28,8 @@ spec:
   valuesFrom:
     - kind: Secret
       name: common-bb
+    - kind: Secret
+      name: terraform
     - kind: ConfigMap
       name: common
     - kind: Secret
