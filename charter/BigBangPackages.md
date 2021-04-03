@@ -415,6 +415,24 @@ Owners:
 Understudies
 * @kevin.wilder
 
+#### Nexus Repository Manager
+
+Single source of truth for components, binaries, and build artifacts.
+
+Product:
+
+* [Nexus Repository Manager](https://www.sonatype.com/nexus/repository-pro)
+
+Repository:
+
+* [Nexus Repository Manager](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/nexus)
+
+Dependencies: None
+
+Owners:
+
+* @grant.duncklee
+
 #### Sonarqube
 
 Sonarqube provides code reviews for code quality and security
