@@ -16,7 +16,7 @@ sso:
   idp_data:
     entityId: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.entity_id }}"
     usernameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.username }}"
-    firstNameAttribute: ""{{ .Values.addons.nexusRepositoryManager.sso.idp_data.firstName }}"
+    firstNameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.firstName }}"
     lastNameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.lastName }}"
     emailAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.email }}"
     groupsAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.groups }}"
