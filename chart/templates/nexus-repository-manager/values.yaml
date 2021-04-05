@@ -16,9 +16,6 @@ license: "{{ .Values.addons.nexusRepositoryManager.license }}"
 license: "{{ .Values.addons.nexusRepositoryManager.license }}"
 {{- end }}
 
-license: ''
-{{- end }}
-
 {{- if .Values.addons.nexusRepositoryManager.sso.enabled }}
 sso:
   enabled: {{ .Values.addons.nexusRepositoryManager.sso.enabled }}
