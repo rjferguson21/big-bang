@@ -8,6 +8,10 @@ istio:
 #image:
 #  pullSecret: private-registry
 
+{{- if (ne .Values.addons.nexusRepositoryManager.license '') }}
+license: ''
+{{- end }}
+
 {{- if .Values.addons.nexusRepositoryManager.sso.enabled }}
 sso:
   enabled: {{ .Values.addons.nexusRepositoryManager.sso.enabled }}
