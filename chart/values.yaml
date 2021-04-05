@@ -434,7 +434,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/nexus.git
       path: "./chart"
-      tag: "29.1.0-bb.0"
+      tag: "29.1.0-bb.1"
     sso:
       # -- Toggle SAML SSO for NXRM.
       # -- handles SAML SSO, a Client must be configured in Keycloak or IdP
