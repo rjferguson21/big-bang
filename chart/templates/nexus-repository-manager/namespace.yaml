@@ -7,3 +7,4 @@ metadata:
   labels:
     istio-injection: enabled
   {{- end }}
+{{- end }}
