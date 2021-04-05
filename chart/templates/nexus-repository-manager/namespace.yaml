@@ -6,4 +6,4 @@ metadata:
   {{- if .Values.istio.enabled }}
   labels:
     istio-injection: enabled
-  {{ -end }}
+  {{- end }}
