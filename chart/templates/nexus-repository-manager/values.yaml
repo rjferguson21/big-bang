@@ -1,5 +1,3 @@
-{{- if .Values.addons.nexusRepositoryManager.enabled }}
-
 {{- define "bigbang.defaults.nexusRepositoryManager" -}}
 hostname: {{ .Values.hostname }}
 
@@ -41,5 +39,5 @@ sso:
       - {{ . | quote }}
       {{- end }}
   {{- end }}
-{{- end -}}
+{{- end }}
 {{- end -}}
