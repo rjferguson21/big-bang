@@ -1,0 +1,10 @@
+{{- if .Values.addons.nexusRepositoryManager.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexus-repository-manager
+  {{- if .Values.istio.enabled }}
+  labels:
+    istio-injection: enabled
+  {{- end }}
+{{- end }}
