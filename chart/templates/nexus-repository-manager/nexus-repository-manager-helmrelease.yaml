@@ -23,5 +23,5 @@ spec:
   dependsOn:
   - name: istio
     namespace: bigbang
-{{ -end }}
-{{ -end }}
+{{- end }}
+{{- end }}
