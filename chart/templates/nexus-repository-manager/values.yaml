@@ -1,3 +1,7 @@
+{{- if .Values.addons.nexusRepositoryManager.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.nexusRepositoryManager "name" "nexus-repository-manager" "defaults" (include "bigbang.defaults.nexusRepositoryManager" .)) }}
+{{- end }}
+
 {{- define "bigbang.defaults.nexusRepositoryManager" -}}
 hostname: {{ .Values.hostname }}
 
