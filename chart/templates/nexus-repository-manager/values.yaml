@@ -1,0 +1,53 @@
+{{- if .Values.addons.nexusRepositoryManager.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.nexusRepositoryManager "name" "nexus-repository-manager" "defaults" (include "bigbang.defaults.nexusRepositoryManager" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.nexusRepositoryManager" -}}
+hostname: {{ .Values.hostname }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+
+## followup on this
+#image:
+#  pullSecret: private-registry
+
+{{- if .Values.addons.nexusRepositoryManager.license_key }}
+license_key: "{{ .Values.addons.nexusRepositoryManager.license_key }}"
+{{ else }}
+license_key: ""
+{{- end }}
+
+{{- if .Values.addons.nexusRepositoryManager.sso.enabled }}
+sso:
+  enabled: {{ .Values.addons.nexusRepositoryManager.sso.enabled }}
+  idp_data:
+    entityId: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.entity_id }}"
+    usernameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.username }}"
+    firstNameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.firstName }}"
+    lastNameAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.lastName }}"
+    emailAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.email }}"
+    groupsAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.groups }}"
+    validateResponseSignature: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.validateResponseSignature | default "true" }}"
+    validateAssertionSignature: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.validateAssertionSignature | default "true" }}"
+    idpMetadata: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.idpMetadata }}"
+  realm:
+      {{- range .Values.addons.nexusRepositoryManager.sso.realm }}
+      - {{ . | quote }}
+      {{- end }}
+  {{- with .Values.addons.nexusRepositoryManager.sso.role }}
+  role:
+    id: {{ .id }}
+    name: {{ .name }}
+    description: {{ .description }}
+    privileges: |-
+      {{- range .privileges }}
+      - {{ . | quote }}
+      {{- end }}
+    roles:
+      {{- range .roles }}
+      - {{ . | quote }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+{{- end -}}
