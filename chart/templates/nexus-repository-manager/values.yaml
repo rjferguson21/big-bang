@@ -8,12 +8,8 @@ istio:
 #image:
 #  pullSecret: private-registry
 
-{{- if not (eq "" .Values.addons.nexusRepositoryManager.license) }}
-license: "{{ .Values.addons.nexusRepositoryManager.license }}"
-{{- end }}
-
-{{- if not (eq "" .Values.addons.nexusRepositoryManager.license) }}
-license: "{{ .Values.addons.nexusRepositoryManager.license }}"
+{{- if not (eq "" .Values.addons.nexusRepositoryManager.license_key) }}
+license_key: "{{ .Values.addons.nexusRepositoryManager.license_key }}"
 {{- end }}
 
 {{- if .Values.addons.nexusRepositoryManager.sso.enabled }}
