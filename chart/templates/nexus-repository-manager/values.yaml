@@ -1,5 +1,5 @@
 {{- if .Values.addons.nexusRepositoryManager.enabled }}
-{{- include "values-secret" (dict "root" $ "package" .Values.addons.nexusRepositoryManager "name" "nexus-repository-manager" "defaults" (include "bigbang.defaults.nexusRepositoryManager" .)) }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.nexusRepositoryManager "name" "nexus-repository-manager" "defaults" (include "bigbang.defaults.nexus-repository-manager" .)) }}
 {{- end }}
 
 {{- define "bigbang.defaults.nexusRepositoryManager" -}}
