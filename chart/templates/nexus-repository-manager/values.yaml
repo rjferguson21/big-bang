@@ -26,7 +26,7 @@ sso:
     groupsAttribute: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.groups }}"
     validateResponseSignature: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.validateResponseSignature | default "true" }}"
     validateAssertionSignature: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.validateAssertionSignature | default "true" }}"
-    idpMetadata: "{{ .Values.addons.nexusRepositoryManager.sso.idp_data.idpMetadata }}"
+    idpMetadata: '{{ .Values.addons.nexusRepositoryManager.sso.idp_data.idpMetadata }}'
   realm:
       {{- range .Values.addons.nexusRepositoryManager.sso.realm }}
       - {{ . | quote }}
