@@ -2,7 +2,7 @@
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.nexusRepositoryManager "name" "nexus-repository-manager" "defaults" (include "bigbang.defaults.nexus-repository-manager" .)) }}
 {{- end }}
 
-{{- define "bigbang.defaults.nexusRepositoryManager" -}}
+{{- define "bigbang.defaults.nexus-repository-manager" -}}
 hostname: {{ .Values.hostname }}
 
 istio:
