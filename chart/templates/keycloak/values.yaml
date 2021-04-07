@@ -5,9 +5,8 @@
 {{- define "bigbang.defaults.keycloak" -}}
 replicas: 2
 
-serviceAccount:
-  imagePullSecrets:
-    - name: private-registry
+imagePullSecrets:
+- name: private-registry
 
 hostname: {{ .Values.hostname }}
 
