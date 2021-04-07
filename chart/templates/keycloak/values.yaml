@@ -20,6 +20,18 @@ monitoring:
 serviceMonitor:
   enabled: {{ .Values.monitoring.enabled }}
 
+{{- if or .Values.istio.ingress.key .Values.istio.ingress.cert }}
+secrets:
+  certificates:
+    stringData:
+      {{- if .Values.istio.ingress.cert }}
+      tls.crt: {{ .Values.istio.ingress.cert }}
+      {{- end }}
+      {{- if .Values.istio.ingress.key }}
+      tls.key: {{ .Values.istio.ingress.key }}
+      {{- end }}
+{{- end }}
+
 {{- if .Values.addons.keycloak.database.host }}
 postgresql:
   enabled: false
