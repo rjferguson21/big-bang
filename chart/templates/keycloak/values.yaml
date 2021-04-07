@@ -23,12 +23,12 @@ serviceMonitor:
 {{- if or .Values.istio.ingress.key .Values.istio.ingress.cert }}
 secrets:
   certificates:
-    stringData:
+    data:
       {{- if .Values.istio.ingress.cert }}
-      tls.crt: {{ .Values.istio.ingress.cert }}
+      tls.crt: {{ .Values.istio.ingress.cert | b64enc }}
       {{- end }}
       {{- if .Values.istio.ingress.key }}
-      tls.key: {{ .Values.istio.ingress.key }}
+      tls.key: {{ .Values.istio.ingress.key | b64enc }}
       {{- end }}
 {{- end }}
 
