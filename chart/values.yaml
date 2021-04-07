@@ -684,9 +684,9 @@ addons:
     enabled: false
 
     git:
-      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "4.8.0-bb.3"
+      tag: "10.1.0-bb.0"
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
