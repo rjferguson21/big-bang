@@ -676,3 +676,37 @@ addons:
   #
   # ----------------------------------------------------------------------------------------------------------------------
 
+  # ----------------------------------------------------------------------------------------------------------------------
+  # Keycloak
+  #
+  keycloak:
+    # -- Toggle deployment of Keycloak.
+    enabled: false
+
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
+      path: "./chart"
+      tag: "4.8.0-bb.3"
+
+    database:
+      # -- Hostname of a pre-existing database to use for Keycloak.
+      # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
+      host: ""
+
+      # -- Pre-existing database type (e.g. postgres) to use for Keycloak.
+      type: postgres
+
+      # -- Port of a pre-existing database to use for Keycloak.
+      port: 5432
+
+      # -- Database name to connect to on host.
+      database: "" # example: keycloak
+
+      # -- Username to connect as to external database, the user must have all privileges on the database.
+      username: ""
+
+      # -- Database password for the username used to connect to the existing database.
+      password: ""
+
+    # -- Values to passthrough to the keycloak chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
+    values: {}

@@ -1,0 +1,40 @@
+{{- if .Values.addons.keycloak.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.keycloak "name" "keycloak" "defaults" (include "bigbang.defaults.keycloak" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.keycloak" -}}
+replicas: 2
+
+serviceAccount:
+  imagePullSecrets:
+    - name: private-registry
+
+hostname: {{ .Values.hostname }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+  keycloak:
+    enabled: true
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+serviceMonitor:
+  enabled: {{ .Values.monitoring.enabled }}
+
+{{- if .Values.addons.keycloak.database.host }}
+postgresql:
+  enabled: false
+secrets:
+  db:
+    stringData:
+      DB_USER: {{ .Values.addons.keycloak.database.username }}
+      DB_PASSWORD: {{ .Values.addons.keycloak.database.password | quote }}
+      DB_VENDOR: {{ default "postgres" .Values.addons.keycloak.database.type }}
+      DB_ADDR: {{ .Values.addons.keycloak.database.host }}
+      DB_PORT: {{ .Values.addons.keycloak.database.port | quote }}
+      DB_DATABASE: {{ .Values.addons.keycloak.database.database }}
+extraEnvFrom: |
+  - secretRef:
+      name: '{{ include "keycloak.fullname" . }}-db'
+{{- end }}
+{{- end }}
