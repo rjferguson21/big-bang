@@ -156,7 +156,7 @@ ulimit -n 131072
 ulimit -u 8192
 ```
 
-Another option includes running the init container as root to modify the kernel values on the host (this requires a busybox container run as root):
+Another option includes running the init container to modify the kernel values on the host (this requires a busybox container run as root):
 
 ```yaml
 addons:
