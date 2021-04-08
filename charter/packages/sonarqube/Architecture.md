@@ -21,7 +21,7 @@ graph TB
   end
 
   subgraph "Database"
-    sonarqubepod --- postgres
+    sonarqube --- postgres
   end
 ```
 
