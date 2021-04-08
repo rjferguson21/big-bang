@@ -12,7 +12,7 @@ graph TB
     ingressgateway
   end
 
-  subgraph "Sonarqube"
+  subgraph "Sonarqube Namespace"
     ingressgateway --> sonarqubepod
   end      
 
@@ -21,7 +21,7 @@ graph TB
   end
 
   subgraph "Database"
-    sonarqubepod --> postgres
+    sonarqubepod <--> postgres
   end
 ```
 
