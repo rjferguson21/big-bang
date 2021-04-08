@@ -7,88 +7,95 @@
 ## Big Bang Touchpoints
 
 ```mermaid
-graph TB
-  subgraph "jaeger"
-  jaegerpods("Jaeger-AllInOne")
-  elasticcredentials --> jaegerpods("Jaeger-AllInOne")
-  end      
 
-  subgraph "ingress"
-    ingressgateway --> jaegerpods("Jaeger-AllInOne")
-  end
-
-  subgraph "logging"
-    subgraph "elasticsearch"
-    
-    credentials --> elasticcredentials
-    jaegerpods("Jaeger-AllInOne") --> logging-ek-es-http
-    logging-ek-es-http --> LoggingElastic(Elasticsearch Storage )
-    end
-  end
-
-  subgraph "workloads"
-    sidecar --> jaegerpods("Jaeger-AllInOne")
-  end
 ```
 
 ### Storage
 
+Persistant storage can be enabled by setting the following values in the bigbang chart:
 
+```yaml
+addons:
+  sonarqube:
+    values:
+      persistence:
+        enabled: true
+        annotations: {}
+        storageClass:
+        accessMode: ReadWriteOnce
+        size: 10Gi
+```
+
+### Database
+
+Sonarqube needs a postgres database to function. If one is not specified in the bigbang chart Sonarqube will deploy one internally within the namespace it is deployed to.
+
+```yaml
+addons:
+  sonarqube:
+    database:
+      host: ""
+      port: 5432
+      database: ""
+      username: ""
+      password: ""
+```
 
 ### Istio Configuration
 
+Istio is disabled in the sonarqube chart by default and can be enabled by setting the following values in the bigbang chart:
 
 ```yaml
-
+hostname: bigbang.dev
+istio:
+  enabled: true
 ```
+
+These values get passed into the sonarqube chart [here](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube/-/blob/main/chart/values.yaml#L358). This creates the virtual service and maps to the istio gateway.
 
 ## High Availability
 
+This can be accomplished by increasing the number of replicas in the deployment.
 
 ```yaml
+addons:
+  sonarqube:
+    values:
+      replicaCount: 2
 ```
-
 
 ## Single Sign on (SSO)
 
-Jaeger does not have built in SSO.  In order to provide SSO, this deployment legerages [Authservice]().
+SSO integration can be accomplished by modifying the following settings in the bigbang chart.
+
+```yaml
+sso:
+  oidc:
+    host: login.dso.mil
+    realm: baby-yoda
+
+addons:
+  sonarqube:
+    enabled: true
+    sso:
+      enabled: true
+      client_id: ""
+      label: ""
+      certificate: ""
+      login: login
+      name: name
+      email: email
+```
 
 ```mermaid
-flowchart LR
-
-A --> K[(Keycloak)]
-
-subgraph external
-K
-end
-
-subgraph auth["authservice namespace"]
-    A(authservice) --> K
-end
-
-
-
-ingress --> IP
-
-
-subgraph "jaeger namespace"
-    subgraph "jaeger pod"
-        J["jager"]
-        IP["istio proxy"] --> A
-        IP --> J
-    end
-end    
 
 ```
 
 ## Licencing
 
-
-
-## Storage
-
-
+Sonarqube is released under the [Lesser GNU General Public License](https://en.wikipedia.org/wiki/Lesser_GNU_General_Public_License). The Bigbang chart utilizes the community edition of Sonarqube, but there are are also paid supported versions.
 
 ## Dependencies
 
-
+- Postgres database
+- Istio
