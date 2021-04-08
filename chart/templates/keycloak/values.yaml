@@ -20,22 +20,20 @@ monitoring:
 serviceMonitor:
   enabled: {{ .Values.monitoring.enabled }}
 
-{{- if or .Values.istio.ingress.key .Values.istio.ingress.cert }}
-secrets:
-  certificates:
-    data:
-      {{- if .Values.istio.ingress.cert }}
-      tls.crt: {{ .Values.istio.ingress.cert | b64enc }}
-      {{- end }}
-      {{- if .Values.istio.ingress.key }}
-      tls.key: {{ .Values.istio.ingress.key | b64enc }}
-      {{- end }}
-{{- end }}
-
 {{- if .Values.addons.keycloak.database.host }}
 postgresql:
   enabled: false
+{{- end }}
+
+{{- if or .Values.addons.keycloak.database.host .Values.istio.ingress.cert }}
 secrets:
+  {{- if and .Values.istio.ingress.key .Values.istio.ingress.cert }}
+  certificates:
+    data:
+      tls.crt: {{ .Values.istio.ingress.cert | b64enc }}
+      tls.key: {{ .Values.istio.ingress.key | b64enc }}
+  {{- end }}
+  {{- if .Values.addons.keycloak.database.host }}
   db:
     stringData:
       DB_USER: {{ .Values.addons.keycloak.database.username }}
@@ -44,8 +42,13 @@ secrets:
       DB_ADDR: {{ .Values.addons.keycloak.database.host }}
       DB_PORT: {{ .Values.addons.keycloak.database.port | quote }}
       DB_DATABASE: {{ .Values.addons.keycloak.database.database }}
+  {{- end }}
+{{- end }}
+
+{{- if .Values.addons.keycloak.database.host }}      
 extraEnvFrom: |
   - secretRef:
-      name: '{{ include "keycloak.fullname" . }}-db'
+      name: 'keycloak-db'
 {{- end }}
+
 {{- end }}
