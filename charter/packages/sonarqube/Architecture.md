@@ -87,6 +87,23 @@ addons:
 ```
 
 ```mermaid
+flowchart LR
+
+S --> K[(Keycloak)]
+
+subgraph external
+K
+end
+
+ingress --> IP
+
+subgraph "Sonarqube namespace"
+    subgraph "Sonarqube pod"
+        S["sonarqube"]
+        IP["istio proxy"] --> K
+        IP --> S
+    end
+end  
 ```
 
 ## Licencing
