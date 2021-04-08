@@ -7,6 +7,19 @@
 ## Big Bang Touchpoints
 
 ```mermaid
+graph TB
+  subgraph "Sonarqube"
+  end      
+
+  subgraph "ingress"
+    ingressgateway --> Sonarqube
+  end
+
+  subgraph "logging"
+  end
+
+  subgraph "workloads"
+    end
 ```
 
 ### Storage
