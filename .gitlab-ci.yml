@@ -59,6 +59,8 @@ pre vars:
     reports:
       dotenv: variables.env
   script:
+  - echo "Checking variables for consumption"
+  - env
   # obtain MR and master versions
   - CHART_MR_VERSION=$(sed -n -e 's/^version. //p' chart/Chart.yaml)
   - git fetch && git checkout ${CI_DEFAULT_BRANCH}
