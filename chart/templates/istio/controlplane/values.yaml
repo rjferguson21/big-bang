@@ -23,4 +23,20 @@ ingress:
     port: 8080
     namespace: authservice
 {{- end }}
+
+{{- $hosts := .Values.istio.ingress.passthrough_hosts }}
+{{- if $hosts }}
+extraServers:
+- port:
+    name: https-passthrough
+    protocol: HTTPS
+    number: 443
+  hosts:
+    {{- range $host := $hosts }}
+    - {{ $host }}.{{ $.Values.hostname }}
+    {{- end }}
+  tls:
+    credentialName: "null"
+    mode: PASSTHROUGH
+{{- end }}
 {{- end -}}

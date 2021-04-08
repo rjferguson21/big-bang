@@ -69,7 +69,7 @@ sso:
 
   # -- OIDC token URL template string (to be used as default)
   token_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/token"
-    
+
   # -- OIDC auth URL template string (to be used as default)
   auth_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/auth"
 
@@ -94,13 +94,17 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.7.3-bb.9"
+    #tag: "1.7.3-bb.9"
+    branch: "291-keycloak"
 
   # -- Certificate/Key pair to use as the default certificate for exposing BigBang created applications.
   # If nothing is provided, applications will expect a valid tls secret to exist in the `istio-system` namespace called `wildcard-cert`.
   ingress:
     key: ""
     cert: ""
+    passthrough_hosts: [] # List of hostnames without domain (domain is pulled from .Values.hostname)
+    #- host1
+    #- host2
 
   sso:
     # -- Toggle SSO for kiali and jaeger on and off
@@ -688,7 +692,7 @@ addons:
       path: "./chart"
       # tag: "10.1.0-bb.0"
       branch: "290-keycloak"
-      
+
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
       # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
