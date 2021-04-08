@@ -8,17 +8,21 @@
 
 ```mermaid
 graph TB
-  subgraph "Sonarqube"
-  end      
-
   subgraph "Ingress"
+    ingressgateway
   end
 
+  subgraph "Sonarqube"
+    ingressgateway --> sonarqubepod
+  end      
+
   subgraph "Logging"
+    sonarqubepod --> metrics
   end
 
   subgraph "Database"
-    end
+    sonarqubepod --> postgres
+  end
 ```
 
 ### Storage
