@@ -30,7 +30,7 @@ extraServers:
 - port:
     name: https-passthrough
     protocol: HTTPS
-    number: 443
+    number: 8443
   hosts:
     {{- range $host := $hosts }}
     - {{ $host }}.{{ $.Values.hostname }}
