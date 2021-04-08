@@ -7,7 +7,6 @@
 ## Big Bang Touchpoints
 
 ```mermaid
-
 ```
 
 ### Storage
@@ -66,7 +65,7 @@ addons:
 
 ## Single Sign on (SSO)
 
-SSO integration can be accomplished by modifying the following settings in the bigbang chart.
+SSO integration can be configured by modifying the following settings in the bigbang chart.
 
 ```yaml
 sso:
@@ -88,7 +87,6 @@ addons:
 ```
 
 ```mermaid
-
 ```
 
 ## Licencing
@@ -97,5 +95,5 @@ Sonarqube is released under the [Lesser GNU General Public License](https://en.w
 
 ## Dependencies
 
-- Postgres database
-- Istio
+Node kernel mods:
+https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/d_prerequisites.md#sonarqube
