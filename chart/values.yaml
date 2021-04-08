@@ -328,7 +328,7 @@ addons:
   #
   minioOperator:
     # -- Toggle deployment of minio operator and instance.
-    enabled: true
+    enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
@@ -337,11 +337,11 @@ addons:
     values: {}
 
   minio:
-    enabled: true
+    enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "helm-tests"
+      branch: "helm-tests"
 
     # -- Default access key to use for minio.
     accesskey: ""
