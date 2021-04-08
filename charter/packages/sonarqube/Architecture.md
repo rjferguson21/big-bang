@@ -11,14 +11,13 @@ graph TB
   subgraph "Sonarqube"
   end      
 
-  subgraph "ingress"
-    ingressgateway --> Sonarqube
+  subgraph "Ingress"
   end
 
-  subgraph "logging"
+  subgraph "Logging"
   end
 
-  subgraph "workloads"
+  subgraph "Database"
     end
 ```
 
