@@ -67,20 +67,25 @@ config: |
     bind :8080
     acl host_kiali hdr(host) -i kiali.{{ .Values.hostname }}
     acl host_tracing hdr(host) -i tracing.{{ .Values.hostname }}
+{{- if and .Values.monitoring.enabled .Values.monitoring.sso.enabled }}
     acl host_alertmanager hdr(host) -i alertmanager.{{ .Values.hostname }}
     acl host_prometheus hdr(host) -i prometheus.{{ .Values.hostname }}
+{{- end }}
 
     option forwardfor
     use_backend kiali_main if host_kiali
     use_backend tracing_main if host_tracing
+{{- if and .Values.monitoring.enabled .Values.monitoring.sso.enabled }}
     use_backend alertmanager_main if host_alertmanager
     use_backend prometheus_main if host_prometheus
+{{- end }} 
   backend kiali_main
     mode http
     server kiali kiali.istio-system.svc.cluster.local:20001
   backend tracing_main
     mode http
     server jaeger tracing.istio-system.svc.cluster.local:80
+{{- if and .Values.monitoring.enabled .Values.monitoring.sso.enabled }}
   backend alertmanager_main
     mode http
     option forwardfor
@@ -91,6 +96,7 @@ config: |
     option forwardfor
     http-request replace-header Host .* monitoring-monitoring-kube-prometheus.monitoring.svc.cluster.local
     server prometheus monitoring-monitoring-kube-prometheus.monitoring.svc.cluster.local:9090
+{{- end }}
 
 image:
   repository: registry1.dso.mil/ironbank/opensource/haproxy/haproxy22
