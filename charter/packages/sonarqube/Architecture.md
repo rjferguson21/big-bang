@@ -17,7 +17,7 @@ graph TB
   end      
 
   subgraph "Metrics"
-    metrics --> sonarqube
+    sonarqube --> prometheus
   end
 
   subgraph "Database"
