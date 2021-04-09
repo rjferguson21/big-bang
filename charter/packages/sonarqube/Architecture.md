@@ -17,7 +17,7 @@ graph TB
   end      
 
   subgraph "Metrics"
-    sonarqube <-- metrics
+    metrics --> sonarqube
   end
 
   subgraph "Database"
