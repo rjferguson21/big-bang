@@ -16,8 +16,8 @@ graph TB
     ingressgateway --> sonarqube
   end      
 
-  subgraph "Logging"
-    sonarqube --> metrics
+  subgraph "Metrics"
+    sonarqube <-- metrics
   end
 
   subgraph "Database"
