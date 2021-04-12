@@ -35,33 +35,33 @@ chains:
   kiali:
     match:
       header: ":authority"
-      prefix: {{ range .Values.istio.sso.kiali.uri }}{{ tpl . $}}{{ end }}
+      prefix: {{ include "kialiHostsHaproxy" . }}
     client_id: {{ .Values.istio.sso.kiali.client_id }}
     client_secret: "{{ .Values.istio.sso.kiali.client_secret }}"
-    callback_uri: https://{{ range .Values.istio.sso.kiali.uri }}{{ tpl . $}}{{ end }}/login
+    callback_uri: {{ include "kialiHostsAuthservice" . }}
 
   jaeger:
     match:
       header: ":authority"
-      prefix: {{ range .Values.istio.sso.jaeger.uri }}{{ tpl . $}}{{ end }}
+      prefix: {{ include "jaegerHostsHaproxy" . }}
     client_id: "{{ .Values.istio.sso.jaeger.client_id }}"
     client_secret: "{{ .Values.istio.sso.jaeger.client_secret }}"
-    callback_uri: https://{{ range .Values.istio.sso.jaeger.uri }}{{ tpl . $}}{{ end }}/login
+    callback_uri: {{ include "jaegerHostsAuthservice" . }}
 
   prometheus:
     match:
       header: ":authority"
-      prefix: {{ range .Values.monitoring.sso.prometheus.uri }}{{ tpl . $}}{{ end }}
+      prefix: {{ include "prometheusHostsHaproxy" . }}
     client_id: {{ .Values.monitoring.sso.prometheus.client_id }}
     client_secret: "{{ .Values.monitoring.sso.prometheus.client_secret }}"
-    callback_uri: https://{{ range .Values.monitoring.sso.prometheus.uri }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    callback_uri: {{ include "prometheusHostsAuthservice" . }}
 
   alertmanager:
     match:
       header: ":authority"
-      prefix: {{ range .Values.monitoring.sso.alertmanager.uri }}{{ tpl . $}}{{ end }}
+      prefix: {{ include "alertmanagerHostsHaproxy" . }}
     client_id: {{ .Values.monitoring.sso.alertmanager.client_id }}
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
-    callback_uri: https://{{ range .Values.monitoring.sso.alertmanager.uri }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    callback_uri: {{ include "alertmanagerHostsAuthservice" . }}
 
 {{- end -}}

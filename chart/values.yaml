@@ -105,18 +105,18 @@ istio:
       client_id: ""
       # -- OIDC Client Secret to use for kiali
       client_secret: ""
-      # -- Single OIDC Callback URI base to use for kiali eg: kiali.example.com
-      uri: 
-        - kiali.{{ .Values.hostname }}
+      # -- OIDC Callback URIs to use for kiali eg: kiali.example.com
+      uris: 
+      - kiali.{{ .Values.hostname }}
 
     jaeger:
       # -- OIDC Client ID to use for jaeger
       client_id: ""
       # -- OIDC Client Secret to use for jaeger
       client_secret: ""
-      # -- Single OIDC Callback URI base to use for jaeger eg: tracing.example.com
-      uri: 
-        - tracing.{{ .Values.hostname }}
+      # -- OIDC Callback URIs to use for jaeger eg: tracing.example.com
+      uris: 
+      - tracing.{{ .Values.hostname }}
 
   # -- Values to passthrough to the istio-controlplane chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
   values: {}
@@ -233,18 +233,18 @@ monitoring:
       client_id: ""
       # -- Prometheus OIDC client secret
       client_secret: ""
-      # -- Single OIDC Callback URI base to use for prometheus eg: prometheus.example.com
-      uri: 
-        - prometheus.{{ .Values.hostname }}
+      # -- OIDC Callback URIs to use for prometheus eg: prometheus.example.com
+      uris: 
+      - prometheus.{{ .Values.hostname }}
 
     alertmanager:
       # -- Alertmanager OIDC client ID
       client_id: ""
       # -- Alertmanager OIDC client secret
       client_secret: ""
-      # -- Single OIDC Callback URI base to use for alertmanager eg: alertmanager.example.com
-      uri: 
-        - alertmanager.{{ .Values.hostname }}
+      # -- OIDC Callback URIs to use for alertmanager eg: alertmanager.example.com
+      uris: 
+      - alertmanager.{{ .Values.hostname }}
 
     grafana:
       # -- Grafana OIDC client ID

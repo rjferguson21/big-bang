@@ -65,10 +65,10 @@ config: |
     unique-id-format %{+X}o\ 1-%[date,hex,bytes(8,8),lower]-%[capture.req.hdr(3)]
     http-request set-header X-Amzn-Trace-Id Root=%[unique-id,lower]
     bind :8080
-    acl host_kiali hdr(host) -i {{ range .Values.istio.sso.kiali.uri }}{{ tpl . $}}{{ end }}
-    acl host_tracing hdr(host) -i {{ range .Values.istio.sso.jaeger.uri }}{{ tpl . $}}{{ end }}
-    acl host_alertmanager hdr(host) -i {{ range .Values.monitoring.sso.alertmanager.uri }}{{ tpl . $}}{{ end }}
-    acl host_prometheus hdr(host) -i {{ range .Values.monitoring.sso.prometheus.uri }}{{ tpl . $}}{{ end }}
+    acl host_kiali hdr(host) -i {{ include "kialiHostsHaproxy" . }}
+    acl host_tracing hdr(host) -i {{ include "jaegerHostsHaproxy" . }}
+    acl host_alertmanager hdr(host) -i {{ include "alertmanagerHostsHaproxy" . }}
+    acl host_prometheus hdr(host) -i {{ include "prometheusHostsHaproxy" . }}
 
     option forwardfor
     use_backend kiali_main if host_kiali
