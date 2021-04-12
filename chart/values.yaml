@@ -91,6 +91,10 @@ flux:
 istio:
   # -- Toggle deployment of Istio.
   enabled: true
+  hostnames:
+    kiali: kiali
+    jaeger: tracing
+
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
@@ -172,6 +176,8 @@ gatekeeper:
 logging:
   # -- Toggle deployment of Logging (EFK).
   enabled: true
+  hostnames:
+    kibana: kibana
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
@@ -223,6 +229,10 @@ fluentbit:
 monitoring:
   # -- Toggle deployment of Monitoring (Prometheus, Grafana, and Alertmanager).
   enabled: true
+  hostnames:
+    prometheus: prometheus
+    alertmanager: alertmanager
+    grafana: grafana
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
@@ -267,6 +277,8 @@ monitoring:
 twistlock:
   # -- Toggle deployment of Twistlock.
   enabled: true
+  hostnames:
+    twistlock: twistlock
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
@@ -360,8 +372,8 @@ addons:
     enabled: false
 
     hostnames:
-      gitlab: gitlab.bigbang.dev
-      registry: registry.bigbang.dev
+      gitlab: gitlab
+      registry: registry
 
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
@@ -685,7 +697,8 @@ addons:
   keycloak:
     # -- Toggle deployment of Keycloak.
     enabled: false
-
+    hostnames:
+      keycloak: keycloak
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"

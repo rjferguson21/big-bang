@@ -24,19 +24,26 @@ ingress:
     namespace: authservice
 {{- end }}
 
-{{- $hosts := .Values.istio.ingress.passthrough_hosts }}
-{{- if $hosts }}
+{{- if .Values.addons.keycloak.enabled }}
 extraServers:
 - port:
-    name: https-passthrough
+    name: https-keycloak
     protocol: HTTPS
     number: 8443
   hosts:
-    {{- range $host := $hosts }}
-    - {{ $host }}.{{ $.Values.hostname }}
-    {{- end }}
+    - {{ .Values.addons.keycloak.hostnames.keycloak }}.{{ .Values.hostname }}
   tls:
     credentialName: "null"
     mode: PASSTHROUGH
+hostnames:
+  {{- range .Values }}
+  {{- if kindIs "map" . }}
+  {{- if .enabled }}
+  {{- range .hostnames }}
+  - {{ . }}.{{ $.Values.hostname }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 {{- end }}
 {{- end -}}
