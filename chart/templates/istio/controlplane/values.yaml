@@ -33,7 +33,6 @@ extraServers:
   hosts:
     - {{ .Values.addons.keycloak.hostnames.keycloak }}.{{ .Values.hostname }}
   tls:
-    credentialName: "null"
     mode: PASSTHROUGH
 hostnames:
   {{- range .Values }}
