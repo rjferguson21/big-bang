@@ -128,6 +128,16 @@ logging:
       {"license":{"uid":....}}
 ```
 
-## Dependencies
+## Health Checks
 
-Elasticsearch-Kibana deploys off of the Operator pattern utilizing Elastic's "eck-operator". The corresponding [chart](https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator/) is bundled in Big Bang.
+Licensed ECK comes with [built in Health monitoring for Kibana and Elasticsearch](https://www.elastic.co/guide/en/kibana/current/monitoring-kibana.html). This is called self-monitoring within the Kibana UI available at the Stack Monitoring settings https://KIBANA_URL/app/monitoring#.
+
+Outside of the UI it is possible to check the health of Elasticsearch cluster via port-forward via doing the following:
+
+```bash
+kubectl get secrets -n logging logging-ek-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
+
+kubectl port-forward svc/logging-ek-es-http -n logging 9200:9200
+
+curl -ku "elastic:ELASTIC_PASSWORD" "https://localhost:9200/_cluster/health?pretty"
+```
