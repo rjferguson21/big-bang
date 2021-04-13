@@ -22,8 +22,8 @@ graph TB
   end
 
   subgraph "Elasticsearch"
-    eck-operator --> elasticsearch
     kibana --> elasticsearch
+    eck-operator --> elasticsearch
   end
 
   subgraph "Metrics"
