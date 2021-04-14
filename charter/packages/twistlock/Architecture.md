@@ -29,12 +29,10 @@ graph LR
   end
 
 ```
-
 ### UI
 
 Twistlock Console serves as the user interface within Twistlock. The graphical
 user interface (GUI) lets you define policy, configure and control your Twistlock deployment, and view the overall health (from a security perspective) of your container environment
-
 
 ### Storage
 
@@ -61,7 +59,20 @@ istio:
   enabled: true
 ```
 
+## Monitoring
+
+Twistlock Prometheus metrics collection is implemented following the documentation:
+[Twistlock Prometheus Integration]<https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/audit/prometheus.html>\
+
+Monitoring is disabled in the twistlock chart by default and can be enabled by setting the following values in the bigbang chart:
+
+```yaml
+monitoring:
+  enabled: true
+```
+
 ## High Availability
+
 Twistlock uses orchestrators built-in high availability capabilities.
 
 ## Single Sign on (SSO)
@@ -72,7 +83,10 @@ SSO can be configured for twistlock  manually using the documentation provided. 
 ## Licensing
 
 Twistlock deployment requires license to operate.\
-[TwistLock  License Documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud/20-04/prisma-cloud-compute-edition-admin/welcome/licensing.html)
+Open a browser and navigate to the Prisma Cloud Console. Create an initial admin user, then enter your license key.\
+Your Prisma Cloud Console is available on https://<consoleServer>:8083 \
+[TwistLock  License Documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud/20-04/prisma-cloud-compute-edition-admin/welcome/licensing.html) \
+
 
 ### Health Checks
 
