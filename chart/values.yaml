@@ -93,8 +93,6 @@ istio:
   enabled: true
   hostnames:
     kiali: kiali
-    jaeger: tracing
-
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"

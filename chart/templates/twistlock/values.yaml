@@ -14,4 +14,7 @@ imagePullSecrets:
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  console:
+    hosts:
+      - {{ .Values.twistlock.hostnames.twistlock }}.{{ .Values.hostname }}
 {{- end -}}

@@ -6,6 +6,9 @@
 hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
+  kibana:
+    hosts:
+      - {{ .Values.logging.hostnames.kibana }}.{{ .Values.hostname }}
 
 {{- if .Values.logging.sso.enabled }}
 sso:
