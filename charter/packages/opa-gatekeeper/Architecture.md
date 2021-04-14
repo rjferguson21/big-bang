@@ -9,16 +9,15 @@ Gatekeeper is an auditing tool that allows administrators to see what resources 
 ```mermaid
 graph LR
   subgraph "OPA Gatekeeper"
-    collector("Collector")
-    auditor{{Auditor}} --> collector("Collector")
+    collector("Collector") --> auditor{{Auditor}}
   end      
 
   subgraph "Kubernetes API"
-    ig(Ingress Gateway) --"App Port"--> mmservice
+    api("Kubernetes API") --> collector("Collector")
   end
 
   subgraph "Metrics"
-    mattermostpods("Mattermost Pod(s)") --"Chats/Config"--> database[(Mattermost DB)]
+    auditor{{Auditor}} --> metrics("Metrics")
   end
 ```
 
