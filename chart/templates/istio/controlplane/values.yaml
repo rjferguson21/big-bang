@@ -24,16 +24,22 @@ ingress:
     namespace: authservice
 {{- end }}
 
+istio:
+  kiali:
+    hosts:
+      - {{ .Values.istio.hostnames.kiali }}.{{ .Values.domain | default .Values.hostname }}
+
 {{- if .Values.addons.keycloak.enabled }}
 extraServers:
 - port:
     name: https-keycloak
-    protocol: HTTPS
+    protocol: TLS
     number: 8443
   hosts:
     - {{ .Values.addons.keycloak.hostnames.keycloak }}.{{ .Values.hostname }}
   tls:
     mode: PASSTHROUGH
+
 hostnames:
   {{- range .Values }}
   {{- if kindIs "map" . }}
@@ -45,4 +51,5 @@ hostnames:
   {{- end }}
   {{- end }}
 {{- end }}
+
 {{- end -}}
