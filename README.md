@@ -147,8 +147,8 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.minio.secretkey | string | `""` | Default secret key to intstantiate with minio, you should change/delete this after installation. |
 | addons.minio.values | object | `{}` | Values to passthrough to the minio instance chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git |
 | addons.gitlab.enabled | bool | `false` | Toggle deployment of Gitlab. |
-| addons.gitlab.hostnames.gitlab | string | `"gitlab.bigbang.dev"` |  |
-| addons.gitlab.hostnames.registry | string | `"registry.bigbang.dev"` |  |
+| addons.gitlab.hostnames.gitlab | string | `"gitlab"` |  |
+| addons.gitlab.hostnames.registry | string | `"registry"` |  |
 | addons.gitlab.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git"` |  |
 | addons.gitlab.git.path | string | `"./chart"` |  |
 | addons.gitlab.git.tag | string | `"4.8.0-bb.3"` |  |
