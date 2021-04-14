@@ -27,13 +27,13 @@ postgresql:
   enabled: false
 {{- end }}
 
-{{- if or .Values.addons.keycloak.database.host .Values.istio.ingress.cert }}
+{{- if or .Values.addons.keycloak.database.host (and .Values.istio.ingress.key .Values.istio.ingress.cert) (and .Values.addons.keycloak.ingress.cert .Values.addons.keycloak.ingress.key) }}
 secrets:
-  {{- if and .Values.istio.ingress.key .Values.istio.ingress.cert }}
+  {{- if or (and .Values.istio.ingress.key .Values.istio.ingress.cert) (and .Values.addons.keycloak.ingress.cert .Values.addons.keycloak.ingress.key) }}
   certificates:
     data:
-      tls.crt: {{ .Values.istio.ingress.cert | b64enc }}
-      tls.key: {{ .Values.istio.ingress.key | b64enc }}
+      tls.crt: {{ default .Values.istio.ingress.cert .Values.addons.keycloak.ingress.cert | b64enc }}
+      tls.key: {{ default .Values.istio.ingress.key .Values.addons.keycloak.ingress.key | b64enc }}
   {{- end }}
   {{- if .Values.addons.keycloak.database.host }}
   db:
