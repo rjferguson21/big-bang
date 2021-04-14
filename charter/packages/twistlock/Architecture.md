@@ -37,7 +37,7 @@ user interface (GUI) lets you define policy, configure and control your Twistloc
 ### Storage
 
 Twistlock Console requires access to persistent storage \
-Persistent storage values can be set in values.yml
+Persistent storage values can be set/modified  in the bigbang chart:
 
 ```yaml
 console:
@@ -82,10 +82,8 @@ SSO can be configured for twistlock  manually using the documentation provided. 
 
 ## Licensing
 
-Twistlock deployment requires license to operate.\
-Open a browser and navigate to the Prisma Cloud Console. Create an initial admin user, then enter your license key.\
-Your Prisma Cloud Console is available on https://<consoleServer>:8083 \
-[TwistLock  License Documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud/20-04/prisma-cloud-compute-edition-admin/welcome/licensing.html) \
+Twistlock deployment requires license to operate. Enter your license key in the twistlock console. \
+[TwistLock  License Documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud/20-04/prisma-cloud-compute-edition-admin/welcome/licensing.html) 
 
 
 ### Health Checks
