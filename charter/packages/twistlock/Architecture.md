@@ -16,16 +16,16 @@ graph TB
     ingressgateway
   end
 
-  subgraph "Twistlock"
-    ingressgateway --> Twistlock
+  subgraph "twistlock"
+    ingressgateway --> twistlock
   end      
 
   subgraph "Metrics"
-    Twistlock --> prometheus
+    twistlock --> prometheus
   end
 
   subgraph "Monitoring"
-    Twistlock --- > ECK
+    twistlock --- > ECK
   end
 ```
 
