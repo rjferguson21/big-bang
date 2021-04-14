@@ -8,6 +8,10 @@ Gatekeeper is an auditing tool that allows administrators to see what resources 
 
 ```mermaid
 graph TB
+  subgraph "Metrics"
+    auditor{{Auditor}} --> metrics("Metrics")
+  end
+  
   subgraph "OPA Gatekeeper"
     collector("Collector") --> auditor{{Auditor}}
   end      
@@ -21,9 +25,6 @@ graph TB
     ctl("kubectl") --> api("Kubernetes API")
   end
 
-  subgraph "Metrics"
-    auditor{{Auditor}} --> metrics("Metrics")
-  end
 ```
 
 ### Storage
