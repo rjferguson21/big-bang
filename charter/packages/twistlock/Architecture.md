@@ -67,7 +67,7 @@ Twistlock uses orchestrators built-in high availability capabilities.
 ## Single Sign on (SSO)
 
 SSO can be configured for twistlock  manually using the documentation provided. \
-[Twistlock SSO Integration] (https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock/-/blob/main/docs/KEYCLOAK.md)
+[Twistlock SSO Integration](https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock/-/blob/main/docs/KEYCLOAK.md)
 
 ## Licensing
 
@@ -76,5 +76,5 @@ Twistlock deployment requires license to operate.\
 
 ### Health Checks
 
-Twistlock provides API endpoints to monitor the health and availability of deployed components  at `/api/v1/_ping` 
+Twistlock provides API endpoints to monitor the health and availability of deployed components  at `/api/v1/_ping` \
 Example command: curl -u admin:Password ‘https:<console-ip>:8083/api/ v1/_ping
