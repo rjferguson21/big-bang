@@ -15,11 +15,7 @@ graph LR
   subgraph "Twistlock"
     twistlockpods("Twistlock Pod(s)")
     twistlockservice{{Twistlock Console}} --> twistlockpods("Twistlockt Pod(s)")
-  end      
-
-  subgraph "Ingress"
-    ig(Ingress Gateway) --"App Port"--> Twistlock Console
-  end
+  end     
 
 ```
 
