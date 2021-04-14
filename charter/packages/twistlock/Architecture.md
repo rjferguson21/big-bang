@@ -17,7 +17,10 @@ graph TB
   end
 subgraph "Twistlock"
     ingressgateway --> twistlock
-  end      
+  end     
+subgraph "Metrics"
+    twistlock --> prometheus
+  end 
 ```
 
 ### UI
