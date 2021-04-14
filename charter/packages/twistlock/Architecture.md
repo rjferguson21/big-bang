@@ -25,7 +25,7 @@ graph TB
   end
 
   subgraph "Monitoring"
-    twistlock --- > ECK
+    twistlock ---> ECK
   end
 ```
 
