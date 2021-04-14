@@ -18,7 +18,7 @@ flowchart LR
   end
 
   subgraph "kubectl"
-    ctl(kubectl) <--> api("Kubernetes API")
+    ctl("kubectl") <--> api("Kubernetes API")
   end
 
   subgraph "Metrics"
