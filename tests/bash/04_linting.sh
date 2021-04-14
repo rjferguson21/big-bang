@@ -3,6 +3,7 @@
 # exit on error
 set -e
 
+# Running in cluster config testing tools
 echo "======================================"
 echo "Popeye"
 echo "======================================"
