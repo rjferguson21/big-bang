@@ -14,6 +14,11 @@ graph LR
 
   subgraph "Kubernetes API"
     api("Kubernetes API") --> collector("Collector")
+    auditor{{Auditor}} --> api("Kubernetes API")
+  end
+
+  subgraph "kubectl"
+    kubectl <--> api("Kubernetes API")
   end
 
   subgraph "Metrics"
