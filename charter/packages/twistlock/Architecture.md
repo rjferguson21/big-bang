@@ -20,6 +20,9 @@ subgraph "Twistlock"
   end     
 subgraph "Metrics"
     twistlock --> prometheus
+subgraph "ElasticSearch"
+    twistlock --- postgres
+  end
   end 
 ```
 
