@@ -7,7 +7,7 @@ Gatekeeper is an auditing tool that allows administrators to see what resources 
 ## Big Bang Touchpoints
 
 ```mermaid
-graph LR
+flowchart LR
   subgraph "OPA Gatekeeper"
     collector("Collector") --> auditor{{Auditor}}
   end      
