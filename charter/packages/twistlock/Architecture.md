@@ -11,21 +11,21 @@
 ## Big Bang Touchpoints
 
 ```mermaid
-graph TB
+graph LR
+  subgraph "Twistlock"
+    mattermostpods("Twistlock Pod(s)")
+    mmservice{{Twistlock Console}} --> twistlockpods("Twistlockt Pod(s)")
+  end      
+
   subgraph "Ingress"
-    ingressgateway
+    ig(Ingress Gateway) --"App Port"--> Twistlock Console
   end
-subgraph "Twistlock"
-    ingressgateway --> twistlock
-  end     
-subgraph "Metrics"
-    twistlock --> prometheus
-  end
-subgraph "Logging"
-    twistlockdefenderpods("Twistlock Pod(s)") --"Logs"--> fluent(Fluentbit) --> logging-ek-es-http
+
+
+  subgraph "Logging"
+    twistlockpods("Twistlock Pod(s)") --"Logs"--> fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
-  
 ```
 
 ### UI
