@@ -15,6 +15,9 @@ graph TB
   subgraph "Ingress"
     ingressgateway
   end
+subgraph "Twistlock"
+    ingressgateway --> twistlock
+  end      
 ```
 
 ### UI
