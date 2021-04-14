@@ -7,12 +7,24 @@ Gatekeeper is an auditing tool that allows administrators to see what resources 
 ## Big Bang Touchpoints
 
 ```mermaid
+graph LR
+  subgraph "OPA Gatekeeper"
+    collector("Collector")
+    auditor{{Auditor}} --> collector("Collector")
+  end      
 
+  subgraph "Kubernetes API"
+    ig(Ingress Gateway) --"App Port"--> mmservice
+  end
+
+  subgraph "Metrics"
+    mattermostpods("Mattermost Pod(s)") --"Chats/Config"--> database[(Mattermost DB)]
+  end
 ```
 
 ### Storage
 
-Data from gatekeeper is provided via [metrics](https://open-policy-agent.github.io/gatekeeper/website/docs/metrics/).
+Data from gatekeeper is not stored is provided via [metrics](https://open-policy-agent.github.io/gatekeeper/website/docs/metrics/).
 
 ### Database
 
