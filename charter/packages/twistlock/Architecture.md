@@ -27,7 +27,8 @@ graph TB
   subgraph "Logging"
      Twistlock -->  Elasticsearch-Kibana
   end
-```
+  
+ ```
 
 ### UI
 
