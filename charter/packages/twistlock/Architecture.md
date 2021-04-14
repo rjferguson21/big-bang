@@ -1,4 +1,4 @@
-# Twistlcok 
+# Twistlock
 
 ## Overview
 
@@ -37,6 +37,10 @@ user interface (GUI) lets you define policy, configure and control your Twistloc
 
 
 ### Storage
+
+Twistlock Console requires access to persistent storage \
+Persistent storage values can be set in values.yml
+
 ```yaml
 console:
   persistence:
@@ -58,14 +62,16 @@ istio:
 ```
 
 ## High Availability
-N/A
+Twistlock uses orchestrators built-in high availability capabilities.
 
 ## Single Sign on (SSO)
 
-Twistlock supports user authentication using SAML.   [Twistlock SAML integration](https://docs.paloaltonetworks.com/prisma/prisma-cloud/19-11/prisma-cloud-compute-edition-admin/access_control/integrate_saml)
+SSO can be configured for twistlock  manually using the documentation provided. \
+[Twistlock SSO Integration] (https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock/-/blob/main/docs/KEYCLOAK.md)
 
 ## Licensing
 
+Twistlock deployment requires license to operate.\
 [TwistLock  License Documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud/20-04/prisma-cloud-compute-edition-admin/welcome/licensing.html)
 
 ### Health Checks
