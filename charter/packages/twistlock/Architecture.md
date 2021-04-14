@@ -14,7 +14,7 @@
 graph LR
   subgraph "Twistlock"
     twistlockpods("Twistlock Pod(s)")
-    twistlockservice{{Twistlock Console}} --> twistlockdefenderpods("TwistlockPod(s)")
+    twistlockservice{{Twistlock Console}} --> twistlockpods("TwistlockPod(s)")
   end   
   subgraph "Ingress"
     ig(Ingress Gateway) --"App Port"--> twistlockservice
@@ -22,7 +22,6 @@ graph LR
   subgraph "Logging"
     twistlockpods("Twistlock Pod(s)") --"Logs"--> fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
-    mattermostpods("Mattermost Pod(s)") --"Chat Indexing"--> logging-ek-es-http
   end
 
 ```
