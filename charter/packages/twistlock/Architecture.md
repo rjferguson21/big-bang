@@ -20,10 +20,11 @@ subgraph "Twistlock"
   end     
 subgraph "Metrics"
     twistlock --> prometheus
-subgraph "ElasticSearch"
-    twistlock --- postgres
+subgraph "Logging"
+    twistlockdefenderpods("Twistlock Pod(s)") --"Logs"--> fluent(Fluentbit) --> logging-ek-es-http
+    logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
-  end 
+  
 ```
 
 ### UI
