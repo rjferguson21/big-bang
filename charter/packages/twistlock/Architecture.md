@@ -24,11 +24,10 @@ graph TB
     Twistlock --> prometheus
   end
 
-  subgraph "Logging"
-     Twistlock -->  Elasticsearch-Kibana
+  subgraph "Monitoring"
+    Twistlock --- > ECK
   end
-  
- ```
+```
 
 ### UI
 
