@@ -105,9 +105,6 @@ istio:
   ingress:
     key: ""
     cert: ""
-    passthrough_hosts: [] # List of hostnames without domain (domain is pulled from .Values.hostname)
-    #- host1
-    #- host2
 
   sso:
     # -- Toggle SSO for kiali and jaeger on and off
@@ -704,7 +701,11 @@ addons:
       path: "./chart"
       # tag: "10.1.0-bb.0"
       branch: "290-keycloak"
-
+    # -- Certificate/Key pair to use as the certificate for exposing Keycloak
+    # If nothing is provided, the default istio ingress key and cert will be used
+    ingress:
+      key: ""
+      cert: ""
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
       # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
