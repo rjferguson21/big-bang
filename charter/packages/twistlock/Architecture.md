@@ -15,18 +15,6 @@ graph TB
   subgraph "Ingress"
     ingressgateway
   end
-
-  subgraph "twistlock"
-    ingressgateway --> twistlock
-  end      
-
-  subgraph "Metrics"
-    twistlock --> prometheus
-  end
-
-  subgraph "Monitoring"
-    twistlock ---> ECK
-  end
 ```
 
 ### UI
