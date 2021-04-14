@@ -122,6 +122,7 @@ istiooperator:
 # ----------------------------------------------------------------------------------------------------------------------
 
 jaeger:
+  # -- Toggle deployment of Jaeger
   enabled: true
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/jaeger.git
