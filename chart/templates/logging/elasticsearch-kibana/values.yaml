@@ -7,14 +7,27 @@ hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
 
-{{- if .Values.logging.sso.enabled }}
+{{- with .Values.logging.sso }}
+{{- if .enabled }}
 sso:
-  enabled: {{ .Values.logging.sso.enabled }}
-  client_id: {{ .Values.logging.sso.client_id }}
-  client_secret: {{ .Values.logging.sso.client_secret | default "no-secret" }}
+  enabled: {{ .enabled }}
+  client_id: {{ .client_id | quote }}
+  client_secret: {{ .client_secret | default "no-secret" }}
   oidc:
-    host: {{ .Values.sso.oidc.host }}
-    realm: {{ .Values.sso.oidc.realm }}
+    host: {{ .oidc.host | default $.Values.sso.oidc.host | quote }}
+    realm: {{ .oidc.realm | default $.Values.sso.oidc.realm | quote }}
+  issuer: {{ .issuer | quote }}
+  auth_url: {{ .auth_url | quote }}
+  token_url: {{ .token_url | quote }}
+  userinfo_url: {{ .userinfo_url | quote }}
+  jwkset_url: {{ .jwkset_url | quote }}
+  claims_principal: {{ .claims_principal | quote }}
+  claims_principal_pattern: {{ .claims_principal_pattern | quote }}
+  signature_algorithm: {{ .signature_algorithm | quote }}
+  endsession_url: {{ .endsession_url | quote }}
+  claims_group: {{ .claims_group | quote }}
+  claims_mail: {{ .claims_mail | quote }}
+{{- end }}
 {{- end }}
 
 kibana:
