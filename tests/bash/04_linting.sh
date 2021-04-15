@@ -12,3 +12,7 @@ echo "======================================"
 echo "Clusterlint"
 echo "======================================"
 clusterlint run
+echo "======================================"
+echo "Istioctl Analyze"
+echo "======================================"
+istioctl analyze --all-namespaces
