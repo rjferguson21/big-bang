@@ -40,7 +40,8 @@ extraServers:
   tls:
     mode: PASSTHROUGH
 
-hostnames:
+gateway:
+  hosts:
   {{- range .Values }}
   {{- if kindIs "map" . }}
   {{- if .enabled }}
