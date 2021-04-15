@@ -52,7 +52,23 @@ Authservice can be configured to use a redis server for distributed state storag
 
 ### High Availability
 
-**TO DO - replicaCount, autoscaling, hpa - TO DO**
+When setting `replicaCount` above `1`, Authservice will utilize an HA redis deployment, but it can also be configured to use an external redis such as Elasticache.
+
+Authservice also utilizes a horizontal pod autoscaler, which can be configured with min & max replicas and target CPU & memory utilization:
+
+```yaml
+addons:
+  authservice:
+    enabled: true
+    values:
+      replicaCount: 2
+      autoscaling:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 3
+        targetCPUUtilizationPercentage: 80
+        targetMemoryUtilizationPercentage: 80
+```
 
 ### UI
 
