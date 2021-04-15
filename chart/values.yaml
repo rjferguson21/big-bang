@@ -698,8 +698,8 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      # tag: "10.1.0-bb.0"
-      branch: "290-keycloak"
+      tag: "10.1.0-bb.0"
+      
     # -- Certificate/Key pair to use as the certificate for exposing Keycloak
     # If nothing is provided, the default istio ingress key and cert will be used
     ingress:
