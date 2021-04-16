@@ -257,7 +257,6 @@ Owners:
 
 Understudy:
 
-* @agill17
 * @kenna81
 
 Repository:
@@ -456,6 +455,29 @@ Owners:
 * @kevin.wilder
 * @LynnStill
 
+#### Nexus
+
+Nexus provides a robust artifact repository, supporting artifacts of multiple programming languages
+
+Product:
+
+* [Nexus](https://www.sonatype.com/nexus/repository-pro)
+* Scope: 
+  * The Nexus OSS will not be supported as the licenced pro version is required for [HA and SAML SSO capabilities](https://www.sonatype.com/nexus/repository-oss-vs-pro-features)
+  * Only Licended Nexus Repository Pro will be supported
+
+Repository:
+
+* [Nexus](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/nexus)
+
+Dependencies:
+
+Owners:
+
+* @kevin.wilder
+* @ariel.shnitzer
+* @grant.duncklee
+
 ### Collaboration Tools
 
 Collaboration tools are hosted here: [Collaboration Tools](https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools)
@@ -635,6 +657,25 @@ Owners:
 
 * @runyontr - Runyon Solutions
 * @still - Parsons
+
+### Cluster Utilities
+
+Packages that provider cluster level utility, such as RWX storage or generic backup capabilities.
+
+#### Velero
+
+Velero is an open source tool to safely backup and restore, perform disaster recovery, and migrate Kubernetes cluster resources and persistent volumes
+
+* [Velero](https://velero.io/)
+
+Repository:
+
+* [Velero Package](https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/tree/main)
+
+Owners:
+
+* @tunde - Oteemo
+* @adam.toy - Rancher Federal
 
 ### Sandbox
 
