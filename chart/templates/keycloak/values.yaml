@@ -32,10 +32,8 @@ secrets:
   {{- if or (and .Values.istio.ingress.key .Values.istio.ingress.cert) (and .Values.addons.keycloak.ingress.cert .Values.addons.keycloak.ingress.key) }}
   certificates:
     stringData:
-      tls.crt: |-
-        {{ default .Values.istio.ingress.cert .Values.addons.keycloak.ingress.cert }}
-      tls.key: |-
-        {{ default .Values.istio.ingress.key .Values.addons.keycloak.ingress.key }}
+      tls.crt: {{ default .Values.istio.ingress.cert .Values.addons.keycloak.ingress.cert | quote }}
+      tls.key: {{ default .Values.istio.ingress.key .Values.addons.keycloak.ingress.key  | quote }}
   {{- end }}
   {{- if .Values.addons.keycloak.database.host }}
   db:
