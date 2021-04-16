@@ -36,8 +36,8 @@ chains:
     match:
       header: ":authority"
       prefix: "kiali"
-    client_id: {{ .Values.istio.sso.kiali.client_id }}
-    client_secret: "{{ .Values.istio.sso.kiali.client_secret }}"
+    client_id: {{ .Values.kiali.sso.client_id }}
+    client_secret: "{{ .Values.kiali.sso.client_secret }}"
     callback_uri: https://kiali.{{ .Values.hostname }}/login
 
   jaeger:

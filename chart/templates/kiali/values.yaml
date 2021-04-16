@@ -13,7 +13,8 @@ elasticsearch:
 {{- if .Values.kiali.sso.enabled }}
 cr:
   spec:
-    pod_labels:
-      protect: keycloak
+    deployment:
+      pod_labels:
+        protect: keycloak
 {{- end }}
 {{- end -}}
