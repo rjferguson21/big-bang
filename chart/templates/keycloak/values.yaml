@@ -31,9 +31,11 @@ postgresql:
 secrets:
   {{- if or (and .Values.istio.ingress.key .Values.istio.ingress.cert) (and .Values.addons.keycloak.ingress.cert .Values.addons.keycloak.ingress.key) }}
   certificates:
-    data:
-      tls.crt: {{ default .Values.istio.ingress.cert .Values.addons.keycloak.ingress.cert | b64enc }}
-      tls.key: {{ default .Values.istio.ingress.key .Values.addons.keycloak.ingress.key | b64enc }}
+    stringData:
+      tls.crt: |-
+        {{ default .Values.istio.ingress.cert .Values.addons.keycloak.ingress.cert }}
+      tls.key: |-
+        {{ default .Values.istio.ingress.key .Values.addons.keycloak.ingress.key }}
   {{- end }}
   {{- if .Values.addons.keycloak.database.host }}
   db:
