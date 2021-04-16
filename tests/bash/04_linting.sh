@@ -5,14 +5,14 @@ set -e
 
 # Running in cluster config testing tools
 echo "======================================"
-echo "Popeye"
+echo "Istioctl Analyze"
 echo "======================================"
-popeye
+istioctl analyze --all-namespaces
 echo "======================================"
 echo "Clusterlint"
 echo "======================================"
 clusterlint run
 echo "======================================"
-echo "Istioctl Analyze"
+echo "Popeye"
 echo "======================================"
-istioctl analyze --all-namespaces
+popeye -A
