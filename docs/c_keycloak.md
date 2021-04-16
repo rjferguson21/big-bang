@@ -32,31 +32,22 @@ keycloak:
 
 ## Keycloak TLS
 
-To properly configure Keycloak TLS, you must provide Keycloak a certificate in `keycloak.ingress` that does not overlap with any TLS terminated app certificate.  This means that if you use a wildcard SAN like `*.bigbang.dev` for TLS terminated apps, Keycloak's cert cannot be `keycloak.bigbang.dev`.  See [the details](#certificate-overlap-problem) for further information on why this is a problem.
+To properly configure Keycloak TLS, you must provide Keycloak a certificate in `keycloak.ingress` that does not overlap with any TLS terminated app certificate.  See [the details](#certificate-overlap-problem) for further information on why this is a problem.
 
-In the following configuration for Big Bang, we move all our core applications to the `*.admin.bigbang.dev` subdomain and provide a certificate for `*.admin.bigbang.dev` to them.  Keycloak remains at `keycloak.bigbang.dev` and gets a `*.bigbang.dev` certificate.
+In the Big Bang implementation, all core apps will be deployed to the `admin` subdomain of your domain (set in `hostname`).  This means an endpoint for prometheus, for example, would be at `prometheus.admin.yourdomain`.
+
+You will need two wildcard SAN certificates, one for `*.admin.yourdomain` and one for `*.yourdomain`, when Keycloak is enabled.  The `*.admin.yourdomain` cert goes into `instio.ingress` and the `*.yourdomain` cert goes into `keycloak.ingress`.
+
+In the following configuration for Big Bang, we provide a certificate for `*.admin.bigbang.dev` to TLS terminated apps and a `*.bigbang.dev` certificate to Keycloak.
 
 ```yaml
 hostname: bigbang.dev
 istio:
-  hostnames:
-    kiali: kiali.admin
   ingress:
     key: |-
       <Private Key for *.admin.bigbang.dev>
     cert: |-
       <Certificate for *.admin.bigbang.dev>
-logging:
-  hostnames:
-    kibana: kibana.admin
-monitoring:
-  hostnames:
-    prometheus: prometheus.admin
-    alertmanager: alertmanager.admin
-    grafana: grafana.admin
-twistlock:
-  hostnames:
-    twistlock: twistlock.admin
 addons:
   keycloak:
     enabled: true
