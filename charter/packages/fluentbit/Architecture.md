@@ -39,6 +39,26 @@ fluentbit:
         name: flb-storage
 ```
 
+## Logging
+
+Since Fluentbit is the method for shipping cluster logs to the ECK stack, to reduce the amount of logs fluentbit and ECK has to process, fluentbit container logs are excluded from being processed and shipped to ECK. However, if you would like to enable fluentbit container logs being sent to ECK  you just have to remove the "Excluded_Path" portion of this INPUT block (requires presence of entire block even when changing a single line):
+
+```yaml
+fluentbit:
+  values:
+    config:
+      inputs: |
+        [INPUT]
+            Name tail
+            Path /var/log/containers/*.log
+            Exclude_Path /var/log/containers/*fluent*.log,/var/log/containers/*gatekeeper-audit*.log
+            Parser containerd
+            Tag kube.*
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            storage.type filesystem
+```
+
 ## Health Checks
 
 Fluentbit is able to be configured with a service port for the container, which is able to expose [all kinds of metrics](https://docs.fluentbit.io/manual/administration/monitoring) including metrics for Prometheus.
