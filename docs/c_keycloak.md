@@ -2,9 +2,11 @@
 
 Big Bang's integration with Keycloak requires special considerations and configuration compared to other applications.  This document will help you get it setup correctly.
 
-## Keycloak with Other Addons
+## Keycloak with Other Apps
 
-Due to the sensitivity of Keycloak, Big Bang does not support deploying KeyCloak and any other add-ons.  Keycloak should be deployed with the core Big Bang applications (e.g. Istio, Monitoring, Logging) only.
+Due to the sensitivity of Keycloak, Big Bang does not support deploying KeyCloak and any other add-ons.  But, Keycloak can be deployed with the core Big Bang applications (e.g. Istio, Monitoring, Logging).  The URL to access these core apps is under the `admin` subdomain to avoid [a problem with overlapping certificates](#certificate-overlap-problem).  For example, in the `bigbang.dev` domain, to access Prometheus, you would go to `https://prometheus.admin.bigbang.dev`.  Keycloak would still be accessed at `https://keycloak.bigbang.dev`.
+
+> The `admin` subdomain is only used when Keycloak is enabled
 
 ## Keycloak's Custom Image
 
@@ -32,13 +34,11 @@ keycloak:
 
 ## Keycloak TLS
 
-To properly configure Keycloak TLS, you must provide Keycloak a certificate in `keycloak.ingress` that does not overlap with any TLS terminated app certificate.  See [the details](#certificate-overlap-problem) for further information on why this is a problem.
+To properly configure Keycloak TLS, you must provide Keycloak a certificate in `addons.keycloak.ingress` that does not overlap with any TLS terminated app certificate.  See [the details](#certificate-overlap-problem) for further information on why this is a problem.
 
-In the Big Bang implementation, all core apps will be deployed to the `admin` subdomain of your domain (set in `hostname`).  This means an endpoint for prometheus, for example, would be at `prometheus.admin.yourdomain`.
+In the Big Bang implementation, [core apps use the `admin` subdomain](#keycloak-with-other-apps).  You need two wildcard SAN certificates, one for `*.admin.yourdomain` and one for `*.yourdomain` for this implementation.  The `*.admin.yourdomain` cert goes into `instio.ingress` and the `*.yourdomain` cert goes into `addons.keycloak.ingress`.
 
-You will need two wildcard SAN certificates, one for `*.admin.yourdomain` and one for `*.yourdomain`, when Keycloak is enabled.  The `*.admin.yourdomain` cert goes into `instio.ingress` and the `*.yourdomain` cert goes into `keycloak.ingress`.
-
-In the following configuration for Big Bang, we provide a certificate for `*.admin.bigbang.dev` to TLS terminated apps and a `*.bigbang.dev` certificate to Keycloak.
+In the following example for Big Bang, we provide a certificate for `*.admin.bigbang.dev` to TLS terminated apps and a `*.bigbang.dev` certificate to Keycloak.
 
 ```yaml
 hostname: bigbang.dev
