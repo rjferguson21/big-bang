@@ -125,7 +125,7 @@ jaeger:
   # -- Toggle deployment of Jaeger
   enabled: true
   git:
-    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/jaeger.git
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
     tag: "2.19.1-bb.2"
   sso:
@@ -133,8 +133,26 @@ jaeger:
     client_id: ""
     # -- OIDC Client Secret to use for jaeger
     client_secret: ""
-  #  -- Values to pass through to jaeger chart: 	https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/jaeger.git
+  #  -- Values to pass through to jaeger chart: 	https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
   values: {}
+
+
+kiali:
+# -- Toggle deployment of Kiali
+  enabled: true
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
+    path: "./chart"
+    # tag: "2.19.1-bb.2"
+    branch: main
+  sso:
+    # -- OIDC Client ID to use for Kiali
+    client_id: ""
+    # -- OIDC Client Secret to use for Kiali
+    client_secret: ""
+  #  -- Values to pass through to Kiali chart: 	https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali
+  values: {}
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Cluster Auditor
