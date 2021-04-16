@@ -16,5 +16,5 @@ istio:
   enabled: {{ .Values.istio.enabled }}
   console:
     hosts:
-      - {{ .Values.twistlock.hostnames.twistlock }}.{{ .Values.hostname }}
+      - twistlock{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
 {{- end -}}

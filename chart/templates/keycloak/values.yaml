@@ -15,7 +15,7 @@ istio:
   keycloak:
     enabled: true
     hosts:
-      - {{ .Values.addons.keycloak.hostnames.keycloak }}.{{ .Values.hostname }}
+      - keycloak.{{ .Values.hostname }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
@@ -47,7 +47,7 @@ secrets:
   {{- end }}
 {{- end }}
 
-{{- if .Values.addons.keycloak.database.host }}      
+{{- if .Values.addons.keycloak.database.host }}
 extraEnvFrom: |
   - secretRef:
       name: 'keycloak-db'

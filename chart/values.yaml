@@ -91,8 +91,6 @@ flux:
 istio:
   # -- Toggle deployment of Istio.
   enabled: true
-  hostnames:
-    kiali: kiali
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
@@ -172,8 +170,6 @@ gatekeeper:
 logging:
   # -- Toggle deployment of Logging (EFK).
   enabled: true
-  hostnames:
-    kibana: kibana
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
@@ -225,10 +221,6 @@ fluentbit:
 monitoring:
   # -- Toggle deployment of Monitoring (Prometheus, Grafana, and Alertmanager).
   enabled: true
-  hostnames:
-    prometheus: prometheus
-    alertmanager: alertmanager
-    grafana: grafana
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
@@ -273,8 +265,6 @@ monitoring:
 twistlock:
   # -- Toggle deployment of Twistlock.
   enabled: true
-  hostnames:
-    twistlock: twistlock
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
@@ -693,13 +683,11 @@ addons:
   keycloak:
     # -- Toggle deployment of Keycloak.
     enabled: false
-    hostnames:
-      keycloak: keycloak
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
       tag: "10.1.0-bb.0"
-      
+
     # -- Certificate/Key pair to use as the certificate for exposing Keycloak
     # If nothing is provided, the default istio ingress key and cert will be used
     ingress:

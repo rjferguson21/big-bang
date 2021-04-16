@@ -27,7 +27,7 @@ ingress:
 istio:
   kiali:
     hosts:
-      - {{ .Values.istio.hostnames.kiali }}.{{ .Values.domain | default .Values.hostname }}
+      - kiali{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
 
 {{- if .Values.addons.keycloak.enabled }}
 extraServers:
@@ -36,21 +36,13 @@ extraServers:
     protocol: TLS
     number: 8443
   hosts:
-    - {{ .Values.addons.keycloak.hostnames.keycloak }}.{{ .Values.hostname }}
+    - keycloak.{{ .Values.hostname }}
   tls:
     mode: PASSTHROUGH
 
 gateway:
   hosts:
-  {{- range .Values }}
-  {{- if kindIs "map" . }}
-  {{- if .enabled }}
-  {{- range .hostnames }}
-  - {{ . }}.{{ $.Values.hostname }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
+    - "*.admin.{{ .Values.hostname }}"
 {{- end }}
 
 {{- end -}}

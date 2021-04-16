@@ -18,7 +18,7 @@ istio:
     namespace: authservice
     {{- end }}
     hosts:
-    - {{ .Values.monitoring.hostnames.prometheus }}.{{ .Values.hostname }}
+    - prometheus{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
   alertmanager:
     enabled: true
     {{- if .Values.monitoring.sso.enabled }}
@@ -27,11 +27,11 @@ istio:
     namespace: authservice
     {{- end }}
     hosts:
-    - {{ .Values.monitoring.hostnames.alertmanager }}.{{ .Values.hostname }}
+    - alertmanager{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
   grafana:
     enabled: true
     hosts:
-    - {{ .Values.monitoring.hostnames.grafana }}.{{ .Values.hostname }}
+    - grafana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
 
 global:
   imagePullSecrets:
@@ -48,7 +48,7 @@ grafana:
   grafana.ini:
     {{- if .Values.istio.enabled }}
     server:
-      root_url: https://{{ .Values.monitoring.hostnames.grafana }}.{{ .Values.hostname }}/
+      root_url: https://grafana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}/
     {{- end }}
 
     auth:

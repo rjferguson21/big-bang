@@ -8,7 +8,7 @@ istio:
   enabled: {{ .Values.istio.enabled }}
   kibana:
     hosts:
-      - {{ .Values.logging.hostnames.kibana }}.{{ .Values.hostname }}
+      - kibana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
 
 {{- if .Values.logging.sso.enabled }}
 sso:
