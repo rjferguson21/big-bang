@@ -125,11 +125,12 @@ jaeger:
     path: "./chart"
     tag: "2.19.1-bb.3"
   sso:
+    enabled: false
     # -- OIDC Client ID to use for jaeger
     client_id: ""
     # -- OIDC Client Secret to use for jaeger
     client_secret: ""
-  #  -- Values to pass through to jaeger chart: 	https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
+  # -- Values to pass through to jaeger chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
   values: {}
 
 
@@ -139,15 +140,14 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    # tag: "2.19.1-bb.2"
-    branch: main
+    tag: "1.32.0-bb.0"
   sso:
     enabled: false
     # -- OIDC Client ID to use for Kiali
     client_id: ""
     # -- OIDC Client Secret to use for Kiali
     client_secret: ""
-  #  -- Values to pass through to Kiali chart: 	https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali
+  # -- Values to pass through to Kiali chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali
   values: {}
 
 
