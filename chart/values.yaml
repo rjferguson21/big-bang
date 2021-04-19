@@ -125,7 +125,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.19.1-bb.2"
+    tag: "2.19.1-bb.3"
   sso:
     # -- OIDC Client ID to use for jaeger
     client_id: ""
