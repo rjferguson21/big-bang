@@ -49,7 +49,34 @@ With Authservice, Kiali, and Jaeger, Istio can be configured to use Keycloak/OID
 
 ### Storage
 
+Aside from the packages that it can integrate with, Istio provides no storage requirements.
 ### High Availability
+
+By default, Istio is configured with 1 istiod replica, but it can be configured in the Big Bang values to use horizontal pod autoscaling:
+
+```yaml
+istio:
+  enabled: true
+  values:
+    istiod:
+      replicaCount: 1
+      hpaSpec:
+        minReplicas: 1
+        maxReplicas: 3
+```
+
+Likewise, the ingress gateway replicas can be specified and extra ingress gateways can be configured:
+
+```yaml
+istio:
+  enabled: true
+  values:
+    ingressGateway:
+      minReplicas: 1
+      maxReplicas: 5
+    extraIngressGateways:
+    # ...
+```
 
 ### UI
 
