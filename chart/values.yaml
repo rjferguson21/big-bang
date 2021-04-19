@@ -115,7 +115,6 @@ istiooperator:
 
   # -- Values to passthrough to the istio-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
   values: {}
-# ----------------------------------------------------------------------------------------------------------------------
 
 jaeger:
   # -- Toggle deployment of Jaeger
@@ -125,31 +124,38 @@ jaeger:
     path: "./chart"
     tag: "2.19.1-bb.3"
   sso:
+    # -- Toggle SSO for jaeger on and off
     enabled: false
+
     # -- OIDC Client ID to use for jaeger
     client_id: ""
+
     # -- OIDC Client Secret to use for jaeger
     client_secret: ""
+
   # -- Values to pass through to jaeger chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
   values: {}
 
-
 kiali:
-# -- Toggle deployment of Kiali
+  # -- Toggle deployment of Kiali
   enabled: true
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
     tag: "1.32.0-bb.0"
   sso:
+    # -- Toggle SSO for Kiali on and off
     enabled: false
+
     # -- OIDC Client ID to use for Kiali
     client_id: ""
+
     # -- OIDC Client Secret to use for Kiali
     client_secret: ""
+
   # -- Values to pass through to Kiali chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali
   values: {}
-
+# ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Cluster Auditor
