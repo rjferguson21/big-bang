@@ -65,7 +65,7 @@ Monitoring is enabled by default in the Istio [values.yaml](https://repo1.dso.mi
 
 ### Healthchecks
 
-The Iron Bank/Registry1 Istio Dockerfiles include healthchecks for all images and the Big Bang Istio Helm Chart includes readiness and liveness probes in its deployment:
+The Iron Bank/Registry1 Istio Dockerfiles include healthchecks for all images.
 
 ### Dependant Packages
 
