@@ -39,6 +39,15 @@ fluentbit:
         name: flb-storage
 ```
 
+This storage buffer hostPath mount, in conjunction with the hostPath mount of `/var/log/containers/` used to fetch logs requires a securityContext of `privileged` to be set if SELinux is set to `Enforcing` on the kubernetes nodes. To set this securityContext for the fluentbit pods, add the following values in Big Bang:
+
+```yaml
+fluentbit:
+  values:
+    securityContext:
+      privileged: true
+```
+
 ## Logging
 
 Since Fluentbit is the method for shipping cluster logs to the ECK stack, to reduce the amount of logs fluentbit and ECK has to process, fluentbit container logs are excluded from being processed and shipped to ECK. However, if you would like to enable fluentbit container logs being sent to ECK  you just have to remove the "Excluded_Path" portion of this INPUT block (requires presence of entire block even when changing a single line):
