@@ -13,7 +13,9 @@ Together, they allow developers to protect their APIs and web apps without any a
 ```mermaid
 graph LR
   subgraph "Authservice"
-    authservicepods("Authservice Pod(s)")
+    subgraph "Any Namespace"
+      authservicepods("Authservice Pod(s)")
+    end
 
     subgraph "istio-system Namespace"
       envoyfilter{{"Envoy Filter"}} --> authservicepods
