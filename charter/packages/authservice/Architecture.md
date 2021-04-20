@@ -12,16 +12,17 @@ Together, they allow developers to protect their APIs and web apps without any a
 
 ```mermaid
 graph LR
-  pod("URL") --> authservice --> |redirect| pod2("IdP")
-  pod2 --> |token| app("App") --> authservicepods
+  pod("URL") --> authservice
+  envoyfilter --> |redirect| pod2("IdP")
+  pod2 --> |token| apppods
 
   subgraph "Authservice"
     subgraph "Any Namespace"
-      authservicepods("Authservice Pod(s)")
+      apppods("Application Pod(s)")
     end
 
     subgraph "istio-system Namespace"
-      envoyfilter{{"Envoy Filter"}} --> authservicepods
+      envoyfilter{{"Envoy Filter"}}
     end
     
     subgraph "Authservice Namespace"
@@ -35,7 +36,7 @@ graph LR
   end
 
   subgraph "Logging"
-    authservicepods("Authservice Pods") --> fluent(Fluentbit) --> logging-ek-es-http
+    apppods --> fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
 ```
