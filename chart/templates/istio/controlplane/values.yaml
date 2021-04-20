@@ -5,6 +5,9 @@
 {{- define "bigbang.defaults.istio" -}}
 hostname: {{ .Values.hostname }}
 
+tracing:
+  enabled:  {{ .Values.jaeger.enabled }}
+
 imagePullSecrets:
   - private-registry
 
