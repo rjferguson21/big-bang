@@ -122,7 +122,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.19.1-bb.3"
+    tag: "2.19.1-bb.4"
   sso:
     # -- Toggle SSO for Jaeger on and off
     enabled: false
