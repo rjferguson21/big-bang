@@ -12,7 +12,6 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 elasticsearch:
   enabled: {{ .Values.logging.enabled }}
-{{- if .Values.jaeger.sso.enabled }}
 jaeger:
   spec:
     allInOne:
@@ -21,5 +20,4 @@ jaeger:
     query:
       labels:
         protect: keycloak
-{{- end }}
 {{- end -}}
