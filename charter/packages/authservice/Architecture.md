@@ -43,7 +43,7 @@ graph LR
 
 ### Single Sign On
 
-Big Bang uses the Istio and Monitoring packages' SSO configurations to provide filters for authservice. See the Big Bang values for more info.
+SSO configurations can provide filters for authservice. See the Big Bang values for more info.
 
 ### Storage
 
