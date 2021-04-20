@@ -43,7 +43,16 @@ graph LR
 
 ### Single Sign On
 
-SSO configurations can provide filters for authservice. See the Big Bang values for more info.
+Authservice provides OIDC Single Sign On capabilities for apps that don't have native support. Enabled pods are picked up by the following values in the Big Bang chart:
+
+```yaml
+addons:
+  authservice:
+    values:
+      selector:
+        key: protect
+        value: keycloak
+```
 
 ### Storage
 
@@ -58,7 +67,6 @@ Authservice also utilizes a horizontal pod autoscaler, which can be configured w
 ```yaml
 addons:
   authservice:
-    enabled: true
     values:
       replicaCount: 2
       autoscaling:
