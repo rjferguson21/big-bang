@@ -58,6 +58,15 @@ addons:
 
 Authservice can be configured to use a redis server for distributed state storage. This Redis instance is used for OIDC token storage/retrieval.
 
+```yaml
+addons:
+  authservice:
+    redis:
+      host: "redis.mydomain.com"
+      port: "6379"
+      password: "password"
+```
+
 ### High Availability
 
 When setting `replicaCount` above `1`, Authservice will utilize an HA redis deployment, but it can also be configured to use an external redis such as Elasticache.
