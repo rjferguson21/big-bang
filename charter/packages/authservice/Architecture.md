@@ -118,10 +118,6 @@ There is no UI feature for authservice.
 
 Within Big Bang, logs are captured by fluentbit and shipped to elastic by default.
 
-### Monitoring
-
-The Big Bang authservice Helm release and values have been modified to use your Big Bang values to automatically toggle and capture metrics from the monitoring packages.
-
 ### Healthchecks
 
 The authservice Dockerfile includes a [healthcheck](https://repo1.dso.mil/dsop/istio-ecosystem/authservice/-/blob/master/Dockerfile#L23-24) and the authservice Helm Chart includes [liveness & readiness probes](https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice/-/blob/main/chart/templates/deployment.yaml#L42-47) in its deployment:
