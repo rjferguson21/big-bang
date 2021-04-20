@@ -12,6 +12,9 @@ Together, they allow developers to protect their APIs and web apps without any a
 
 ```mermaid
 graph LR
+  pod("some URL") --> authservice --> |redirect| pod2("IdP")
+  pod2 --> |token| authservicepods
+
   subgraph "Authservice"
     subgraph "Any Namespace"
       authservicepods("Authservice Pod(s)")
