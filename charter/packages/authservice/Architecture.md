@@ -49,7 +49,11 @@ graph LR
 
 ### Single Sign On
 
-Authservice provides OIDC Single Sign On capabilities for apps that don't have native support. Enabled pods are picked up by the following values in the Big Bang chart:
+Authservice provides OIDC Single Sign On capabilities for apps that don't have native support. 
+
+Pods just need to have istio-injection, a single label which by default is `protect=keycloak` applied to the pods, and a corresponding chain to load into authservice.
+
+This label can be adjusted via following values in the Big Bang chart:
 
 ```yaml
 addons:
@@ -58,6 +62,20 @@ addons:
       selector:
         key: protect
         value: keycloak
+```
+
+The corresponding chain loaded in to authservice via the values in the Big Bang chart:
+For more information see the [README.md](https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice/-/blob/main/README.md) in the Authservice package.
+
+```yaml
+addons:
+  authservice:
+    chains:
+      example:
+        callback_uri: ...
+        match: ...
+        client_id: ...
+        client_secret: ...
 ```
 
 ### Storage
