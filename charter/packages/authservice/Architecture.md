@@ -36,7 +36,7 @@ graph LR
   end
 
   subgraph "Logging"
-    apppods --> fluent(Fluentbit) --> logging-ek-es-http
+    authservice --> fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
 ```
