@@ -31,7 +31,7 @@ sso:
   {{- if .token_url }} 
   token_url: {{ .token_url | quote }} 
   {{- end }}
-  {{- if .userinfo_ur }} 
+  {{- if .userinfo_url }} 
   userinfo_url: {{ .userinfo_url | quote }} 
   {{- end }}
   {{- if .jwkset_url }} 
@@ -42,6 +42,12 @@ sso:
   {{- end }}
   {{- if .claims_principal_pattern }} 
   claims_principal_pattern: {{ .claims_principal_pattern | quote }} 
+  {{- end }}
+  {{- if .requested_scopes }}
+  requested_scopes:
+    {{- range .requested_scopes }}
+    - {{ . | quote }}
+    {{- end }}
   {{- end }}
   {{- if .signature_algorithm }} 
   signature_algorithm: {{ .signature_algorithm | quote }} 
