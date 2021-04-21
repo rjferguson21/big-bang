@@ -32,6 +32,7 @@ chains:
   {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
   {{- end }}
 
+  {{- if .Values.jaeger.sso.enabled }}
   jaeger:
     match:
       header: ":authority"
@@ -39,7 +40,9 @@ chains:
     client_id: "{{ .Values.jaeger.sso.client_id }}"
     client_secret: "{{ .Values.jaeger.sso.client_secret }}"
     callback_uri: https://tracing.{{ .Values.hostname }}/login
+  {{- end }}
 
+  {{- if .Values.monitoring.sso.enabled }}
   prometheus:
     match:
       header: ":authority"
@@ -55,5 +58,5 @@ chains:
     client_id: {{ .Values.monitoring.sso.alertmanager.client_id }}
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
     callback_uri: https://alertmanager.{{ .Values.hostname }}/login/generic_oauth
-
+  {{- end }}
 {{- end -}}
