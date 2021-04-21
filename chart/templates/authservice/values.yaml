@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.kiali.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
 
@@ -31,14 +31,6 @@ chains:
   {{- if .Values.addons.authservice.chains }}
   {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
   {{- end }}
-
-  kiali:
-    match:
-      header: ":authority"
-      prefix: "kiali"
-    client_id: {{ .Values.kiali.sso.client_id }}
-    client_secret: "{{ .Values.kiali.sso.client_secret }}"
-    callback_uri: https://kiali.{{ .Values.hostname }}/login
 
   jaeger:
     match:

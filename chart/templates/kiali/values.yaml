@@ -10,11 +10,22 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 elasticsearch:
   enabled: {{ .Values.logging.enabled }}
-{{- if .Values.kiali.sso.enabled }}
 cr:
   spec:
-    deployment:
-      pod_labels:
-        protect: keycloak
-{{- end }}
+    server:
+      web_port: "443"
+    auth:
+      {{- if .Values.kiali.sso.enabled }}
+      strategy: openid
+      openid:
+        client_id: "{{ .Values.kiali.sso.client_id }}"
+        disable_rbac: true
+        issuer_uri: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}"
+      {{- else }}
+      strategy: token
+      {{- end }}
+    api:
+      namespaces:
+        # bigbang watches all!
+        exclude: []
 {{- end -}}
