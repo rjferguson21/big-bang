@@ -14,19 +14,47 @@ sso:
   client_id: {{ .client_id | quote }}
   client_secret: {{ .client_secret | default "no-secret" }}
   oidc:
+    {{- if $.Values.logging.sso.oidc }}
     host: {{ .oidc.host | default $.Values.sso.oidc.host | quote }}
     realm: {{ .oidc.realm | default $.Values.sso.oidc.realm | quote }}
-  issuer: {{ .issuer | quote }}
-  auth_url: {{ .auth_url | quote }}
-  token_url: {{ .token_url | quote }}
-  userinfo_url: {{ .userinfo_url | quote }}
-  jwkset_url: {{ .jwkset_url | quote }}
-  claims_principal: {{ .claims_principal | quote }}
-  claims_principal_pattern: {{ .claims_principal_pattern | quote }}
-  signature_algorithm: {{ .signature_algorithm | quote }}
-  endsession_url: {{ .endsession_url | quote }}
-  claims_group: {{ .claims_group | quote }}
-  claims_mail: {{ .claims_mail | quote }}
+    {{- else }}
+    host: {{ $.Values.sso.oidc.host | quote }}
+    realm: {{ $.Values.sso.oidc.realm | quote }}
+    {{- end }}
+  {{- /* Optional fields should be nil checked */ -}}
+  {{- if .issuer }} 
+  issuer: {{ .issuer | quote }} 
+  {{- end }}
+  {{- if .auth_url }} 
+  auth_url: {{ .auth_url | quote }} 
+  {{- end }}
+  {{- if .token_url }} 
+  token_url: {{ .token_url | quote }} 
+  {{- end }}
+  {{- if .userinfo_ur }} 
+  userinfo_url: {{ .userinfo_url | quote }} 
+  {{- end }}
+  {{- if .jwkset_url }} 
+  jwkset_url: {{ .jwkset_url | quote }} 
+  {{- end }}
+  {{- if .claims_principal }} 
+  claims_principal: {{ .claims_principal | quote }} 
+  {{- end }}
+  {{- if .claims_principal_pattern }} 
+  claims_principal_pattern: {{ .claims_principal_pattern | quote }} 
+  {{- end }}
+  {{- if .signature_algorithm }} 
+  signature_algorithm: {{ .signature_algorithm | quote }} 
+  {{- end }}
+  {{- if .endsession_url }} 
+  endsession_url: {{ .endsession_url | quote }} 
+  {{- end }}
+  {{- if .claims_group }} 
+  claims_group: {{ .claims_group | quote }} 
+  {{- end }}
+  {{- if .claims_mail }} 
+  claims_mail: {{ .claims_mail | quote }} 
+  {{- end }}
 {{- end }}
 {{- end }}
 
