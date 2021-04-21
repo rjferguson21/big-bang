@@ -22,17 +22,13 @@ graph LR
     istioservice2 --> jaegerservice
   end
 
-  subgraph "Ingress"
-    ig(Ingress traffic) --> istioservice2
-  end
-
   subgraph "Logging"
-    istioservice2 --> fluent(Fluentbit) --> logging-ek-es-http
+    istioservice1 --> fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
 
   subgraph "Monitoring"
-    svcmonitor("Service Monitor") --> istioservice2
+    svcmonitor("Service Monitor") --> istioservice1
     Prometheus --> svcmonitor("Service Monitor")
   end
 ```
@@ -56,7 +52,6 @@ By default, Istio is configured with 1 istiod replica, but it can be configured 
 
 ```yaml
 istio:
-  enabled: true
   values:
     istiod:
       replicaCount: 1
@@ -69,7 +64,6 @@ Likewise, the ingress gateway replicas can be specified and extra ingress gatewa
 
 ```yaml
 istio:
-  enabled: true
   values:
     ingressGateway:
       minReplicas: 1
