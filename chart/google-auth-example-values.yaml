@@ -31,8 +31,10 @@ logging:
     jwkset_url: "https://www.googleapis.com/oauth2/v3/certs"
     claims_principal: email
     claims_principal_pattern: "<regex for allowed email domains>" # example: "^([^@]+)@leapfrog\\.ai$"
+    requested_scopes:
+      - openid
+      - email
     # required for keycloak - should be empty for google)
-    signature_algorithm: ""
-    endsession_url: ""
-    claims_group: ""
-    claims_mail: ""
+    signature_algorithm: "-"
+    endsession_url: "-"
+    claims_mail: "-"
