@@ -37,4 +37,5 @@ logging:
     # required for keycloak - should be empty for google)
     signature_algorithm: "-"
     endsession_url: "-"
+    claims_group: "-"
     claims_mail: "-"
