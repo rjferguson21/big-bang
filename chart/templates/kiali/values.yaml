@@ -21,6 +21,10 @@ cr:
         client_id: "{{ .Values.kiali.sso.client_id }}"
         disable_rbac: true
         issuer_uri: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}"
+        scopes:
+        - openid
+        - email
+        username_claim: email
       {{- else }}
       strategy: token
       {{- end }}
