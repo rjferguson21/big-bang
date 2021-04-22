@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cluster Auditor(CA) collects opa objects in the cluster and sends them to [elasticsearch](https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana).  The list of objects collected can be found in this [ConfigMap](../chart/templates/configMap.yaml).
+Cluster Auditor(CA) collects opa objects in the cluster and sends them to [elasticsearch](https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana).  The list of objects collected can be found in this [ConfigMap](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
 
 ## Big Bang Touchpoints
 
@@ -19,7 +19,7 @@ graph TB
 
 ##High Availability
 
-HA can be configured by increasing the "count" or number of replicas of the [deployment](../chart/templates/deployment.yaml#L13).
+HA can be configured by increasing the "count" or number of replicas of the [deployment](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/deployment.yaml).
 
 ```yaml
 ...
