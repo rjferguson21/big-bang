@@ -101,3 +101,32 @@ stringData:
   overlays: |
     {{- toYaml .package.values | nindent 4 }}
 {{- end -}}
+
+{{/* 
+bigbang.addValueIfSet can be used to nil check parameters before adding them to the values.
+  Expects a list with the following params:
+    * [0] - (string) <yaml_key_to_add>
+    * [1] - (interface{}) <value_to_check>
+  For example: `(list "name" .username)` would result in `name: "username_value"` if .username is set. 
+  No value would be added if .username is nil. All string fields will be quoted.
+*/}}
+{{- define "bigbang.addValueIfSet" -}}
+  {{- $key := (index . 0) }}
+  {{- $value := (index . 1) }}
+  {{- if $value }}
+    {{- if kindIs "string" $value }} {{/*Handle strings*/}}
+      {{- printf "\n%s" $key }}: {{ $value | quote }} 
+    {{- else if kindIs "slice" $value }} {{/*Hanldle slices*/}}
+      {{- printf "\n%s" $key }}:    
+        {{- range $value }}
+          {{- if kindIs "string" . }}
+            {{- printf "\n  - %s" (. | quote) }}
+          {{- else }} 
+            {{- printf "\n  - %v" . }}
+          {{- end }}
+        {{- end }}
+    {{- else }} {{/*Handle other types (no quotes)*/}}
+      {{- printf "\n%s" $key }}: {{ $value }} 
+    {{- end }}
+  {{- end }}
+{{- end -}}
