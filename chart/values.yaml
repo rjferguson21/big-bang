@@ -361,7 +361,7 @@ addons:
     values: {}
 
   minio:
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
