@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cluster Auditor(CA) collects opa objects in the cluster and sends them to [elasticsearch](https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana).  The list of objects collected can be found in this [ConfigMap](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
+Cluster Auditor pulls data from the kubernetes API, transforms them and inserts them into Elasticsearch for being queried by Kibana.  The types of objects are both OPA Gatekeeper CRDS and native kubernetes [objects]((https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml)).
 
 ## Big Bang Touchpoints
 
@@ -35,7 +35,7 @@ spec:
 
 ##Storage
 
-Cluster Auditor has no storage requirements.
+It uses the currently deployed Elasticsearch that's deployed as part of the logging stack.
 
 ## Single Sign On (SSO)
 
