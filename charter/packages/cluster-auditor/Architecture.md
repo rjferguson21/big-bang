@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cluster Auditor pulls data from the kubernetes API, transforms them and inserts them into Elasticsearch for being queried by Kibana.  The types of objects are both OPA Gatekeeper CRDS and native kubernetes [objects]((https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml)).
+Cluster Auditor pulls data from the kubernetes API, transforms them and inserts them into Elasticsearch which can then be queried by Kibana.  The types of objects are both OPA Gatekeeper CRDS and native kubernetes [objects](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
 
 ## Big Bang Touchpoints
 
@@ -45,3 +45,7 @@ CA does not have SSO Integration.
 
 CA parent image is `fluentd` which uses  [Apache License 2.0](https://github.com/fluent/fluentd/blob/master/LICENSE).
 
+## Dependant Packages
+
+- Elasticsearch Kibana
+- OPA Gatekeeper
