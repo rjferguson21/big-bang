@@ -9,10 +9,10 @@ echo "Clusterlint"
 echo "======================================"
 clusterlint run
 echo "======================================"
+echo "Istioctl Analyze"
+echo "======================================"
+istioctl analyze --all-namespaces --suppress "IST0102"
+echo "======================================"
 echo "Popeye"
 echo "======================================"
 popeye -A
-echo "======================================"
-echo "Istioctl Analyze"
-echo "======================================"
-istioctl analyze --all-namespaces
