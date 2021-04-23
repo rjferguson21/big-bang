@@ -107,16 +107,29 @@ bigbang.addValueIfSet can be used to nil check parameters before adding them to 
   Expects a list with the following params:
     * [0] - (string) <yaml_key_to_add>
     * [1] - (interface{}) <value_to_check>
-  For example: `(list "name" .username)` would result in `name: "username_value"` if .username is set. 
-  No value would be added if .username is nil. All string fields will be quoted.
+  
+  No output is generated if <value> is undefined, however, explicitly set empty values 
+  (i.e. `username=""`) will be passed along. All string fields will be quoted.
+
+  Example command: 
+  - `{{ (list "name" .username) | include "bigbang.addValueIfSet" }}`
+    * When `username: Aniken`
+      -> `name: "Aniken"`
+    * When `username: ""`
+      -> `name: ""`
+    * When username is not defined
+      -> no output 
 */}}
 {{- define "bigbang.addValueIfSet" -}}
   {{- $key := (index . 0) }}
   {{- $value := (index . 1) }}
-  {{- if $value }}
-    {{- if kindIs "string" $value }} {{/*Handle strings*/}}
+  {{- /*If the value is explicitly set (even if it's empty)*/}}
+  {{- if not (kindIs "invalid" $value) }}
+    {{- /*Handle strings*/}}
+    {{- if kindIs "string" $value }}
       {{- printf "\n%s" $key }}: {{ $value | quote }} 
-    {{- else if kindIs "slice" $value }} {{/*Hanldle slices*/}}
+    {{- /*Hanldle slices*/}}
+    {{- else if kindIs "slice" $value }}
       {{- printf "\n%s" $key }}:    
         {{- range $value }}
           {{- if kindIs "string" . }}
@@ -125,7 +138,8 @@ bigbang.addValueIfSet can be used to nil check parameters before adding them to 
             {{- printf "\n  - %v" . }}
           {{- end }}
         {{- end }}
-    {{- else }} {{/*Handle other types (no quotes)*/}}
+    {{- /*Handle other types (no quotes)*/}}
+    {{- else }}
       {{- printf "\n%s" $key }}: {{ $value }} 
     {{- end }}
   {{- end }}
