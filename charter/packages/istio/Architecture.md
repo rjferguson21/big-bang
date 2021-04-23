@@ -12,15 +12,8 @@ graph LR
     istioservice2{{"Data plane"}} 
   end      
   
-  subgraph "Kiali"
-    kialiservice{{"Kiali Service"}} --> istioservice2
-    istioservice2 --> kialiservice
-  end
-
-  subgraph "Jaeger"
-    jaegerservice{{"Jaeger Service"}} --> istioservice2
-    istioservice2 --> jaegerservice
-  end
+  igpod("Ingress") --> istioservice2
+  istioservice2 --> egpod("Egress")
 
   subgraph "Logging"
     istioservice1 --> fluent(Fluentbit) --> logging-ek-es-http
