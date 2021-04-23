@@ -32,7 +32,7 @@ function array_contains() {
 ## $1: package name
 function wait_on() {
   echo "Waiting on package $1"
-  kubectl wait --for=condition=Ready --timeout 1800s helmrelease -n bigbang $1;
+  kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang $1;
 }
 
 ## Function to wait on all statefulsets
@@ -48,7 +48,7 @@ function wait_sts() {
       fi
       sleep 5
       timeElapsed=$(($timeElapsed+5))
-      if [[ $timeElapsed -ge 1200 ]]; then
+      if [[ $timeElapsed -ge 600 ]]; then
          echo "Timed out while waiting for stateful sets to be ready."
          exit 1
       fi
