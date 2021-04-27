@@ -73,7 +73,7 @@ addons:
 
 To properly configure Keycloak TLS, you must provide Keycloak a certificate in `addons.keycloak.ingress` that does not overlap with any TLS terminated app certificate.  See [the details](#certificate-overlap-problem) for further information on why this is a problem.
 
-In the Big Bang implementation, [core apps use the `admin` subdomain](#keycloak-with-other-apps).  You need two wildcard SAN certificates, one for `*.admin.yourdomain` and one for `*.yourdomain` for this implementation.  The `*.admin.yourdomain` cert goes into `instio.ingress` and the `*.yourdomain` cert goes into `addons.keycloak.ingress`.
+In the Big Bang implementation, [core apps use the `admin` subdomain](#keycloak-with-other-apps).  You need two wildcard SAN certificates, one for `*.admin.yourdomain` and one for `*.yourdomain` for this implementation.  The `*.admin.yourdomain` cert goes into `istio.ingress` and the `*.yourdomain` cert goes into `addons.keycloak.ingress`.
 
 In the following example for Big Bang, we provide a certificate for `*.admin.bigbang.dev` to TLS terminated apps and a `*.bigbang.dev` certificate to Keycloak.
 
