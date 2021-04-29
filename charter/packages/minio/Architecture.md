@@ -31,12 +31,14 @@ a. Create a StorageClass for the MinIO local Volumes
 
 The following YAML describes a StorageClass with the appropriate fields for use with the local PV:
 
+'''yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
    name: local-storage
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
+'''
 
 The StorageClass must have volumeBindingMode set to WaitForFirstConsumer to ensure correct binding of each pod’s Persistent Volume Claims (PVC) to the Node’s local PV.
 
