@@ -17,21 +17,29 @@ spec:
         namespace: {{ .Release.Namespace }}
 
   {{- with .Values.flux }}
-  interval: {{ .interval }}
+  timeout: {{ .Values.addons.anchore.flux.timeout | default .timeout }}
+  interval: {{ .Values.addons.anchore.flux.interval | default .interval }}
   test:
-    enable: false
+    enable: {{ .Values.addons.anchore.flux.test.enabled | default false }}
+    ignoreFailures: {{ .Values.addons.anchore.flux.test.ignoreFailures | default false }}
   install:
+    disableWait: {{ .Values.addons.anchore.flux.install.disableWait | default false }}
+    skipCRDs: {{ .Values.addons.anchore.flux.install.skipCRDs | default false }}
     remediation:
-      retries: {{ .install.retries }}
+      retries: {{ .Values.addons.anchore.flux.install.retries | default .install.retries }}
   upgrade:
-    disableWait: true
+    disableWait: {{ .Values.addons.anchore.flux.upgrade.disableWait | default true }}
+    force: {{ .Values.addons.anchore.flux.upgrade.force | default false }}
     remediation:
-      retries: {{ .upgrade.retries }}
-      remediateLastFailure: true
-    cleanupOnFail: true
+      retries: {{ .Values.addons.anchore.flux.upgrade.retries | default .upgrade.retries }}
+      remediateLastFailure: {{ .Values.addons.anchore.flux.upgrade.remediation.remediateLastFailure | default true }}
+    cleanupOnFail: {{ .Values.addons.anchore.flux.upgrade.cleanupOnFail | default true }}
   rollback:
-    timeout: {{ .rollback.timeout }}
-    cleanupOnFail: {{ .rollback.cleanupOnFail }}
+    disableWait: {{ .Values.addons.anchore.flux.rollback.disableWait | default false }}
+    timeout: {{ .Values.addons.anchore.flux.rollback.timeout | default .rollback.timeout }}
+    force: {{ .Values.addons.anchore.flux.rollback.force | default false }}
+    recreate: {{ .Values.addons.anchore.flux.rollback.recreate | default false }}
+    cleanupOnFail: {{ .Values.addons.anchore.flux.rollback.cleanupOnFail | default .rollback.cleanupOnFail }}
   {{- end }}
 
   valuesFrom:

@@ -582,6 +582,9 @@ addons:
       path: "./chart"
       tag: "1.12.7-bb.2"
 
+    # -- Flux options specifically for the Anchore Package
+    flux: {}
+
     # -- Initial admin password used to authenticate to Anchore.
     adminPassword: ""
 
