@@ -76,11 +76,18 @@ sso:
 # -- (Advanced) Flux reconciliation parameters.
 # The default values provided will be sufficient for the majority of workloads.
 flux:
+  timeout: 10m
   interval: 2m
+  test:
+    enable: false
   install:
-    retries: 3
+    remediation:
+      retries: 3
   upgrade:
-    retries: 3
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+    cleanupOnFail: true
   rollback:
     timeout: 10m
     cleanupOnFail: true
@@ -95,6 +102,9 @@ istio:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
     tag: "1.8.4-bb.1"
+
+  # -- Flux options specifically for the Istio Package
+  flux: {}
 
   # -- Certificate/Key pair to use as the default certificate for exposing BigBang created applications.
   # If nothing is provided, applications will expect a valid tls secret to exist in the `istio-system` namespace called `wildcard-cert`.
@@ -116,6 +126,9 @@ istiooperator:
     path: "./chart"
     tag: "1.8.4-bb.1"
 
+  # -- Flux options specifically for the Istio Operator Package
+  flux: {}
+
   # -- Values to passthrough to the istio-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
   values: {}
 
@@ -129,6 +142,10 @@ jaeger:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
     tag: "2.19.1-bb.4"
+
+  # -- Flux options specifically for the Jaeger Package
+  flux: {}
+
   sso:
     # -- Toggle SSO for Jaeger on and off
     enabled: false
@@ -152,6 +169,10 @@ kiali:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
     tag: "1.32.0-bb.1"
+
+  # -- Flux options specifically for the Kiali Package
+  flux: {}
+
   sso:
     # -- Toggle SSO for Kiali on and off
     enabled: false
@@ -181,6 +202,9 @@ clusterAuditor:
     path: "./chart"
     tag: "0.1.9-bb.0"
 
+  # -- Flux options specifically for the Cluster Auditor Package
+  flux: {}
+
   # -- Values to passthrough to the cluster auditor chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
   values: {}
 
@@ -199,6 +223,9 @@ gatekeeper:
     path: "./chart"
     tag: "3.3.0-bb.0"
 
+  # -- Flux options specifically for the OPA Gatekeeper Package
+  flux: {}
+
   # -- Values to passthrough to the gatekeeper chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
   values: {}
 
@@ -216,6 +243,9 @@ logging:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
     tag: "0.1.8-bb.0"
+
+  # -- Flux options specifically for the Logging (EFK) Package
+  flux: {}
 
   sso:
     # -- Toggle OIDC SSO for Kibana/Elasticsearch on and off.
@@ -248,6 +278,11 @@ eckoperator:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
     tag: "1.4.0-bb.1"
+
+  # -- Flux options specifically for the ECK Operator Package
+  flux: {}
+
+  # -- Values to passthrough to the eck-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
   values: {}
 
 fluentbit:
@@ -257,6 +292,11 @@ fluentbit:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
     tag: "0.15.8-bb.1"
+
+  # -- Flux options specifically for the Fluent-Bit Package
+  flux: {}
+
+  # -- Values to passthrough to the fluentbit chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git  
   values: {}
 
   # -- Post Renderers.  See docs/postrenders.md
@@ -273,6 +313,9 @@ monitoring:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
     tag: "11.0.0-bb.17"
+
+  # -- Flux options specifically for the Monitoring Package
+  flux: {}
 
   sso:
     # -- Toggle SSO for monitoring components on and off
@@ -321,6 +364,9 @@ twistlock:
     path: "./chart"
     tag: "0.0.3-bb.3"
 
+  # -- Flux options specifically for the Twistlock Package
+  flux: {}
+
   # -- Values to passthrough to the twistlock chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
   values: {}
 
@@ -338,6 +384,10 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
       tag: "2.14.7-bb.3"
+
+    # -- Flux options specifically for the ArgoCD Package
+    flux: {}
+
     sso:
       # -- Toggle SSO for ArgoCD on and off
       enabled: false
@@ -375,6 +425,9 @@ addons:
       path: "./chart"
       tag: "0.4.0-bb.1"
 
+    # -- Flux options specifically for the Authservice Package
+    flux: {}
+
     # -- Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
     values: {}
 
@@ -394,6 +447,8 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
       tag: "2.0.9-bb.3"
+    # -- Flux options specifically for the Minio Operator Package
+    flux: {}
     # -- Values to passthrough to the minio operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
     values: {}
 
@@ -406,6 +461,9 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
       tag: "2.0.9-bb.9"
+
+    # -- Flux options specifically for the Minio Package
+    flux: {}
 
     # -- Default access key to use for minio.
     accesskey: ""
@@ -431,6 +489,9 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
       tag: "4.10.3-bb.0"
+
+    # -- Flux options specifically for the Gitlab Package
+    flux: {}
 
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.
@@ -500,6 +561,9 @@ addons:
       path: "./chart"
       tag: "0.26.0-bb.1"
 
+    # -- Flux options specifically for the Gitlab Runner Package
+    flux: {}
+
     # -- Values to passthrough to the gitlab runner chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
     values: {}
 
@@ -510,6 +574,9 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
       tag: "9.2.6-bb.7"
+
+    # -- Flux options specifically for the Sonarqube Package
+    flux: {}
 
     sso:
       # -- Toggle OIDC SSO for SonarQube.
@@ -576,14 +643,16 @@ addons:
 
   anchore:
     # -- Toggle deployment of Anchore.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
       tag: "1.12.7-bb.2"
 
     # -- Flux options specifically for the Anchore Package
-    flux: {}
+    flux:
+      upgrade:
+      disableWait: true
 
     # -- Initial admin password used to authenticate to Anchore.
     adminPassword: ""
@@ -659,6 +728,9 @@ addons:
       path: "./chart"
       tag: "1.13.0-bb.2"
 
+    # -- Flux options specifically for the Mattermost Operator Package
+    flux: {}
+
     # -- Values to passthrough to the mattermost operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator/-/blob/main/chart/values.yaml
     values: {}
 
@@ -672,6 +744,9 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
       tag: "0.1.3-bb.2"
+
+    # -- Flux options specifically for the Mattermost Package
+    flux: {}
 
     # -- Mattermost Enterprise functionality.
     enterprise:
@@ -757,6 +832,9 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
       tag: "2.14.8-bb.0"
+
+    # -- Flux options specifically for the Velero Package
+    flux: {}
 
     # -- Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/chart/values.yaml
     values:
