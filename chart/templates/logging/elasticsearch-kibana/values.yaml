@@ -34,6 +34,7 @@ sso:
   {{- list "endsession_url" .endsession_url | include "bigbang.addValueIfSet" | indent 2 }}
   {{- list "claims_group" .claims_group | include "bigbang.addValueIfSet" | indent 2 }}
   {{- list "claims_mail" .claims_mail | include "bigbang.addValueIfSet" | indent 2 }}
+  {{- list "cert_authorities" .cert_authorities | include "bigbang.addValueIfSet" | indent 2 }}
 {{- end }}
 {{- end }}
 
