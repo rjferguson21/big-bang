@@ -21,11 +21,6 @@ graph LR
   subgraph "File Storage (S3/Minio)"
     mattermostpods("Mattermost Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
   end
-
-  subgraph "Logging"
-    mattermostpods("Mattermost Pod(s)") --"Logs"--> fluent(Fluentbit) --> logging-ek-es-http
-    logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
-  end
 ```
 
 ### MinIO Tenant
