@@ -70,7 +70,7 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 ### REQUIREMENTS
 
 - Blank, un-partitioned attached disk(s)
-- RWX is in Alpha and requires work. [OpenEBS RWX Docs [](https://docs.openebs.io/docs/next/rwm.html)
+- RWX is in Alpha and requires work. [OpenEBS RWX Docs](https://docs.openebs.io/docs/next/rwm.html)
 
 ### Notes
 
