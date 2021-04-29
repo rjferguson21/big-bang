@@ -17,7 +17,7 @@ graph TB
   end
 ```
 
-##High Availability
+## High Availability
 
 HA can be configured by increasing the "count" or number of replicas of the [deployment](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/deployment.yaml).
 
@@ -33,7 +33,7 @@ spec:
 ...
 ```
 
-##Storage
+## Storage
 
 It uses the currently deployed Elasticsearch that's deployed as part of the logging stack.
 
