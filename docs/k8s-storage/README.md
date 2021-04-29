@@ -35,7 +35,7 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 - Must be using AWS
 ### Notes
 
-- Super easy use, apply CSI spec and you done!
+- Super easy use, apply CSI and you done!
 
 ## Azure Disk CSI
 
@@ -46,7 +46,7 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 - Must be using Azure
 ### Notes
 
-- Super easy use, apply CSI spec and you done!
+- Super easy use, apply CSI and you done!
 
 ## Longhorn
 
