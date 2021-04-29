@@ -3,7 +3,7 @@
 
 ## Feature Matrix
 
-| Product | BB Compatible  | FOSS | In Ironbank  | RWX Support | Airgap Compatible | Cloud Agnostic |
+| Product | BB Compatible  | FOSS | In Ironbank  | RWX/RWM Support | Airgap Compatible | Cloud Agnostic |
 | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
 Amazon EBS CSI    | **X** |  N/A  |  | **X** | AWS Dependent | No | 
 Azure Disk CSI    | Not Tested  |  N/A  |  | **X** | Azure Dependent | No | 
