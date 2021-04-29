@@ -1,5 +1,6 @@
 ## Kubernetes Storage Options
 
+Use this data to assist in your CSI decision. However, when using a cloud provider we suggest you use their Kubernetes CSI.
 
 ## Feature Matrix
 
