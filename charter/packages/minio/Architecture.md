@@ -5,7 +5,9 @@
 [MinIO](https://minio.io/) is a high performance, Kubernetes-native object storage suite.
 
 
-### MinIO Server
+## Big Bang Touchpoints
+
+### MinIO is Used with Mattermost
 
 ```mermaid
 graph LR
@@ -22,10 +24,6 @@ graph LR
     mattermostpods("Mattermost Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
   end
 ```
-
-### MinIO Tenant
-
-## Big Bang Touchpoints
 
 ### Licensing
 
