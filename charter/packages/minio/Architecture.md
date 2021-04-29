@@ -20,7 +20,7 @@ graph LR
     ig(Ingress Gateway) --"App Port"--> mmservice
   end
 
-  subgraph "File Storage (S3/Minio)"
+  subgraph "File Storage (Minio)"
     mattermostpods("Mattermost Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
   end
 ```
