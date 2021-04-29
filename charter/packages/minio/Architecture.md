@@ -71,6 +71,7 @@ mc admin config get myminio/ logger_webhook
 logger_webhook:name1 auth_token="" endpoint=""
 
 mc admin config set myminio logger_webhook:name1 auth_token="" endpoint="http://endpoint:port/path"
+
 mc admin service restart myminio
 
 ### Monitoring
