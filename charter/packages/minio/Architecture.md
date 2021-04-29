@@ -60,6 +60,7 @@ MinIO supports currently two target types
 Console Target
 
 Console target is on always and cannot be disabled.
+
 HTTP Target
 
 HTTP target logs to a generic HTTP endpoint in JSON format and is not enabled by default. To enable HTTP target logging you would have to update your MinIO server configuration using mc admin config set command.
