@@ -27,6 +27,7 @@ MinIO automatically generates one Persistent Volume Claim (PVC) for each volume 
 The following steps create the necessary StorageClass and local Persistent Volumes (PV) resources such that each MinIO Pod and their associated storage are local to the same Node.
 
 You can skip this step if the cluster already has local PV resources and a StorageClass configured for use by the MinIO Tenant.
+
 a. Create a StorageClass for the MinIO local Volumes
 
 The following YAML describes a StorageClass with the appropriate fields for use with the local PV:
