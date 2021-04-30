@@ -245,7 +245,8 @@ logging:
     tag: "0.1.8-bb.0"
 
   # -- Flux options specifically for the Logging (EFK) Package
-  flux: {}
+  flux:
+    timeout: 20m
 
   sso:
     # -- Toggle OIDC SSO for Kibana/Elasticsearch on and off.
