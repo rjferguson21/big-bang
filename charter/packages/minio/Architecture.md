@@ -21,7 +21,7 @@ graph LR
   end
 
   subgraph "Istio"
-    istservice{{Istio Service}} --> kubeservice{{Kubernetes Service}}
+    istservice{{Istio Service}}
   end
 
   subgraph "File Storage (Minio)"
