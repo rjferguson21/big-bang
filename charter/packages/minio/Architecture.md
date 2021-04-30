@@ -24,7 +24,7 @@ graph LR
   end
 
   subgraph "File Storage (Minio)"
-    istiopods("Istio Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
+    minioservice{{MinIO Service}} --"Files"--> bucket[(Mattermost Bucket)]
   end
 ```
 
