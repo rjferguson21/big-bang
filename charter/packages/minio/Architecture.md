@@ -11,21 +11,17 @@
 
 ```mermaid
 graph LR
-  subgraph "Mattermost"
-    mattermostpods("Mattermost Pod(s)")
-    mmservice{{Mattermost Service}} --> mattermostpods("Mattermost Pod(s)")
+  subgraph "Istio"
+    istiopods("Istio Pod(s)")
+    istservice{{Istio Service}} --> istiopods("Istio Pod(s)")
   end      
 
   subgraph "Ingress"
     ig(Ingress Gateway) --"App Port"--> istservice
   end
 
-  subgraph "Istio"
-    istservice{{Istio Service}}
-  end
-
   subgraph "File Storage (Minio)"
-    mattermostpods("Mattermost Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
+    istiopods("Istio Pod(s)") --"Files"--> bucket[(Mattermost Bucket)]
   end
 ```
 
