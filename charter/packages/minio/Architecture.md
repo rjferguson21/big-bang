@@ -17,7 +17,11 @@ graph LR
   end      
 
   subgraph "Ingress"
-    ig(Ingress Gateway) --"App Port"--> mmservice
+    ig(Ingress Gateway) --"App Port"--> istservice
+  end
+
+  subgraph "Istio"
+    istservice{{Istio Service}} --> kubeservice{{Kubernetes Service}}
   end
 
   subgraph "File Storage (Minio)"
