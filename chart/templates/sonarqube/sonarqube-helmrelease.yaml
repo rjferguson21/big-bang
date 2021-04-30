@@ -1,4 +1,4 @@
-{{- $fluxSettings := deepCopy .Values.sonarqube.flux | mergeOverwrite .Values.flux -}}
+{{- $fluxSettings := deepCopy .Values.addons.sonarqube.flux | mergeOverwrite .Values.flux -}}
 {{- if .Values.addons.sonarqube.enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease

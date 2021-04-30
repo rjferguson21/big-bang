@@ -635,6 +635,9 @@ addons:
       path: "./chart"
       tag: 1.1.2-bb.0
 
+    # -- Flux options specifically for the HAProxy Package
+    flux: {}
+
     # -- Values to passthrough to the haproxy chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/haproxy.git
     values: {}
 
