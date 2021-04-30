@@ -13,7 +13,10 @@
 graph LR  
 
 subgraph "File Storage (Minio)"
-  minioservice{{MinIO Service}} --"Files"--> bucket[(Mattermost Bucket)]
+  minioservice{{MinIO Service}} --"Stream1"--> bucket1[(Mattermost Bucket1)]
+  minioservice{{MinIO Service}} --"Stream2"--> bucket2[(Mattermost Bucket2)]
+  minioservice{{MinIO Service}} --"Stream3"--> bucket3[(Mattermost Bucket3)]
+  minioservice{{MinIO Service}} --"Stream4"--> bucket4[(Mattermost Bucket4)]
 end
 
 subgraph "Kubernetes"
