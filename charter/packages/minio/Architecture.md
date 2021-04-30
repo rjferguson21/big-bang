@@ -12,7 +12,11 @@
 ```mermaid
 graph LR
   subgraph "Istio"
-    istservice{{Istio Service}} --"App Port"--> kubeservice("Kubernetes Service")
+    istservice{{Istio Service}} --"App Port"--> kubeservice
+  end
+
+  subgraph "Kubernetes"
+    kubeservice{{Kubernetes Service}} --"App Port"--minioservice
   end      
 
   subgraph "Ingress"
