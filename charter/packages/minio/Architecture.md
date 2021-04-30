@@ -10,18 +10,18 @@
 ### MinIO is Used with Mattermost
 
 ```mermaid
-graph LR
+graph LR    
+  subgraph "Ingress"
+    ig(Ingress Gateway) --"App Port"--> istservice
+  end
+
   subgraph "Istio"
     istservice{{Istio Service}} --"App Port"--> kubeservice
   end
 
   subgraph "Kubernetes"
     kubeservice{{Kubernetes Service}} --"App Port"--> minioservice
-  end      
-
-  subgraph "Ingress"
-    ig(Ingress Gateway) --"App Port"--> istservice
-  end
+  end  
 
   subgraph "File Storage (Minio)"
     minioservice{{MinIO Service}} --"Files"--> bucket[(Mattermost Bucket)]
