@@ -356,7 +356,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
-      branch: "operator4.0"
+      tag: "4.0.4-bb.1"
     # -- Values to passthrough to the minio operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
     values: {}
 
