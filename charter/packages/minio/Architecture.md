@@ -16,7 +16,7 @@ graph LR
   end
 
   subgraph "Kubernetes"
-    kubeservice{{Kubernetes Service}} --"App Port"--minioservice
+    kubeservice{{Kubernetes Service}} --"App Port"--> minioservice
   end      
 
   subgraph "Ingress"
