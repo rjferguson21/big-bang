@@ -12,8 +12,7 @@
 ```mermaid
 graph LR
   subgraph "Istio"
-    istiopods("Istio Pod(s)")
-    istservice{{Istio Service}} --> istiopods("Istio Pod(s)")
+    istservice{{Istio Service}} --"App Port"--> kubeservice("Kubernetes Service")
   end      
 
   subgraph "Ingress"
