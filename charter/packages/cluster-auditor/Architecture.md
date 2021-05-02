@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cluster Auditor pulls data from the kubernetes API, transforms them and inserts them into Elasticsearch which can then be queried by Kibana.  The types of objects are both OPA Gatekeeper CRDS and native kubernetes [objects](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
+Cluster Auditor(CA) pulls data from the kubernetes API, transforms them and inserts them into Elasticsearch which can then be queried by Kibana.  The types of objects are both OPA Gatekeeper CRDs and native kubernetes [objects](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
 
 ## Big Bang Touchpoints
 
@@ -19,19 +19,7 @@ graph TB
 
 ##High Availability
 
-HA can be configured by increasing the "count" or number of replicas of the [deployment](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/deployment.yaml).
-
-```yaml
-...
-spec:
-  strategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      engine: fluentd
-  replicas: 1
-...
-```
+CA currently does not support HA.
 
 ##Storage
 
