@@ -17,11 +17,11 @@ graph TB
   end
 ```
 
-##High Availability
+## High Availability
 
 CA currently does not support HA.
 
-##Storage
+## Storage
 
 It uses the currently deployed Elasticsearch that's deployed as part of the logging stack.
 
