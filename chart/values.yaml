@@ -94,7 +94,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.7.3-bb.9"
+    tag: "1.8.4-bb.1"
 
   # -- Certificate/Key pair to use as the default certificate for exposing BigBang created applications.
   # If nothing is provided, applications will expect a valid tls secret to exist in the `istio-system` namespace called `wildcard-cert`.
@@ -102,24 +102,11 @@ istio:
     key: ""
     cert: ""
 
-  sso:
-    # -- Toggle SSO for kiali and jaeger on and off
-    enabled: false
-
-    kiali:
-      # -- OIDC Client ID use for kiali
-      client_id: ""
-      # -- OIDC Client Secret to use for kiali
-      client_secret: ""
-
-    jaeger:
-      # -- OIDC Client ID to use for jaeger
-      client_id: ""
-      # -- OIDC Client Secret to use for jaeger
-      client_secret: ""
-
   # -- Values to passthrough to the istio-controlplane chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 
 istiooperator:
   # -- Toggle deployment of Istio Operator.
@@ -127,10 +114,60 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.7.0-bb.1"
+    tag: "1.8.4-bb.1"
 
   # -- Values to passthrough to the istio-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+
+jaeger:
+  # -- Toggle deployment of Jaeger.
+  enabled: true
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
+    path: "./chart"
+    tag: "2.19.1-bb.4"
+  sso:
+    # -- Toggle SSO for Jaeger on and off
+    enabled: false
+
+    # -- OIDC Client ID to use for Jaeger
+    client_id: ""
+
+    # -- OIDC Client Secret to use for Jaeger
+    client_secret: ""
+
+  # -- Values to pass through to Jaeger chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+
+kiali:
+  # -- Toggle deployment of Kiali.
+  enabled: true
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
+    path: "./chart"
+    tag: "1.32.0-bb.1"
+  sso:
+    # -- Toggle SSO for Kiali on and off
+    enabled: false
+
+    # -- OIDC Client ID to use for Kiali
+    client_id: ""
+
+    # -- OIDC Client Secret to use for Kiali
+    client_secret: ""
+
+  # -- Values to pass through to Kiali chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -146,6 +183,9 @@ clusterAuditor:
 
   # -- Values to passthrough to the cluster auditor chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -161,6 +201,9 @@ gatekeeper:
 
   # -- Values to passthrough to the gatekeeper chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -172,7 +215,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.7-bb.0"
+    tag: "0.1.8-bb.0"
 
   sso:
     # -- Toggle OIDC SSO for Kibana/Elasticsearch on and off.
@@ -195,6 +238,9 @@ logging:
   # -- Values to passthrough to the elasticsearch-kibana chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
   values: {}
 
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+
 eckoperator:
   # -- Toggle deployment of ECK Operator.
   enabled: true
@@ -210,8 +256,11 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.15.3-bb.0"
+    tag: "0.15.8-bb.1"
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -256,6 +305,9 @@ monitoring:
 
   # -- Values to passthrough to the monitoring chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -271,6 +323,9 @@ twistlock:
 
   # -- Values to passthrough to the twistlock chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
   values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
 
 #
 # ----------------------------------------------------------------------------------------------------------------------
@@ -303,6 +358,9 @@ addons:
     # -- Values to passthrough to the argocd chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
     values: {}
 
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
+
   authservice:
     # -- Toggle deployment of Authservice.
     # if enabling authservice, a filter needs to be provided by either enabling
@@ -315,10 +373,13 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.1.6-bb.4"
+      tag: "0.4.0-bb.1"
 
-    # -- Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/authservice.git
+    # -- Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
     values: {}
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
 
     # -- Additional authservice chain configurations.
     chains: {}
@@ -332,9 +393,12 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
-      tag: "2.0.9-bb.2"
+      tag: "2.0.9-bb.3"
     # -- Values to passthrough to the minio operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
     values: {}
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
 
   minio:
     enabled: false
@@ -352,6 +416,9 @@ addons:
     # -- Values to passthrough to the minio instance chart: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
     values: {}
 
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
+
   gitlab:
     # -- Toggle deployment of Gitlab.
     enabled: false
@@ -363,7 +430,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.8.0-bb.3"
+      tag: "4.10.3-bb.0"
 
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.
@@ -422,13 +489,16 @@ addons:
     # -- Values to passthrough to the gitlab chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
     values: {}
 
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
+
   gitlabRunner:
     # -- Toggle deployment of Gitlab Runner.
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
       path: "./chart"
-      tag: "0.26.0-bb.0"
+      tag: "0.26.0-bb.1"
 
     # -- Values to passthrough to the gitlab runner chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
     values: {}
@@ -487,6 +557,9 @@ addons:
     # -- Values to passthrough to the sonarqube chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
     values: {}
 
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
+
   haproxy:
     # -- Toggle deployment of HAProxy.
     enabled: false
@@ -497,6 +570,9 @@ addons:
 
     # -- Values to passthrough to the haproxy chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/haproxy.git
     values: {}
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
 
   anchore:
     # -- Toggle deployment of Anchore.
@@ -567,6 +643,9 @@ addons:
     # -- Values to passthrough to the anchore chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
     values: {}
 
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
+
   # ----------------------------------------------------------------------------------------------------------------------
   # Mattermost Operator and Instance
   #
@@ -576,8 +655,12 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
       tag: "1.13.0-bb.2"
+
     # -- Values to passthrough to the mattermost operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator/-/blob/main/chart/values.yaml
     values: {}
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
 
   mattermost:
     # -- Toggle deployment of Mattermost.
@@ -585,7 +668,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.1.3-bb.0"
+      tag: "0.1.4-bb.0"
 
     # -- Mattermost Enterprise functionality.
     enterprise:
@@ -657,8 +740,18 @@ addons:
       # -- Bucket name to use for Mattermost - will be auto-created.
       bucket: ""
 
+    # -- Mattermost Elasticsearch integration - requires enterprise E20 license - https://docs.mattermost.com/deployment/elasticsearch.html
+    # Connection info defaults to the BB deployed Elastic, all values can be overridden via the "values" passthrough for other connections.
+    # See values spec in MM chart "elasticsearch" yaml block - https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/chart/values.yaml
+    elasticsearch:
+      # -- Toggle interaction with Elastic for optimized search indexing
+      enabled: false
+
     # -- Values to passthrough to the Mattermost chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/chart/values.yaml
     values: {}
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
 
   velero:
     # -- Toggle deployment of Velero.
@@ -674,6 +767,9 @@ addons:
       # Requires at least one plugin installed. Current supported values: aws, azure
       plugins: []
       # - aws
+
+    # -- Post Renderers.  See docs/postrenders.md
+    postRenderers: []
   #
   # ----------------------------------------------------------------------------------------------------------------------
 

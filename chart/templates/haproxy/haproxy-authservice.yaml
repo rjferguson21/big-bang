@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
+{{- if and .Values.istio.enabled .Values.monitoring.sso.enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -18,7 +18,10 @@ spec:
         kind: GitRepository
         name: haproxy
         namespace: {{ .Release.Namespace }}
-
+  {{- if .Values.addons.haproxy.postRenderers }}
+  postRenderers:
+  {{ toYaml .Values.addons.haproxy.postRenderers | nindent 4 }}
+  {{- end }}
   valuesFrom:
     - name: {{ .Release.Name }}-haproxy-sso-values
       kind: Secret

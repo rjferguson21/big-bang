@@ -35,7 +35,10 @@ spec:
     timeout: {{ .rollback.timeout }}
     cleanupOnFail: {{ .rollback.cleanupOnFail }}
   {{- end }}
-
+  {{- if .Values.gatekeeper.postRenderers }}
+  postRenderers:
+  {{ toYaml .Values.gatekeeper.postRenderers | nindent 4 }}
+  {{- end }}
   valuesFrom:
     - name: {{ .Release.Name }}-gatekeeper-values
       kind: Secret
@@ -46,11 +49,4 @@ spec:
     - name: {{ .Release.Name }}-gatekeeper-values
       kind: Secret
       valuesKey: "overlays"
-
-  values:
-    disableValidatingWebhook: true
-    createNamespace: false
-    image:
-      pullSecrets:
-      - name: private-registry
 {{- end }}
