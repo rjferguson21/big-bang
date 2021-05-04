@@ -121,7 +121,7 @@ You can configure an external database by providing the values needed in the Big
 
 ### File Storage
 
-Mattermost uses S3, Minio, or another S3-style storage for file storage. By default Big Bang deploys an in-cluster Minio instance for this purpose, but you have the option to point to an external Minio or S3 if desired. See the below example for the values to supply:
+Gitlab uses S3, Minio, or another S3-style storage for file storage. By default Big Bang deploys an in-cluster Minio instance for this purpose, but you have the option to point to an external Minio or S3 if desired. See the below example for the values to supply:
 ```yaml
     objectStorage:
       # -- Type of object storage to use for Gitlab, setting to s3 will assume an external, pre-existing object storage is to be used.
@@ -157,4 +157,4 @@ Additional pass throughs for dependencies that deviate from rationalized standar
     values: {}
 ```
 
-## EOF
+
