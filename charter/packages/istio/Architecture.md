@@ -34,7 +34,7 @@ Istio is an open source tool that utilizes an Apache-2.0 License.
 
 ### Single Sign On
 
-Istio can be configured to use Keycloak/OIDC auth. For documentation on how to configure Istio SSO with Authservice, Kiali, and Jaeger, see [KEYCLOAK.md](https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane/-/blob/main/docs/KEYCLOAK.md).
+By default, Istio is configured with SSO disabled. However, Istio can be configured to use Keycloak/OIDC auth. For documentation on how to configure Istio SSO with Authservice, Kiali, and Jaeger, see [KEYCLOAK.md](https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane/-/blob/main/docs/KEYCLOAK.md).
 
 ```yaml
 istio:
@@ -50,6 +50,7 @@ istio:
 ### Storage
 
 Aside from the packages that it can integrate with, Istio provides no storage requirements.
+
 ### High Availability
 
 By default, Istio is configured with 1 istiod replica, but it can be configured in the Big Bang values to use horizontal pod autoscaling:
