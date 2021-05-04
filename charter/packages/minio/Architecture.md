@@ -7,20 +7,20 @@
 
 ## Big Bang Touchpoints
 
-### MinIO is Used with Mattermost
+### MinIO is Used with Mattermost and can be used with any service that needs object storage.
 
 ```mermaid
 graph LR  
 
 subgraph "File Storage (Minio)"
-  minioservice{{MinIO Service}} --"Stream1"--> bucket1[(Mattermost Bucket1)]
-  minioservice{{MinIO Service}} --"Stream2"--> bucket2[(Mattermost Bucket2)]
-  minioservice{{MinIO Service}} --"Stream3"--> bucket3[(Mattermost Bucket3)]
-  minioservice{{MinIO Service}} --"Stream4"--> bucket4[(Mattermost Bucket4)]
+  miniopods("MinIO Pod(s)") --"Stream1"--> bucket1[(Mattermost Bucket1)]
+  miniopods("MinIO Pod(s)") --"Stream2"--> bucket2[(Mattermost Bucket2)]
+  miniopods("MinIO Pod(s)") --"Stream3"--> bucket3[(Mattermost Bucket3)]
+  miniopods("MinIO Pod(s)") --"Stream4"--> bucket4[(Mattermost Bucket4)]
 end
 
 subgraph "Kubernetes"
-  kubeservice{{Kubernetes Service}} --"App Port"--> minioservice
+  kubeservice{{MinIO Kubernetes Service}} --"App Port"--> miniopods
 end 
 
 subgraph "Istio"
@@ -65,7 +65,9 @@ The StorageClass must have volumeBindingMode set to WaitForFirstConsumer to ensu
 
 ### High Availability
 
-MinIO supports Bucket Replication in baremetal installations. Bucket Replication is designed to replicate selected objects in a bucket to a destination bucket.
+MinIO supports Bucket Replication in baremetal installations. Bucket Replication is designed to replicate selected objects in a bucket to a destination bucket. 
+
+Customers can also change the number of servers and volumes per server in the values file.
 
 ### UI
 
@@ -73,34 +75,21 @@ MinIO Console provides a graphical user interface for MinIO
 
 ### Logging
 
-MinIO supports currently two target types
+All logs are sent to Elastic via FluentBit by default in a BigBang install.
 
-    console
-    http
+MinIO also supports logging to the console of the MinIO UI.
 
-Console Target
+Console target is always on and cannot be disabled.
 
-Console target is on always and cannot be disabled.
-
-HTTP Target
-
-HTTP target logs to a generic HTTP endpoint in JSON format and is not enabled by default. To enable HTTP target logging you would have to update your MinIO server configuration using mc admin config set command.
-
-Assuming mc is already configured
-
-mc admin config get myminio/ logger_webhook
-logger_webhook:name1 auth_token="" endpoint=""
-
-mc admin config set myminio logger_webhook:name1 auth_token="" endpoint="http://endpoint:port/path"
-
-mc admin service restart myminio
 
 ### Monitoring
 
 MinIO server can be monitored with Prometheus.  MinIO exports Prometheus compatible data by default as an authorized endpoint at /minio/v2/metrics/cluster. Users looking to monitor their MinIO instances can point Prometheus configuration to scrape data from this endpoint. This document explains how to setup Prometheus and configure it to scrape data from MinIO servers.  (https://docs.min.io/docs/how-to-monitor-minio-using-prometheus.html)
 
+If a customer enables monitoring in their BigBang values file, the setup for scraping metrics is automatically done.
+
 ### Healthchecks
 
 ### Dependant Packages
 
-There are no package dependencies for MinIO
+MinIO deploys making use of the MinIO operator being enabled in the BigBang values file.
