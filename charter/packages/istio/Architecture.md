@@ -97,6 +97,4 @@ The Iron Bank/Registry1 Istio Dockerfiles include healthchecks for all images.
 
 ### Dependant Packages
 
-- Authservice
-- Kiali
-- Jaegar
+- istio-operator
