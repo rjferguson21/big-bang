@@ -79,7 +79,16 @@ istio:
 
 ### UI
 
-Big Bang can be configured to deploy [Kiali](https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali) (a management console that provides dashboards, observability, and other robust capabilities) and [Jaeger](https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger) (an end-to-end distributed tracing system), both of which include UI features to help you visualize your Istio mesh.
+Big Bang can be configured to deploy [Kiali](https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali) (a management console that provides dashboards, observability, and other robust capabilities) and [Jaeger](https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger) (an end-to-end distributed tracing system), both of which include UI features to help you visualize your Istio mesh. To enable Kialia and Jaeger, simply update the Big Bang values.yaml:
+
+```yaml
+istio:
+  enabled: true
+jaeger:
+  enabled: true
+kiali:
+  enabled: true
+```
 
 ### Logging
 
