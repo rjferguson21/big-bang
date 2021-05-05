@@ -8,21 +8,27 @@ layer over the underlying cluster management platform, such as Kubernetes.
 ```mermaid
 graph LR
   subgraph "Istio"
-    istioservice1{{"Control plane"}} --> istioservice2
-    istioservice2{{"Data plane"}} 
+    dataplane("Data plane") 
+    controlplane{{"Control plane"}} --> dataplane
   end      
-  
-  igpod("Ingress") --> istioservice2
-  istioservice2 --> egpod("Egress")
 
-  subgraph "Logging"
-    istioservice1 --> fluent(Fluentbit) --> logging-ek-es-http
-    logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
+  subgraph "Ingress"
+    igw("Ingress Gateway") 
+    igw --"http 8080<br/>https 8443<br/>istiod 15012<br/>status 15021<br/>tls 15443"--> dataplane
   end
 
   subgraph "Monitoring"
-    svcmonitor("Service Monitor") --> istioservice1
+    svcmonitor("Service Monitor") --> controlplane
     Prometheus --> svcmonitor("Service Monitor")
+  end
+  
+  subgraph "App"
+    dataplane --"app.bigbang.dev"<br/>port redirects--> appvs{{"Virtual Service"}} --> apppod("App")
+  end
+
+  subgraph "Logging"
+    controlplane --> fluent(Fluentbit) --> logging-ek-es-http
+    logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
 ```
 
