@@ -8,14 +8,12 @@ layer over the underlying cluster management platform, such as Kubernetes.
 ```mermaid
 graph LR
   subgraph "Istio"
-    dataplane("Data plane") 
-    controlplane{{"Control plane"}} --> dataplane
+    dataplane("Data Plane<br/>AKA Gateway") 
+    controlplane{{"Control Plane"}} --> dataplane
+    igw("Ingress Gateway") --"http 8080<br/>https 8443<br/>istiod 15012<br/>status 15021<br/>tls 15443"--> dataplane
   end      
 
-  subgraph "Ingress"
-    igw("Ingress Gateway") 
-    igw --"http 8080<br/>https 8443<br/>istiod 15012<br/>status 15021<br/>tls 15443"--> dataplane
-  end
+  ig("Ingress") --> igw
 
   subgraph "Monitoring"
     svcmonitor("Service Monitor") --> controlplane
@@ -23,7 +21,7 @@ graph LR
   end
   
   subgraph "App"
-    dataplane --"app.bigbang.dev"<br/>port redirects--> appvs{{"Virtual Service"}} --> apppod("App")
+    dataplane --"app.bigbang.dev"<br/>port redirects--> appvs{{"Virtual Service"}} --> appsvc{{"App Service"}}
   end
 
   subgraph "Logging"
