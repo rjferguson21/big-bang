@@ -100,13 +100,28 @@ Within Big Bang, logs are captured by fluentbit and shipped to elastic by defaul
 
 ### Monitoring
 
-Monitoring is enabled by default in the Istio [values.yaml](https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane/-/blob/main/chart/values.yaml#L21-22) to automatically capture metrics from the monitoring packages. Since Istio 1.5, standard metrics are directly exported by the Envoy proxy. For a list of metrics, see [Istio Standard Metrics](https://istio.io/latest/docs/reference/config/metrics/#metrics) and [Istio Observability](https://istio.io/latest/docs/ops/best-practices/observability/).
+Monitoring can be enabled to automatically capture metrics for Istio when `monitoring.enabled` is set to `true` in the Big Bang values.yaml. Since Istio 1.5, standard metrics are directly exported by the Envoy proxy. For a list of metrics, see [Istio Standard Metrics](https://istio.io/latest/docs/reference/config/metrics/#metrics) and [Istio Observability](https://istio.io/latest/docs/ops/best-practices/observability/).
 
 Grafana (part of the monitoring packages) is a standalone component of Big Bang that can provide dashboards to show monitoring data. For more information, see Big Bang's [Grafana docs](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring/-/tree/main/docs#grafana) and [Visualizing Metrics with Grafana](https://istio.io/latest/docs/tasks/observability/metrics/using-istio-dashboard/).
 
 ### Healthchecks
 
-The Iron Bank/Registry1 Istio Dockerfiles include healthchecks for all images.
+Big Bang's Istio Controlplane does not allow for updating liveness and readiness probes at the moment, however Big Bang's Istio [Operator](https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec) does allow for configuration of [readiness probes](https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#ReadinessProbe).
+
+Istio envoy sidecar's default readinessProbes look like the following:
+
+```yaml
+readinessProbe:
+  failureThreshold: 30
+  httpGet:
+    path: /healthz/ready
+    port: 15021
+    scheme: HTTP
+  initialDelaySeconds: 1
+  periodSeconds: 2
+  successThreshold: 1
+  timeoutSeconds: 3
+```
 
 ### Dependant Packages
 
