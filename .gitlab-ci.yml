@@ -96,7 +96,7 @@ pre vars:
 .deploy_bigbang: &deploy_bigbang
   - |
     set -e
-    for deploy_script in scripts/deploy/**/*.sh; do
+    for deploy_script in $(find ./scripts/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
       echo "Executing ${deploy_script}..."
       ./${deploy_script}
@@ -105,7 +105,7 @@ pre vars:
 .test_bigbang: &test_bigbang
   - |
     set -e
-    for test_script in tests/**/*.sh; do
+    for test_script in $(find ./tests -type f -name '*.sh' | sort); do
       chmod +x ${test_script}
       echo "Executing ${test_script}"
       ./${test_script}
