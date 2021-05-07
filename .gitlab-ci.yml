@@ -97,6 +97,7 @@ pre vars:
   - |
     set -e
     for deploy_script in scripts/deploy/*.sh; do
+      chmod +x ${deploy_script}
       ./${deploy_script}
     done
 
@@ -104,6 +105,7 @@ pre vars:
   - |
     set -e
     for test_script in tests/*.sh; do
+      chmod +x ${test_script}
       ./${test_script}
     done
 
