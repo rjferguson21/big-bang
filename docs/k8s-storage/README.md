@@ -11,7 +11,7 @@ Azure Disk CSI    | Not Tested  | Apache License 2.0 |  | **X** | Azure Dependen
 Longhorn v1.1.0   | **X** | Apache License 2.0 |  | **X** | **X** - [Docs](https://longhorn.io/docs/1.1.0/advanced-resources/deploy/airgap/) | Yes, uses host storage |
 OpenEBS (jiva)    | **X** | Apache License 2.0 |  | **X** **[Alpha](https://docs.openebs.io/docs/next/rwm.html)** | Manual Work Required | Yes, uses host storage |  
 Rook-Ceph         | **X** | Rook - Apache License 2.0. Ceph - dual licensed under the LGPL version 2.1 or 3.0 |  | **X** | Manual Work Required | Yes, uses host storage |
-Portworx          | **X** |       |  | **X** | **X** - [Docs](https://docs.portworx.com/portworx-install-with-kubernetes/operate-and-maintain-on-kubernetes/pxcentral-onprem/install/px-central/) | Yes, uses host storage |
+Portworx          | **X** | Tiered License - [See website](https://docs.portworx.com/reference/knowledge-base/px-licensing/) |  | **X** | **X** - [Docs](https://docs.portworx.com/portworx-install-with-kubernetes/operate-and-maintain-on-kubernetes/pxcentral-onprem/install/px-central/) | Yes, uses host storage |
 
 ## Benchmark Results
 
@@ -36,7 +36,8 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 **Notes**
 
-- Super easy use, apply CSI spec and you are done!
+- Apache License 2.0
+- Very easy to install and use, apply CSI spec and you are ready.
 
 ## Azure Disk CSI
 
@@ -48,7 +49,8 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 **Notes**
 
-- Super easy use, apply CSI spec and you are done!
+- Apache License 2.0
+- Very easy to install and use, apply CSI spec and you are ready.
 
 ## Longhorn
 
@@ -60,8 +62,9 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 **Notes**
 
-- 100% open source
+- Apache License 2.0
 - Easiest to install
+- Built-in backup tool.
 - Documented airgap install process. [Docs](https://longhorn.io/docs/1.1.0/advanced-resources/deploy/airgap/)
 - GUI provides data and observability; replica status, cluster health status, backup status, and backup initiation/recovery.
 - Native backup to S3 or NFS
@@ -99,7 +102,8 @@ Low latency, Local PV, Snapshots, Clones                                        
 
 **Notes**
 
-- 100% open source
+- Rook - Apache License 2.0. 
+- Ceph - dual licensed under the LGPL version 2.1 or 3.0
 - Very Fast
 
 ## Portworx
