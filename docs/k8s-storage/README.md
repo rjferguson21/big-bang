@@ -4,13 +4,13 @@ Use this data to assist in your CSI decision. However, when using a cloud provid
 
 ## Feature Matrix
 
-| Product | BB Compatible  | FOSS | In Ironbank  | RWX/RWM Support | Airgap Compatible | Cloud Agnostic |
+| Product | BB Compatible  | License Type | In Ironbank  | RWX/RWM Support | Airgap Compatible | Cloud Agnostic |
 | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
-Amazon EBS CSI    | **X** |  N/A  |  | **X** | AWS Dependent | No |
-Azure Disk CSI    | Not Tested  |  N/A  |  | **X** | Azure Dependent | No |
-Longhorn v1.1.0   | **X** | **X** |  | **X** | **X** - [Docs](https://longhorn.io/docs/1.1.0/advanced-resources/deploy/airgap/) | Yes, uses host storage |
-OpenEBS (jiva)    | **X** | **X** |  | **X** **[Alpha](https://docs.openebs.io/docs/next/rwm.html)** | Manual Work Required | Yes, uses host storage |  
-Rook-Ceph         | **X** | **X** |  | **X** | Manual Work Required | Yes, uses host storage |
+Amazon EBS CSI    | **X** | Apache License 2.0  |  | **X** | AWS Dependent | No |
+Azure Disk CSI    | Not Tested  | Apache License 2.0 |  | **X** | Azure Dependent | No |
+Longhorn v1.1.0   | **X** | Apache License 2.0 |  | **X** | **X** - [Docs](https://longhorn.io/docs/1.1.0/advanced-resources/deploy/airgap/) | Yes, uses host storage |
+OpenEBS (jiva)    | **X** | Apache License 2.0 |  | **X** **[Alpha](https://docs.openebs.io/docs/next/rwm.html)** | Manual Work Required | Yes, uses host storage |  
+Rook-Ceph         | **X** | Rook - Apache License 2.0. Ceph - dual licensed under the LGPL version 2.1 or 3.0 |  | **X** | Manual Work Required | Yes, uses host storage |
 Portworx          | **X** |       |  | **X** | **X** - [Docs](https://docs.portworx.com/portworx-install-with-kubernetes/operate-and-maintain-on-kubernetes/pxcentral-onprem/install/px-central/) | Yes, uses host storage |
 
 ## Benchmark Results
@@ -30,39 +30,39 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 [Website/Docs](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
 - Must be using AWS
 
-### Notes
+**Notes**
 
-- Super easy use, apply CSI and you done!
+- Super easy use, apply CSI spec and you are done!
 
 ## Azure Disk CSI
 
 [Website/Docs](https://docs.microsoft.com/en-us/azure/aks/azure-disk-csi)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
 - Must be using Azure
 
-### Notes
+**Notes**
 
-- Super easy use, apply CSI and you done!
+- Super easy use, apply CSI spec and you are done!
 
 ## Longhorn
 
 [Website/Docs](https://longhorn.io/)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
 - RWX requires `nfs-common` to be installed on the nodes. [Longhorn RWX Docs](https://longhorn.io/docs/1.1.0/advanced-resources/rwx-workloads/)
 
-### Notes
+**Notes**
 
 - 100% open source
 - Easiest to install
-- Documented airgap install process
+- Documented airgap install process. [Docs](https://longhorn.io/docs/1.1.0/advanced-resources/deploy/airgap/)
 - GUI provides data and observability; replica status, cluster health status, backup status, and backup initiation/recovery.
 - Native backup to S3 or NFS
 
@@ -70,22 +70,34 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 [Website/Docs](https://openebs.io/)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
-- Blank, un-partitioned attached disk(s)
+- Blank and un-partitioned attached disk(s)
 - RWX is in Alpha and requires work. [OpenEBS RWX Docs](https://docs.openebs.io/docs/next/rwm.html)
 
-### Notes
+**Notes**
+
+- Very flexible, supports multiple storage designs.
+
+Application requirements | Storage Type | OpenEBS Volumes
+| --------- | --------- | --------- |
+Low Latency, High Availability, Synchronous replication, Snapshots, Clones, Thin provisioning | SSDs/Cloud Volumes                   | OpenEBS Mayastor
+High Availability, Synchronous replication, Snapshots, Clones, Thin provisioning              | Disks/SSDs/Cloud Volumes             | OpenEBS cStor
+High Availability, Synchronous replication, Thin provisioning                                 | hostpath or external mounted storage | OpenEBS Jiva
+Low latency, Local PV                                                                         | hostpath or external mounted storage | Dynamic Local PV - Hostpath
+Low latency, Local PV                                                                         | Disks/SSDs/Cloud Volumes             | Dynamic Local PV - Device
+Low latency, Local PV, Snapshots, Clones                                                      | Disks/SSDs/Cloud Volumes             | OpenEBS Dynamic Local PV - ZFS
+
 
 ## Rook-Ceph
 
 [Website/Docs](https://rook.io/)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
-- Blank, un-partitioned attached disk(s)
+- Blank and un-partitioned attached disk(s)
 
-### Notes
+**Notes**
 
 - 100% open source
 - Very Fast
@@ -94,11 +106,11 @@ Portworx  2.6 | 3016/19.3k. BW: 74.5MiB/s / 85.1MiB/s | 1337.31 |  113MiB/s / 12
 
 [Website/Docs](https://docs.portworx.com/portworx-install-with-kubernetes/)
 
-### REQUIREMENTS
+**REQUIREMENTS**
 
-- Blank, un-partitioned attached disk(s)
+- Blank and un-partitioned attached disk(s)
 
-### Notes
+**Notes**
 
 - Portworx Essentials is free **up to** 5nodes, 5TB Storage, 500 volumes
 - Portworx Enterprise and PX-Backup require paid licenses
