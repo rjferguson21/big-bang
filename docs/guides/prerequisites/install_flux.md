@@ -1,7 +1,7 @@
 # Install the flux cli tool
 
 ```bash
-sudo curl -s https://toolkit.fluxcd.io/install.sh | sudo bash
+sudo curl -s https://fluxcd.io/install.sh | sudo bash
 ```
 >   Fedora Note: kubectl is a prereq for flux, and flux expects it in `/usr/local/bin/kubectl` symlink it or copy the binary to fix errors.
 
