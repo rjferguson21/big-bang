@@ -24,7 +24,7 @@ The following is a general overview of the process, the [deployment guides](guid
    * Configure Flux, the Cluster, and the Git Repo for GitOps Deployments that support deploying encrypted values.
    * Commit to the Git Repo BigBang's values.yaml and encrypted secrets that have been configured to match the desired state of the cluster (including HTTPS Certs and DNS names).  
 2. `kubectl apply --filename bigbang.yaml`
-   * bigbang.yaml will trigger a chain reaction of GitOps Custom Resources' that will deploy other GitOps CR's that will eventually deploy an instance of a DevSecOps Platform that's declaratively defined in your Git Repo.
+   * [bigbang.yaml](https://repo1.dso.mil/platform-one/big-bang/customers/template/-/blob/main/dev/bigbang.yaml) will trigger a chain reaction of GitOps Custom Resources' that will deploy other GitOps CR's that will eventually deploy an instance of a DevSecOps Platform that's declaratively defined in your Git Repo.
    * To be specific, the chain reaction pattern we consider best practice is to have:
      * bigbang.yaml deploys a gitrepository and kustomization Custom Resource
      * Flux reads the declarative configuration stored in the kustomization CR to do a GitOps equivalent of `kustomize build . | kubectl apply  --filename -`, to deploy a helmrelease CR of the BigBang Helm Chart, that references input values.yaml files defined in the Git Repo.
