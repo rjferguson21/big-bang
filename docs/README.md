@@ -9,7 +9,8 @@
   2. Defines what input parameters will be passed through to the chosen helm charts.
 * You can see what applications are part of the platform by checking the following resources:
   * [../Packages.md](../Packages.md) lists the packages and organizes them in categories. 
-  * [release notes](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/releases) shows the versions of packages, or alternatively for a code based source of truth, you can check [BigBang's default values.yaml](../chart/values.yaml), and `[CTRL] + [F]` "repo:", to quickly iterate through the list of applications supported by the BigBang team. 
+  * [Release Notes](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/releases) lists the packages and their versions.
+  * For a code based source of truth, you can check [BigBang's default values.yaml](../chart/values.yaml), and `[CTRL] + [F]` "repo:", to quickly iterate through the list of applications supported by the BigBang team. 
 
 ## How do I deploy BigBang?
 
