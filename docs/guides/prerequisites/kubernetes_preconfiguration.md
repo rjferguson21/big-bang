@@ -2,6 +2,7 @@
 
 
 ## Best Practices:        
+* A CNI (Container Network Interface) that supports Network Policies (which are basically firewalls for the Inner Cluster Network.) (Note: k3d, which is recommended for the quickstart demo, defaults to flannel, which does not support network policies.)
 * All Kubernetes Nodes and the LB associated with the kube-apiserver should all use private IPs.
 * In most case User Application Facing LBs should have Private IP Addresses and be paired with a defense in depth Ingress Protection mechanism like [P1's CNAP](https://p1.dso.mil/#/products/cnap/), a CNAP equivalent (Advanced Edge Firewall), VPN, VDI, port forwarding through a bastion, or air gap deployment. 
 * CoreDNS in the kube-system namespace should be HA with pod anti-affinity rules
