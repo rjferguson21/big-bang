@@ -1,16 +1,16 @@
 [Project Managers]
 # protect individual files in the root directory such as the CODEOWNERS file
-/*                     @runyontr @joshwolf @megamind @phillip.record
+/*                     @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
 # Recursive protection for directories
-/.gitlab-ci/           @runyontr @joshwolf @megamind @phillip.record
-/.gitlab/              @runyontr @joshwolf @megamind @phillip.record
-/base/                 @runyontr @joshwolf @megamind @phillip.record
-/chart/                @runyontr @joshwolf @megamind @phillip.record
-/charter/              @runyontr @joshwolf @megamind @phillip.record
-/hack/                 @runyontr @joshwolf @megamind @phillip.record
-/scripts/              @runyontr @joshwolf @megamind @phillip.record
-/tests/                @runyontr @joshwolf @megamind @phillip.record
-/docs/                 @runyontr @joshwolf @megamind @phillip.record
+/.gitlab-ci/           @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/.gitlab/              @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/base/                 @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/chart/                @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/charter/              @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/hack/                 @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/scripts/              @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/tests/                @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
+/docs/                 @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
 
 
 [Docs Owners]
@@ -18,7 +18,7 @@
 # Does not allow the creator of the merge request to be the approveer.
 /docs/                @michaelmcleroy @egoode @aaronbeger @aaron.ruse @branden.cobb @shouseba @chuck.laverde @daryndecker @dyoung @egnoriega @egoode @iahmad @jcookehg   
                       @jasonkrause @jpower_rfed @jkayse @jdale @joshwolf @karchaf @kavitha @kenna81 @kevin.wilder @killian.byrne @mgauto @msbrown47 @mdutton @matthew.kaiser 
-                      @michaelmcleroy @nick_tetrate @racosta @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @seanthomaswilliams1 @thomas.burton @Ozzie100 @tsiddique1 
+                      @michaelmcleroy @barrywoodtetrate @racosta @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @seanthomaswilliams1 @thomas.burton @Ozzie100 @tsiddique1 
                       @toladipupo @visuth.dy @zdzielinski @micah.nagel @LynnStill @cmcgrath @evan.rush @andrew.scala.hg @jay-rob @david.allen @nick.kammerdiener
 
 
@@ -39,13 +39,13 @@ scripts/              @toladipupo @michaelmcleroy @egoode
 hack/                 @toladipupo @michaelmcleroy @egoode
 
 ^[Charter Owners]
-charter/              @runyontr @joshwolf
+charter/              @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
 
 ^[Istio and Authservice]
-chart/Chart.yaml                @kenna81 @kavitha @cmcgrath @nick_tetrate
-chart/values.yaml               @kenna81 @kavitha @cmcgrath @nick_tetrate
+chart/Chart.yaml                @kenna81 @kavitha @cmcgrath @barrywoodtetrate
+chart/values.yaml               @kenna81 @kavitha @cmcgrath @barrywoodtetrate
 chart/templates/authservice     @kenna81 @kavitha @cmcgrath 
-chart/templates/istio           @kenna81 @kavitha @cmcgrath @nick_tetrate
+chart/templates/istio           @kenna81 @kavitha @cmcgrath @barrywoodtetrate
 
 # ^[HAProxy]
 # chart/Chart.yaml              @?
