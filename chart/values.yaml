@@ -716,6 +716,9 @@ addons:
       # -- Port of a pre-existing Redis to use for Anchore Enterprise.
       port: ""
 
+      # -- OPTIONAL: Username to connect to a pre-existing Redis (for password-only auth leave empty)
+      username: ""
+
       # -- Password to connect to pre-existing Redis.
       password: ""
 
