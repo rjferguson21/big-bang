@@ -85,7 +85,7 @@ For another example in using the [`kube-prometheus-stack`](https://github.com/pr
 
 The common components that each package will have are defined in the following folder layout:
 
-```bash
+```shell
 ├── CODEOWNERS              # GitLab Code Owners for Package Owners/Understudies.
 ├── README.md               # top level summary of package
 ├── docs/                   # detailed documentation folder describing package consumption details and assumptions
@@ -101,7 +101,7 @@ The common components that each package will have are defined in the following f
 Each package shall contain a .gitlab-ci.yml file at the top of the package repo.   This file shall reference the pipeline CI/CD infrastructure
 files and include the following contents:
 
-```bash
+```shell
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
     ref: master

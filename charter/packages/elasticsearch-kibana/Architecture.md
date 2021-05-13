@@ -134,7 +134,7 @@ Licensed ECK comes with [built in Health monitoring for Kibana and Elasticsearch
 
 Outside of the UI it is possible to check the health of Elasticsearch cluster via port-forward via doing the following:
 
-```bash
+```shell
 kubectl get secrets -n logging logging-ek-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
 
 kubectl port-forward svc/logging-ek-es-http -n logging 9200:9200

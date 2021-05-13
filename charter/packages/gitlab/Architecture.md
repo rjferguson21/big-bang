@@ -35,36 +35,36 @@ monitoring:
 
 Gitlab provides built in health checks.
 
-```bash
+```shell
 GET /-/health
 ```
 
 Example request
 
-```bash
+```shell
 curl "https://gitlab.example.com/-/health"
 ```
 
 Gitlab also provides a separate liveness and readiness probes.
 
-```bash
+```shell
 GET /-/readiness
 GET /-/readiness?all=1
 ```
 
 Example request
 
-```bash
+```shell
 curl "https://gitlab.example.com/-/readiness"
 ```
 
-```bash
+```shell
 GET /-/liveness
 ```
 
 Example request
 
-```bash
+```shell
 curl "https://gitlab.example.com/-/liveness"
 ```
 
