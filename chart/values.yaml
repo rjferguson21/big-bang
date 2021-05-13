@@ -215,7 +215,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.8-bb.0"
+    tag: "0.1.10-bb.0"
 
   sso:
     # -- Toggle OIDC SSO for Kibana/Elasticsearch on and off.
