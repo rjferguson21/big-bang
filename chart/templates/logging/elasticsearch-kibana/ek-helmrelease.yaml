@@ -9,8 +9,6 @@ metadata:
     app.kubernetes.io/name: logging
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
-  annotations:
-    checksum/values: {{ include (print $.Template.BasePath "/logging/elasticsearch-kibana/values.yaml") . | sha256sum }}
 spec:
   targetNamespace: logging
   chart:
