@@ -331,9 +331,17 @@ addons:
   minio:
     enabled: false
     values:
-      zones:
-        servers: 1
-      volumesPerServer: 1
+      tenants:
+        pools:
+          - servers: 1
+            # 4 is the minimum the operator will allow
+            volumesPerServer: 4
+            size: 1Gi
+            storageClassName: standard
+            securityContext:
+              runAsUser: 1001
+              runAsGroup: 1001
+              fsGroup: 1001
 
   mattermostoperator:
     enabled: false
@@ -350,9 +358,17 @@ addons:
           memory: 128Mi
         limits: {}
       minio:
-        zones:
-          servers: 1
-        volumesPerServer: 1
+        tenants:
+          pools:
+            - servers: 1
+              # 4 is the minimum the operator will allow
+              volumesPerServer: 4
+              size: 1Gi
+              storageClassName: standard
+              securityContext:
+                runAsUser: 1001
+                runAsGroup: 1001
+                fsGroup: 1001
 
   velero:
     enabled: false
