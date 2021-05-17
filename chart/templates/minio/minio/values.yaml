@@ -22,8 +22,8 @@ imagePullSecrets:
 tenants:
   secrets:
     name: minio-creds-secret
-    accessKey:
-    secretKey:
+    accessKey: {{ .Values.addons.minio.accesskey | default "minio" }}
+    secretKey: {{ .Values.addons.minio.secretkey | default "minio123" }}
   imagePullSecret:
     name: private-registry
 
