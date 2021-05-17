@@ -8,8 +8,6 @@ hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
 
-minioRootCreds: minio-root-creds-secret
-
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
@@ -22,6 +20,10 @@ imagePullSecrets:
   - name: private-registry
 
 tenants:
+  secrets:
+    name: minio-creds-secret
+    accessKey:
+    secretKey:
   imagePullSecret:
     name: private-registry
 
