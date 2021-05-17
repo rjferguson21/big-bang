@@ -10,20 +10,4 @@ metadata:
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
   name: gatekeeper-system
-
----
-{{- if ( include "imagePullSecret" . ) }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: private-registry
-  namespace: gatekeeper-system
-  labels:
-    app.kubernetes.io/name: gatekeeper
-    app.kubernetes.io/component: "core"
-    {{- include "commonLabels" . | nindent 4}}
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: {{ template "imagePullSecret" . }}
-{{- end }}
 {{- end }}

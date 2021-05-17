@@ -56,7 +56,7 @@ sso:
     realm: baby-yoda
 
   # -- Keycloak's certificate authority (unencoded) used by authservice to support SSO for various packages
-  certificate_authority: ""
+  certificate_authority: ''
 
   # -- Keycloak realm's json web key uri, obtained through https://<keycloak-server>/auth/realms/<realm>/.well-known/openid-configuration
   jwks: ""
@@ -242,7 +242,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.8-bb.0"
+    tag: "0.1.10-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -363,7 +363,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.0.3-bb.3"
+    tag: "0.0.4-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
@@ -384,7 +384,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "2.14.7-bb.3"
+      tag: "2.14.7-bb.5"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -577,7 +577,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.2.6-bb.8"
+      tag: "9.2.6-bb.9"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -654,7 +654,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.12.7-bb.2"
+      tag: "1.12.13-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -715,6 +715,9 @@ addons:
 
       # -- Port of a pre-existing Redis to use for Anchore Enterprise.
       port: ""
+
+      # -- OPTIONAL: Username to connect to a pre-existing Redis (for password-only auth leave empty)
+      username: ""
 
       # -- Password to connect to pre-existing Redis.
       password: ""
