@@ -21,6 +21,7 @@ The final package is the MinIO console. This is a graphical user interface that 
 
 The MinIO Console UI is the primary way of interacting with a MinIO tenant. The UI is accessible via a web browser. The UI provides access to all of a tenants features. This includes access to features very similar to what you would see in AWS S3, setting up buckets, controlling access, etc. 
 
+
 ### Logging
 
 MinIO supports configuring audit logs through both the MinIO Console UI and the MinIO `mc` command line tool. For Kubernetes environments, the MinIO Operator automatically configures the Console with a LogSearch integration for visual inspection of collected audit logs.
