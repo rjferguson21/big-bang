@@ -117,7 +117,7 @@ logging:
 
 ## Licensing
 
-Features like SSO integration, email/slack/pager alerting, FIPS 140-2 mode, encryption at rest, and more for the eck stack requires a platinum or enterprise license. Information about licensing and all features is available [here](https://www.elastic.co/pricing/). A Trial license can be enabled by setting `trial: true` in the below settings to enable a 30-day trial of enterprise settings.
+Features like SSO integration, email/slack/Pagerduty alerting, FIPS 140-2 mode, encryption at rest, and more for the eck stack requires a platinum or enterprise license. Information about licensing and all features is available [here](https://www.elastic.co/pricing/). A Trial license can be enabled by setting `trial: true` in the below settings to enable a 30-day trial of enterprise settings.
 Licensing can be configured with the following values:
 
 ```yaml
