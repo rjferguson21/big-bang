@@ -79,8 +79,6 @@ monitoring:
           cpu: 100m
           memory: 128Mi
         limits: {}
-      testFramework:
-        enabled: true
     kubeStateMetrics:
       resources:
         requests:
