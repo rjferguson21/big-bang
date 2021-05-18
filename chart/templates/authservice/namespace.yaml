@@ -12,7 +12,11 @@ metadata:
     {{- include "commonLabels" . | nindent 4}}
 {{- end }}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 {{- end }}
 =======
 >>>>>>> b3af9e2 (revert back authservice)
+=======
+
+>>>>>>> 7245107 (namespace changed)
