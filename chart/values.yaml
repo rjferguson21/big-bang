@@ -420,11 +420,16 @@ addons:
     #   chain:
     #     minimal:
     #       callback_uri: "https://somecallback"
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.2"
+      tag: "0.4.0-bb.4"
+   ## Redis coniguration for authservice.   
+    redis: 
+      host: ""  # set the host if you try to connect authservice to  existing  external redis
+      port: "" # set the port of external  redis
+      password: "" #  set the password of external  redis
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
