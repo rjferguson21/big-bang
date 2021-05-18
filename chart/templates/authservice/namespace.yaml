@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
+{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -6,18 +6,13 @@ metadata:
   labels:
     {{- if .Values.istio.enabled }}
     istio-injection: enabled
-  {{- end }}
-
-{{- if ( include "imagePullSecret" . ) }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: private-registry
-  namespace: authservice
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: {{ template "imagePullSecret" . }}
+    {{- end }}
+    app.kubernetes.io/name: authservice
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
 {{- end }}
+<<<<<<< HEAD
 
 {{- end }}
+=======
+>>>>>>> b3af9e2 (revert back authservice)

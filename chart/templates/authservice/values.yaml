@@ -1,22 +1,16 @@
-{{- if and .Values.istio.enabled .Values.addons.authservice.enabled }}
+{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
 
 {{- define "bigbang.defaults.authservice" -}}
 imagePullSecrets:
   - name: private-registry
-{{- if  and   .Values.addons.authservice.redis.host .Values.addons.authservice.redis.port }}
-redis:
-  enabled: true
-{{- end }}
 
 global:
   oidc:
     host: {{ .Values.sso.oidc.host }}
     realm: {{ .Values.sso.oidc.realm }}
-  {{- if  and   .Values.addons.authservice.redis.host .Values.addons.authservice.redis.port }}
-  redis_server_uri: "tcp://{{ .Values.addons.authservice.redis.host }}:{{ .Values.addons.authservice.redis.port }}"
-  {{- end }}
+
   {{- if .Values.sso.jwks }}
   jwks: "{{ .Values.sso.jwks }}"
   {{- end }}
@@ -38,36 +32,53 @@ chains:
   {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
   {{- end }}
 
-  kiali:
-    match:
-      header: ":authority"
-      prefix: "kiali"
-    client_id: {{ .Values.istio.sso.kiali.client_id }}
-    client_secret: "{{ .Values.istio.sso.kiali.client_secret }}"
-    callback_uri: https://kiali.{{ .Values.hostname }}/login
-
+  {{- if .Values.jaeger.sso.enabled }}
   jaeger:
     match:
       header: ":authority"
+    {{- $jaegerValues := .Values.jaeger.values | default dict }}
+    {{- $jaegerIstioValues := $jaegerValues.istio | default dict }}
+    {{- $jaegerHostValues := $jaegerIstioValues.jaeger | default dict}}
+    {{- if hasKey $jaegerHostValues "hosts" }}
+      prefix: {{ range .Values.jaeger.values.istio.jaeger.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.jaeger.values.istio.jaeger.hosts }}{{ tpl . $}}{{ end }}/login
+    {{- else }}
       prefix: "tracing"
-    client_id: "{{ .Values.istio.sso.jaeger.client_id }}"
-    client_secret: "{{ .Values.istio.sso.jaeger.client_secret }}"
     callback_uri: https://tracing.{{ .Values.hostname }}/login
+    {{- end }}
+    client_id: "{{ .Values.jaeger.sso.client_id }}"
+    client_secret: "{{ .Values.jaeger.sso.client_secret }}"
+  {{- end }}
 
+  {{- if .Values.monitoring.sso.enabled }}
   prometheus:
     match:
       header: ":authority"
+    {{- $monitoringValues := .Values.monitoring.values | default dict }}
+    {{- $monitoringIstioValues := $monitoringValues.istio | default dict }}
+    {{- $prometheusHostValues := $monitoringIstioValues.prometheus | default dict}}
+    {{- if hasKey $prometheusHostValues "hosts" }}
+      prefix: {{ range .Values.monitoring.values.istio.prometheus.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.monitoring.values.istio.prometheus.hosts }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    {{- else }}
       prefix: "prometheus"
+    callback_uri: https://prometheus.{{ .Values.hostname }}/login/generic_oauth
+    {{- end }}
     client_id: {{ .Values.monitoring.sso.prometheus.client_id }}
     client_secret: "{{ .Values.monitoring.sso.prometheus.client_secret }}"
-    callback_uri: https://prometheus.{{ .Values.hostname }}/login/generic_oauth
 
   alertmanager:
     match:
       header: ":authority"
+    {{- $alertmanagerHostValues := $monitoringIstioValues.alertmanager | default dict}}
+    {{- if hasKey $alertmanagerHostValues "hosts" }}
+      prefix: {{ range .Values.monitoring.values.istio.alertmanager.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.monitoring.values.istio.alertmanager.hosts }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    {{- else }}
       prefix: "alertmanager"
+    callback_uri: https://alertmanager.{{ .Values.hostname }}/login/generic_oauth
+    {{- end }}
     client_id: {{ .Values.monitoring.sso.alertmanager.client_id }}
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
-    callback_uri: https://alertmanager.{{ .Values.hostname }}/login/generic_oauth
-
+  {{- end }}
 {{- end -}}
