@@ -349,7 +349,7 @@ package:
     # Set up auth
     - mkdir -p /root/.docker
     - |
-      jq -n '{"auths": {"registry.dso.mil": {"username": $bb_registry_username, "password": $bb_registry_pw, "auth": $bb_registry_auth}, "registry1.dso.mil": {"username": "robot$bb-dev-imagepullonly", "password": $registry1_pw, "auth": $registry1_auth}, "registry.il2.dso.mil": {"username": $il2_registry_username, "password": $il2_registry_pw, "auth": $il2_registry_auth} } }' \
+      jq -n '{"auths": {"registry.dso.mil": {"auth": $bb_registry_auth}, "registry1.dso.mil": {"auth": $registry1_auth}, "registry.il2.dso.mil": {"auth": $il2_registry_auth} } }' \
         --arg bb_registry_auth ${BB_REGISTRY_AUTH} \
         --arg registry1_auth ${REGISTRY1_AUTH} \
         --arg il2_registry_auth ${IL2_REGISTRY_AUTH} > /root/.docker/config.json
