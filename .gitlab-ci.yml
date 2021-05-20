@@ -348,7 +348,7 @@ package:
   before_script:
     # Set up auth
     - mkdir -p /root/.docker
-    - echo $DOCKER_AUTH_CONFIG | base64 -d - > /root/.docker/config.json
+    - echo $DOCKER_AUTH_CONFIG > /root/.docker/config.json
   script:
     - cp ./scripts/package/synker.yaml ./synker.yaml
     # Populate images list in synker config

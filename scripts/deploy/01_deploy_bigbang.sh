@@ -29,7 +29,7 @@ cat $CI_VALUES_FILE
 
 helm upgrade -i bigbang chart -n bigbang --create-namespace \
   --set registryCredentials[0].username='robot$bb-dev-imagepullonly' \
-  --set registryCredentials[0].password="$( echo "$REGISTRY1_PASSWORD" | base64 -d -)" \
+  --set registryCredentials[0].password="${REGISTRY1_PASSWORD}" \
   --set registryCredentials[0].registry=registry1.dso.mil \
   -f ${CI_VALUES_FILE}
 
