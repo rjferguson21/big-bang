@@ -47,6 +47,25 @@ variables:
     - kubectl get helmrelease -A
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Pre Stage Jobs
+#
+
+pre vars:
+  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/pre-envs:ubi8.3
+  stage: .pre
+  extends:
+    - .bigbang-dogfood
+  artifacts:
+    reports:
+      dotenv: variables.env
+  script:
+  # Create the TF_VAR_env variable
+  - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
+  - cat variables.env
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Smoke Tests
 #
 
@@ -103,6 +122,8 @@ clean install:
 
 upgrade:
   stage: smoke tests
+  dependencies:
+    - pre vars
   extends:
     - .k3d-ci
   rules:
@@ -202,6 +223,7 @@ aws/rke2/cluster up:
     - .rke2 up
   needs:
     - job: aws/network up
+    - job: pre vars
       artifacts: true
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
@@ -287,6 +309,7 @@ aws/rke2/cluster down:
     - .rke2 down
   needs:
     - job: aws/rke2/bigbang down
+    - job: pre vars
       artifacts: true
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
