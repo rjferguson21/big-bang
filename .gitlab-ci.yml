@@ -107,7 +107,7 @@ upgrade:
     - .k3d-ci
   rules:
     # skip job when MR title starts with 'Breaking Change'
-    - if: '$CI_MERGE_REQUEST_TITLE =~ /^Breaking Change/'
+    - if: '$CI_MERGE_REQUEST_TITLE =~ /^SKIP UPGRADE/'
       when: never
     # run pipeline on merge request events
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
