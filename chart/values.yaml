@@ -97,7 +97,6 @@ networkPolicies:
   # -- Toggle all package NetworkPolicies, can disable specific packages with `package.networkPolicies.enabled`
   enabled: false
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # Istio
 #
