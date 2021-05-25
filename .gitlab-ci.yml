@@ -47,41 +47,6 @@ variables:
     - kubectl get helmrelease -A
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Pre Stage Jobs
-#
-
-pre vars:
-  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/pre-envs:ubi8.3
-  stage: .pre
-  extends:
-    - .bigbang-dogfood
-  artifacts:
-    reports:
-      dotenv: variables.env
-  script:
-  # obtain MR and master versions
-  - CHART_MR_VERSION=$(sed -n -e 's/^version. //p' chart/Chart.yaml)
-  - git fetch && git checkout ${CI_DEFAULT_BRANCH}
-  - CHART_MA_VERSION=$(sed -n -e 's/^version. //p' chart/Chart.yaml)
-  - git fetch && git checkout ${CI_COMMIT_REF_NAME}
-  - echo "CHART_MR_VERSION=$CHART_MR_VERSION" >> variables.env
-  - echo "CHART_MA_VERSION=$CHART_MA_VERSION" >> variables.env
-  - CHART_VERSION_DIFF=$(./scripts/semver_diff.sh $CHART_MR_VERSION $CHART_MA_VERSION)
-  - IFS=. DIFF_ARR=(${CHART_VERSION_DIFF##*-})
-  - echo "CHART_VERSION_DIFF=$CHART_VERSION_DIFF" >> variables.env
-  # detect breaking change (first two version sections in semver diff)
-  - CHART_BREAKING_CHANGE="false"
-  - if (( ${DIFF_ARR[0]} > 0 )); then CHART_BREAKING_CHANGE="true"; fi
-  - if (( ${DIFF_ARR[1]} > 0 )); then CHART_BREAKING_CHANGE="true"; fi
-  # store variables
-  - echo "CHART_BREAKING_CHANGE=$CHART_BREAKING_CHANGE" >> variables.env
-  # Create the TF_VAR_env variable
-  - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
-  - cat variables.env
-
-#-----------------------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Smoke Tests
 #
 
@@ -138,8 +103,6 @@ clean install:
 
 upgrade:
   stage: smoke tests
-  dependencies:
-    - pre vars
   extends:
     - .k3d-ci
   rules:
@@ -152,7 +115,6 @@ upgrade:
   variables:
     CLUSTER_NAME: "upgrade-${CI_COMMIT_SHORT_SHA}"
   script:
-    - if $CHART_BREAKING_CHANGE; then echo "Breaking change detected by chart version difference, skipping job"; exit 0; fi
     - echo "Install Big Bang from ${CI_DEFAULT_BRANCH}"
     - git fetch && git checkout ${CI_DEFAULT_BRANCH}
     - *deploy_bigbang
@@ -240,7 +202,6 @@ aws/rke2/cluster up:
     - .rke2 up
   needs:
     - job: aws/network up
-    - job: pre vars
       artifacts: true
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
