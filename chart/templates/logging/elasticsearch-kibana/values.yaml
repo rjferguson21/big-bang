@@ -6,6 +6,9 @@
 hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
+  kibana:
+    hosts:
+      - kibana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
 
 {{- with .Values.logging.sso }}
 {{- if .enabled }}
@@ -39,12 +42,10 @@ sso:
 {{- end }}
 
 kibana:
-  version: 7.9.2
   imagePullSecrets:
     - name: private-registry
 
 elasticsearch:
-  version: 7.9.2
   imagePullSecrets:
     - name: private-registry
 {{- end -}}

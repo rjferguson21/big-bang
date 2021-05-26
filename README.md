@@ -1,6 +1,6 @@
 # bigbang
 
-![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.8.0](https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Big Bang is a declarative, continuous delivery tool for core DoD hardened and approved packages into a Kubernetes cluster.
 
@@ -24,6 +24,9 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 
 | Name | Email | Url |
 | ---- | ------ | --- |
+| Ryan Garcia | garcia.ryan@solute.us |  |
+| Michael McLeroy | michaelmcleroy@cloudfitsoftware.com |  |
+| Micah Nagel | micah.nagel@parsons.com |  |
 | Tom Runyon | tom@runyon.dev |  |
 | Josh Wolf | josh@rancherfederal.com |  |
 
@@ -57,7 +60,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | istio.enabled | bool | `true` | Toggle deployment of Istio. |
 | istio.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git"` |  |
 | istio.git.path | string | `"./chart"` |  |
-| istio.git.tag | string | `"1.8.4-bb.1"` |  |
+| istio.git.tag | string | `"1.8.4-bb.2"` |  |
 | istio.flux | object | `{}` | Flux reconciliation overrides specifically for the Istio Package |
 | istio.ingress | object | `{"cert":"","key":""}` | Certificate/Key pair to use as the default certificate for exposing BigBang created applications. If nothing is provided, applications will expect a valid tls secret to exist in the `istio-system` namespace called `wildcard-cert`. |
 | istio.values | object | `{}` | Values to passthrough to the istio-controlplane chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git |
@@ -106,7 +109,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | logging.enabled | bool | `true` | Toggle deployment of Logging (EFK). |
 | logging.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git"` |  |
 | logging.git.path | string | `"./chart"` |  |
-| logging.git.tag | string | `"0.1.8-bb.0"` |  |
+| logging.git.tag | string | `"0.1.11-bb.0"` |  |
 | logging.flux | object | `{"timeout":"20m"}` | Flux reconciliation overrides specifically for the Logging (EFK) Package |
 | logging.sso.enabled | bool | `false` | Toggle OIDC SSO for Kibana/Elasticsearch on and off. Enabling this option will auto-create any required secrets. |
 | logging.sso.client_id | string | `""` | Elasticsearch/Kibana OIDC client ID |
@@ -131,7 +134,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | monitoring.enabled | bool | `true` | Toggle deployment of Monitoring (Prometheus, Grafana, and Alertmanager). |
 | monitoring.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git"` |  |
 | monitoring.git.path | string | `"./chart"` |  |
-| monitoring.git.tag | string | `"11.0.0-bb.17"` |  |
+| monitoring.git.tag | string | `"11.0.0-bb.18"` |  |
 | monitoring.flux | object | `{}` | Flux reconciliation overrides specifically for the Monitoring Package |
 | monitoring.sso.enabled | bool | `false` | Toggle SSO for monitoring components on and off |
 | monitoring.sso.prometheus.client_id | string | `""` | Prometheus OIDC client ID |
@@ -148,14 +151,14 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | twistlock.enabled | bool | `true` | Toggle deployment of Twistlock. |
 | twistlock.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git"` |  |
 | twistlock.git.path | string | `"./chart"` |  |
-| twistlock.git.tag | string | `"0.0.3-bb.3"` |  |
+| twistlock.git.tag | string | `"0.0.4-bb.0"` |  |
 | twistlock.flux | object | `{}` | Flux reconciliation overrides specifically for the Twistlock Package |
 | twistlock.values | object | `{}` | Values to passthrough to the twistlock chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git |
 | twistlock.postRenderers | list | `[]` | Post Renderers.  See docs/postrenders.md |
 | addons.argocd.enabled | bool | `false` | Toggle deployment of ArgoCD. |
 | addons.argocd.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git"` |  |
 | addons.argocd.git.path | string | `"./chart"` |  |
-| addons.argocd.git.tag | string | `"2.14.7-bb.3"` |  |
+| addons.argocd.git.tag | string | `"2.14.7-bb.5"` |  |
 | addons.argocd.flux | object | `{}` | Flux reconciliation overrides specifically for the ArgoCD Package |
 | addons.argocd.sso.enabled | bool | `false` | Toggle SSO for ArgoCD on and off |
 | addons.argocd.sso.client_id | string | `""` | ArgoCD OIDC client ID |
@@ -167,7 +170,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.authservice.enabled | bool | `false` | Toggle deployment of Authservice. if enabling authservice, a filter needs to be provided by either enabling sso for monitoring or istio, or manually adding a filter chain in the values here: values:   chain:     minimal:       callback_uri: "https://somecallback" |
 | addons.authservice.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git"` |  |
 | addons.authservice.git.path | string | `"./chart"` |  |
-| addons.authservice.git.tag | string | `"0.4.0-bb.2"` |  |
+| addons.authservice.git.tag | string | `"0.4.0-bb.4"` |  |
 | addons.authservice.flux | object | `{}` | Flux reconciliation overrides specifically for the Authservice Package |
 | addons.authservice.values | object | `{}` | Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git |
 | addons.authservice.postRenderers | list | `[]` | Post Renderers.  See docs/postrenders.md |
@@ -221,7 +224,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.sonarqube.enabled | bool | `false` | Toggle deployment of SonarQube. |
 | addons.sonarqube.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git"` |  |
 | addons.sonarqube.git.path | string | `"./chart"` |  |
-| addons.sonarqube.git.tag | string | `"9.2.6-bb.8"` |  |
+| addons.sonarqube.git.tag | string | `"9.2.6-bb.9"` |  |
 | addons.sonarqube.flux | object | `{}` | Flux reconciliation overrides specifically for the Sonarqube Package |
 | addons.sonarqube.sso.enabled | bool | `false` | Toggle OIDC SSO for SonarQube. Enabling this option will auto-create any required secrets. |
 | addons.sonarqube.sso.client_id | string | `""` | SonarQube OIDC client ID |
@@ -248,7 +251,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.anchore.enabled | bool | `false` | Toggle deployment of Anchore. |
 | addons.anchore.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git"` |  |
 | addons.anchore.git.path | string | `"./chart"` |  |
-| addons.anchore.git.tag | string | `"1.12.7-bb.2"` |  |
+| addons.anchore.git.tag | string | `"1.12.13-bb.0"` |  |
 | addons.anchore.flux | object | `{"upgrade":{"disableWait":true}}` | Flux reconciliation overrides specifically for the Anchore Package |
 | addons.anchore.adminPassword | string | `""` | Initial admin password used to authenticate to Anchore. |
 | addons.anchore.enterprise | object | `{"enabled":false,"licenseYaml":"FULL LICENSE\n"}` | Anchore Enterprise functionality. |
@@ -265,6 +268,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.anchore.database.feeds_database | string | `""` | Feeds database name to connect to on host (Note: feeds database name CANNOT contain hyphens). Only required for enterprise edition of anchore. By default, feeds database will be configured with the same username and password as the main database. For formatting examples on how to use a separate username and password for the feeds database see https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/-/blob/main/docs/CHART.md#handling-dependencies |
 | addons.anchore.redis.host | string | `""` | Hostname of a pre-existing Redis to use for Anchore Enterprise. Entering connection info will enable external redis and will auto-create any required secrets. Anchore only requires redis for enterprise deployments and will not provision an instance if using external |
 | addons.anchore.redis.port | string | `""` | Port of a pre-existing Redis to use for Anchore Enterprise. |
+| addons.anchore.redis.username | string | `""` | OPTIONAL: Username to connect to a pre-existing Redis (for password-only auth leave empty) |
 | addons.anchore.redis.password | string | `""` | Password to connect to pre-existing Redis. |
 | addons.anchore.values | object | `{}` | Values to passthrough to the anchore chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git |
 | addons.anchore.postRenderers | list | `[]` | Post Renderers.  See docs/postrenders.md |
@@ -278,7 +282,7 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.mattermost.enabled | bool | `false` | Toggle deployment of Mattermost. |
 | addons.mattermost.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git"` |  |
 | addons.mattermost.git.path | string | `"./chart"` |  |
-| addons.mattermost.git.tag | string | `"0.1.4-bb.0"` |  |
+| addons.mattermost.git.tag | string | `"0.1.5-bb.0"` |  |
 | addons.mattermost.flux | object | `{}` | Flux reconciliation overrides specifically for the Mattermost Package |
 | addons.mattermost.enterprise | object | `{"enabled":false,"license":""}` | Mattermost Enterprise functionality. |
 | addons.mattermost.enterprise.enabled | bool | `false` | Toggle the Mattermost Enterprise.  This must be accompanied by a valid license unless you plan to start a trial post-install. |
@@ -310,6 +314,19 @@ To start using Big Bang, you will need to create your own Big Bang environment t
 | addons.velero.flux | object | `{}` | Flux reconciliation overrides specifically for the Velero Package |
 | addons.velero.values | object | `{"plugins":[]}` | Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/chart/values.yaml |
 | addons.velero.postRenderers | list | `[]` | Post Renderers.  See docs/postrenders.md |
+| addons.keycloak.enabled | bool | `false` | Toggle deployment of Keycloak. |
+| addons.keycloak.git.repo | string | `"https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git"` |  |
+| addons.keycloak.git.path | string | `"./chart"` |  |
+| addons.keycloak.git.tag | string | `"11.0.0-bb.0"` |  |
+| addons.keycloak.ingress | object | `{"cert":"","key":""}` | Certificate/Key pair to use as the certificate for exposing Keycloak |
+| addons.keycloak.database.host | string | `""` | Hostname of a pre-existing database to use for Keycloak. Entering connection info will disable the deployment of an internal database and will auto-create any required secrets. |
+| addons.keycloak.database.type | string | `"postgres"` | Pre-existing database type (e.g. postgres) to use for Keycloak. |
+| addons.keycloak.database.port | int | `5432` | Port of a pre-existing database to use for Keycloak. |
+| addons.keycloak.database.database | string | `""` | Database name to connect to on host. |
+| addons.keycloak.database.username | string | `""` | Username to connect as to external database, the user must have all privileges on the database. |
+| addons.keycloak.database.password | string | `""` | Database password for the username used to connect to the existing database. |
+| addons.keycloak.flux | object | `{}` | Flux reconciliation overrides specifically for the OPA Gatekeeper Package |
+| addons.keycloak.values | object | `{}` | Values to passthrough to the keycloak chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git |
 
 ## Contributing
 

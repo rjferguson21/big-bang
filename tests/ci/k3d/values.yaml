@@ -18,13 +18,15 @@ logging:
             cpu: .5
           limits: {}
       data:
-        count: 1
+        count: 2
         persistence:
           size: 5Gi
         resources:
           requests:
             cpu: .5
           limits: {}
+    kibana:
+      count: 1
 
 fluentbit:
   values:
@@ -415,3 +417,13 @@ addons:
       # Backup data in object storage will _not_ be deleted, however Backup instances in the Kubernetes API will.
       # Always clean up CRDs in CI.
       cleanUpCRDs: true
+
+  keycloak:
+    enabled: false
+    values:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits: {}
