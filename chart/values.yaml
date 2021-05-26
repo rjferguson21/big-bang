@@ -492,10 +492,15 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.10.3-bb.1"
+      # tag: "4.10.3-bb.1"
+      branch: "network-policy-update"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
+
+    # -- Toggle the creation of optional network policies in the Gitlab namespace
+    networkPolicies:
+      enabled: false
 
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.

@@ -8,6 +8,9 @@ hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
 
+networkPolicies:
+  enabled: {{ .Values.addons.gitlab.networkPolicies.enabled }}
+  
 {{- if .Values.addons.gitlab.database.host }}
 postgresql:
   install: false
