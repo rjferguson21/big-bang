@@ -582,10 +582,6 @@ addons:
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
 
-    # -- Toggle Sonarqube network policies
-    networkPolicies:
-      enabled: null
-
     sso:
       # -- Toggle SAML SSO for SonarQube.
       # Enabling this option will auto-create any required secrets.
