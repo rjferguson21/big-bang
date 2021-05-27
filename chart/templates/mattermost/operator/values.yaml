@@ -7,5 +7,5 @@ imagePullSecrets:
   - name: private-registry
 
 networkPolicies:
-  enabled: {{ .Values.addons.mattermostoperator.networkPolicies.enabled | default .Values.networkPolicies.enabled }}
+  enabled: {{ .Values.networkPolicies.enabled }}
 {{- end -}}

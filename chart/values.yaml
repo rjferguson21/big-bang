@@ -95,7 +95,7 @@ flux:
 # -- Global NetworkPolicies settings
 networkPolicies:
   # -- Toggle all package NetworkPolicies, can disable specific packages with `package.networkPolicies.enabled`
-  enabled: false
+  enabled: true
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Istio
@@ -745,10 +745,6 @@ addons:
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
-
-    networkPolicies:
-      # -- Toggle Mattermost Operator network policies
-      enabled: null
 
     # -- Values to passthrough to the mattermost operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator/-/blob/main/chart/values.yaml
     values: {}
