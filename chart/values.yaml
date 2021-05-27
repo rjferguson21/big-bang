@@ -497,10 +497,6 @@ addons:
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
 
-    # -- Toggle the creation of optional network policies in the Gitlab namespace
-    networkPolicies:
-      enabled: false
-
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.
       # Enabling this option will auto-create any required secrets.
