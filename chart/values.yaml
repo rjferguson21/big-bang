@@ -661,10 +661,6 @@ addons:
       upgrade:
         disableWait: true
 
-    # -- Toggle creation of optional network policies in Anchore namespace
-    networkPolicies:
-      enabled: true
-
     # -- Initial admin password used to authenticate to Anchore.
     adminPassword: ""
 

@@ -12,7 +12,7 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
-  enabled: {{ .Values.addons.anchore.networkPolicies.enabled }}
+  enabled: {{ .Values.networkPolicies.enabled }}
 
 {{- if and .Values.addons.anchore.enterprise.enabled .Values.addons.anchore.enterprise.licenseYaml }}
 enterpriseLicenseYaml: |
