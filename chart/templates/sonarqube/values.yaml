@@ -12,11 +12,7 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
-  {{- if (list "enabled" .Values.addons.sonarqube.networkPolicies.enabled | include "bigbang.addValueIfSet") -}}
-  {{- list "enabled" .Values.addons.sonarqube.networkPolicies.enabled | include "bigbang.addValueIfSet" | nindent 2 }}
-  {{- else }}
   enabled: {{ .Values.networkPolicies.enabled }}
-  {{- end }}
 
 image:
   pullSecret: private-registry
