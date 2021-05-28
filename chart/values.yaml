@@ -92,6 +92,11 @@ flux:
     timeout: 10m
     cleanupOnFail: true
 
+# -- Global NetworkPolicies settings
+networkPolicies:
+  # -- Toggle all package NetworkPolicies, can disable specific packages with `package.networkPolicies.enabled`
+  enabled: true
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Istio
 #
@@ -278,7 +283,7 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.4.0-bb.1"
+    tag: "1.4.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
@@ -297,7 +302,7 @@ fluentbit:
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
 
-  # -- Values to passthrough to the fluentbit chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git  
+  # -- Values to passthrough to the fluentbit chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
   values: {}
 
   # -- Post Renderers.  See docs/postrenders.md
@@ -313,7 +318,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "11.0.0-bb.18"
+    tag: "11.0.0-bb.20"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux: {}
@@ -492,7 +497,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.10.3-bb.1"
+      tag: "4.10.3-bb.6"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -571,23 +576,75 @@ addons:
     # -- Values to passthrough to the gitlab runner chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
     values: {}
 
+  nexus:
+    # -- Toggle deployment of Nexus.
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
+      path: "./chart"
+      tag: "29.1.0-bb.0"
+
+    # -- Base64 encoded license file.
+    license_key: ""
+
+    sso:
+      # -- Toggle SAML SSO for NXRM.
+      # -- handles SAML SSO, a Client must be configured in Keycloak or IdP
+      # -- to complete setup.
+      # -- https://support.sonatype.com/hc/en-us/articles/1500000976522-SAML-integration-for-Nexus-Repository-Manager-Pro-3-and-Nexus-IQ-Server-with-Keycloak#h_01EV7CWCYH3YKAPMAHG8XMQ599
+      enabled: false
+
+      # -- NXRM SAML SSO Integration data
+      idp_data:
+        # -- IdP Field Mappings
+        # -- NXRM username attribute
+        username: ""
+
+        # -- NXRM firstname attribute (optional)
+        firstName: ""
+
+        # -- NXRM lastname attribute (optional)
+        lastName: ""
+
+        # -- NXRM email attribute (optional)
+        email: ""
+
+        # -- NXRM groups attribute (optional)
+        groups: ""
+
+        # -- IDP SAML Metadata XML as a single line string in single quotes
+        # -- this information is public and does not require a secret
+        idpMetadata: ''
+
+      # -- NXRM Role
+      role:
+        id: ""
+        name: ""
+        description: ""
+
+    # -- Flux reconciliation overrides specifically for the Nexus Repository Manager Package
+    flux: {}
+
+    # -- Values to passthrough to the nxrm chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/nexus.git
+    values: {}
+
   sonarqube:
     # -- Toggle deployment of SonarQube.
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.2.6-bb.9"
+      tag: "9.2.6-bb.11"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
 
     sso:
-      # -- Toggle OIDC SSO for SonarQube.
+      # -- Toggle SAML SSO for SonarQube.
       # Enabling this option will auto-create any required secrets.
       enabled: false
 
-      # -- SonarQube OIDC client ID
+      # -- SonarQube SAML client ID
       client_id: ""
 
       # -- SonarQube SSO login button label
@@ -736,7 +793,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.13.0-bb.2"
+      tag: "1.13.0-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
