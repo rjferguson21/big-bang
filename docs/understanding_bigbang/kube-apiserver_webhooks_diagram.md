@@ -1,6 +1,6 @@
 # Goals of this Architecture Diagram: 
 * Help new users understand how BigBang extends the kube-apiserver using webhooks to enable:
-  * Best practic security controls 
+  * Best practice security controls 
   * Abstractions that improve user experience for developers / maintainability
 * Kubernetes Security Best Practice (per kube-bench) for requests to the kube-apiserver is that requests should go through the following flow of controls: 
   1. mTLS Authentication via x509 certs:    
@@ -8,7 +8,7 @@
   2. RBAC Authorization of users and Node Authentication for worker nodes    
      * `--authorization-mode=Node,RBAC` flag on kube-apiserver ensures this is set.
      * Deployed applications contain YAML manifests with rbac rules to minimize the rights of the application's service account.
-  3. Admission Controllers: These take effect after Authn and Authz have occured and allow the functionality of the api-server to be extended to enable additional security controls and advanced features. 
+  3. Admission Controllers: These take effect after Authn and Authz have occurred and allow the functionality of the api-server to be extended to enable additional security controls and advanced features. 
      * There are apiserver plugins baked into Kubernetes that just need to be turned on like `--enable-admission-plugins=NodeRestriction` per kube-bench.
      * There's also webhooks that allow extending the apiserver with custom logic, this will be overviewed in the diagram below. 
 
@@ -25,8 +25,8 @@
 
 
 ### 2. Mutating Admission Controllers
-* This improves user experience for developers. If a namespace is labeled `isito-injection=enabled`, then a developer can submit a YAML manifest where the pod only needs to reference 1 container image/the application. After the request is authenticated and authorized against the kube-apiserver, it's admission controller will see a mutating admission webhook exists and the manifest will be sent to the istiod pod in the istio-system namespace to mutate the manifest and inject an istio init container and istio envoy proxy sidecar container into the YAML manifest. This allows the developer's pod to be integrated into the service mesh with minimial configuration / effort on their part/no adjustments to their YAMLs were needed. 
-* Note: It's possible to use Istio CNI plugin to eliminate the need for istio init containers.
+* This improves user experience for developers. If a namespace is labeled `isito-injection=enabled`, then a developer can submit a YAML manifest where the pod only needs to reference 1 container image/the application. After the request is authenticated and authorized against the kube-apiserver, it's admission controller will see a mutating admission webhook exists and the manifest will be sent to the istiod pod in the istio-system namespace to mutate the manifest and inject an istio init container and istio envoy proxy sidecar container into the YAML manifest. This allows the developer's pod to be integrated into the service mesh with minimal configuration / effort on their part/no adjustments to their YAMLs were needed. 
+* Note: It's possible to use Istio CNI Plugin to eliminate the need for Istio Init Containers.
 
 
 ### 3. Validating Admission Controllers
