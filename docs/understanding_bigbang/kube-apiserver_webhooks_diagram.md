@@ -3,7 +3,7 @@
 * Help new users understand how BigBang extends the kube-apiserver using webhooks to enable:
   * Best practice security controls
   * Abstractions that improve user experience for developers / maintainability
-* Kubernetes Security Best Practice (per kube-bench) for requests to the kube-apiserver is that requests should go through the following flow of controls:
+* Kubernetes Security Best Practice (per [kube-bench](https://github.com/aquasecurity/kube-bench)) for requests to the kube-apiserver is that requests should go through the following flow of controls:
   1. mTLS Authentication via x509 certs:
      * This is baked into Kubernetes
   2. RBAC Authorization of users and Node Authentication for worker nodes
