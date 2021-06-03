@@ -376,6 +376,14 @@ addons:
     values:
       installCRDs: true
 
+      initContainers:
+      - name: velero-plugin-for-aws
+        image: registry1.dso.mil/ironbank/opensource/velero/velero-plugin-for-aws:v1.2.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+
       # Set provider name and backup storage location bucket name
       configuration:
         provider: aws
@@ -392,11 +400,7 @@ addons:
       #      bucket: velero
       #      region: us-west-1
 
-      # Default to AWS Plugin, update to others as they are supported
-      plugins:
-        - aws
-
-      #schedules:
+      # schedules:
       #  mybackup:
       #    labels:
       #      myenv: foo
