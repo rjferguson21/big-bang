@@ -13,7 +13,7 @@ The MinIO tenants are created using the [MinIO package](https://repo1.dso.mil/pl
 
 The final package is the MinIO console. This is a graphical user interface that allows management of an individual tenant. The official package can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio).
 
-![Tenant Architecture](https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator/-/blob/main/upstream/operator/docs/images/architecture.png)
+![Tenant Architecture](https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator/-/raw/main/upstream/operator/docs/images/architecture.png)
 
 ## Big Bang Touchpoints
 
@@ -45,18 +45,21 @@ MinIO server exposes three un-authenticated, healthcheck endpoints [liveness pro
 
 ## High Availability
 
-The default is to run in high availability. The default number of servers is 4, but can be changed by changing the values in the base Big Bang cofiguration.
+The default is to run in high availability. The default number of servers is 3, but can be changed by changing the values in the base Big Bang cofiguration.
 
 ```
 values:
-  tenants:
-    pools:
-      servers: 4
+  zones:
+    servers: 3
 ```
 
 You can also set things like the number of volumes per server and affinity rules for the MinIO tenant.
 
 ## Single Sign On (SSO)
+
+No current SSO is avaiable via Keycloak.
+
+## Configuring access to Minio without SSO
 
 Initial access to the MinIO server is via the minioRootCreds. These can be configured by configuring a secret the following fields/format.
 
@@ -77,8 +80,6 @@ An easy way to create this secret is given here:
 ```
 kubectl create secret generic default-minio-creds-secret -n minio-tenant-namespace --from-literal=accesskey=your-access-key --from-literal=secretkey=your-secret-key -o yaml --dry-run=client
 ```
-
-No other SSO access is currently available from the console or MinIO.
 
 ## Licensing
 
