@@ -16,7 +16,7 @@
 [Docs Owners]
 # Allow any one of the listed codeowners to approve merges to the documentation 
 # Does not allow the creator of the merge request to be the approver.
-/docs/                @michaelmcleroy @egoode @aaronbeger @aaron.ruse @branden.cobb @shouseba @daryndecker @dyoung @iahmad @jcookehg @jasonkrause @jpower_rfed @jkayse @jdale @joshwolf @kavitha @kenna81 @kevin.wilder @mgauto @msbrown47 @mdutton @matthew.kaiser @michaelmcleroy @barrywoodtetrate @racosta @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @seanthomaswilliams1 @thomas.burton @Ozzie100 @tsiddique1 @toladipupo @visuth.dy @micah.nagel @LynnStill @cmcgrath @evan.rush @andrew.scala.hg @jay-rob @david.allen @nick.kammerdiener
+/docs/                @aaron.ruse @aaronbeger @andrew.scala.hg @barrywoodtetrate @branden.cobb @cmcgrath @daryndecker @david.allen @dyoung @egoode @evan.rush @iahmad @jasonkrause @jay-rob @jcookehg @jdale @jkayse @joshwolf @jpower_rfed @kavitha @kenna81 @kevin.wilder @LynnStill @matthew.kaiser @mdutton @mgauto @micah.nagel @michaelmcleroy @msbrown47 @nick.kammerdiener @Ozzie100 @racosta @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @seanthomaswilliams1 @shouseba @thomas.burton @toladipupo @tsiddique1 @visuth.dy
 
 
 ################################################
@@ -25,92 +25,92 @@
 ################################################
 
 ^[Kustomize Base Owners]
-base/                 @michaelmcleroy
+base/                 @micah.nagel @michaelmcleroy @ryan.j.garcia
 
 ^[CI Owners]
-.gitlab-ci/           @toladipupo
-tests/                @toladipupo
+.gitlab-ci/           @branden.cobb @toladipupo
+tests/                @branden.cobb @toladipupo
 
 ^[Hack Owners]
-scripts/              @toladipupo @michaelmcleroy @egoode
-hack/                 @toladipupo @michaelmcleroy @egoode
+scripts/              @egoode @michaelmcleroy @toladipupo
+hack/                 @egoode @michaelmcleroy @toladipupo
 
 ^[Charter Owners]
 charter/              @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
 
 ^[Istio and Authservice]
-chart/Chart.yaml                @kenna81 @kavitha @cmcgrath @barrywoodtetrate
-chart/values.yaml               @kenna81 @kavitha @cmcgrath @barrywoodtetrate
-chart/templates/authservice     @kenna81 @kavitha @cmcgrath 
-chart/templates/istio           @kenna81 @kavitha @cmcgrath @barrywoodtetrate
+chart/Chart.yaml                @barrywoodtetrate @cmcgrath @kavitha @kenna81
+chart/values.yaml               @barrywoodtetrate @cmcgrath @kavitha @kenna81
+chart/templates/authservice     @cmcgrath @kavitha @kenna81
+chart/templates/istio           @barrywoodtetrate @cmcgrath @kavitha @kenna81
 
 # ^[HAProxy]
-# chart/Chart.yaml              @?
-# chart/values.yaml             @?
-# chart/templates/haproxy       @?
+# chart/Chart.yaml              @blloyd @runyontr @ryan.j.garcia
+# chart/values.yaml             @blloyd @runyontr @ryan.j.garcia
+# chart/templates/haproxy       @blloyd @runyontr @ryan.j.garcia
 
 ^[Anchore]
-chart/Chart.yaml                @blake.hearn @micah.nagel @jasonkrause
-chart/values.yaml               @blake.hearn @micah.nagel @jasonkrause
-chart/templates/anchore         @blake.hearn @micah.nagel @jasonkrause
+chart/Chart.yaml                @blake.hearn @jasonkrause @micah.nagel
+chart/values.yaml               @blake.hearn @jasonkrause @micah.nagel
+chart/templates/anchore         @blake.hearn @jasonkrause @micah.nagel
 
 ^[ArgoCD]
-chart/Chart.yaml                @matthew.kaiser @brian.rexrode
-chart/values.yaml               @matthew.kaiser @brian.rexrode
-chart/templates/argocd          @matthew.kaiser @brian.rexrode
+chart/Chart.yaml                @branden.cobb @matthew.kaiser @brian.rexrode
+chart/values.yaml               @branden.cobb @matthew.kaiser @brian.rexrode
+chart/templates/argocd          @branden.cobb @matthew.kaiser @brian.rexrode
 
-# ^[Cluster Auditor]
-# chart/Chart.yaml
-# chart/values.yaml
-# chart/templates/clusterauditor
+# ^[Cluster Auditor]            @branden.cobb @matthew.kaiser @brian.rexrode
+# chart/Chart.yaml              @branden.cobb @matthew.kaiser @brian.rexrode
+# chart/values.yaml             @branden.cobb @matthew.kaiser @brian.rexrode
+# chart/templates/clusterauditor @branden.cobb @matthew.kaiser @brian.rexrode
 
 # ^[Gatekeeper]
-# chart/Chart.yaml              @toladipupo
-# chart/values.yaml             @toladipupo   
-# chart/templates/gatekeeper    @toladipupo
+# chart/Chart.yaml              @echuang @egoode @toladipupo
+# chart/values.yaml             @echuang @egoode @toladipupo   
+# chart/templates/gatekeeper    @echuang @egoode @toladipupo
 
 ^[Logging]
-chart/Chart.yaml                @kavitha @ryan.j.garcia
-chart/values.yaml               @kavitha @ryan.j.garcia
-chart/templates/logging         @kavitha @ryan.j.garcia
+chart/Chart.yaml                @evan.rush @kavitha @ryan.j.garcia
+chart/values.yaml               @evan.rush @kavitha @ryan.j.garcia
+chart/templates/logging         @evan.rush @kavitha @ryan.j.garcia
 
 ^[Monitoring]
-chart/Chart.yaml                @lynnstill @ryan.j.garcia
-chart/values.yaml               @lynnstill @ryan.j.garcia
-chart/templates/monitoring      @lynnstill @ryan.j.garcia
+chart/Chart.yaml                @lynnstill @michaelmartin @ryan.j.garcia
+chart/values.yaml               @lynnstill @michaelmartin @ryan.j.garcia
+chart/templates/monitoring      @lynnstill @michaelmartin @ryan.j.garcia
 
 ^[Twistlock]
-chart/Chart.yaml                @thomas.burton @ryan.j.garcia @runyontr @joshwolf
-chart/values.yaml               @thomas.burton @ryan.j.garcia @runyontr @joshwolf
-chart/templates/twistlock       @thomas.burton @ryan.j.garcia @runyontr @joshwolf
+chart/Chart.yaml                @joshwolf @runyontr @ryan.j.garcia @thomas.burton
+chart/values.yaml               @joshwolf @runyontr @ryan.j.garcia @thomas.burton
+chart/templates/twistlock       @joshwolf @runyontr @ryan.j.garcia @thomas.burton
 
 ^[Sonarqube]
-chart/Chart.yaml                @kevin.wilder @lynnstill @branden.cobb
-chart/values.yaml               @kevin.wilder @lynnstill @branden.cobb
-chart/templates/sonarqube       @kevin.wilder @lynnstill @branden.cobb
+chart/Chart.yaml                @branden.cobb @kevin.wilder @lynnstill
+chart/values.yaml               @branden.cobb @kevin.wilder @lynnstill
+chart/templates/sonarqube       @branden.cobb @kevin.wilder @lynnstill
 
 ^[Gitlab and Gitlab Runners]
-chart/Chart.yaml                @lynnstill @ryan.j.garcia @kevin.wilder
-chart/values.yaml               @lynnstill @ryan.j.garcia @kevin.wilder
-chart/templates/gitlab          @lynnstill @ryan.j.garcia @kevin.wilder
+chart/Chart.yaml                @kevin.wilder @lynnstill @ryan.j.garcia
+chart/values.yaml               @kevin.wilder @lynnstill @ryan.j.garcia
+chart/templates/gitlab          @kevin.wilder @lynnstill @ryan.j.garcia
 
 ^[KeyCloak]
-chart/Chart.yaml                @megamind @kevin.wilder @michaelmcleroy
-chart/values.yaml               @megamind @kevin.wilder @michaelmcleroy
-chart/templates/keycloak        @megamind @kevin.wilder @michaelmcleroy
+chart/Chart.yaml                @kevin.wilder @megamind @michaelmcleroy @zacw
+chart/values.yaml               @kevin.wilder @megamind @michaelmcleroy @zacw
+chart/templates/keycloak        @kevin.wilder @megamind @michaelmcleroy @zacw
 
 ^[Mattermost (and operator)]
-chart/Chart.yaml                @micah.nagel @branden.cobb
-chart/values.yaml               @micah.nagel @branden.cobb
-chart/templates/mattermost      @micah.nagel @branden.cobb
+chart/Chart.yaml                @branden.cobb @jasonkrause @micah.nagel
+chart/values.yaml               @branden.cobb @jasonkrause @micah.nagel
+chart/templates/mattermost      @branden.cobb @jasonkrause @micah.nagel
 
 ^[Minio (and operator)]
-chart/Chart.yaml                @LynnStill @kevin.wilder @branden.cobb
-chart/values.yaml               @LynnStill @kevin.wilder @branden.cobb
-chart/templates/minio           @LynnStill @kevin.wilder @branden.cobb
+chart/Chart.yaml                @branden.cobb @kevin.wilder @lynnstill
+chart/values.yaml               @branden.cobb @kevin.wilder @lynnstill
+chart/templates/minio           @branden.cobb @kevin.wilder @lynnstill
 
 ^[Velero]
-chart/Chart.yaml                @tunde @adam.toy
-chart/values.yaml               @tunde @adam.toy
-chart/templates/velero          @tunde @adam.toy
+chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
+chart/values.yaml               @tunde @adam.toy @micah.nagel @jcarnes
+chart/templates/velero          @tunde @adam.toy @micah.nagel @jcarnes
 
