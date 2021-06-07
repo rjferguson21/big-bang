@@ -62,6 +62,7 @@
 * CNIs (Container Network Interfaces) create Inner Cluster Networks that allow pods and services to talk to each other and usually set up network routing rules/filters that make it so external traffic can only initiate a connection to by going through explicitly opened NodePorts.
 * Different CNIs create an Inner Cluster Network in different ways. Some CNIs uses BGP. Others make use of VXLANs.
 * Some CNIs support encrypting 100% of the CNI traffic and others don't.
+* Installation and configuration of CNI is outside the scope of BigBang and is considered a prerequisite, consult with your AO to determine their requirements for encryption of traffic in transit.
 
 
 #### 7. Network Encryption of Traffic on the Inner Cluster Network
