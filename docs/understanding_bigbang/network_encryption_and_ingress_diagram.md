@@ -28,38 +28,38 @@
 * Each ingressGateway in the list will (by default) spawn:
   * A Kubernetes Service of type Load Balancer, which spawns a CSP LB.    
   * A Kubernetes Deployment of pods acting as an Istio Ingress Gateway.
-* A BigBang deployment can end up with more than 1 LB if the list contains multiple ingressGateways OR if there is more than 1 istiooperator CR. 
+* A BigBang Cluster can end up with more than 1 LB if the list contains multiple ingressGateways OR if there is more than 1 istiooperator CR. 
 * A Production Deployment of BigBang should (in most cases):
   * Set the BigBang values.yaml file to leverage Kubernetes service annotations to ensure the provisioned CSP LBs are provisioned with Private IP Addresses.
-  * Separate traffic destined for admin management GUIs vs user facing applications, either by mapping user facing application traffic to 1 CSP LB, and mapping admin management GUI to a separate CSP LB protected by NACL access rules or using BigBang's Auth Service SSO Proxy to filter webpage access based on a users group membership defined by the backend identity provider.  
+  * Separate traffic destined for admin management GUIs from user facing applications. One way of doing this is to map user facing application traffic to 1 CSP LB, and map admin management GUI to a separate CSP LB, and then use a firewall/network access control list to limit traffic to the admin management GUI CSP LB. Another way of doing this is to use BigBang's Auth Service SSO Proxy to filter webpage access based on a user's group membership defined by the backend identity provider.  
  
 
 #### 3. Network Ingress Traffic Flow
-1. Port 443 of the CSP LB gets load balanced between a NodePort of the worker nodes. (The NodePort can be randomly generated or static, depending on helm values.)
+1. Port 443 of the CSP LB gets load balanced between a NodePort of the Kubernetes Nodes. (The NodePort can be randomly generated or static, depending on helm values.)
 2. Kube Proxy (in most cases) is responsible for mapping/forwarding traffic from the NodePort, which is accessible on the Private IP Space Network, to port 443 of the istio-ingressgateway service which is accessible on the Kubernetes Inner Cluster Network. (So Kube Proxy and Node Ports are how traffic crosses the boundary from Private IP Space to Kubernetes Inner Cluster Network Space.)
 3. Istio-ingressgateway service port 443 then maps to port 8443 of istio-ingressgateway pods associated with the deployment (they use the non-privileged port 8443, because they've gone through the IronBank Container hardening process. (From the end users perspective the end user only sees 443, and an http --> https redirect is also configured.)
 4. The Istio Ingress Gateway pods are basically Envoy Proxies / Layer 7 Load Balancers that are dynamically configured using declarative Kubernetes Custom Resources managed via GitOps. These Ingress Gateway pods terminate HTTPS (in most cases) and then forward traffic to web services hosted in a BigBang Cluster.
 
 
 #### 4. Ingress HTTPS Certificates
-* A Gateway CR will reference a HTTPS Certificate stored in a Kubernetes Secret. 
-* Some environments will mandate 1 HTTPS Certificate per DNS name, in this scenario you'll need 1 gateway CR and secret of type tls per virtual service.
-* If the Keycloak addon is deployed to the cluster it will need it's own certificate and DNS name that doesn't match a wildcard dns entry (Ex: If you try to host grafana.bigbang.dev and keycloak.bigbang.dev using the same *.bigbang.dev HTTPS certificate, you'll run into routing issues. Where as keycloak.bigbang.dev and grafana.admin.bigbang.dev would work)
+* A Gateway CR will reference a HTTPS Certificate stored in a Kubernetes secret of type tls. 
+* Some environments will mandate 1 HTTPS Certificate per DNS name. In this scenario you'll need 1 gateway CR and secret of type tls for each virtual service.
+* If the Keycloak addon is deployed to the cluster it will need it's own certificate and DNS name that doesn't match a wildcard dns entry (Example: If you try to host grafana.bigbang.dev and keycloak.bigbang.dev using the same *.bigbang.dev HTTPS certificate, you'll run into routing issues. Where as keycloak.bigbang.dev and grafana.admin.bigbang.dev will work.)
 * In order for Ingress to work correctly DNS names must match in 4 places:
-1. CSP Ingress LB
-2. HTTPS Certificate in a Kubernetes Secret of type TLS
-3. Virtual Service CR
-4. Gateway CR
+  1. DNS needs to point to the correct CSP Ingress LB
+  2. DNS name associated with HTTPS Certificate in a Kubernetes Secret of type TLS
+  3. DNS name referenced in Virtual Service CR
+  4. DNS name referenced in Gateway CR
 
 
 #### 5. Network Encryption of Ingress Traffic
-* Traffic from the user through the CSP LB to the Istio Ingress Gateway pods is encrypted in transit in 100% of cases per default settings.
-* Usually HTTPS is terminated at the Istio Ingress Gateway, using an Ingress Certificate 
-* One exception is if the Keycloak addon is enabled then the Keycloak DNS name gets configured for TLS Passthrough, and the Keycloak pod terminates the HTTPS connection.
+* Traffic from the user through a CSP Layer 4/TCP LB to the Istio Ingress Gateway pods is encrypted in transit in 100% of cases per default settings.
+* Usually HTTPS is terminated at the Istio Ingress Gateway, using an HTTPS Certificate embedded in a Kubernetes secret of type tls.
+* One exception is if the Keycloak addon is enabled then the gateway CR is configured to have traffic destined for the Keycloak DNS name to leverage TLS Passthrough, and the Keycloak pod terminates the HTTPS connection.
 
 
 #### 6. Network Encryption of Node to Node Traffic
-* CNIs (Container Network Interfaces) create Inner Cluster Networks that allow pods and services to talk to each other and usually set up network routing rules that make it so external traffic can only initiate a connection by going through explicitly opened NodePorts.
+* CNIs (Container Network Interfaces) create Inner Cluster Networks that allow pods and services to talk to each other and usually set up network routing rules/filters that make it so external traffic can only initiate a connection to by going through explicitly opened NodePorts.
 * Different CNIs create an Inner Cluster Network in different ways. Some CNIs uses BGP. Others make use of VXLANs.
 * Some CNIs support encrypting 100% of the CNI traffic and others don't.
 
@@ -70,4 +70,4 @@
 * If the app isn't part of the service mesh (which as of BigBang 1.8.0 is the case for Grafana, Prometheus, and AlertManager) then traffic from the Istio Ingress Gateway to the destination pod won't be encrypted, unless the application provides it's own encryption like in the case of Keycloak and Twistlock.
 * Kubernetes Operators have their own built in HTTPS.
 * Kubernetes Control Plane Components have built in mTLS.
-* Vinella CoreDNS that ships with Kubernetes doesn't leverage encrypted DNS
+* CoreDNS that ships with Kubernetes doesn't leverage encrypted DNS.
