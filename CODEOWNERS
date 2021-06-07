@@ -59,10 +59,10 @@ chart/Chart.yaml                @matthew.kaiser @brian.rexrode @branden.cobb
 chart/values.yaml               @matthew.kaiser @brian.rexrode @branden.cobb
 chart/templates/argocd          @matthew.kaiser @brian.rexrode @branden.cobb
 
-# ^[Cluster Auditor]
-# chart/Chart.yaml
-# chart/values.yaml
-# chart/templates/clusterauditor
+^[Cluster Auditor]              @kavitha @jcarnes @toladipupo
+chart/Chart.yaml                @kavitha @jcarnes @toladipupo
+chart/values.yaml               @kavitha @jcarnes @toladipupo
+chart/templates/clusterauditor  @kavitha @jcarnes @toladipupo
 
 # ^[Gatekeeper]
 chart/Chart.yaml                @echuang @egoode @toladipupo
