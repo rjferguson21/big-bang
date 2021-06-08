@@ -374,7 +374,10 @@ addons:
   velero:
     enabled: false
     values:
+      # leaving .Values.installCRDs and .Values.plugins in for compatibility with 2.14.8-bb.0 (deprecated in 2.21.1-bb.0)
       installCRDs: true
+      plugins:
+      - aws
 
       # Set provider name and backup storage location bucket name
       configuration:
@@ -408,7 +411,8 @@ addons:
           name: velero
 
       # This job upgrades the CRDs.
-      upgradeCRDs: false
+      # upgradeCRDs: false
+
       # Whether or not to clean up CustomResourceDefintions when deleting a release.
       # Cleaning up CRDs will delete the BackupStorageLocation and VolumeSnapshotLocation instances, which would have to be reconfigured.
       # Backup data in object storage will _not_ be deleted, however Backup instances in the Kubernetes API will.
