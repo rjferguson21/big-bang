@@ -374,11 +374,6 @@ addons:
   velero:
     enabled: false
     values:
-      # leaving .Values.installCRDs and .Values.plugins in for compatibility with 2.14.8-bb.0 (deprecated in 2.21.1-bb.0)
-      installCRDs: true
-      plugins:
-      - aws
-
       # Set provider name and backup storage location bucket name
       configuration:
         provider: aws
