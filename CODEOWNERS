@@ -16,7 +16,7 @@
 [Docs Owners]
 # Allow any one of the listed codeowners to approve merges to the documentation 
 # Does not allow the creator of the merge request to be the approver.
-/docs/                          @aaron.ruse @aaronbeger @barrywoodtetrate @branden.cobb @cmcgrath @daryndecker @david.allen @dyoung @echuang @egoode @evan.rush @iahmad @jasonkrause @jay-rob @jcookehg @jdale @joshwolf @kavitha @kenna81 @kevin.wilder @kottoson @LynnStill @matthew.kaiser @mdutton @micah.nagel @michaelmartin @michaelmcleroy @michaelmcleroy @msbrown47 @nick.kammerdiener @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @shouseba @thomas.burton @toladipupo @tsiddique1 @visuth.dy
+/docs/                          @aaron.ruse @aaronbeger @barrywoodtetrate @brandencobb @cmcgrath @daryndecker @david.allen @dyoung @echuang @egoode @evan.rush @iahmad @jasonkrause @jay-rob @jcookehg @jdale @joshwolf @kavitha @kenna81 @kevin.wilder @kottoson @LynnStill @matthew.kaiser @mdutton @micah.nagel @michaelmartin @michaelmcleroy @michaelmcleroy @msbrown47 @nick.kammerdiener @rkernick @runyontr @ryan.j.garcia @sean.deprefontaine @shouseba @thomas.burton @toladipupo @tsiddique1 @visuth.dy
 
 
 ################################################
@@ -28,8 +28,8 @@
 base/                           @michaelmcleroy @micah.nagel @ryan.j.garcia
 
 ^[CI Owners]
-.gitlab-ci/                     @toladipupo @branden.cobb
-tests/                          @toladipupo @branden.cobb
+.gitlab-ci/                     @toladipupo @brandencobb
+tests/                          @toladipupo @brandencobb
 
 ^[Hack Owners]
 scripts/                        @toladipupo @michaelmcleroy @egoode
@@ -55,9 +55,9 @@ chart/values.yaml               @blake.hearn @micah.nagel @jasonkrause
 chart/templates/anchore         @blake.hearn @micah.nagel @jasonkrause
 
 ^[ArgoCD]
-chart/Chart.yaml                @matthew.kaiser @brian.rexrode @branden.cobb
-chart/values.yaml               @matthew.kaiser @brian.rexrode @branden.cobb
-chart/templates/argocd          @matthew.kaiser @brian.rexrode @branden.cobb
+chart/Chart.yaml                @matthew.kaiser @brian.rexrode @brandencobb
+chart/values.yaml               @matthew.kaiser @brian.rexrode @brandencobb
+chart/templates/argocd          @matthew.kaiser @brian.rexrode @brandencobb
 
 ^[Cluster Auditor]              @kavitha @jcarnes @toladipupo
 chart/Chart.yaml                @kavitha @jcarnes @toladipupo
@@ -85,9 +85,9 @@ chart/values.yaml               @thomas.burton @ryan.j.garcia @runyontr @joshwol
 chart/templates/twistlock       @thomas.burton @ryan.j.garcia @runyontr @joshwolf
 
 ^[Sonarqube]
-chart/Chart.yaml                @kevin.wilder @lynnstill @branden.cobb
-chart/values.yaml               @kevin.wilder @lynnstill @branden.cobb
-chart/templates/sonarqube       @kevin.wilder @lynnstill @branden.cobb
+chart/Chart.yaml                @kevin.wilder @lynnstill @brandencobb
+chart/values.yaml               @kevin.wilder @lynnstill @brandencobb
+chart/templates/sonarqube       @kevin.wilder @lynnstill @brandencobb
 
 ^[Gitlab and Gitlab Runners]
 chart/Chart.yaml                @lynnstill @ryan.j.garcia @kevin.wilder
@@ -100,14 +100,14 @@ chart/values.yaml               @megamind @kevin.wilder @michaelmcleroy
 chart/templates/keycloak        @megamind @kevin.wilder @michaelmcleroy
 
 ^[Mattermost (and operator)]
-chart/Chart.yaml                @micah.nagel @branden.cobb @jasonkrause
-chart/values.yaml               @micah.nagel @branden.cobb @jasonkrause
-chart/templates/mattermost      @micah.nagel @branden.cobb @jasonkrause
+chart/Chart.yaml                @micah.nagel @brandencobb @jasonkrause
+chart/values.yaml               @micah.nagel @brandencobb @jasonkrause
+chart/templates/mattermost      @micah.nagel @brandencobb @jasonkrause
 
 ^[Minio (and operator)]
-chart/Chart.yaml                @LynnStill @kevin.wilder @branden.cobb
-chart/values.yaml               @LynnStill @kevin.wilder @branden.cobb
-chart/templates/minio           @LynnStill @kevin.wilder @branden.cobb
+chart/Chart.yaml                @LynnStill @kevin.wilder @brandencobb
+chart/values.yaml               @LynnStill @kevin.wilder @brandencobb
+chart/templates/minio           @LynnStill @kevin.wilder @brandencobb
 
 ^[Velero]
 chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
