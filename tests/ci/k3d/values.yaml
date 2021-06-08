@@ -372,6 +372,21 @@ addons:
                 runAsGroup: 1001
                 fsGroup: 1001
 
+  nexus:
+    enabled: false
+    values:
+      persistence:
+        storageSize: 3Gi
+      nexus:
+      # https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-JVMDirectMemory
+        env:
+          - name: install4jAddVmParams
+            value: "-Xms500M -Xmx500M -XX:MaxDirectMemorySize=500M -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1500Mi
+
   velero:
     enabled: false
     values:
