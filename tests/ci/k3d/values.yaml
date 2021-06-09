@@ -405,8 +405,8 @@ addons:
         server:
           name: velero
 
-      # This job upgrades the CRDs.
-      # upgradeCRDs: false
+      # This job upgrades the CRDs (disable this to prevent the CI upgrade job from failing).
+      upgradeCRDs: false
 
       # Whether or not to clean up CustomResourceDefintions when deleting a release.
       # Cleaning up CRDs will delete the BackupStorageLocation and VolumeSnapshotLocation instances, which would have to be reconfigured.
