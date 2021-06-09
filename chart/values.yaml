@@ -912,7 +912,15 @@ addons:
     flux: {}
 
     # -- Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/chart/values.yaml
-    values: {}
+    values: 
+      # Requires at least one plugin provider image. Current supported images: registry1.dso.mil/ironbank/opensource/velero/velero-plugin-for-aws:v1.2.0, registry1.dso.mil/ironbank/opensource/velero/velero-plugin-for-microsoft-azure:v1.2.0
+      initContainers: []
+        # - name: velero-plugin-for-aws
+        #   image: registry1.dso.mil/ironbank/opensource/velero/velero-plugin-for-aws:v1.2.0
+        #   imagePullPolicy: IfNotPresent
+        #   volumeMounts:
+        #     - mountPath: /target
+        #       name: plugins
 
     # -- Post Renderers.  See docs/postrenders.md
     postRenderers: []
