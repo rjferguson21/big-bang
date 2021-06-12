@@ -15,25 +15,54 @@ There are 2 issues that make it difficult to figure out BigBang's license requir
   * There are free OS options like CentOS / Ubuntu and tools like [openscap](https://www.open-scap.org/), which has ansible and bash scripts to automate STIG/CIS benchmark compliance for OS security to help automate DIY hardening.
 2. Kubernetes Distributions
   * RH OpenShift, VMware TKG, D2IQ Konvoy each require a license, that comes with support and additional features, they each offer 30-90 day trial licenses
-  * There are free options like kubeadm, k3s, k0s, and RKE2
+  * There are free options like kubeadm, k0s, k3s, and RKE2
   * RKE2 is a free option that can be licensed for Vendor Support
 3. BigBang's Core Applications:
   * Many of the core applications are free open source software
   * Twistlock is a core component that requires a license
   * ElasticSearch is a core component that requires a license to unlock additional features, that could be considered required in some cases (more on this nuance below.)
+  * Although BigBang is free support can be purchased (more on that below)
 4. BigBang's AddOn Applications:
   * Also include a mix of free, freemium, and licensed products.
 
 
 ## Who purchases the licenses?
-Licensing of products deployable by BigBang are not covered by the BigBang team. As a general rule of thumb the acquisition of licenses are the responsibility of the end-using organization, and the product vendors should be reached out for support. (Exceptions to the rule involve PartyBus and Tier 1 Customers.) 
-DRAFT_NOTE: (Ask a member of P1 Customer Success to validate this during a peer review and then get rid of this note.)
+Licensing of products deployable by BigBang are not covered by the BigBang team. As a general rule of thumb the acquisition of licenses are the responsibility of the end-using organization, and product vendors should be contacted for support of their respective products. (PartyBus is an example of an exception to the rule of thumb.)
 
 
 ## Who decides if a licenced feature in a freemium application is a hard requirement?
 * The Consumer of BigBang, their security team, and AO (Authorizing official) need to decide if licensed features constitute a hard requirement or if free tier functionality can be considered at lower impact levels or unique use cases.
-* In most cases licenses will be required due to Security Controls only being available in the fully licensed version; however, users may be able to hold off on licensed versions for proof of concepts and while integration of applications are figured out before being used in a production capacity.
-* Even if there isn't a hard requirement for a license, consumers of BigBang may still want to consider purchasing licenses or support contracts. Big Bang does not provide support for any the components themselves, just the initial deployment and integration of the components. This means that your operations staff are responsible for day-to-day maintenance of all of the underlying software products, as well as any OS and Kubernetes Distribution updates that need to be applied. Licensing and Vendor support contracts can help with this.
+* In most cases licenses will be required due to Security Controls only being available in the fully licensed version; however, users may be able to hold off on licensed versions for non-ATO'd proof of concept deployments or risk acceptance by an AO for unique scenarios.
+* Even if there isn't a hard requirement for a license (like in the case of a Kubernetes Cluster), consumers of BigBang may still want to consider purchasing licenses or support contracts.
+
+
+## Does BigBang have a paid support option?
+* [Yes, Platform One offers paid support for BigBang](https://p1.dso.mil/#/contact-us)
+* Support Services are provided by the BigBang Customer Integration Team.
+* Disclaimer: The following is general rule of thumb for what to expect in terms of support, in some cases additional arrangements can be made with P1's Customer Success Team to cover items that are usually out of scope.
+
+
+### What's out of scope of BigBang's Paid Support?
+* The Operations staff of the consuming organization is responsible for:
+  * Installation of OS and Kubernetes Distribution
+  * Day 2 operations (maintenance, backup, and updates) of the OS and Kubernetes Distribution
+  * Full integration of Deployed Applications (Ex: Gitlab CICD Pipeline)
+* Vendor licensing/support contracts should be considered to help support the Ops team, especially if airgap or high side deployments are planned.
+* Adding Vendor Products to IronBank, Vendors must add their products to IronBank. [(More Information can be obtained via IronBank Onboarding/AMA Working Sessions)](https://p1.dso.mil/#/products/iron-bank/)
+
+
+### What does BigBang Paid Support Look like? / What's in scope?
+* The goal of the BigBang Customer Integration Team is to help the Ops team of the consuming organization become self sufficient with the BigBang Platform.
+* Tech fit discussions
+* A 2 week Discovery Sprint helps organizations understand how BigBang can help them with their goals and what gaps and limitations might exist that will need additional planning.
+* A 3-5 day BigBang Engineering Cohort is open to members of the Ops team. This contains onboarding guide lead sessions for Ops Engineers to be presented with overviews of technologies and methodologies used, a place to get lots of questions answered at once, and get a deep dive walk through of the initial configuration and deployment of BigBang onto a Kubernetes Cluster, with troubleshooting scenarios, and some initial configuration of applications [through a series of hands on keyboard lab scenarios.](https://repo1.dso.mil/platform-one/onboarding/big-bang/engineering-cohort)
+* A BigBang Customer Integration Liaison (Primary point of contact for support) is assigned who can:
+  * Answer general questions and offer Consultative support and documentation to help customers make informed decisions about OS, Kubernetes Distributions, and Applications Choices.
+  * Help Request and discuss the prioritization of open source containers making their way through IronBank.
+  * Help Request and discuss the prioritization of BigBang features, bug fixes, automation, and documentation improvements.
+  * Follow up on customer submitted issues.
+  * Share tips on deployments to higher Impact Levels that can't be stored in the public repo.
+  * Support OS and Kubernetes Distribution integration issues that result from things like missing OS/Kubernetes Distribution prerequisites and hardening.
 
 
 ## Table to help Elaborate on Nuances of Application Licensing:
