@@ -33,6 +33,5 @@ initContainers:
         name: plugins
 {{- end }}
 {{- end }}
-{{- end }}
 
 {{- end -}}
