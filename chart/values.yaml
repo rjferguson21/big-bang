@@ -205,7 +205,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "0.2.0-bb.2"
+    tag: "0.2.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -226,7 +226,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.3.0-bb.2"
+    tag: "3.3.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux: {}
@@ -247,7 +247,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.13-bb.0"
+    tag: "0.1.14-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -318,7 +318,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "11.0.0-bb.22"
+    tag: "11.0.0-bb.23"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux: {}
@@ -347,10 +347,13 @@ monitoring:
       # -- Grafana OIDC client secret
       client_secret: ""
 
-      # -- Grafana OIDC client scopes, comma separated
+      # -- Grafana OIDC client scopes, comma separated, see https://grafana.com/docs/grafana/latest/auth/generic-oauth/
       scopes: ""
+
       allow_sign_up: "true"
+
       role_attribute_path: "Viewer"
+      # -- Other options available, see package Documentation.
 
   # -- Values to passthrough to the monitoring chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
   values: {}
@@ -368,7 +371,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.0.4-bb.0"
+    tag: "0.0.6-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
@@ -536,7 +539,7 @@ addons:
     objectStorage:
       # -- Type of object storage to use for Gitlab, setting to s3 will assume an external, pre-existing object storage is to be used.
       # Entering connection info will enable this option and will auto-create any required secrets
-      type: ""         # supported types are "s3" or "minio"
+      type: "" # supported types are "s3" or "minio"
 
       # -- S3 compatible endpoint to use for connection information.
       # examples: "https://s3.amazonaws.com" "https://s3.us-gov-west-1.amazonaws.com" "http://minio.minio.svc.cluster.local:9000"
@@ -582,7 +585,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "29.1.0-bb.0"
+      tag: "29.1.0-bb.4"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -711,7 +714,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.12.13-bb.0"
+      tag: "1.12.15-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -810,7 +813,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.1.6-bb.3"
+      tag: "0.1.6-bb.4"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
@@ -931,9 +934,10 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.0-bb.0"
+      tag: "11.0.0-bb.4"
 
     # -- Certificate/Key pair to use as the certificate for exposing Keycloak
+    # Setting the ingress cert here will automatically create the volume and volumemounts in the Keycloak Package chart
     ingress:
       key: ""
       cert: ""
