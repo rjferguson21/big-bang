@@ -5,7 +5,7 @@ While BigBang's itself is open source and free to use, the same cannot be said o
 ## What Licenses do I need for BigBang?
 There are 2 issues that make it difficult to figure out BigBang's license requirements:
 1. The modular (and in some cases swappable) componentized nature of BigBang means choices affect license requirements. OS, Kubernetes Distribution, and Application decisions need to be made before license requirements can be sorted out.
-2. Freemium applications often require a license to unlock features like HA (High Availability), Advanced SSO functionality with authn, authz, and audit logging of federated users. Advanced compliance controls like FIPS 140-2 mode, compliance reporting, or audit logs.
+2. Freemium applications often require a license to unlock features like HA (High Availability), advanced SSO functionality with authn, authz, and audit logging of federated users, or advanced compliance controls like FIPS 140-2 mode, compliance reporting, or audit logs.
 
 
 ## What components could have licenses?
