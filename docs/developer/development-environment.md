@@ -32,16 +32,16 @@ Create an Ubuntu EC2 instance using the AWS console with the following attribute
 - User Data (as Text):
 
 ```shell
-    MIME-Version: 1.0
-    Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
     
-    --==MYBOUNDARY==
-    Content-Type: text/x-shellscript; charset="us-ascii"
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
 
-    #!/bin/bash
-    # Set the vm.max_map_count to 262144. 
-    # Required for Elastic to run correctly without OOM errors.
-    sysctl -w vm.max_map_count=262144
+#!/bin/bash
+# Set the vm.max_map_count to 262144. 
+# Required for Elastic to run correctly without OOM errors.
+sysctl -w vm.max_map_count=262144
 ```
 
 - 50 Gigs of disk space
