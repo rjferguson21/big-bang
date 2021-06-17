@@ -1,5 +1,5 @@
 # BigBang Licensing Expectations
-While BigBang's itself is open source and free to use, the same cannot be said of it's components. The licensing requirements of components requires a nuanced explanation. The intent of this document is to be a self service resource to help consumers of BigBang make an informed decision about what licenses they may need to look into to successfully deploy an ATO'able DevSecOps Platform using BigBang.
+While BigBang is open source and free to use, the same cannot be said of its components. The licensing requirements of components requires a nuanced explanation. The intent of this document is to be a self service resource to help consumers of BigBang make an informed decision regarding licenses they may need to successfully deploy an ATO'able DevSecOps Platform using BigBang.
 
 
 ## What Licenses do I need for BigBang?
@@ -10,7 +10,7 @@ There are 2 issues that make it difficult to figure out BigBang's license requir
 
 ## What components could have licenses?
 1. OS / CSP(Cloud Service Providers) VM Images
-   * RHEL requires a license and comes with Vendor Support
+   * RHEL requires a subscription and comes with vendor support
    * CSPs often offer licensed VM Images at additional per hour cost, these add features like offloading STIG/CIS OS hardening
    * There are free OS options like CentOS / Ubuntu and tools like [openscap](https://www.open-scap.org/), which has ansible and bash scripts to automate STIG/CIS benchmark compliance for OS security to help automate DIY hardening of the OS.
 2. Kubernetes Distributions
@@ -21,13 +21,13 @@ There are 2 issues that make it difficult to figure out BigBang's license requir
    * Many of the core applications are free open source software
    * Twistlock is a core component that requires a license
    * ElasticSearch is a core component that requires a license to unlock additional features, that could be considered required in some cases (more on this nuance below.)
-   * Although BigBang is free support can be purchased (more on that below)
+   * Although BigBang is free, support can be purchased (more on that below)
 4. BigBang's AddOn Applications:
    * Also include a mix of free, freemium, and licensed products.
 
 
 ## Who purchases the licenses?
-Licensing of products deployable by BigBang are not covered by the BigBang team. As a general rule of thumb the acquisition of licenses are the responsibility of the end-using organization, and product vendors should be contacted for support of their respective products. (PartyBus is an example of an exception to the rule of thumb.)
+Licensing of products deployable by BigBang are not covered by the BigBang team. As a general rule of thumb the acquisition of licenses is the responsibility of the end-user's  organization, and product vendors should be contacted for support of their respective products. (PartyBus is an example of an exception to the rule of thumb.) 
 
 
 ## Who decides if a licenced feature in a freemium application is a hard requirement?
