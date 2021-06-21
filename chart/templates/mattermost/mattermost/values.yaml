@@ -23,6 +23,7 @@ sso:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
 global:
   imagePullSecrets:
