@@ -32,6 +32,7 @@ monitoring:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
 {{- if .Values.addons.argocd.sso.enabled }}
 sso:
