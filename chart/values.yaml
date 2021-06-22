@@ -177,7 +177,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.32.0-bb.1"
+    tag: "1.32.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -301,7 +301,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.15.8-bb.5"
+    tag: "0.15.14-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -800,7 +800,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.14.0-bb.1"
+      tag: "1.14.0-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
