@@ -6,7 +6,7 @@ What package changes are included with this merge request? The more detail here 
 
 **Links to the MRs that are included in the tag bump are required**.
 
-If the package is set up for releases, link the release associated with the tag here.
+If the package is set up for releases, also link the release associated with the tag here.
 
 ## Additional Details
 
