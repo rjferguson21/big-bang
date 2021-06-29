@@ -19,9 +19,8 @@ dex:
   imagePullSecrets:
     - name: private-registry
 
-redis-ha:
-  enabled: true
 redis-bb:
+  enabled: true
   auth:
     enabled: false
 
