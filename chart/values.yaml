@@ -322,7 +322,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "11.0.0-bb.24"
+    tag: "11.0.0-bb.25"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux: {}
@@ -396,7 +396,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.0"
+      tag: "3.6.8-bb.2"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -592,7 +592,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "29.1.0-bb.4"
+      tag: "29.1.0-bb.5"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -941,7 +941,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.0-bb.4"
+      tag: "11.0.1-bb.0"
 
     # -- Certificate/Key pair to use as the certificate for exposing Keycloak
     # Setting the ingress cert here will automatically create the volume and volumemounts in the Keycloak Package chart
