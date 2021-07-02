@@ -722,7 +722,6 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
       # tag: "1.13.0-bb.0"
-      tag: ""
       branch: "version-bump"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
