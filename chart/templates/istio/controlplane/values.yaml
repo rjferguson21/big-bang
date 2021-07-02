@@ -13,6 +13,44 @@ imagePullSecrets:
 
 openshift: {{ .Values.openshift }}
 
+{{- if .Values.istio.ingressGateways }}
+ingressGateways:
+  istio-ingressgateway:
+    enabled: false
+{{- end }}
+{{- range $name, $values := .Values.istio.ingressGateways }}
+  {{ $name | nindent 2 }}:
+    extraLabels:
+      app.kubernetes.io/name: istio-controlplane
+      app.kubernetes.io/component: "core"
+      {{- include "commonLabels" $ | nindent 6}}
+    k8s:
+      service:
+        type: {{ $values.type }}
+      serviceAnnotations:
+        {{ $values.serviceAnnotations | default (dict) | toYaml | nindent 8 }}
+{{- end }}
+
+{{- if .Values.istio.gateways }}
+gateways:
+  main: null
+{{- end }}
+{{- range $name, $values := .Values.istio.gateways }}
+  {{ $name | nindent 2 }}:
+    selector:
+      app: {{ $values.ingressGateway }}
+    servers:
+    - hosts:
+      {{ tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
+      port:
+        name: https
+        number: 8443
+        protocol: HTTPS
+      tls:
+        credentialName: {{ $name }}-cert
+        mode: {{ default "SIMPLE" $values.tls.mode }}
+{{- end }}
+
 {{- if .Values.addons.keycloak.enabled }}
 extraServers:
 - port:

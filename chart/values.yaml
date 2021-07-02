@@ -110,16 +110,56 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.8.4-bb.2"
+    tag: "1.8.4-bb.3"
+
+  # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
+  # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
+  # Besides some ports needed by Istio, only ports 80 and 443 are opened
+  ingressGateways:
+    public-ingressgateway:
+      type: "LoadBalancer" # or "NodePort"
+      serviceAnnotations: {}
+        # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        # service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    # private-ingressgateway:
+    #   type: "LoadBalancer" # or "NodePort"
+    #   serviceAnnotations: {}
+    # keycloak-ingressgateway:
+    #   type: "LoadBalancer" # or "NodePort"
+    #   serviceAnnotations: {}
+
+  gateways:
+    public:
+      ingressGateway: "public-ingressgateway"
+      hosts:
+      - "*.{{ .Values.hostname }}"
+      tls:
+        key: ""
+        cert: ""
+    # private:
+    #   ingressGateway: "private-ingressgateway"
+    #   hosts:
+    #   - alertmanager.{{ .Values.hostname }}
+    #   - anchore.{{ .Values.hostname }}
+    #   - argocd.{{ .Values.hostname }}
+    #   - grafana.{{ .Values.hostname }}
+    #   - kiali.{{ .Values.hostname }}
+    #   - kibana.{{ .Values.hostname }}
+    #   - prometheus.{{ .Values.hostname }}
+    #   - tracing.{{ .Values.hostname }}
+    #   - twistlock.{{ .Values.hostname }}
+    #   tls:
+    #     key: ""
+    #     cert: ""
+    # keycloak:
+    #   ingressGateway: "keycloak-ingressgateway"
+    #   hosts:
+    #   - "keycloak.{{ .Values.hostname }}"
+    #   tls:
+    #     mode: "PASSTHROUGH"
 
   # -- Flux reconciliation overrides specifically for the Istio Package
   flux: {}
-
-  # -- Certificate/Key pair to use as the default certificate for exposing BigBang created applications.
-  # If nothing is provided, applications will expect a valid tls secret to exist in the `istio-system` namespace called `wildcard-cert`.
-  ingress:
-    key: ""
-    cert: ""
 
   # -- Values to passthrough to the istio-controlplane chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
   values: {}
@@ -942,12 +982,6 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
       tag: "11.0.0-bb.4"
-
-    # -- Certificate/Key pair to use as the certificate for exposing Keycloak
-    # Setting the ingress cert here will automatically create the volume and volumemounts in the Keycloak Package chart
-    ingress:
-      key: ""
-      cert: ""
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
