@@ -18,6 +18,7 @@ ingressGateways:
   istio-ingressgateway:
     enabled: false
 {{- end }}
+
 {{- range $name, $values := .Values.istio.ingressGateways }}
   {{ $name | nindent 2 }}:
     extraLabels:
@@ -27,6 +28,26 @@ ingressGateways:
     k8s:
       service:
         type: {{ $values.type }}
+        {{- if $values.nodePortBase }}
+        ports: # Pulled from Istio gateway defaults (https://github.com/istio/istio/blob/master/manifests/charts/gateways/istio-ingress/values.yaml)
+        # Ports default to "protocol: TCP" and "targetPort = port"
+        # AWS ELB will by default perform health checks on the first port on this list. https://github.com/istio/istio/issues/12503
+        - port: 15021
+          name: status-port
+          nodePort: {{ add $values.nodePortBase 0 }}
+        - port: 80
+          targetPort: 8080
+          name: http2
+          nodePort: {{ add $values.nodePortBase 1 }}
+        - port: 443
+          targetPort: 8443
+          name: https
+          nodePort: {{ add $values.nodePortBase 2 }}
+        # SNI Routing port
+        - port: 15443
+          name: tls
+          nodePort: {{ add $values.nodePortBase 3 }}
+        {{- end }}
       serviceAnnotations:
         {{ $values.serviceAnnotations | default (dict) | toYaml | nindent 8 }}
 {{- end }}
