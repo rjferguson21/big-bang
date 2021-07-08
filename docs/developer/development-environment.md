@@ -4,7 +4,7 @@ BigBang developers use [k3d](https://k3d.io/), a lightweight wrapper to run [k3s
 
 It is not recommend to run k3d with BigBang on your local computer. BigBang can be quite resource-intensive and it requires a huge download bandwidth for the images. It is best to use a remote k3d cluster running on an AWS EC2 instance. If you do insist on running k3d locally you should disable certain packages before deploying. You can do this in the values.yaml file by setting the package deploy to false. One of the packages that is most resource-intensive is the logging package. And you should create a local image registry cache to minimize the amount of image downloading. A script that shows how to create a local image cache is in the [BigBang Quick Start](https://repo1.dso.mil/platform-one/quick-start/big-bang/-/blob/master/init.sh)
 
-There are 2 methods to create a remote k3d cluster. Manually or with IaC/CaC code. For new bigbang developers the manual way is recommended so that you understand how it works. The manual steps are in this page. Here is the automated [IaC/CaC](https://repo1.dso.mil/platform-one/big-bang/terraform-modules/k3d-dev-env/-/tree/dev) code and instructions. This code has not been maintained and might not work. It would be a good idea to get a live demonstration by someone who already knows how to do it. You can also watch the [first half of this T3](https://confluence.il2.dso.mil/download/attachments/10161790/T3%20Eric%20and%20Zack.mp4) showing a Big Bang deployment or start this T3 around 17:45 to get a better handle on how BigBang works. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
+This page contains the manual steps to create your k3d dev environment. Various persons have automated parts of these steps with scripts and terraform but we recommened that you do it manually so that you understand how it works. Automation is left to each person. It might be helpful to get a live demonstration by someone who already knows how to do it until a good video tutorial is created. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
 
 ## Prerequisites
 
@@ -17,7 +17,9 @@ There are 2 methods to create a remote k3d cluster. Manually or with IaC/CaC cod
 ### Utilities installed on local workstation
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
-- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release)
+- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release) 
+
+**Note:** there is an issue with flux v0.15.0 causing helm to fail with duplicate key errors. Brew/yum/apt-get will probably install that version or newer. Instead, please use the [install flux script](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/scripts/install_flux.sh) or manually install an older version such as v0.14.2 from [fluxcd's git repo](https://github.com/fluxcd/flux2/releases/tag/v0.14.2).
 
 ## Manual Creation of a Development Environment
 
@@ -180,6 +182,20 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
+**STEP 4:**:  
+Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang. 
+```
+# git clone the bigbang repo somewhere on your workstation
+git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
+# run the script to install flux in your cluster using your registry1.dso.mil image pull credentials
+cd ./bigbang
+./scripts/install_flux.sh -u your-user-name -p your-pull-secret
+```
+Or, alternatively install flux from the internet upstream
+```
+flux install
+```
+
 ## Addendum
 
 ### More secure method with sshuttle
@@ -202,7 +218,7 @@ k3d cluster create \
     --volume /etc/machine-id:/etc/machine-id \
     --k3s-server-arg "--disable=traefik" \
     --k3s-server-arg "--disable=metrics-server" \
-    --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
+    --k3s-server-arg "--tls-san=$EC2_PRIVATE_IP" \
     --port 80:80@loadbalancer \
     --port 443:443@loadbalancer \
     --api-port 6443
