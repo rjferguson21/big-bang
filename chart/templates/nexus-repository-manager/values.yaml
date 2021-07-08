@@ -7,12 +7,19 @@ domain: {{ .Values.hostname }}
 hostname: nexus
 istio:
   enabled: {{ .Values.istio.enabled }}
+  nexus:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.nexus.ingress.gateway }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := (default "public" .Values.addons.nexus.ingress.gateway) }}
+    app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
+    istio: null
 
 nexus:
   imagePullSecrets:

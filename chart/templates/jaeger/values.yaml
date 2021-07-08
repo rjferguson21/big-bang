@@ -9,8 +9,9 @@ hostname: {{ .Values.hostname }}
 istio:
   enabled: {{ .Values.istio.enabled }}
   jaeger:
-    hosts:
-    - tracing{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
+    gateways:
+    - istio-system/{{ default "public" .Values.jaeger.ingress.gateway }}
+
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 elasticsearch:
@@ -25,5 +26,9 @@ jaeger:
         protect: keycloak
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
-  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  ingressLabels:
+    {{- $gateway := (default "public" .Values.jaeger.ingress.gateway) }}
+    app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
+    istio: null
 {{- end -}}

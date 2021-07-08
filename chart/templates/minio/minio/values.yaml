@@ -7,6 +7,9 @@ hostname: {{ .Values.hostname }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  minio-console:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.minio.ingress.gateway }}
 
 minioRootCreds: minio-root-creds-secret
 
@@ -15,6 +18,10 @@ monitoring:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := (default "public" .Values.addons.minio.ingress.gateway) }}
+    app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
+    istio: null
 
 podAnnotations:
   sidecar.istio.io/inject: "true"

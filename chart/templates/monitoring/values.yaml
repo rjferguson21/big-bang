@@ -10,6 +10,10 @@ flux:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := (default "public" .Values.monitoring.ingress.gateway) }}
+    app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
+    istio: null
 
 istio:
   enabled: {{ .Values.istio.enabled }}
@@ -20,8 +24,8 @@ istio:
     port: 8080
     namespace: authservice
     {{- end }}
-    hosts:
-    - prometheus{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
+    gateways:
+    - istio-system/{{ default "public" .Values.monitoring.ingress.gateway }}
   alertmanager:
     enabled: true
     {{- if .Values.monitoring.sso.enabled }}
@@ -29,12 +33,12 @@ istio:
     port: 8080
     namespace: authservice
     {{- end }}
-    hosts:
-    - alertmanager{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
+    gateways:
+    - istio-system/{{ default "public" .Values.monitoring.ingress.gateway }}
   grafana:
     enabled: true
-    hosts:
-    - grafana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}
+    gateways:
+    - istio-system/{{ default "public" .Values.monitoring.ingress.gateway }}
 
 global:
   imagePullSecrets:
@@ -51,7 +55,7 @@ grafana:
   grafana.ini:
     {{- if .Values.istio.enabled }}
     server:
-      root_url: https://grafana{{ if .Values.addons.keycloak.enabled }}.admin{{ end }}.{{ .Values.hostname }}/
+      root_url: https://grafana.{{ .Values.hostname }}/
     {{- end }}
 
     auth:

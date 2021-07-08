@@ -14,8 +14,16 @@ istio:
   enabled: {{ .Values.istio.enabled }}
   keycloak:
     enabled: true
-    hosts:
-      - keycloak.{{ .Values.hostname }}
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.keycloak.ingress.gateway }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  ingressLabels:
+    {{- $gateway := (default "public" .Values.addons.keycloak.ingress.gateway) }}
+    app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
+    istio: null
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}

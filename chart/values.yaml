@@ -194,6 +194,10 @@ jaeger:
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux: {}
 
+  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  ingress:
+    gateway: ""
+
   sso:
     # -- Toggle SSO for Jaeger on and off
     enabled: false
@@ -220,6 +224,10 @@ kiali:
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
+
+  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  ingress:
+    gateway: ""
 
   sso:
     # -- Toggle SSO for Kiali on and off
@@ -296,6 +304,10 @@ logging:
   flux:
     timeout: 20m
 
+  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  ingress:
+    gateway: ""
+
   sso:
     # -- Toggle OIDC SSO for Kibana/Elasticsearch on and off.
     # Enabling this option will auto-create any required secrets.
@@ -366,6 +378,10 @@ monitoring:
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux: {}
 
+  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  ingress:
+    gateway: ""
+
   sso:
     # -- Toggle SSO for monitoring components on and off
     enabled: false
@@ -419,6 +435,10 @@ twistlock:
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
 
+  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  ingress:
+    gateway: ""
+
   # -- Values to passthrough to the twistlock chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
   values: {}
 
@@ -439,6 +459,10 @@ addons:
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     sso:
       # -- Toggle SSO for ArgoCD on and off
@@ -520,6 +544,10 @@ addons:
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
 
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
+
     # -- Default access key to use for minio.
     accesskey: ""
 
@@ -547,6 +575,10 @@ addons:
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     sso:
       # -- Toggle OIDC SSO for Gitlab on and off.
@@ -636,6 +668,10 @@ addons:
     # -- Base64 encoded license file.
     license_key: ""
 
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
+
     sso:
       # -- Toggle SAML SSO for NXRM.
       # -- handles SAML SSO, a Client must be configured in Keycloak or IdP
@@ -687,6 +723,10 @@ addons:
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     sso:
       # -- Toggle SAML SSO for SonarQube.
@@ -779,6 +819,10 @@ addons:
       # For formatting examples see https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/-/blob/main/docs/CHART.md#enabling-enterprise-services
       licenseYaml: |
         FULL LICENSE
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     sso:
       # -- Toggle OIDC SSO for Anchore on and off.
@@ -873,6 +917,10 @@ addons:
       # This should be the entire contents of the license file from Mattermost (should be one line), example below
       # license: "eyJpZCI6InIxM205bjR3eTdkYjludG95Z3RiOD---REST---IS---HIDDEN
       license: ""
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     sso:
       # -- Toggle OIDC SSO for Mattermost on and off.
@@ -1004,6 +1052,10 @@ addons:
 
     # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
     flux: {}
+
+    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    ingress:
+      gateway: ""
 
     # -- Values to passthrough to the keycloak chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
     values: {}
