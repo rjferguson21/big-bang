@@ -64,7 +64,15 @@ monitoring:
             memory: 200Mi
           limits: {}
     prometheusOperator:
+      # https://github.com/helm/charts/issues/19928
+      # https://github.com/kubernetes/kubernetes/issues/85681
+      # https://github.com/prometheus-operator/prometheus-operator/issues/3473
+      # https://github.com/prometheus-operator/prometheus-operator/pull/3574
       admissionWebhooks:
+        enabled: false
+        patch:
+          enabled: false
+      tls:
         enabled: false
       resources:
         requests:
