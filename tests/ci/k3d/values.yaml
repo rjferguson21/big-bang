@@ -64,6 +64,8 @@ monitoring:
             memory: 200Mi
           limits: {}
     prometheusOperator:
+      admissionWebhooks:
+        enabled: false
       resources:
         requests:
           cpu: 250m
