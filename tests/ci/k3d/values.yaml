@@ -68,6 +68,7 @@ monitoring:
       # https://github.com/kubernetes/kubernetes/issues/85681
       # https://github.com/prometheus-operator/prometheus-operator/issues/3473
       # https://github.com/prometheus-operator/prometheus-operator/pull/3574
+      enabled: false
       admissionWebhooks:
         enabled: false
         patch:
