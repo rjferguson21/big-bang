@@ -38,10 +38,10 @@ hack/                           @toladipupo @michaelmcleroy @egoode
 charter/                        @gabe.scarberry @joshwolf @megamind @micah.nagel @michaelmcleroy @phillip.record @runyontr @ryan.j.garcia 
 
 ^[Istio and Authservice]
-chart/Chart.yaml                @kenna81 @kavitha @cmcgrath @barrywoodtetrate
-chart/values.yaml               @kenna81 @kavitha @cmcgrath @barrywoodtetrate
-chart/templates/authservice     @kenna81 @kavitha @cmcgrath 
-chart/templates/istio           @kenna81 @kavitha @cmcgrath @barrywoodtetrate
+chart/Chart.yaml                @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia
+chart/values.yaml               @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia
+chart/templates/authservice     @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia 
+chart/templates/istio           @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia
 
 # ^[HAProxy]
 # chart/Chart.yaml              @blloyd @runyontr @ryan.j.garcia
@@ -63,10 +63,25 @@ chart/Chart.yaml                @echuang @egoode @toladipupo @michaelmcleroy
 chart/values.yaml               @echuang @egoode @toladipupo @michaelmcleroy
 chart/templates/clusterauditor  @echuang @egoode @toladipupo @michaelmcleroy
 
+^[eck-operator]
+chart/Chart.yaml                @kavitha @ryan.j.garcia @evan.rush
+chart/values.yaml               @kavitha @ryan.j.garcia @evan.rush
+chart/templates/eck-operator    @kavitha @ryan.j.garcia @evan.rush
+
+^[fluentbit]
+chart/Chart.yaml                @kavitha @ryan.j.garcia @iahmad
+chart/values.yaml               @kavitha @ryan.j.garcia @iahmad
+chart/templates/fluentbit       @kavitha @ryan.j.garcia @iahmad
+
 # ^[Gatekeeper]
 chart/Chart.yaml                @echuang @egoode @toladipupo @michaelmcleroy
 chart/values.yaml               @echuang @egoode @toladipupo @michaelmcleroy   
 chart/templates/gatekeeper      @echuang @egoode @toladipupo @michaelmcleroy
+
+# ^[Jaeger]
+chart/Chart.yaml                @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
+chart/values.yaml               @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia  
+chart/templates/Jaegar          @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
 
 ^[Logging]
 chart/Chart.yaml                @kavitha @ryan.j.garcia @evan.rush
@@ -98,6 +113,11 @@ chart/Chart.yaml                @megamind @kevin.wilder @michaelmcleroy
 chart/values.yaml               @megamind @kevin.wilder @michaelmcleroy
 chart/templates/keycloak        @megamind @kevin.wilder @michaelmcleroy
 
+^[kiali]
+chart/Chart.yaml                @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
+chart/values.yaml               @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
+chart/templates/keycloak        @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
+
 ^[Mattermost (and operator)]
 chart/Chart.yaml                @micah.nagel @brandencobb @jasonkrause
 chart/values.yaml               @micah.nagel @brandencobb @jasonkrause
@@ -108,7 +128,7 @@ chart/Chart.yaml                @LynnStill @kevin.wilder @brandencobb
 chart/values.yaml               @LynnStill @kevin.wilder @brandencobb
 chart/templates/minio           @LynnStill @kevin.wilder @brandencobb
 
-^[Velero]
-chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
-chart/values.yaml               @tunde @adam.toy @micah.nagel @jcarnes
-chart/templates/velero          @tunde @adam.toy @micah.nagel @jcarnes
+#^[Velero]
+#chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
+#chart/values.yaml               @tunde @adam.toy @micah.nagel @jcarnes
+#chart/templates/velero          @tunde @adam.toy @micah.nagel @jcarnes
