@@ -1024,6 +1024,9 @@ addons:
   #
   keycloak:
     # -- Toggle deployment of Keycloak.
+    # if you enable Keycloak you should uncomment these istio configurations above
+      # istio.ingressGateways.keycloak-ingressgateway
+      # istio.gateways.keycloak
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
@@ -1055,7 +1058,12 @@ addons:
 
     # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
-      gateway: ""
+      # the istio gateway for keycloak must have tls.mode: PASSTHROUGH
+      gateway: "keycloak"
+      # -- Certificate/Key pair to use as the certificate for exposing Keycloak
+      # Setting the ingress cert here will automatically create the volume and volumemounts in the Keycloak Package chart
+      key: ""
+      cert: ""
 
     # -- Values to passthrough to the keycloak chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
     values: {}
