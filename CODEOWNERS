@@ -68,7 +68,7 @@ chart/Chart.yaml                @echuang @egoode @toladipupo @michaelmcleroy
 chart/values.yaml               @echuang @egoode @toladipupo @michaelmcleroy   
 chart/templates/gatekeeper      @echuang @egoode @toladipupo @michaelmcleroy
 
- ^[Jaeger]
+^[Jaeger]
 chart/Chart.yaml                @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
 chart/values.yaml               @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia  
 chart/templates/jaegar          @runyontr @joshwolf @michaelmcleroy @micah.nagel @ryan.j.garcia
