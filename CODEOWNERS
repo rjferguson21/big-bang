@@ -118,6 +118,11 @@ chart/Chart.yaml                @LynnStill @kevin.wilder @brandencobb
 chart/values.yaml               @LynnStill @kevin.wilder @brandencobb
 chart/templates/minio           @LynnStill @kevin.wilder @brandencobb
 
+^[Nexus]
+chart/Chart.yaml                @kavitha @kevin.wilder @ariel.shnitzer @grant.duncklee
+chart/values.yaml               @kavitha @kevin.wilder @ariel.shnitzer @grant.duncklee
+chart/templates/gitlab          @kavitha @kevin.wilder @ariel.shnitzer @grant.duncklee
+
 ^[Velero]
 chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
 chart/values.yaml               @tunde @adam.toy @micah.nagel @jcarnes
