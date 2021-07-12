@@ -43,10 +43,10 @@ chart/values.yaml               @barrywoodtetrate @joshwolf @kavitha @kenna81 @m
 chart/templates/authservice     @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
 chart/templates/istio           @barrywoodtetrate @joshwolf @kavitha @kenna81 @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
 
-# ^[HAProxy]
-# chart/Chart.yaml              @blloyd @runyontr @ryan.j.garcia
-# chart/values.yaml             @blloyd @runyontr @ryan.j.garcia
-# chart/templates/haproxy       @blloyd @runyontr @ryan.j.garcia
+^[HAProxy]
+chart/Chart.yaml              @blloyd @runyontr @ryan.j.garcia
+chart/values.yaml             @blloyd @runyontr @ryan.j.garcia
+chart/templates/haproxy       @blloyd @runyontr @ryan.j.garcia
 
 ^[Anchore]
 chart/Chart.yaml                @blake.hearn @micah.nagel @jasonkrause
