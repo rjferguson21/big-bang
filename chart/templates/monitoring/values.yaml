@@ -40,6 +40,9 @@ istio:
     gateways:
     - istio-system/{{ default "public" .Values.monitoring.ingress.gateway }}
 
+anchore:
+  enabled: {{ .Values.addons.anchore.enabled }}
+
 global:
   imagePullSecrets:
   - name: private-registry

@@ -13,6 +13,9 @@ imagePullSecrets:
 
 openshift: {{ .Values.openshift }}
 
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+
 {{- if .Values.istio.ingressGateways }}
 ingressGateways:
   istio-ingressgateway:
