@@ -7,7 +7,7 @@ hostname: {{ .Values.hostname }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
-  minio-console:
+  virtualService:  # this key is non-standard and needs to be fixed in the package
     gateways:
     - istio-system/{{ default "public" .Values.addons.minio.ingress.gateway }}
 
