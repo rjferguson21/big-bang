@@ -7,7 +7,7 @@ hostname: {{ .Values.hostname }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
-  virtualService:
+  chat:
     gateways:
     - istio-system/{{ default "public" .Values.addons.mattermost.ingress.gateway }}
 
