@@ -111,7 +111,6 @@ istio:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
     #tag: "1.8.4-bb.3"
-    tag: ""
     branch: "25-multiingress-poc"    
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
