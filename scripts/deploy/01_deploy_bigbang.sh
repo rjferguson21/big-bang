@@ -37,7 +37,7 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
 # otherwise use *.bigbang.dev
 if [ "$(yq e ".addons.keycloak.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
   # apply secrets kustomization pointing to current branch
-  if [ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]; then
+  if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
     echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
     kubectl apply -f tests/ci/keycloak.yaml
   elif [ -z "$CI_COMMIT_TAG" ]; then
@@ -50,7 +50,7 @@ if [ "$(yq e ".addons.keycloak.enabled" "tests/ci/k3d/values.yaml")" == "true" ]
   fi
 else
   # apply secrets kustomization pointing to current branch or master if an upgrade job
-  if [ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]; then
+  if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
     echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
     kubectl apply -f tests/ci/shared-secrets.yaml
   elif [ -z "$CI_COMMIT_TAG" ]; then
