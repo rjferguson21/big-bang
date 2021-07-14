@@ -1,14 +1,18 @@
 # Credentials for Big Bang Packages
 
-This document includes details on credentials to access each package in a default install (without SSO). Note that some packages called out do not have built in auth, but do provide auth mechanisms when used with SSO/Authservice. It is safe to assume that any packages not listed here either have no need for authentication or use different methods (ex: velero require kubectl access).
+This document includes details on credentials to access each package in a default install (without SSO). It is safe to assume that any packages not listed in the two categories below either have no need for authentication or use different methods (ex: velero require kubectl access).
 
-## Packages with no built in authentication
+## Packages with SSO but no built in authentication
 
-- Jaeger (can use authservice + SSO)
-- Prometheus (can use authservice + SSO)
-- Alertmanager (can use authservice + SSO)
+The below applications provide no authentication by default but can be auth-protected with the use of SSO and authservice:
+
+- Jaeger
+- Prometheus
+- Alertmanager
 
 ## Packages with built in authentication
+
+The applications in the table below provide both SSO and built in auth. The table gives default credentials and ways to access and/or override those.
 
 | Package (Application) | Default Username | Default Password | Additional Notes |
 | --------------------- | ---------------- | ---------------- | ---------------- |
