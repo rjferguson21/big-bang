@@ -18,7 +18,7 @@ This document includes details on credentials to access each package in a defaul
 | Twistlock | N/A | N/A | Prompted to setup an admin account when you first hit the virtual service, no default user |
 | ArgoCD | `admin` | (randomly generated) | Use `kubectl -n argocd get secret argocd-initial-admin-secret -o go-template='{{.data.password \| base64decode}}'` to get the password |
 | Minio | `minio` | `minio123` | Access and secret key can be overridden with `addons.minio.accesskey` and `addons.minio.secretkey` respectively |
-| Gitlab | ? | ? | ? |
+| Gitlab | `root` | (randomly generated) | Use `kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -o go-template='{{.data.password \| base64decode}}'` to get the password` |
 | Nexus | ? | ? | ? |
 | Sonarqube | ? | ? | ? |
 | Anchore | ? | ? | ? |
