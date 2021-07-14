@@ -19,16 +19,20 @@ dex:
   imagePullSecrets:
     - name: private-registry
 
-redis-ha:
-  enabled: true
 redis-bb:
-  usePassword: false
+  enabled: true
+  auth:
+    enabled: false
 
 istio:
   enabled: {{ .Values.istio.enabled }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
 {{- if .Values.addons.argocd.sso.enabled }}
 sso:

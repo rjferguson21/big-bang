@@ -4,7 +4,7 @@ BigBang developers use [k3d](https://k3d.io/), a lightweight wrapper to run [k3s
 
 It is not recommend to run k3d with BigBang on your local computer. BigBang can be quite resource-intensive and it requires a huge download bandwidth for the images. It is best to use a remote k3d cluster running on an AWS EC2 instance. If you do insist on running k3d locally you should disable certain packages before deploying. You can do this in the values.yaml file by setting the package deploy to false. One of the packages that is most resource-intensive is the logging package. And you should create a local image registry cache to minimize the amount of image downloading. A script that shows how to create a local image cache is in the [BigBang Quick Start](https://repo1.dso.mil/platform-one/quick-start/big-bang/-/blob/master/init.sh)
 
-There are 2 methods to create a remote k3d cluster. Manually or with IaC/CaC code. The manual steps are in this page. Here is the automated [IaC/CaC](https://repo1.dso.mil/platform-one/big-bang/terraform-modules/k3d-dev-env/-/tree/dev) code and instructions. You can use whichever one you prefer. It would be a good idea to get a live demonstration by someone who already knows how to do it. You can also watch the [first half of this T3](https://confluence.il2.dso.mil/download/attachments/10161790/T3%20Eric%20and%20Zack.mp4) showing a Big Bang deployment or start this T3 around 17:45 to get a better handle on how BigBang works. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
+This page contains the manual steps to create your k3d dev environment. Various persons have automated parts of these steps with scripts and terraform but we recommened that you do it manually so that you understand how it works. Automation is left to each person. It might be helpful to get a live demonstration by someone who already knows how to do it until a good video tutorial is created. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
 
 ## Prerequisites
 
@@ -17,7 +17,9 @@ There are 2 methods to create a remote k3d cluster. Manually or with IaC/CaC cod
 ### Utilities installed on local workstation
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
-- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release)
+- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release) 
+
+**Note:** there is an issue with flux v0.15.0 causing helm to fail with duplicate key errors. Brew/yum/apt-get will probably install that version or newer. Instead, please use the [install flux script](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/scripts/install_flux.sh) or manually install an older version such as v0.14.2 from [fluxcd's git repo](https://github.com/fluxcd/flux2/releases/tag/v0.14.2).
 
 ## Manual Creation of a Development Environment
 
@@ -32,16 +34,16 @@ Create an Ubuntu EC2 instance using the AWS console with the following attribute
 - User Data (as Text):
 
 ```shell
-    MIME-Version: 1.0
-    Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
     
-    --==MYBOUNDARY==
-    Content-Type: text/x-shellscript; charset="us-ascii"
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
 
-    #!/bin/bash
-    # Set the vm.max_map_count to 262144. 
-    # Required for Elastic to run correctly without OOM errors.
-    sysctl -w vm.max_map_count=262144
+#!/bin/bash
+# Set the vm.max_map_count to 262144. 
+# Required for Elastic to run correctly without OOM errors.
+sysctl -w vm.max_map_count=262144
 ```
 
 - 50 Gigs of disk space
@@ -107,7 +109,8 @@ k3d cluster create \
     --k3s-server-arg "--disable=metrics-server" \
     --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
     --port 80:80@loadbalancer \
-    --port 443:443@loadbalancer
+    --port 443:443@loadbalancer \
+    --api-port 6443
 ```
 
 **_Optionally_** you can set your image pull secret on the cluster so that you don't have to put your credentials in the code or in the command line in later steps
@@ -140,7 +143,8 @@ k3d cluster create \
     --k3s-server-arg "--disable=metrics-server" \
     --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
     --port 80:80@loadbalancer \
-    --port 443:443@loadbalancer
+    --port 443:443@loadbalancer \
+    --api-port 6443
 ```
 
 Here is an explanation of what we are doing with this command:
@@ -154,6 +158,7 @@ Here is an explanation of what we are doing with this command:
 - `--port 443:443@loadbalancer` Exposes the cluster on the host on port 443
 - `--volume ~/.k3d/p1-registries.yaml:/etc/rancher/k3s/registries.yaml` volume mount image pull secret config for k3d cluster.
 - `--volume /etc/machine-id:/etc/machine-id` volume mount so k3d nodes have a file at /etc/machine-id for fluentbit DaemonSet.
+- `--api-port 6443` port that your k8s api will use. 6443 is the standard default port for k8s api
 
 **STEP 3:**  
 Test the cluster from your local workstation. Copy the contents of the k3d kubeconfig from the EC2 instance to your local workstation. Do it manually with copy and paste.
@@ -175,6 +180,20 @@ Edit the kubeconfig on your workstation. Replace the server host ```0.0.0.0``` w
 ```shell
 kubectl cluster-info
 kubectl get nodes
+```
+
+**STEP 4:**:  
+Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang. 
+```
+# git clone the bigbang repo somewhere on your workstation
+git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
+# run the script to install flux in your cluster using your registry1.dso.mil image pull credentials
+cd ./bigbang
+./scripts/install_flux.sh -u your-user-name -p your-pull-secret
+```
+Or, alternatively install flux from the internet upstream
+```
+flux install
 ```
 
 ## Addendum
@@ -199,9 +218,10 @@ k3d cluster create \
     --volume /etc/machine-id:/etc/machine-id \
     --k3s-server-arg "--disable=traefik" \
     --k3s-server-arg "--disable=metrics-server" \
-    --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
+    --k3s-server-arg "--tls-san=$EC2_PRIVATE_IP" \
     --port 80:80@loadbalancer \
-    --port 443:443@loadbalancer
+    --port 443:443@loadbalancer \
+    --api-port 6443
 ```
 
 Then on your workstation edit the kubeconfig with the EC2 private ip. In a separate terminal window start a tunnel session with sshuttle using the EC2 public IP.
@@ -308,16 +328,16 @@ aws ec2 authorize-security-group-ingress \
 # Create userdata.txt
 # https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
 cat << EOF > userdata.txt
-    MIME-Version: 1.0
-    Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
 
-    --==MYBOUNDARY==
-    Content-Type: text/x-shellscript; charset="us-ascii"
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
 
-    #!/bin/bash
-    # Set the vm.max_map_count to 262144.
-    # Required for Elastic to run correctly without OOM errors.
-    sysctl -w vm.max_map_count=262144
+#!/bin/bash
+# Set the vm.max_map_count to 262144.
+# Required for Elastic to run correctly without OOM errors.
+sysctl -w vm.max_map_count=262144
 EOF
 
 # Create new instance

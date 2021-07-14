@@ -5,6 +5,9 @@ flux:
   rollback:
     cleanupOnFail: false
 
+networkPolicies:
+  controlPlaneCidr: 172.16.0.0/12
+
 logging:
   enabled: true
   values:
@@ -374,9 +377,9 @@ addons:
 
   velero:
     enabled: false
+    plugins:
+    - aws
     values:
-      installCRDs: true
-
       # Set provider name and backup storage location bucket name
       configuration:
         provider: aws
@@ -393,11 +396,7 @@ addons:
       #      bucket: velero
       #      region: us-west-1
 
-      # Default to AWS Plugin, update to others as they are supported
-      plugins:
-        - aws
-
-      #schedules:
+      # schedules:
       #  mybackup:
       #    labels:
       #      myenv: foo
@@ -411,12 +410,6 @@ addons:
       serviceAccount:
         server:
           name: velero
-
-      # Whether or not to clean up CustomResourceDefintions when deleting a release.
-      # Cleaning up CRDs will delete the BackupStorageLocation and VolumeSnapshotLocation instances, which would have to be reconfigured.
-      # Backup data in object storage will _not_ be deleted, however Backup instances in the Kubernetes API will.
-      # Always clean up CRDs in CI.
-      cleanUpCRDs: true
 
   keycloak:
     enabled: false

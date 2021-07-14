@@ -3,9 +3,16 @@
 {{- end }}
 
 {{- define "bigbang.defaults.gatekeeper" -}}
-disableValidatingWebhook: true
-createNamespace: false
 image:
   pullSecrets:
   - name: private-registry
+postInstall:
+  labelNamespace:
+    enabled: false
+    image:
+      pullSecrets:
+      - name: private-registry
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
 {{- end -}}
