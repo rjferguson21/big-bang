@@ -1,6 +1,6 @@
 # Credentials for Big Bang Packages
 
-This document includes details on credentials to access each package in a default install (without SSO). It is safe to assume that any packages not listed in the two categories below either have no need for authentication or use different methods (ex: velero require kubectl access).
+This document includes details on credentials to access each package in a default install (without SSO). It is safe to assume that any packages not listed in the two categories below either have no need for authentication or use different methods (ex: velero requires kubectl access).
 
 ## Packages with SSO but no built in authentication
 
