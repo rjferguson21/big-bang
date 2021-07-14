@@ -7,8 +7,8 @@ This document includes details on credentials to access each package in a defaul
 The below applications provide no authentication by default but can be auth-protected with the use of SSO and authservice:
 
 - Jaeger
-- Prometheus
-- Alertmanager
+- Monitoring (Prometheus)
+- Monitoring (Alertmanager)
 
 ## Packages with built in authentication
 
