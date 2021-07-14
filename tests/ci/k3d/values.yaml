@@ -412,6 +412,9 @@ addons:
 
   keycloak:
     enabled: false
+    istio:
+      ingress:
+        gateway: "public"
     values:
       replicas: 1
       resources:
