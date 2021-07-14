@@ -2,9 +2,9 @@
 
 This document includes details on credentials to access each package in a default install (without SSO). It is safe to assume that any packages not listed in the two categories below either have no need for authentication or use different methods (ex: velero require kubectl access).
 
-## Packages with SSO but no built in authentication
+## Packages with no built in authentication
 
-The below applications provide no authentication by default but can be auth-protected with the use of SSO and authservice:
+Although the below applications have no built in authentication, Big Bang's helm values can be configured to deploy authservice in front of these endpoints. Authservice is an Authentication Proxy that can integrate with SSO providers like Keycloak.
 
 - Jaeger
 - Monitoring (Prometheus)
