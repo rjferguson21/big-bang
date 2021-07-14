@@ -22,8 +22,8 @@ The applications in the table below provide both SSO and built in auth. The tabl
 | Twistlock | N/A | N/A | Prompted to setup an admin account when you first hit the virtual service, no default user |
 | ArgoCD | `admin` | (randomly generated) | Use `kubectl -n argocd get secret argocd-initial-admin-secret -o go-template='{{.data.password \| base64decode}}'` to get the password |
 | Minio | `minio` | `minio123` | Access and secret key can be overridden with `addons.minio.accesskey` and `addons.minio.secretkey` respectively |
-| Gitlab | `root` | (randomly generated) | Use `kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -o go-template='{{.data.password \| base64decode}}'` to get the password` |
-| Nexus | ? | ? | ? |
+| Gitlab | `root` | (randomly generated) | Use `kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -o go-template='{{.data.password \| base64decode}}'` to get the password |
+| Nexus | `admin` | (randomly generated) | Use `kubectl get secret -n nexus-repository-manager nexus-repository-manager-secret -o go-template='{{index .data "admin.password" \| base64decode}}'` to get the password |
 | Sonarqube | ? | ? | ? |
 | Anchore | ? | ? | ? |
 | Mattermost | N/A | N/A | Prompted to setup an account when you first hit the virtual service - this user becomes admin, no default user |
