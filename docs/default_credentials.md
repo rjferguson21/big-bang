@@ -16,8 +16,8 @@ This document includes details on credentials to access each package in a defaul
 | Logging (Kibana) | `elastic` | (randomly generated) | Use `kubectl get secrets -n logging logging-ek-es-elastic-user -o go-template='{{.data.elastic \| base64decode}}'` to get the password |
 | Monitoring (Grafana) | `admin` | `prom-operator` | Default password can be overridden with `monitoring.values.grafana.adminPassword` |
 | Twistlock | N/A | N/A | Prompted to setup an admin account when you first hit the virtual service, no default user |
-| ArgoCD | ? | ? | ? |
-| Minio | ? | ? | ? |
+| ArgoCD | `admin` | (randomly generated) | Use `kubectl -n argocd get secret argocd-initial-admin-secret -o go-template='{{.data.password \| base64decode}}'` to get the password |
+| Minio | `minio` | `minio123` | Access and secret key can be overridden with `addons.minio.accesskey` and `addons.minio.secretkey` respectively |
 | Gitlab | ? | ? | ? |
 | Nexus | ? | ? | ? |
 | Sonarqube | ? | ? | ? |
