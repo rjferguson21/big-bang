@@ -127,7 +127,7 @@ istio:
     #     service.beta.kubernetes.io/aws-load-balancer-type: nlb
     #     service.beta.kubernetes.io/aws-load-balancer-internal: "true"
 
-    # keycloak-ingressgateway:
+    # passthrough-ingressgateway:
     #   type: "NodePort" # or "LoadBalancer"
     #   serviceAnnotations: {}
     #   # Node ports are assigned starting from nodePortBase.  The nodePortBase specifies the start of a range of 4 unused node ports.
@@ -150,8 +150,8 @@ istio:
     #   tls:
     #     key: ""
     #     cert: ""
-    # keycloak:
-    #   ingressGateway: "keycloak-ingressgateway"
+    # passthrough:
+    #   ingressGateway: "passthrough-ingressgateway"
     #   hosts:
     #   - "*.{{ .Values.hostname }}"
     #   tls:
@@ -1028,9 +1028,8 @@ addons:
   #
   keycloak:
     # -- Toggle deployment of Keycloak.
-    # if you enable Keycloak you should uncomment these istio configurations above
-      # istio.ingressGateways.keycloak-ingressgateway
-      # istio.gateways.keycloak
+    # if you enable Keycloak you should uncomment the istio passthrough configurations above
+      # istio.ingressGateways.passthrough-ingressgateway and istio.gateways.passthrough
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
@@ -1063,7 +1062,7 @@ addons:
     # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       # the istio gateway for keycloak must have tls.mode: PASSTHROUGH
-      gateway: "keycloak"
+      gateway: "passthrough"
       # -- Certificate/Key pair to use as the certificate for exposing Keycloak
       # Setting the ingress cert here will automatically create the volume and volumemounts in the Keycloak Package chart
       key: ""
