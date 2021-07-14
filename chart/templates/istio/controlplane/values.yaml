@@ -16,7 +16,6 @@ openshift: {{ .Values.openshift }}
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
-{{- end -}}
 
 {{- if .Values.istio.ingressGateways }}
 ingressGateways:
