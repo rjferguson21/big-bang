@@ -22,5 +22,5 @@ This document includes details on credentials to access each package in a defaul
 | Nexus | ? | ? | ? |
 | Sonarqube | ? | ? | ? |
 | Anchore | ? | ? | ? |
-| Mattermost | N/A | N/A | First user to access Mattermost and sign up becomes an Admin |
+| Mattermost | N/A | N/A | First user to access Mattermost and sign up becomes an Admin, there is no default user |
 | Keycloak | ? | ? | ? |
