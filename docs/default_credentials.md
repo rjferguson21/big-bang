@@ -24,7 +24,7 @@ The applications in the table below provide both SSO and built in auth. The tabl
 | Minio | `minio` | `minio123` | Access and secret key can be overridden with Helm values `addons.minio.accesskey` and `addons.minio.secretkey` respectively |
 | Gitlab | `root` | (randomly generated) | Use `kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -o go-template='{{.data.password \| base64decode}}'` to get the password |
 | Nexus | `admin` | (randomly generated) | Use `kubectl get secret -n nexus-repository-manager nexus-repository-manager-secret -o go-template='{{index .data "admin.password" \| base64decode}}'` to get the password |
-| Sonarqube | ? | ? | ? |
+| Sonarqube | `admin` | `admin` | Default password can be overridden with Helm values `addons.sonarqube.values.account.adminPassword` |
 | Anchore | ? | ? | ? |
 | Mattermost | N/A | N/A | Prompted to setup an account when you first hit the virtual service - this user becomes admin, no default user |
 | Keycloak | `admin` | `password` | Default username and password can be overridden with Helm values `addons.keycloak.values.secrets.credentials.stringData.adminuser` and `addons.keycloak.values.secrets.credentials.stringData.password` respectively |
