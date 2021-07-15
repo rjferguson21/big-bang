@@ -8,6 +8,10 @@ if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_
   echo "On default branch or tag, enabling all addons"
   yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
   yq e ".addons.keycloak.enabled = "false"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
+elif [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
+  echo "all-packages label applied. Enabling all addons"
+  yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
+  yq e ".addons.keycloak.enabled = "false"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
 else
   IFS=","
   for package in $CI_MERGE_REQUEST_LABELS; do
