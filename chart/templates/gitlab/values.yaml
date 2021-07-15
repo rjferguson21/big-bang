@@ -23,6 +23,7 @@ networkPolicies:
     {{- $gateway := (default "public" .Values.addons.gitlab.ingress.gateway) }}
     app: {{ (get .Values.istio.gateways $gateway).ingressGateway }}
     istio: null
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
 {{- if .Values.addons.gitlab.database.host }}
 postgresql:

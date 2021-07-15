@@ -572,7 +572,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.10.3-bb.12"
+      tag: "4.10.3-bb.13"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -805,7 +805,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.2"
+      tag: "1.13.0-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
