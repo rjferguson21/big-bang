@@ -30,10 +30,10 @@ spec:
     remediation:
       retries: 3
       remediateLastFailure: true
-    cleanupOnFail: true
+    cleanupOnFail: false
   rollback:
     timeout: 10m
-    cleanupOnFail: true
+    cleanupOnFail: false
   valuesFrom:
     - name: {{ .Release.Name }}-nexus-repository-manager-values
       kind: Secret
