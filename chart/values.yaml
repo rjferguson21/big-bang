@@ -190,7 +190,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.21.4-bb.2"
+    tag: "2.22.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux: {}
@@ -456,7 +456,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.3"
+      tag: "3.6.8-bb.4"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -805,7 +805,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.1"
+      tag: "1.13.0-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
