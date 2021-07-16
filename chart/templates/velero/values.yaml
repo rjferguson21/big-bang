@@ -42,6 +42,8 @@ initContainers:
     volumeMounts:
       - mountPath: /target
         name: plugins
+configuration:
+  features: EnableCSI
 {{- end }}
 {{- end }}
 
