@@ -25,10 +25,6 @@ ingressGateways:
 
 {{- range $name, $values := .Values.istio.ingressGateways }}
   {{ $name | nindent 2 }}:
-    extraLabels:
-      app.kubernetes.io/name: istio-controlplane
-      app.kubernetes.io/component: "core"
-      {{- include "commonLabels" $ | nindent 6}}
     k8s:
       service:
         type: {{ $values.type }}
