@@ -96,8 +96,8 @@ flux:
 networkPolicies:
   # -- Toggle all package NetworkPolicies, can disable specific packages with `package.networkPolicies.enabled`
   enabled: true
-  # -- Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl cluster-info` to get the value for your cluster
-  # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP)
+  # -- Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster
+  # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
   # Used by package NetworkPolicies to allow Kube API access
   controlPlaneCidr: 0.0.0.0/0
 
@@ -189,7 +189,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.22.0-bb.0"
+    tag: "2.22.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux: {}
@@ -220,7 +220,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.36.0-bb.1"
+    tag: "1.36.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -298,7 +298,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.16-bb.0"
+    tag: "0.1.17-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -352,7 +352,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.15.14-bb.1"
+    tag: "0.15.15-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -571,7 +571,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.10.3-bb.13"
+      tag: "4.10.3-bb.14"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -1006,12 +1006,12 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.21.1-bb.6"
+      tag: "2.23.3-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
 
-    # -- Plugin provider for Velero - requires at least one plugin installed. Current supported values: aws, azure 
+    # -- Plugin provider for Velero - requires at least one plugin installed. Current supported values: aws, azure, csi 
     plugins: []
     # - aws
 
