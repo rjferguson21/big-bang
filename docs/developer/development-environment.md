@@ -191,10 +191,7 @@ git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ./bigbang
 ./scripts/install_flux.sh -u your-user-name -p your-pull-secret
 ```
-Or, alternatively install flux from the internet upstream
-```
-flux install
-```
+
 
 ## Addendum
 
