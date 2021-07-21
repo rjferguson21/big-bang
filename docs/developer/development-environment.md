@@ -4,7 +4,7 @@ BigBang developers use [k3d](https://k3d.io/), a lightweight wrapper to run [k3s
 
 It is not recommend to run k3d with BigBang on your local computer. BigBang can be quite resource-intensive and it requires a huge download bandwidth for the images. It is best to use a remote k3d cluster running on an AWS EC2 instance. If you do insist on running k3d locally you should disable certain packages before deploying. You can do this in the values.yaml file by setting the package deploy to false. One of the packages that is most resource-intensive is the logging package. And you should create a local image registry cache to minimize the amount of image downloading. A script that shows how to create a local image cache is in the [BigBang Quick Start](https://repo1.dso.mil/platform-one/quick-start/big-bang/-/blob/master/init.sh)
 
-This page contains the manual steps to create your k3d dev environment. Various persons have automated parts of these steps with scripts and terraform but we recommened that you do it manually so that you understand how it works. Automation is left to each person. It might be helpful to get a live demonstration by someone who already knows how to do it until a good video tutorial is created. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
+This page contains the manual steps to create your k3d dev environment. Various persons have automated parts of these steps with scripts and terraform but we recommend that you do it manually so that you understand how it works. Automation is left to each person. It might be helpful to get a live demonstration by someone who already knows how to do it until a good video tutorial is created. We strive to make the documentation as good as possible but it is hard to keep it up-to-date and there are still pitfalls and gotchas.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ This page contains the manual steps to create your k3d dev environment. Various 
 ### Utilities installed on local workstation
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
-- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release) 
+- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/release)
 
 **Note:** there is an issue with flux v0.15.0 causing helm to fail with duplicate key errors. Brew/yum/apt-get will probably install that version or newer. Instead, please use the [install flux script](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/scripts/install_flux.sh) or manually install an older version such as v0.14.2 from [fluxcd's git repo](https://github.com/fluxcd/flux2/releases/tag/v0.14.2).
 
@@ -183,15 +183,15 @@ kubectl get nodes
 ```
 
 **STEP 4:**:  
-Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang. 
-```
+Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang.
+
+```shell
 # git clone the bigbang repo somewhere on your workstation
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 # run the script to install flux in your cluster using your registry1.dso.mil image pull credentials
 cd ./bigbang
 ./scripts/install_flux.sh -u your-user-name -p your-pull-secret
 ```
-
 
 ## Addendum
 
