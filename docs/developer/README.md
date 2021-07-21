@@ -8,7 +8,6 @@ The [BigBang Charter](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tre
 
 Join Mattermost channels to ask questions and communicate with the team. The team also has a daily stand up at 8:30 am MST. The link for the stand up is usually found in the channel headers. Here is the list of relevant Mattermost channels for BigBang development:  
 [public Big Bang](https://chat.il2.dso.mil/platform-one/channels/team---big-bang)  
-[private Big Bang - by invitation only](https://chat.il2.dso.mil/platform-one/channels/team---bigbang)  
 
 ## Big Bang Framework
 
