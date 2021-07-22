@@ -5,9 +5,6 @@
 {{- define "bigbang.defaults.anchore" -}}
 hostname: {{ .Values.hostname }}
 
-anchoreGlobal:
-  openShiftDeployment: {{ .Values.openshift }}
-
 istio:
   enabled: {{ .Values.istio.enabled }}
 
@@ -46,6 +43,7 @@ postgresql:
   {{- end }}
 
 anchoreGlobal:
+  openShiftDeployment: {{ .Values.openshift }}
   {{- if .Values.addons.anchore.adminPassword }}
   defaultAdminPassword: {{ .Values.addons.anchore.adminPassword }}
   {{- end }}
