@@ -15,4 +15,22 @@ postInstall:
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
+
+violations:
+  namespacesHaveIstio:
+    match:
+      excludedNamespaces:
+        - flux-system
+        - bigbang
+        - anchore
+        - argocd
+        - gatekeeper
+        - gitlab
+        - istio-system
+        - istio-operator
+        - keycloak
+        - eck-operator
+        - mattermost
+        - monitoring
+        - sonarqube
 {{- end -}}
