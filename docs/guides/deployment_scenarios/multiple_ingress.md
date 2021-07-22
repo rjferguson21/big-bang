@@ -123,7 +123,7 @@ istio:
       nodePortBase: 30100  # Bind the following ports: Status (15021) <-> 30100; HTTP (8080) <-> 30101; HTTPS (8443) <-> 30102; SNI (15443) <-> 30103
 ```
 
-The default values for Ingress Gateways will work for most situations.  However, if you need finer control over the configuration, any of the settings in teh [Kubernetes Resource Spec](https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec) can be added to `kubernetesResourceSpec` as a map.  Some examples of additional settings include environmental variables, service selectors, affinity mapping, or additional ports.
+The default values for Ingress Gateways will work for most situations.  However, if you need finer control over the configuration, any of the settings in the [Kubernetes Resource Spec](https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec) can be added to `kubernetesResourceSpec` as a map.  Some examples of additional settings include environmental variables, service selectors, affinity mapping, or additional ports.
 
 ### Gateways
 
