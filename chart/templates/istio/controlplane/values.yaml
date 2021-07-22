@@ -45,7 +45,7 @@ gateways:
         protocol: HTTPS
       tls:
         credentialName: {{ $name }}-cert
-        mode: {{ default "SIMPLE" $values.tls.mode }}
+        mode: {{ dig "tls" "mode" "SIMPLE" $values }}
 {{- end }}
 {{- end }}
 
