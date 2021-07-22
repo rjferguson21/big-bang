@@ -5,6 +5,9 @@
 {{- define "bigbang.defaults.anchore" -}}
 hostname: {{ .Values.hostname }}
 
+anchoreGlobal:
+  openShiftDeployment: {{ .Values.openshift }}
+
 istio:
   enabled: {{ .Values.istio.enabled }}
 
