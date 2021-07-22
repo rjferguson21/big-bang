@@ -76,7 +76,7 @@ The load balancer can then be setup to forward HTTP traffic to all nodes on port
 
 Private or internal load balancers can usually be created automatically by Big Bang via Istio using service annotations.  By using these annotations, a load balancer will be created for you and automatically mapped to the appropriate nodes/ports for distributing the load.
 
-Here is how you would setup Big Bang for a private load balancer on AWS.  For other cloud providers, review [Kubernetes internal load balander documentation](https://kubernetes.io/docs/concepts/services-networking/_print/#internal-load-balancer):
+Here is how you would setup Big Bang for a private load balancer on AWS.  For other cloud providers, review [Kubernetes internal load balancer documentation](https://kubernetes.io/docs/concepts/services-networking/_print/#internal-load-balancer):
 
 ```yaml
 istio:
