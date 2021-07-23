@@ -1,5 +1,7 @@
 # Developer Documentation
 
+[[_TOC_]]
+
 ## Charter
 
 The [BigBang Charter](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tree/master/charter) is required reading for BigBang developers. Study all the documents carefully before you start developing.  The Charter lays out the policies, requirements, and responsibilities for the BigBang product and the supported Packages (applications). At a high level, the BigBang product is a helm chart that wraps the deployment of DevSecOps applications (Packages). The goal of BigBang is to hide the complexity of deploying and integrating the supported Packages. Customers should be able to easily deploy and configure a DevSecOps environment. BigBang is intended to deploy on any OCI/CNCF compliant Kubernetes cluster.
