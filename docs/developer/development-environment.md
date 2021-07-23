@@ -10,16 +10,17 @@ This page contains the manual steps to create your k3d dev environment. Various 
 
 ## Prerequisites
 
-### Access
+### Required Access
 
 - [AWS GovCloud "coder" account](https://927962728993.signin.amazonaws-us-gov.com/console)
 - [BigBang repository](https://repo1.dso.mil/platform-one/big-bang/bigbang)
 - [Iron Bank registry](https://registry1.dso.mil/)
 
-### Utilities installed on local workstation
+### Local Utilities
 
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
+- [Helm](https://helm.sh/docs/intro/install/)
 - [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/releases)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
 
 ## Manual Creation of a Development Environment
 
