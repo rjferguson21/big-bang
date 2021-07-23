@@ -12,6 +12,19 @@ postInstall:
     image:
       pullSecrets:
       - name: private-registry
+violations:
+  allowedDockerRegistries:
+    match:
+      excludedNamespaces: 
+        - istio-system # allows creation for loadbalancer pods for various ports and various vendor loadbalancers
+        - kube-system # ignored as the kubernetes distro cannot be controlled
+    parameters:
+      exemptContainers:
+        {{- if .Values.addons.mattermost.enabled}}
+        - init-check-database # mattermost needs postgres:13 image and cannot override the upstream
+        {{- else -}}
+        []
+        {{- end}}
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
