@@ -11,6 +11,9 @@ metadata:
     {{- include "commonLabels" . | nindent 4}}
 spec:
   targetNamespace: gatekeeper-system
+  upgrade:
+    CRDsPolicy: CreateReplace
+    force: true
   chart:
     spec:
       chart: {{ .Values.gatekeeper.git.path }}
