@@ -256,10 +256,26 @@ k3d cluster create \
     --port 443:443@loadbalancer \
     --api-port 6443
 ```
+  - This will create a K3D cluster just like before, except we need to ensure the built in "servicelb" add-on is disabled so we can use metallb.
 
-This will create a K3D cluster just like before, except we need to ensure the built in "servicelb" add-on is disabled so we can use metallb.
+2. Find the Subnet for your k3d cluster's Docker network
 
-2. Before installing BigBang we will need to install and configure [metallb](https://metallb.universe.tf/concepts/)
+```shell
+docker network inspect k3d-k3s-default | jq .[0].IPAM.Config[0]
+```
+
+  - k3d-k3s-default is the name of the default bridge network k3d creates when creating a k3d cluster.
+  - We need the "Subnet": value to populate the correct addresses in the ConfigMap below.
+  - If my output looks like:
+  ```json
+  {
+    "Subnet": "172.21.0.0/16",
+    "Gateway": "172.21.0.1"
+  }
+  ```
+  - Then the addresses I want to input for metallb would be `172.21.1.240-172.21.1.243` so that I can reserve 4 IP addresses within the subnet of the Docker Network.
+
+3. Before installing BigBang we will need to install and configure [metallb](https://metallb.universe.tf/concepts/)
 
 ```shell
 kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
@@ -276,20 +292,20 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - 172.18.1.240-172.18.1.243
+      - 172.21.1.240-172.21.1.243
 EOF
 kubectl create -f metallb-config.yaml
 ```
 
-The commands will create a metallb install and configure it to assign LoadBalancer IPs within the range `172.18.1.240-172.18.1.243` which is within the standard Docker Bridge Network CIDR meaning that the linux network stack will have a route to this network already.
+  - The commands will create a metallb install and configure it to assign LoadBalancer IPs within the range `172.18.1.240-172.18.1.243` which is within the standard Docker Bridge Network CIDR meaning that the linux network stack will have a route to this network already.
 
-3. Verify LoadBalancers
+4. Verify LoadBalancers
 
 ```shell
 kubectl get svc -n istio-system
 ```
 
-You should see a result like:
+  - You should see a result like:
 ```
 NAME                         TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                      AGE
 istiod                       ClusterIP      10.43.59.25    <none>         15010/TCP,15012/TCP,443/TCP,15014/TCP                        151m
@@ -298,42 +314,42 @@ public-ingressgateway        LoadBalancer   10.43.35.202   172.18.1.241   15021:
 passthrough-ingressgateway   LoadBalancer   10.43.173.31   172.18.1.242   15021:32000/TCP,80:32001/TCP,443:32002/TCP,15443:32003/TCP   119m
 ```
 
-With the key information here being the assigned `EXTERNAL-IP` sections for the ingressgateways.
+  - With the key information here being the assigned `EXTERNAL-IP` sections for the ingressgateways.
 
-4. Update Hosts file on ec2 instance with IPs above
+5. Update Hosts file on ec2 instance with IPs above
 
 ```shell
 sudo vim /etc/hosts
 ```
 
-Update it with similar entries:
-- Applications with the following values (eg for Jaeger):
-```yaml
-jaeger:
-  ingress:
-    gateway: "" #(Defaults to public-ingressgateway)
-```
-We will need to set to the EXTERNAL-IP of the public-ingressgateway
-```
-172.18.1.241 jaeger.bigbang.dev
-```
-- Applications with the following values (eg for Logging):
-```yaml
-logging:
-  ingress:
-    gateway: "private"
-```
-We will need to set to the EXTERNAL-IP of the private-ingressgateway
-```
-172.18.1.240 kibana.bigbang.dev
-```
-- Keycloak will need to be set to the External-IP of the passthrough-ingressgateway
-```
-172.18.1.242 keycloak.bigbang.dev
-```
-With these DNS settings in place you will now be able to reach the external *.bigbang.dev URLs from this EC2 instance.
+  - Update it with similar entries:
+    - Applications with the following values (eg for Jaeger):
+    ```yaml
+    jaeger:
+      ingress:
+        gateway: "" #(Defaults to public-ingressgateway)
+    ```
+    We will need to set to the EXTERNAL-IP of the public-ingressgateway
+    ```
+    172.18.1.241 jaeger.bigbang.dev
+    ```
+    - Applications with the following values (eg for Logging):
+    ```yaml
+    logging:
+      ingress:
+        gateway: "private"
+    ```
+    We will need to set to the EXTERNAL-IP of the private-ingressgateway
+    ```
+    172.18.1.240 kibana.bigbang.dev
+    ```
+    - Keycloak will need to be set to the External-IP of the passthrough-ingressgateway
+    ```
+    172.18.1.242 keycloak.bigbang.dev
+    ```
+  - With these DNS settings in place you will now be able to reach the external *.bigbang.dev URLs from this EC2 instance.
 
-To reach outside the EC2 instance use either SSH or SSHUTTLE commands to specify a local port for Dynamic application-level port forwarding (ssh -D) and utilize Firefox's built in SOCKS proxy configuration to route DNS and web traffic through the application-level port forward from the SSH command.
+  - To reach outside the EC2 instance use either SSH or SSHUTTLE commands to specify a local port for Dynamic application-level port forwarding (ssh -D) and utilize Firefox's built in SOCKS proxy configuration to route DNS and web traffic through the application-level port forward from the SSH command.
 
 ### Amazon Linux 2
 
