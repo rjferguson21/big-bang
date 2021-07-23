@@ -264,7 +264,7 @@ This will create a K3D cluster just like before, except we need to ensure the bu
 ```shell
 kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
 kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
-cat <<EOF | kubectl create -f |
+cat <<EOF | > metallb-config.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -278,6 +278,7 @@ data:
       addresses:
       - 172.18.1.240-172.18.1.243
 EOF
+kubectl create -f metallb-config.yaml
 ```
 
 The commands will create a metallb install and configure it to assign LoadBalancer IPs within the range `172.18.1.240-172.18.1.243` which is within the standard Docker Bridge Network CIDR meaning that the linux network stack will have a route to this network already.
