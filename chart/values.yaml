@@ -150,7 +150,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.22.0-bb.1"
+    tag: "2.22.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux: {}
@@ -177,7 +177,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.36.0-bb.2"
+    tag: "1.36.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -209,7 +209,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "0.3.0-bb.2"
+    tag: "0.3.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -230,7 +230,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.4.0-bb.14"
+    tag: "3.4.0-bb.19"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux: {}
@@ -251,7 +251,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.16-bb.0"
+    tag: "0.1.17-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -322,7 +322,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "11.0.0-bb.27"
+    tag: "14.0.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux: {}
@@ -721,7 +721,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.3"
+      tag: "1.13.0-bb.4"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -820,7 +820,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.1.6-bb.7"
+      tag: "0.1.6-bb.8"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
