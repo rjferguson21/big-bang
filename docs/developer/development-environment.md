@@ -19,7 +19,6 @@ This page contains the manual steps to create your k3d dev environment. Various 
 ### Local Utilities
 
 - [Helm](https://helm.sh/docs/intro/install/)
-- [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/releases)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
 
 ## Manual Creation of a Development Environment
