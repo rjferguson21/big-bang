@@ -16,15 +16,15 @@ violations:
   allowedDockerRegistries:
     match:
       excludedNamespaces: 
+       {{- if .Values.istio.enabled }}
         - istio-system # allows creation for loadbalancer pods for various ports and various vendor loadbalancers
+       {{- end }}
         - kube-system # ignored as the kubernetes distro cannot be controlled
+    {{- if .Values.addons.mattermost.enabled }}
     parameters:
       exemptContainers:
-        {{- if .Values.addons.mattermost.enabled}}
         - init-check-database # mattermost needs postgres:13 image and cannot override the upstream
-        {{- else -}}
-        []
-        {{- end}}
+    {{- end }}
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
