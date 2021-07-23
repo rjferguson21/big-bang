@@ -25,7 +25,7 @@ This page contains the manual steps to create your k3d dev environment. Various 
 
 This section will cover the creation of an environment manually. This is a good place to start because it creates an understanding of everything that the automated method does for you and uses far less cloud resources.
 
-### STEP 1
+### Step 1
 
 Create an Ubuntu EC2 instance using the AWS console with the following attributes. Please clean up after yourself. Stop or delete any instances that you are not currently using. See addendum for using Amazon Linux2 instead of Ubuntu. See addendum for using aws command line.
 
@@ -60,7 +60,7 @@ modprobe xt_statistic
 - Security Group: All TCP limited to your local IP address. If you already have a security group, select it.  Otherwise create a new one. See addendum for more secure way with only port 22 for ssh traffic using sshuttle.
 - If you have created an existing key pair that you still have access to, select it. If not, create a new key pair. Be sure to save the pem file.  
 
-### STEP 2 
+### Step 2 
 Configure the EC2 instance. SSH into your new EC2 instance and configure it with the following:
 
 - SSH: Find your instance's public IP. This may be in the output of your `run-instance` command, if not search for your instance id in the AWS web console and under the details copy your public ipv4 address. Example below assumes this value is `1.2.3.4`, replace that with the actual value.
@@ -169,7 +169,7 @@ Here is an explanation of what we are doing with this command:
 - `--volume /etc/machine-id:/etc/machine-id` volume mount so k3d nodes have a file at /etc/machine-id for fluentbit DaemonSet.
 - `--api-port 6443` port that your k8s api will use. 6443 is the standard default port for k8s api
 
-### STEP 3 
+### Step 3 
 
 Test the cluster from your local workstation. Copy the contents of the k3d kubeconfig from the EC2 instance to your local workstation. Do it manually with copy and paste.
 
@@ -192,7 +192,7 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-### STEP 4
+### Step 4
 
 Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang.
 
