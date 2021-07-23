@@ -1,4 +1,6 @@
-# Integrate a Package with BigBang helm chart
+# Integrate a Package with Bigbang Helm Chart
+
+[[_TOC_]]
 
 1. Make a branch from the BigBang chart repository master branch. You can automatically create a branch from the Repo1 Gitlab issue. Or, in some cases you might manually create the branch. You should name the branch with your issue number. If your issue number is 9999 then your branch name can be "9999-my-description". It is best practice to make branch names short and simple.
 
