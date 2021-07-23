@@ -19,7 +19,7 @@ This page contains the manual steps to create your k3d dev environment. Various 
 ### Local Utilities
 
 - [Helm](https://helm.sh/docs/intro/install/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)  
 
 ## Manual Creation of a Development Environment
 
