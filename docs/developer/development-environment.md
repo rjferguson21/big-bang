@@ -190,7 +190,7 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-**STEP 4:**:  
+**STEP 4:**
 Start deploying to your k3d cluster. The scope of this documentation is limited to creating your dev environment. How to deploy BigBang is intentionally NOT included here. Those steps are left to other documents. You will need to install flux in your cluster before deploying BigBang.
 
 ```shell
