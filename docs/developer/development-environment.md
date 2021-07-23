@@ -19,8 +19,6 @@ This page contains the manual steps to create your k3d dev environment. Various 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) cli  
 - [flux](https://toolkit.fluxcd.io/guides/installation/) v2 cli. release [downloads](https://github.com/fluxcd/flux2/releases)
 
-**Note:** there is an issue with flux v0.15.0 causing helm to fail with duplicate key errors. Brew/yum/apt-get will probably install that version or newer. Instead, please use the [install flux script](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/scripts/install_flux.sh) or manually install an older version such as v0.14.2 from [fluxcd's git repo](https://github.com/fluxcd/flux2/releases/tag/v0.14.2).
-
 ## Manual Creation of a Development Environment
 
 This section will cover the creation of an environment manually. This is a good place to start because it creates an understanding of everything that the automated method does for you and uses far less cloud resources.
