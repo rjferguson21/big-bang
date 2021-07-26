@@ -28,6 +28,7 @@
     DOCKER_DRIVER: overlay2
   before_script:
     - docker network create ${CI_JOB_ID} --driver=bridge -o "com.docker.network.driver.mtu"="1450"
+    - ulimit -n 65535
     - k3d cluster create ${CI_JOB_ID} --config tests/ci/k3d/config.yaml --network ${CI_JOB_ID}
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
     - kubectl get all -A
@@ -72,8 +73,7 @@
   image:
     name: rancher/k3d:v4.3.0-dind
   before_script:
-    - ulimit -n 65535
-    - nohup dockerd-entrypoint.sh --default-ulimit nofile=65535:65535 &
+    - nohup dockerd-entrypoint.sh &
     - until docker ps 2>&1 > /dev/null; do sleep 1s; done
     - k3d cluster create --config tests/ci/k3d/config.yaml
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
