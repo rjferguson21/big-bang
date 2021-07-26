@@ -72,6 +72,7 @@
   image:
     name: rancher/k3d:v4.3.0-dind
   before_script:
+    - ulimit -n 65535
     - nohup dockerd-entrypoint.sh --default-ulimit nofile=65535:65535 &
     - until docker ps 2>&1 > /dev/null; do sleep 1s; done
     - k3d cluster create --config tests/ci/k3d/config.yaml
