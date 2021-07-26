@@ -31,6 +31,7 @@ violations:
         # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus-node-exporter/templates/daemonset.yaml#L150
         - monitoring
        {{- end }}
+        - kube-system #local-path_local-path-provisioner helper-pod-create-pvc
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}        
