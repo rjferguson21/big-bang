@@ -37,6 +37,7 @@ gatekeeper:
 ```
 
 To validate it was deployed correctly on your cluster run the following command:
+
 `kubectl get k8sallowedrepos.constraints.gatekeeper.sh/allowed-docker-registries -o yaml`
 
 You should only see `kube-system` under `excludedNamespaces` section
