@@ -44,7 +44,6 @@ Content-Type: text/x-shellscript; charset="us-ascii"
 #!/bin/bash
 # Set the vm.max_map_count to 262144. 
 # Required for Elastic to run correctly without OOM errors.
-sysctl -w vm.max_map_count=262144
 echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf
 echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf
 sysctl -p
