@@ -6,6 +6,15 @@
 image:
   pullSecrets:
   - name: private-registry
+violations:
+  httpsOnly:
+    match:
+      excludedNamespaces: 
+       {{- if .Values.addons.mattermost.enabled }}
+        # mattermost currently does not useIngressTLS hence Ingress is created without TLS field by the operator.
+        # Adding exemption, pending https://github.com/mattermost/mattermost-operator/issues/235
+        - mattermost
+       {{- end }}
 postInstall:
   labelNamespace:
     enabled: false
