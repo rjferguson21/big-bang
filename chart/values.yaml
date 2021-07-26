@@ -150,10 +150,14 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.22.0-bb.2"
+    tag: "2.23.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
-  flux: {}
+  flux:
+    install:
+      crds: CreateReplace
+    upgrade:
+      crds: CreateReplace
 
   sso:
     # -- Toggle SSO for Jaeger on and off
@@ -233,7 +237,11 @@ gatekeeper:
     tag: "3.5.1-bb.2"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
-  flux: {}
+  flux:
+    install:
+      crds: CreateReplace
+    upgrade:
+      crds: CreateReplace
 
   # -- Values to passthrough to the gatekeeper chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
   values: {}
@@ -287,7 +295,7 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.6.0-bb.0"
+    tag: "1.6.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
