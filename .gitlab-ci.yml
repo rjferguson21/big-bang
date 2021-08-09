@@ -1,3 +1,4 @@
+# Run pipeline
 # global rules for when pipelines run
 workflow:
   rules:
