@@ -99,10 +99,10 @@ done
 # Double check everything got waited on...
 kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang --all
 
-echo "Waiting on Secrets Kustomization"
-kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 echo "troubleshooting kustomize controller"
 kubectl describe kustomizations secrets -n bigbang
+echo "Waiting on Secrets Kustomization"
+kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
 # In case some helm releases are marked as ready before all objects are live...
 echo "Waiting on all jobs, deployments, statefulsets, and daemonsets"
