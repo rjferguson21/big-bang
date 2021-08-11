@@ -3225,10 +3225,10 @@ spec:
             port: healthz
         resources:
           limits:
-            cpu: 100m
+            cpu: 500m
             memory: 750Mi
           requests:
-            cpu: 100m
+            cpu: 500m
             memory: 750Mi
         securityContext:
           allowPrivilegeEscalation: false
