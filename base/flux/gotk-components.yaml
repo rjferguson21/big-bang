@@ -3226,10 +3226,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 350Mi
+            memory: 750Mi
           requests:
             cpu: 100m
-            memory: 350Mi
+            memory: 750Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -3299,10 +3299,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 300Mi
+            memory: 200Mi
           requests:
             cpu: 100m
-            memory: 150Mi
+            memory: 200Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -3377,10 +3377,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 150Mi
+            memory: 100Mi
           requests:
             cpu: 100m
-            memory: 150Mi
+            memory: 100Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
