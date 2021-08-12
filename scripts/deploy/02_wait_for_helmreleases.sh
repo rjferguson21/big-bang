@@ -97,14 +97,14 @@ do
 done
 
 # Double check everything got waited on...
-kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang --all
+kubectl wait --for=condition=Ready --timeout 750s helmrelease -n bigbang --all
 
 echo "Waiting on Secrets Kustomization"
 kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
 # In case some helm releases are marked as ready before all objects are live...
 echo "Waiting on all jobs, deployments, statefulsets, and daemonsets"
-kubectl wait --for=condition=available --timeout 600s -A deployment --all > /dev/null
+kubectl wait --for=condition=available --timeout 750s -A deployment --all > /dev/null
 wait_sts
 wait_daemonset
 if kubectl get job -A -o jsonpath='{.items[].metadata.name}' &> /dev/null; then
