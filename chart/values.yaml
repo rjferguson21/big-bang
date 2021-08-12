@@ -306,7 +306,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.17-bb.2"
+    tag: "0.1.18-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -381,7 +381,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.3"
+    tag: "14.0.0-bb.5"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -467,7 +467,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.4"
+      tag: "3.6.8-bb.5"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -1046,7 +1046,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.1-bb.0"
+      tag: "11.0.1-bb.1"
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
