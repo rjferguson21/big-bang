@@ -169,8 +169,8 @@ Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to d
     2. Login via OIDC provider
     3. Top right of the page, click your name --> User Profile
     4. Your image pull username is labeled "Username"
-    5. Your image pull password is labeled "CLI secret"
-       (Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after 3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the <https://registry1.dso.mil> GUI)
+    5. Your image pull password is labeled "CLI secret"    
+       (Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after 3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the <https://registry1.dso.mil> GUI)    
 
 3. Verify your credentials work
 
