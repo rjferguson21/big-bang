@@ -2,17 +2,53 @@
 
 ## Overview
 
-This guide is designed to offer an easy to deploy preview of BigBang, so new users can get to a hands-on state as quickly as possible.
+This quick start guide explains how to do the following tasks in under a hour:
+1. Turn a VM into a k3d single node dev cluster.
+2. Quickly Deploy Big Bang using a Demo deployment workflow.
+3. Customize your Big Bang Deployment.
+
+Make a table? 
+        Demo Deployment Workflow       Production Deployment Workflow
+Git Repo
+Encrypted Secrets in Git
+
+Use helm to imperatively deploy the Big Bang helm chart into the cluster using the [workflow used by developers of Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration.md#imperative), instead of using the GitOps deployment methodology which involves Flux GitRepository and Kustomization CR's, which must be used for production deployments and is covered in the [customer template repo](https://repo1.dso.mil/platform-one/big-bang/customers/template))     
+`(Note: This quick start guide is purposefully not using the GitOps production deployment methodology in order to minimize dependencies needed for a user to be able to quickly get started and tinkering with BigBang. The customer template repo requires a git repository )`
+
+
+in under an hour of gaining access to a VM, 
+
+
+to quickly provision a BigBang Cluster for the purpose of demoing and trying out BigBang in a non production fassion. by using a k3d Single Node Dev Cluster, and use the imperative developer workflow non GitOps (Non Production deployment method) quickly deploy BigBang for demo purposes. 
+
+
+
+Using the following directions a demo Big Bang cluster can be deployed in under an hour.
+For the sake of speed the qu
+
+
+The resulting "cluster" is not intended to reflect  
+The deployment methodology used 
+
+
+how to turn a VM into a k3d cluster, install BigBang on the k3d cluster. For simplicity sake the 
+
+Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
+
+
+guide is designed to offer an easy to deploy preview of BigBang, so new users can get to a hands-on state as quickly as possible.  
+
+
 Note: The current implementation of the Quick Start limits the ability to customize the BigBang Deployment. It is doing a GitOps defined deployment from a repository you don't control.
 
 ## Step 1. Provision a Virtual Machine
 
 The following requirements are recommended for Demo Purposes:
 
-* 1 Virtual Machine with 64GB RAM, 16-Core CPU (This will become a single node cluster)
-* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than RHEL, although both work fine)
+* 1 Virtual Machine with 32GB RAM, 8-Core CPU (This will become a single node cluster) (Note 64GB RAM / 16 CPU core is recommended for those who want to do lots of customizing.)
+* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, although both work fine)
 * Network connectivity to said Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a vagrant box Virtual Machine configured for remote ssh works fine.)
-Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
+
 
 ## Step 2. SSH into machine and install prerequisite software
 * ssh and passwordless sudo should be configured on the remote machine
@@ -104,20 +140,18 @@ Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to d
     # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
     ```
 
-10. Install Terraform
+10. Install helm
 
     ```bash
     [ubuntu@Ubuntu_VM:~]
-    wget https://releases.hashicorp.com/terraform/1.0.4/terraform_1.0.4_linux_amd64.zip
-    sudo apt update -y && sudo apt install unzip -y && unzip terraform_1.0.4_linux_amd64.zip && sudo mv terraform /usr/local/bin/ && rm terraform_1.0.4_linux_amd64.zip
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     ```
 
-11. Verify terraform installation
+11. Verify helm installation
 
     ```shell
     [ubuntu@Ubuntu_VM:~]
-    terraform version
-    # Terraform v1.0.4
+    helm version
     ```
 
 ## Step 3. Configure Host OS prerequisites
@@ -157,6 +191,25 @@ Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to d
     # cat /proc/swaps
     # cat /etc/fstab
     ```
+
+## Step 4. Spin up a k3d Cluster
+
+
+Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
+
+k3d cluster create \
+    --servers 1 \
+    --agents 3 \
+    --volume /etc/machine-id:/etc/machine-id \
+    --k3s-server-arg "--disable=traefik" \
+    --k3s-server-arg "--disable=metrics-server" \
+    --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
+    --port 80:80@loadbalancer \
+    --port 443:443@loadbalancer \
+    --api-port 6443
+
+
+
 
 ## Step 4. Verify your IronBank Image Pull Credentials work
 
