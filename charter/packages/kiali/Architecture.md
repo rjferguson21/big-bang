@@ -21,11 +21,11 @@ graph LR
 
   subgraph "Monitoring"
     Kialipods("Kiali Pod(s)") --> prometheusservice{{Prometheus Service<br />monitoring-monitoring-kube-prometheus}} --> Prometheus
-    Kialipods("Kiali Pod(s)") --> grafanaservice{{Grafana Service<br />monitoring-monitoring-grafana}} ----> Grafana  
+    Kialipods("Kiali Pod(s)") --> grafanaservice{{Grafana Service<br />monitoring-monitoring-grafana}} --> Grafana  
   end
 
   subgraph "Tracing"
-    Kialipods("Kiali Pod(s)") --> queryservice{{Query Service<br />jaeger-query}} ----> jaeger(Jaeger)
+    Kialipods("Kiali Pod(s)") --> queryservice{{Query Service<br />jaeger-query}} --> jaeger(Jaeger)
   end
 
   subgraph "Logging"
