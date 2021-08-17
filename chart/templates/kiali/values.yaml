@@ -45,6 +45,9 @@ cr:
       istio:
         component_status:
           components:
+            - app_label: istiod
+              is_core: true
+              is_proxy: false
             {{- range $name, $values := .Values.istio.ingressGateways }}
             - app_label: {{ $name }}
               is_core: true
