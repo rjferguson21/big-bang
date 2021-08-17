@@ -40,7 +40,7 @@ charter/                        @gabe.scarberry @joshwolf @megamind @micah.nagel
 ^[Istio, Istio Operator, and Authservice]
 chart/Chart.yaml                @joshwolf @kavitha @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
 chart/values.yaml               @joshwolf @kavitha @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
-chart/templates/authservice     @joshwolf @kavitha @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
+chart/templates/authservice     @joshwolf @kavitha @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher @cdevarenne
 chart/templates/istio           @joshwolf @kavitha @michaelmcleroy @micah.nagel @runyontr @ryan.j.garcia @zackbutcher
 
 ^[HAProxy]
@@ -119,9 +119,9 @@ chart/values.yaml               @kavitha @kevin.wilder @ariel.shnitzer @grant.du
 chart/templates/nexus           @kavitha @kevin.wilder @ariel.shnitzer @grant.duncklee
 
 ^[Velero]
-chart/Chart.yaml                @tunde @adam.toy @micah.nagel @jcarnes
-chart/values.yaml               @tunde @adam.toy @micah.nagel @jcarnes
-chart/templates/velero          @tunde @adam.toy @micah.nagel @jcarnes
+chart/Chart.yaml                @tunde @adam.toy @micah.nagel @toladipupo
+chart/values.yaml               @tunde @adam.toy @micah.nagel @toladipupo
+chart/templates/velero          @tunde @adam.toy @micah.nagel @toladipupo
 
 ^[fluentbit]
 chart/Chart.yaml                @kavitha @ryan.j.garcia @echuang

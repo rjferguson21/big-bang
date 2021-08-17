@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [1.14.0]
+
+* [!1.14.0](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.14.0); List of merge requests in this release.
+
+## [1.13.1]
+
+* [!722](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/722): Bumping Gatekeeper tag, reducing pod footprint, cleaning up constraints
+* [!730](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/730): Bumping Gatekeeper tag, properly excluding all of "kube-system" namespace from gatekeeper via upstream recommendation, removing "kube-system" exclusions from package values.
+
 ## [1.13.0]
 
 [!1.13.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.13.0); List of Merge Requests in this Release
@@ -111,6 +120,9 @@ curl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/scripts/de
 * [!463](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/463): Update CODEOWNERS
 
 ### Upgrade Notice
+
+#### Sonarqube Release Information
+
 This release comes with a new version of Sonarqube which requires a manual database upgrade that can be easily done through the web interface. If you see a message stating Sonarqube is under maintenance go to the following url and click update database:
 ```
 https://sonarqube.your.url/setup

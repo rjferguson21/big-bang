@@ -204,6 +204,18 @@ cd ./bigbang
 ./scripts/install_flux.sh -u your-user-name -p your-pull-secret
 ```
 
+**Note:** When deploying to k3d, istio-system should be added from `excludedNamespaces` under the `allowedDockerRegistries` violations for gatekeeper. This can be done by modifying `chart/values.yaml` file or passing an override file with the values set as seen below. This is for development purposes only: production should not allow containers in the `istio-system` namespace to be pulled from outside of Registry1. 
+
+```yaml
+gatekeeper:
+  values:
+    violations:
+      allowedDockerRegistries:
+        match:
+          excludedNamespaces: 
+            - istio-system # allows creation for loadbalancer pods for various ports and various vendor loadbalancers
+```
+
 ## Addendum
 
 ### More secure method with `sshuttle`
@@ -237,6 +249,18 @@ Then on your workstation edit the kubeconfig with the EC2 private ip. In a separ
 ```shell
 sshuttle --dns -vr ec2-user@$EC2_PUBLIC_IP 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/your-ec2.pem'
 ```
+
+#### A note on DNS forwarding
+
+Mac antivirus tools have been known to interfere with DNS forwarding. In other cases, due to the cluster configuration, the hostnames do resolve, but to 127.0.0.1 (localhost) or to other 127.0.0.0/8 addresses
+
+If the hosts shown in the HOSTS column from `kubectl get vs -A` don't resolve to the host(s) running the cluster (or don't resolve at all), add them to your /etc/hosts file:
+
+```shell
+<IP of the EC2 instance> kibana.bigbang.dev prometheus.bigbang.dev grafana.bigbang.dev alertmanager.bigbang.dev kiali.bigbang.dev tracing.bigbang.dev
+```
+
+It is important to use hostnames when accessing cluster apps in a browser instead of IPs as the hostname sent by the browser in its HTTP GET request is used by the load balancers (see: kubectl get svc -n istio-system) to direct the traffic to the correct app. 
 
 ### Multi Ingress-gateway Support with MetalLB and K3D
 
