@@ -97,16 +97,16 @@ do
 done
 
 # Check for failed helm releases...
-until [ kubectl wait --for=condition=Ready --timeout 750s helmrelease -n bigbang --all &> /dev/null ]
-do
-   read -a array <<< $(kubectl get hr -A -o jsonpath={.items[*].status.conditions[0].reason})
-   for item in "${array[@]}"; do
-      if [[ "$item" =~ "UpgradeFailed" ]]; then
+timeout 750s bash << EOF
+    until false 
+    do
+        kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all &> /dev/null
+        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ "Failed" ]]; then
             echo "Found a failed Helm Release. Exiting now."
             exit 1
-      fi
-   done
-done
+        fi
+    done
+EOF
 
 echo "Waiting on Secrets Kustomization"
 kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
