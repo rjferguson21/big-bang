@@ -86,7 +86,10 @@ If you require a more advanced SSO configuration there are additional ways to cu
 
 ### Licensing
 
-
+Kiali is open source and released under [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0.txt). There are no paid options for licensing or support.
 
 ### Dependencies
 
+Since Kiali is used to observe the Istio service mesh it is tightly coupled with Istio and dependent on Istio being deployed.
+
+Big Bang's implementation of Kiali is dependent on Monitoring (Prometheus and Grafana) and Jaeger as well. All of these are by default deployed with BB Core and Kiali will be auto-configured with the service info needed to connect to them.
