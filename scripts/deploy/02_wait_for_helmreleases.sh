@@ -32,7 +32,7 @@ function array_contains() {
 ## $1: package name
 function wait_on() {
   echo "Waiting on package $1"
-  kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang $1;
+  kubectl wait --for=condition=Ready --timeout 900s helmrelease -n bigbang $1;
 }
 
 ## Function to wait on all statefulsets
@@ -96,11 +96,20 @@ do
   fi
 done
 
-# Double check everything got waited on...
-kubectl wait --for=condition=Ready --timeout 750s helmrelease -n bigbang --all
+# Check for failed helm releases...
+until [ kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all &> /dev/null ]
+do
+   read -a array <<< $(kubectl get hr -A -o jsonpath={.items[*].status.conditions[0].reason})
+   for item in "${array[@]}"; do
+      if [[ "$item" =~ "UpgradeFailed" ]]; then
+            echo "Found a failed Helm Release. Exiting now."
+            exit 1
+      fi
+   done
+done
 
 echo "Waiting on Secrets Kustomization"
-kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
+kubectl wait --for=condition=Ready --timeout 500s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
 # In case some helm releases are marked as ready before all objects are live...
 echo "Waiting on all jobs, deployments, statefulsets, and daemonsets"
