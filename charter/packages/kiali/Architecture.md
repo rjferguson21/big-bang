@@ -2,7 +2,7 @@
 
 ## Overview
 
-[Kiali](https://kiali.io/) is a console for managing an Istio service mesh. It provides graphical views of interactions, metrics, and configuration options for the mesh. To aggregate this data it interacts with Prometheus, Grafana, and Jaeger.
+[Kiali](https://kiali.io/) is a console for managing your Istio service mesh. It provides graphical views of networking interactions, metrics, and configuration options for the mesh. To aggregate this data it interacts with Prometheus, Grafana, and Jaeger.
 
 Big Bang's implementation uses the [Kiali operator](https://github.com/kiali/kiali-operator) to provide custom resources and manage the deployment.
 
@@ -36,11 +36,46 @@ graph LR
 
 ### Storage
 
-Kiali does not have any persistent storage, all data is accessed from Jaeger/Monitoring which have their own persistent storage needs/uses (see their respective architecture docs for more info).
+Kiali does not have any persistent storage, all data is accessed from Jaeger/Monitoring services.
 
-### High Availability
+### Istio Configuration
 
-HA can be done for Kiali via two methods. You can directly control the replicas required or have Kiali create and use a horizontal pod autoscaler and set a min/max number of replicas for the deployment. Both methods are shown below:
+The Istio VirtualService is created automatically (hosted at `kiali.{{ .Values.hostname }}`) and can be configured with the following values:
+
+```yaml
+kiali:
+  # Gateway override
+  ingress:
+    gateway: "private"
+  values:
+    istio:
+      kiali:
+        # Hostname override
+        hosts:
+        - kiali.{{ .Values.hostname }}
+```
+
+### Monitoring/Tracing Configuration
+
+Kiali in Big Bang is preconfigured with the service information to connect to Big Bang's deployments of Prometheus, Grafana, and Jaeger. If you wish to configure Kiali with different external services rather than the BB provided ones, you can do that via values overrides:
+
+```yaml
+kiali:
+  values:
+    cr:
+      spec:
+        external_services:
+          ...
+          # Fill in with your custom overrides
+          # See https://github.com/kiali/kiali-operator/blob/master/deploy/kiali/kiali_cr.yaml#L422 for available options
+          ...
+```
+
+Important note: If you modify the Grafana admin password via the UI or another method besides your Helm values (`monitoring.values.grafana.adminPassword`), Kiali will not be autoconfigured with this knowledge...TBD?
+
+## High Availability
+
+HA can be accomplished for Kiali via two methods. You can directly control the replicas required or have Kiali create and use a horizontal pod autoscaler and set a min/max number of replicas for the deployment. Both methods are shown below:
 
 - Specific number of replicas
 ```yaml
@@ -65,7 +100,7 @@ kiali:
               minReplicas: 3
 ```
 
-### Single Sign on (SSO)
+## Single Sign on (SSO)
 
 SSO for Kiali is done via [built in OIDC](https://kiali.io/documentation/latest/configuration/authentication/openid/). Big Bang abstracts and simplifies the settings required for SSO setup. The following values can be used to configure SSO for Kiali:
 
@@ -84,11 +119,11 @@ sso:
 
 If you require a more advanced SSO configuration there are additional ways to customize that are detailed in the [upstream OIDC docs](https://kiali.io/documentation/latest/configuration/authentication/openid/). This doc includes details on how to configure username, scope, timeout, proxies, and more. It also lists some [SSO provider specifics](https://kiali.io/documentation/latest/configuration/authentication/openid/#_provider_specific_instructions) which may be needed for configuring with different providers. If you want to provide any further configuration than what is included in the `kiali.sso` block, you can pass values via `kiali.values.cr.spec.auth`.
 
-### Licensing
+## Licensing
 
 Kiali is open source and released under [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0.txt). There are no paid options for licensing or support.
 
-### Dependencies
+## Dependencies
 
 Since Kiali is used to observe the Istio service mesh it is tightly coupled with Istio and dependent on Istio being deployed.
 
