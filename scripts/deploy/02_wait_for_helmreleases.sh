@@ -32,7 +32,7 @@ function array_contains() {
 ## $1: package name
 function wait_on() {
   echo "Waiting on package $1"
-  kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang $1;
+  kubectl wait --for=condition=Ready --timeout 720s helmrelease -n bigbang $1;
 }
 
 ## Function to wait on all statefulsets
@@ -96,11 +96,11 @@ do
   fi
 done
 
-# Check for failed helm releases...
-timeout 750s bash << EOF
-    until false 
+# In case some failed/not yet deployed helm releases get past the first check...
+echo "Check for failed helm releases"
+timeout 600s bash << EOF
+    until [ $(kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all) ]
     do
-        kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all &> /dev/null
         if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ "Failed" ]]; then
             echo "Found a failed Helm Release. Exiting now."
             exit 1
