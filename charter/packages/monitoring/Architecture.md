@@ -38,7 +38,7 @@ graph LR
     monitoringpods("Monitoring Pod(s)") ---|Logs|fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
-  subgraph "Ingress"
+  subgraph "Ingress (Istio)"
     ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> alertmanagerservice
     ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> grafanaservice
     ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> kubeprometheusservice
@@ -202,9 +202,20 @@ monitoring:
 
 ### Dependency Packages
 
-By default BigBang  installs additional, dependent charts:
-* kubernetes/kube-state-metrics
-* prometheus-community/prometheus-node-exporter
-* grafana/grafana
+When deploying BigBang, monitoring depends on gatekeeper and istio being installed prior.
+
+```
+  {{- if or .Values.gatekeeper.enabled .Values.istio.enabled }}
+  dependsOn:
+  {{- if .Values.istio.enabled }}
+    - name: istio
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if .Values.gatekeeper.enabled }}
+    - name: gatekeeper
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- end }}
+```
 
 
