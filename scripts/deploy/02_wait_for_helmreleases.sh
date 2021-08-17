@@ -32,7 +32,7 @@ function array_contains() {
 ## $1: package name
 function wait_on() {
   echo "Waiting on package $1"
-  kubectl wait --for=condition=Ready --timeout 900s helmrelease -n bigbang $1;
+  kubectl wait --for=condition=Ready --timeout 600s helmrelease -n bigbang $1;
 }
 
 ## Function to wait on all statefulsets
@@ -97,7 +97,7 @@ do
 done
 
 # Check for failed helm releases...
-until [ kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all &> /dev/null ]
+until [ kubectl wait --for=condition=Ready --timeout 750s helmrelease -n bigbang --all &> /dev/null ]
 do
    read -a array <<< $(kubectl get hr -A -o jsonpath={.items[*].status.conditions[0].reason})
    for item in "${array[@]}"; do
