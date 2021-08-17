@@ -114,7 +114,7 @@ monitoring:
 
 ### Logging
 
-Within the kube-prometheus-stack chart you can customize both the LogFormat and LogLevel for the following components within the chart:
+Within the kube-prometheus-stack chart, you can customize both the LogFormat and LogLevel for the following components:
 Note: within Big Bang, logs are captured by fluentbit and shipped to elastic by default.
 
 #### Prometheus-Operator
@@ -146,7 +146,7 @@ monitoring:
     alertmanager:
       alertmanagerSpec:
         logFormat: logfmt
-         logLevel: info
+        logLevel: info
 ```
 
 #### Grafana
@@ -162,7 +162,7 @@ monitoring:
 
 ## Single Sign on (SSO)
 
-SSO can be configured for monitoring through Authservice, more info is included in the following the documentation. \
+SSO can be configured for monitoring through Authservice, more info is included in the following documentation:
 [Monitoring SSO Integration](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring/-/blob/main/docs/KEYCLOAK.md)
 
 ## Monitoring
