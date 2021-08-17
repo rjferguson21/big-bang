@@ -9,7 +9,7 @@ Big Bang's implementation uses the [Kiali operator](https://github.com/kiali/kia
 ## Big Bang Touch Points
 
 ```mermaid
-graph LR
+graph TB
   subgraph "Kiali"
     Kialipods("Kiali Pod(s)")
     kialiservice{{Kiali Service}} --> Kialipods("Kiali Pod(s)")
@@ -20,12 +20,14 @@ graph LR
   end
 
   subgraph "Monitoring"
-    Kialipods("Kiali Pod(s)") ---- prometheus(Prometheus)
-    Kialipods("Kiali Pod(s)") ---- grafana(Grafana)  
+    Kialipods("Kiali Pod(s)") ---- prometheusservice{{Prometheus Service<br />monitoring-monitoring-kube-prometheus}} ----> Prometheus
+    svcmonitor("Service Monitor") --"Metrics Port"--> kialiservice
+    Prometheus --> svcmonitor("Service Monitor")
+    Kialipods("Kiali Pod(s)") ---- grafanaservice{{Grafana Service<br />monitoring-monitoring-grafana}} ----> Grafana  
   end
 
   subgraph "Tracing"
-    Kialipods("Kiali Pod(s)") ---- jaeger(Jaeger)
+    Kialipods("Kiali Pod(s)") ---- queryservice{{Query Service<br />jaeger-query}} ----> jaeger(Jaeger)
   end
 
   subgraph "Logging"
