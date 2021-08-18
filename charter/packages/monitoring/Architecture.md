@@ -171,13 +171,15 @@ Monitoring deployment has serviceMonitors enabled for
 * kube-proxy
 * kube-scheduler
 * kube-state-metrics
-*  kubelet
+* kubelet
 * node-exporter
 * alert manager
 * grafana
 * prometheus
 * prometheus-operator
 * node-exporter
+
+Note: Other packages are responsible for deploying Service Monitors for their components as needed.
 
 ### HA
 
