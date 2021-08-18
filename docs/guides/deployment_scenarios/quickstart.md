@@ -197,24 +197,29 @@ The following requirements are recommended for Demo Purposes:
 
 Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
 
-APPLICATION=big-bang-quick-start
-IMAGE_CACHE=${HOME}/.bigbang-container-image-cache
 
+IMAGE_CACHE=${HOME}/.bigbang-container-image-cache
+SERVER_IP="10.10.16.11" #(can be public)
 cd ~
 mkdir -p ${IMAGE_CACHE}
 
 k3d cluster create \
-    --servers 1 \
-    --agents 3 \
     --volume /etc/machine-id:/etc/machine-id \
     --volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content \
     --k3s-server-arg "--disable=traefik" \
+    --k3s-server-arg "--tls-san=$SERVER_IP" \
     --port 80:80@loadbalancer \
     --port 443:443@loadbalancer \
-    --api-port 6443 \
-    ${APPLICATION}
+    --api-port 6443
 
 
+exit
+
+scp k3d:~/.kube/config ~/.kube/config
+vi ~/.kube/config #(replace 0.0.0.0 with the value of SERVER_IP)
+(now kubectl from laptop is an option)
+
+# k3d cluster delete big-bang-quick-start
 
 
 
