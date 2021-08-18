@@ -113,7 +113,7 @@ kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolk
 
 # In case some helm releases are marked as ready before all objects are live...
 echo "Waiting on all jobs, deployments, statefulsets, and daemonsets"
-kubectl wait --for=condition=available --timeout 600s -A deployment --all > /dev/null
+kubectl wait --for=condition=available --timeout 660s -A deployment --all > /dev/null
 wait_sts
 wait_daemonset
 if kubectl get job -A -o jsonpath='{.items[].metadata.name}' &> /dev/null; then
