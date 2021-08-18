@@ -16,10 +16,6 @@ graph LR
     grafanaservice{{Grafana Service}} --> grafanapods("Grafana Pod(s)")
     grafanasvcmonitor("Service Monitor") --"Metrics Port"--> grafanaservice
     Prometheus --> grafanasvcmonitor("Service Monitor")
-    prometheusoperatorpods("Prometheus-Operator Pod(s)") --> monitoringpods("Monitoring Pod(s)")
-    prometheusoperatorservice{{Prometheus-Operator Service}} -->  prometheusoperatorpods("Prometheus-Operator Pod(s)")
-    prometheusoperatorsvcmonitor("Service Monitor") --"Metrics Port"--> prometheusoperatorservice
-    Prometheus --> prometheusoperatorsvcmonitor("Service Monitor")
     nodeexporterpods("Node-Exporter Pod(s)") --> monitoringpods("Monitoring Pod(s)")
     nodeexporterservice{{Node-Exporter Service}} -->  nodeexporterpods("Node-Exporter Pod(s)")
     nodeexportersvcmonitor("Service Monitor") --"Metrics Port"-->  nodeexporterservice
@@ -28,20 +24,17 @@ graph LR
     kubestatemetricsservice{{Kube-State-Metrics Service}} -->  kubestatemetricspods("Kube-State-Metrics Pod(s)")
     kubestatemetricssvcmonitor("Service Monitor") --"Metrics Port"-->  kubestatemetricsservice
     Prometheus --> kubestatemetricssvcmonitor("Service Monitor")
-    kubeprometheuspods("Kube-Prometheus-Prometheus Pod(s)") --> monitoringpods("Monitoring Pod(s)")
-    kubeprometheusservice{{Kube-Prometheus-Prometheus Service}} -->  kubeprometheuspods("Kube-Prometheus-Prometheus Pod(s)")
-    kubeprometheussvcmonitor("Service Monitor") --"Metrics Port"-->  kubeprometheusservice
-    Prometheus --> kubeprometheussvcmonitor("Service Monitor")
+    PromOperator ---|Manages/Creates| Prometheus
+    VirtualService --"App Port"--> alertmanagerservice
+    VirtualService --"App Port"--> grafanaservice
+    VirtualService --"App Port"--> Prometheus
   end
-
   subgraph "Logging"
     monitoringpods("Monitoring Pod(s)") ---|Logs|fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
-  subgraph "Ingress (Istio)"
-    ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> alertmanagerservice
-    ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> grafanaservice
-    ig(Ingress Gateway, Gateway, VirtualService) --"App Port"--> kubeprometheusservice
+  subgraph "Istio-system (Ingress)"
+    ig(Ingress Gateway, Gateway) --> VirtualService
   end 
   
 ```
