@@ -53,8 +53,7 @@ cr:
               is_core: true
               is_proxy: true
             {{- end }}
-            {{- $istioValuesIngressGateways := (dig "ingressGateways" dict .Values.istio.values) }}
-            {{- range $name, $values := $istioValuesIngressGateways }}
+            {{- range $name, $values := .Values.istio.values.ingressGateways }}
             - app_label: {{ $name }}
               is_core: true
               is_proxy: true
