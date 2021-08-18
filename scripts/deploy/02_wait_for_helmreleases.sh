@@ -99,13 +99,13 @@ done
 # In case some failed/not yet deployed helm releases get past the first check...
 echo "Check for failed helm releases"
 timeout 600s bash << EOF
-    until [ $(kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all) ]
-    do
-        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ "Failed" ]]; then
-            echo "Found a failed Helm Release. Exiting now."
-            exit 1
-        fi
-    done
+   until kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all
+   do
+      if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ "Failed" ]]; then
+         echo "Found a failed Helm Release. Exiting now."
+         exit 1
+      fi
+   done
 EOF
 
 echo "Waiting on Secrets Kustomization"
