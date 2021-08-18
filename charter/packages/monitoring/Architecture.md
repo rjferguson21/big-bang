@@ -24,17 +24,20 @@ graph LR
     kubestatemetricsservice{{Kube-State-Metrics Service}} -->  kubestatemetricspods("Kube-State-Metrics Pod(s)")
     kubestatemetricssvcmonitor("Service Monitor") --"Metrics Port"-->  kubestatemetricsservice
     Prometheus --> kubestatemetricssvcmonitor("Service Monitor")
+    Prometheus --> prometheussvcmonitor("Service Monitor")
+    prometheussvcmonitor("Service Monitor") --"Metrics Port"--> prmetheussservice{{Prometheus Service}}
+    prmetheussservice{{Prometheus Service}} --> Prometheus
     PromOperator ---|Manages/Creates| Prometheus
-    VirtualService --"App Port"--> alertmanagerservice
-    VirtualService --"App Port"--> grafanaservice
-    VirtualService --"App Port"--> Prometheus
+    VirtualServices --"App Port"--> alertmanagerservice
+    VirtualServices --"App Port"--> grafanaservice
+    VirtualServices --"App Port"--> Prometheus
   end
   subgraph "Logging"
     monitoringpods("Monitoring Pod(s)") ---|Logs|fluent(Fluentbit) --> logging-ek-es-http
     logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
   end
   subgraph "Istio-system (Ingress)"
-    ig(Ingress Gateway, Gateway) --> VirtualService
+    ig(Ingress Gateway, Gateway) --> VirtualServices
   end 
   
 ```
