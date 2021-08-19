@@ -1,7 +1,6 @@
 hostname: bigbang.dev
 
 flux:
-  timeout: 15m
   interval: 1m
   rollback:
     cleanupOnFail: false
