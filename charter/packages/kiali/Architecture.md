@@ -10,9 +10,11 @@ Big Bang's implementation uses the [Kiali operator](https://github.com/kiali/kia
 
 ```mermaid
 graph LR
-  subgraph "Kiali"
+  subgraph "Kiali"    
+    Operator("Kiali Operator<br />(manages/deploys Kiali)")
     Kialipods("Kiali Pod(s)")
     kialiservice{{Kiali Service}} --> Kialipods("Kiali Pod(s)")
+    
   end      
 
   subgraph "Ingress"
@@ -20,8 +22,8 @@ graph LR
   end
 
   subgraph "Monitoring"
-    Kialipods("Kiali Pod(s)") --> prometheusservice{{Prometheus Service<br />monitoring-monitoring-kube-prometheus}} --> Prometheus
-    Kialipods("Kiali Pod(s)") --> grafanaservice{{Grafana Service<br />monitoring-monitoring-grafana}} --> Grafana  
+    Kialipods("Kiali Pod(s)") --> prometheusservice{{Prometheus Service<br />monitoring-monitoring-kube-prometheus}} --> Prometheus("Prometheus")
+    Kialipods("Kiali Pod(s)") --> grafanaservice{{Grafana Service<br />monitoring-monitoring-grafana}} --> Grafana("Grafana")
   end
 
   subgraph "Tracing"
@@ -36,7 +38,7 @@ graph LR
 
 ### Storage
 
-Kiali does not have any persistent storage, all data is accessed from Jaeger/Monitoring services.
+Kiali does not have any persistent storage, all data is accessed live/directly from Jaeger/Monitoring services.
 
 ### Istio Configuration
 
@@ -55,7 +57,9 @@ kiali:
         - kiali.{{ .Values.hostname }}
 ```
 
-### Monitoring/Tracing Configuration
+Kiali is also pre-configured with knowledge of the BB Istio stack for monitoring purposes. Kiali will monitor the status of all ingressGateways and istiod and display a status "bubble" when a component is unreachable or down.
+
+### External Service Configuration
 
 Kiali in Big Bang is preconfigured with the service information to connect to Big Bang's deployments of Prometheus, Grafana, and Jaeger. If you wish to configure Kiali with different external services rather than the BB provided ones, you can do that via values overrides:
 
@@ -71,7 +75,23 @@ kiali:
           ...
 ```
 
-Important note: If you modify the Grafana admin password via the UI or another method besides your Helm values (`monitoring.values.grafana.adminPassword`), Kiali will not be autoconfigured with this knowledge...TBD?
+Since both Prometheus and Jaeger are open to Kiali via the service address there is no authentication needed for them. Grafana authentication will be set up automatically using the admin account for Grafana.
+
+Important note: If you modify the Grafana admin username/password via the UI or another method besides Helm values (`monitoring.values.grafana.adminPassword` or `monitoring.values.grafana.admin.existingSecret`), Kiali will not be autoconfigured with this knowledge. This is due to limitations in where/how Grafana stores the "live" password. If you do modify your Grafana username/password in one of thse ways, it is recommended to pass these values to your Grafana install via one of the below methods where they will also be picked up by Kiali:
+
+```yaml
+monitoring:
+  values:
+    grafana:
+      # Direct passing via values (method 1)
+      adminUser: myadminuser
+      adminPassword: myadminpassword
+      # Passing via secret (method 2)
+      admin:
+        existingSecret: mygrafanasecret
+        userKey: myusernamekey
+        passwordKey: mypasswordkey
+```
 
 ## High Availability
 
@@ -117,7 +137,7 @@ sso:
     realm: baby-yoda
 ```
 
-If you require a more advanced SSO configuration there are additional ways to customize that are detailed in the [upstream OIDC docs](https://kiali.io/documentation/latest/configuration/authentication/openid/). This doc includes details on how to configure username, scope, timeout, proxies, and more. It also lists some [SSO provider specifics](https://kiali.io/documentation/latest/configuration/authentication/openid/#_provider_specific_instructions) which may be needed for configuring with different providers. If you want to provide any further configuration than what is included in the `kiali.sso` block, you can pass values via `kiali.values.cr.spec.auth`.
+If you require a more advanced SSO configuration there are additional ways to customize that are detailed in the [upstream OIDC docs](https://kiali.io/documentation/latest/configuration/authentication/openid/). This doc includes details on how to configure username, scope, timeout, proxies, and more. It also lists some [SSO provider specifics](https://kiali.io/documentation/latest/configuration/authentication/openid/#_provider_specific_instructions) which may be needed for configuring with different providers. If you want to provide any further configuration than what is included in the `kiali.sso` block, you can override the BB pre-configured SSO and pass values via `kiali.values.cr.spec.auth`.
 
 ## Licensing
 
@@ -127,4 +147,4 @@ Kiali is open source and released under [Apache License v2](https://www.apache.o
 
 Since Kiali is used to observe the Istio service mesh it is tightly coupled with Istio and dependent on Istio being deployed.
 
-Big Bang's implementation of Kiali is dependent on Monitoring (Prometheus and Grafana) and Jaeger as well. All of these are by default deployed with BB Core and Kiali will be auto-configured with the service info needed to connect to them.
+Big Bang's implementation of Kiali is dependent on Monitoring (Prometheus and Grafana) and Jaeger as well. While these services are not required for setup, Kiali will be missing information if one or more of them are not deployed (note that all are part of the core BB stack).
