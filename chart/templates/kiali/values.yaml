@@ -37,8 +37,8 @@ cr:
       {{- end }}
     external_services:
       grafana:
-        {{- $grafanaUrls := first (dig "istio" "grafana" "hosts" list .Values.monitoring.values) }}
-        url: https://{{ tpl ($grafanaUrls | default (printf "%s.%s" "grafana" .Values.hostname)) . }}
+        {{- $grafanaUrl := first (dig "istio" "grafana" "hosts" list .Values.monitoring.values) }}
+        url: https://{{ tpl ($grafanaUrl | default (printf "%s.%s" "grafana" .Values.hostname)) . }}
         auth:
         {{- if (dig "grafana" "admin" "existingSecret" "" .Values.monitoring.values) }}
           {{- $userKey := (dig "grafana" "admin" "userKey" "admin-user" .Values.monitoring.values) }}
@@ -50,8 +50,8 @@ cr:
         {{- end }}
           password: "secret:grafana-auth:password"
       tracing:
-        {{- $tracingUrls := first (dig "istio" "jaeger" "hosts" list .Values.jaeger.values) }}
-        url: https://{{ tpl ($tracingUrls | default (printf "%s.%s" "tracing" .Values.hostname)) . }}
+        {{- $tracingUrl := first (dig "istio" "jaeger" "hosts" list .Values.jaeger.values) }}
+        url: https://{{ tpl ($tracingUrl | default (printf "%s.%s" "tracing" .Values.hostname)) . }}
       istio:
         component_status:
           components:
