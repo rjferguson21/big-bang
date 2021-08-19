@@ -59,13 +59,11 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
 
   podsHaveIstio:
     enabled: {{ .Values.istio.enabled }}
-    {{- if .Values.istio.enabled }}
     match:
       excludedNamespaces:
         # Istio does not inject sidecars in itself
         - istio-operator
         - istio-system
-    {{- end }}
 
   {{- if .Values.monitoring.enabled }}
   restrictedTaint:
