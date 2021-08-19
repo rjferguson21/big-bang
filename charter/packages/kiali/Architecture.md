@@ -11,9 +11,9 @@ Big Bang's implementation uses the [Kiali operator](https://github.com/kiali/kia
 ```mermaid
 graph LR
   subgraph "Kiali"    
-    Operator("Kiali Operator<br />(manages/deploys Kiali)") --> Kialicr("Kiali CR")
-    Kialicr("Kiali CR") --> Kialipods("Kiali Pod(s)")
-    Kialicr("Kiali CR") --> kialiservice{{Kiali Service}} --> Kialipods("Kiali Pod(s)")
+    Operator("Kiali Operator<br />(manages/deploys Kiali)")
+    Kialipods("Kiali Pod(s)")
+    kialiservice{{Kiali Service}} --> Kialipods("Kiali Pod(s)")
     
   end      
 
