@@ -42,7 +42,6 @@ cr:
         auth:
           username: "secret:grafanaauth:username"
           password: "secret:grafanaauth:password"
-          test: test
       tracing:
         {{- $tracingUrls := first (dig "istio" "jaeger" "hosts" list .Values.jaeger.values) }}
         url: https://{{ tpl ($tracingUrls | default (printf "%s.%s" "tracing" .Values.hostname)) . }}
