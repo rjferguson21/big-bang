@@ -105,7 +105,7 @@ addons:
 
 **Setting a user value is not supported due to OPA constraint issues**
 
-To update the "size" (`users` value) for Mattermost, you need to override the default of null in your values, as an example to set 1000:
+If you want to use Mattermost's user/size value you will need to handle OPA violations and exceptions yourself since this is not BB supported. If all of these considerations have been accounted for and you still want to deploy with Mattermost's user sizing it can be done by setting the value as in this example:
 
 ```yaml
 addons:
