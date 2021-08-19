@@ -312,7 +312,7 @@ docker network inspect k3d-k3s-default | jq .[0].IPAM.Config[0]
 ```shell
 kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
 kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
-cat <<EOF | > metallb-config.yaml
+cat << EOF > metallb-config.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -381,7 +381,21 @@ sudo vim /etc/hosts
     ```
   - With these DNS settings in place you will now be able to reach the external *.bigbang.dev URLs from this EC2 instance.
 
-  - To reach outside the EC2 instance use either SSH or SSHUTTLE commands to specify a local port for Dynamic application-level port forwarding (ssh -D) and utilize Firefox's built in SOCKS proxy configuration to route DNS and web traffic through the application-level port forward from the SSH command.
+  - To reach outside the EC2 instance use either SSH or SSHUTTLE commands to specify a local port for Dynamic application-level port forwarding (ssh -D). Example
+      ```shell
+      sshuttle --dns -vr ubuntu@$EC2_PRIVATE_IP 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/your.pem -D 127.0.0.1:12345'
+      ```
+   - and utilize Firefox's built in SOCKS proxy configuration to route DNS and web traffic through the application-level port forward from the SSH command.
+      1. Open Firefox browser
+      1. Click on hamburger menu in upper right corner and select ```Settings```
+      1. At the bottom of ```Settings``` page in the ```Network Settings``` section select ```Settings```
+      1. Select ```Manual proxy configuration``` and the following values
+          ```
+          SOCKS Host:  localhost
+          Port:  12345
+          ```
+          and select SOCKS v5
+      1. Select ```Proxy DNS when using SOCKS v5```
 
 ### Amazon Linux 2
 
