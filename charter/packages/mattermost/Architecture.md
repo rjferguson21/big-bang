@@ -106,6 +106,20 @@ Setting new Size will override previous values regardless if set
 by Size or manually.
 ```
 
+**To allow for defining replica count and resource requests/limits, `users` is set to `null` by default. Changing this will negate these values and mattermost may not run due to OPA Gatekeeper constraints.**
+
+To override Mattermost's handling of replicas and explicitly set replicas you can specify this workaround in your values:
+
+```yaml
+addons:
+  mattermost:
+    values:
+      enterprise:
+        enabled: true
+      replicaCount: 3
+```
+
+**Not supported due to OPA constraint issues**
 To update the "size" (`users` value) for Mattermost, you need to override the default of 100 in your values (note you do not need to include the word `users` since Big Bang handles this for you), as an example to set 1000:
 
 ```yaml
@@ -115,15 +129,6 @@ addons:
       users: 1000
 ```
 
-To override Mattermost's handling of replicas and explicitly set replicas you can specify this workaround in your values:
-
-```yaml
-addons:
-  mattermost:
-    values:
-      users: null
-      replicaCount: 3
-```
 
 ## Single Sign On (SSO)
 
