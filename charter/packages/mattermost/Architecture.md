@@ -120,6 +120,7 @@ addons:
 ```
 
 **Not supported due to OPA constraint issues**
+
 To update the "size" (`users` value) for Mattermost, you need to override the default of 100 in your values (note you do not need to include the word `users` since Big Bang handles this for you), as an example to set 1000:
 
 ```yaml
