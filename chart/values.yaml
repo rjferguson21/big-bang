@@ -55,11 +55,11 @@ sso:
     # -- Keycloak realm containing clients
     realm: baby-yoda
 
-  # -- Keycloak's certificate authority (unencoded) used by authservice to support SSO for various packages
-  certificate_authority: ''
+  # -- Keycloak's certificate authority (PEM Format). Entered using chomp modifier (see chart/dev-sso-values.yaml for example). Used by authservice to support SSO for various packages
+  certificate_authority: ""
 
-  # -- Keycloak realm's json web key uri, obtained through https://<keycloak-server>/auth/realms/<realm>/.well-known/openid-configuration
-  jwks: ""
+  # -- Keycloak realm's json web key output, obtained at https://<keycloak-server>/auth/realms/<realm>/protocol/openid-connect/certs
+  jwks: ''
 
   # -- OIDC client ID used for packages authenticated through authservice
   client_id: ""
@@ -281,7 +281,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.5.1-bb.8"
+    tag: "3.5.1-bb.13"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
@@ -511,7 +511,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.11"
+      tag: "0.4.0-bb.13"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -586,7 +586,8 @@ addons:
       tag: "4.12.9-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
-    flux: {}
+    flux:
+      timeout: 20m
 
     # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
@@ -816,7 +817,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.5"
+      tag: "1.13.0-bb.6"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -902,7 +903,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.14.0-bb.2"
+      tag: "1.14.0-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
@@ -919,7 +920,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.1.7-bb.1"
+      tag: "0.1.8-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
