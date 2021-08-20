@@ -3,12 +3,9 @@
 set -e
 
 ## This is an array to instantiate the order of wait conditions
-ORDERED_HELMRELEASES="gatekeeper istio-operator istio monitoring eck-operator ek fluent-bit twistlock cluster-auditor authservice argocd gitlab haproxy-sso gitlab-runner minio-operator minio anchore sonarqube mattermost-operator mattermost keycloak nexus-repository-manager"
+CORE_HELMRELEASES=("gatekeeper" "istio-operator" "istio" "monitoring" "eck-operator" "ek" "fluent-bit" "twistlock" "cluster-auditor" "jaeger" "kiali")
 
-## This is the actual deployed helmrelease objects in the cluster
-DEPLOYED_HELMRELEASES=$(kubectl get hr --no-headers -n bigbang | awk '{ print $1}')
-
-printf "Identified the following deployed helmreleases:\n%s" "${DEPLOYED_HELMRELEASES}"
+ADD_ON_HELMRELEASES=("argocd" "authservice" "gitlab" "gitlabrunner" "anchore" "sonarqube" "minio-operator" "minio" "mattermost-operator" "mattermost" "nexus" "velero")
 
 ## Function to test an array contains an element
 ## Args:
@@ -27,12 +24,39 @@ function array_contains() {
     return $in
 }
 
-## Function to wait on helmrelease
-## Args:
-## $1: package name
-function wait_on() {
-  echo "Waiting on package $1"
-  kubectl wait --for=condition=Ready --timeout 720s helmrelease -n bigbang $1;
+function check_if_exist() {
+    timeElapsed=0
+    echo "Checking if $1 HR exists"
+    until kubectl get hr -n bigbang $1 &> /dev/null; do
+      sleep 5
+      timeElapsed=$(($timeElapsed+5))
+      if [[ $timeElapsed -ge 60 ]]; then
+         echo "Timed out while waiting for $1 to exist"
+         exit 1
+      fi
+    done
+}
+
+function wait_all_hr() {
+    timeElapsed=0
+    while true; do
+        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ Failed ]]; then
+            echo "Found a failed Helm Release. Exiting now."
+            exit 1
+        fi
+        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" != *DependencyNotReady* ]]; then
+            if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" != *Failed* ]]; then
+                echo "All HR's deployed"
+                break
+            fi
+        fi
+        sleep 5
+        timeElapsed=$(($timeElapsed+5))
+        if [[ $timeElapsed -ge 1800 ]]; then
+            echo "Timed out while waiting for hr's to be ready."
+            exit 1
+        fi
+    done
 }
 
 ## Function to wait on all statefulsets
@@ -75,38 +99,30 @@ function wait_daemonset(){
    done
 }
 
+## Untested - rough outline
+## Intent: Append all add-ons to hr list if "all-packages" or default branch. Else, add specific ci labels to hr list
+# HELMRELEASES+=(${CORE_HELMRELEASES[@]})
+# if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
+#     HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
+# elif [[ -z "$CI_MERGE_REQUEST_LABELS" ]]; then
+#     for package in $CI_MERGE_REQUEST_LABELS; do
+#         # Check if package is in core
+#         if array_contains CORE_HELMRELEASES "$package"; then
+#             break
+#         else
+#             HELMRELEASES+=($package)
+#         fi
+#     done
+# fi
 
-for package in $ORDERED_HELMRELEASES;
+for package in "${HELMRELEASES[@]}";
 do
-  if array_contains DEPLOYED_HELMRELEASES "$package";
-  then wait_on "$package"
-  else echo "Expected package: $package, but not found in release. Update the array in this script if this package is no longer needed"
-  fi
+    check_if_exist "$package"
 done
 
+echo "Waiting on helm releases..."
+wait_all_hr
 kubectl get helmreleases,kustomizations,gitrepositories -A
-
-for package in $DEPLOYED_HELMRELEASES;
-do
-  if array_contains ORDERED_HELMRELEASES "$package";
-  then echo ""
-  else 
-    echo "Found package: $package, but not found in this script array. Update the array in this script if this package is always needed"
-    wait_on "$package"
-  fi
-done
-
-# In case some failed/not yet deployed helm releases get past the first check...
-echo "Check for failed helm releases"
-timeout 600s bash << EOF
-   until kubectl wait --for=condition=Ready --timeout 60s helmrelease -n bigbang --all
-   do
-      if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ "Failed" ]]; then
-         echo "Found a failed Helm Release. Exiting now."
-         exit 1
-      fi
-   done
-EOF
 
 echo "Waiting on Secrets Kustomization"
 kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
