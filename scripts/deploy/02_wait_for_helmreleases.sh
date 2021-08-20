@@ -101,7 +101,7 @@ function wait_daemonset(){
 
 ## Untested - rough outline
 ## Intent: Append all add-ons to hr list if "all-packages" or default branch. Else, add specific ci labels to hr list
-# HELMRELEASES+=(${CORE_HELMRELEASES[@]})
+HELMRELEASES+=(${CORE_HELMRELEASES[@]})
 # if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
 #     HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
 # elif [[ -z "$CI_MERGE_REQUEST_LABELS" ]]; then
