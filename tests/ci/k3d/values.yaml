@@ -102,37 +102,37 @@ twistlock:
 addons:
   argocd:
     enabled: false
-    # values:
-    #   controller:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 200Mi
-    #       limits: {}
-    #   dex:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 200Mi
-    #       limits: {}
-    #   redis:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 200Mi
-    #       limits: {}
-    #   server:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 200Mi
-    #       limits: {}
-    #   repoServer:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 200Mi
-    #       limits: {}
+    values:
+      controller:
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits: {}
+      dex:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits: {}
+      redis:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits: {}
+      server:
+        resources:
+          requests:
+            cpu: 20m
+            memory: 128Mi
+          limits: {}
+      repoServer:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits: {}
 
   authservice:
     enabled: false
