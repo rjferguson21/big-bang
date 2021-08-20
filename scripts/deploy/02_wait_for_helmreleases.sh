@@ -2,10 +2,19 @@
 
 set -e
 
-## This is an array to instantiate the order of wait conditions
+## Array of core HRs
 CORE_HELMRELEASES=("gatekeeper" "istio-operator" "istio" "monitoring" "eck-operator" "ek" "fluent-bit" "twistlock" "cluster-auditor" "jaeger" "kiali")
 
-ADD_ON_HELMRELEASES=("argocd" "authservice" "gitlab" "gitlabrunner" "anchore" "sonarqube" "minio-operator" "minio" "mattermost-operator" "mattermost" "nexus" "velero")
+## Array of addon HRs
+ADD_ON_HELMRELEASES=("argocd" "authservice" "haproxy-sso" "gitlab" "gitlab-runner" "anchore" "sonarqube" "minio-operator" "minio" "mattermost-operator" "mattermost" "nexus-repository-manager" "velero")
+
+## Map of values-keys/labels to HRs: Only needed if HR name =/= label name
+declare -A ADD_ON_HELMRELEASES_MAP
+ADD_ON_HELMRELEASES_MAP["haproxy"]="haproxy-sso"
+ADD_ON_HELMRELEASES_MAP["gitlabRunner"]="gitlab-runner"
+ADD_ON_HELMRELEASES_MAP["minioOperator"]="minio-operator"
+ADD_ON_HELMRELEASES_MAP["mattermostoperator"]="mattermost-operator"
+ADD_ON_HELMRELEASES_MAP["nexus"]="nexus-repository-manager"
 
 ## Function to test an array contains an element
 ## Args:
@@ -24,19 +33,21 @@ function array_contains() {
     return $in
 }
 
+## Function to check/wait on HR existence
 function check_if_exist() {
     timeElapsed=0
-    echo "Checking if $1 HR exists"
+    echo "Waiting for $1 HR to exist"
     until kubectl get hr -n bigbang $1 &> /dev/null; do
       sleep 5
       timeElapsed=$(($timeElapsed+5))
       if [[ $timeElapsed -ge 60 ]]; then
-         echo "Timed out while waiting for $1 to exist"
+         echo "Timed out while waiting for $1 HR to exist"
          exit 1
       fi
     done
 }
 
+## Function to wait on all HRs
 function wait_all_hr() {
     timeElapsed=0
     while true; do
@@ -99,21 +110,28 @@ function wait_daemonset(){
    done
 }
 
-## Untested - rough outline
-## Intent: Append all add-ons to hr list if "all-packages" or default branch. Else, add specific ci labels to hr list
-HELMRELEASES+=(${CORE_HELMRELEASES[@]})
-# if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
-#     HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
-# elif [[ -z "$CI_MERGE_REQUEST_LABELS" ]]; then
-#     for package in $CI_MERGE_REQUEST_LABELS; do
-#         # Check if package is in core
-#         if array_contains CORE_HELMRELEASES "$package"; then
-#             break
-#         else
-#             HELMRELEASES+=($package)
-#         fi
-#     done
-# fi
+## Append all add-ons to hr list if "all-packages" or default branch/tag. Else, add specific ci labels to hr list.
+HELMRELEASES=(${CORE_HELMRELEASES[@]})
+if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
+    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
+    echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
+elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
+    IFS=","
+    for package in $CI_MERGE_REQUEST_LABELS; do
+        # Check if package is in addons
+        if array_contains ADD_ON_HELMRELEASES "$package"; then
+            HELMRELEASES+=("$package")
+        # Check to see if there is a mapping from label -> HR
+        elif [ ${ADD_ON_HELMRELEASES_MAP[$package]+_} ]; then
+            package="${ADD_ON_HELMRELEASES_MAP[$package]}"
+            # Safeguard to doublecheck new package name is valid HR name
+            if array_contains ADD_ON_HELMRELEASES "$package"; then
+                HELMRELEASES+=("$package")
+            fi
+        fi
+    done
+    echo "Found enabled helmreleases: ${HELMRELEASES[@]}"
+fi
 
 for package in "${HELMRELEASES[@]}";
 do
@@ -122,8 +140,11 @@ done
 
 echo "Waiting on helm releases..."
 wait_all_hr
+
+# TODO: Collapse this output by default with https://docs.gitlab.com/ee/ci/jobs/#custom-collapsible-sections
 kubectl get helmreleases,kustomizations,gitrepositories -A
 
+# TODO: Is this needed? Should it be before HRs?
 echo "Waiting on Secrets Kustomization"
 kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
