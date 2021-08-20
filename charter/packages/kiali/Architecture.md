@@ -29,11 +29,6 @@ graph LR
   subgraph "Tracing"
     Kialipods("Kiali Pod(s)") --> queryservice{{Query Service<br />jaeger-query}} --> jaeger(Jaeger)
   end
-
-  subgraph "Logging"
-    Kialipods("Kiali Pod(s)") --> fluent(Fluentbit) --> logging-ek-es-http
-    logging-ek-es-http{{Elastic Service<br />logging-ek-es-http}} --> elastic[(Elastic Storage)]
-  end
 ```
 
 ### Storage
@@ -138,6 +133,16 @@ sso:
 ```
 
 If you require a more advanced SSO configuration there are additional ways to customize that are detailed in the [upstream OIDC docs](https://kiali.io/documentation/latest/configuration/authentication/openid/). This doc includes details on how to configure username, scope, timeout, proxies, and more. It also lists some [SSO provider specifics](https://kiali.io/documentation/latest/configuration/authentication/openid/#_provider_specific_instructions) which may be needed for configuring with different providers. If you want to provide any further configuration than what is included in the `kiali.sso` block, you can override the BB pre-configured SSO and pass values via `kiali.values.cr.spec.auth`.
+
+## Non-SSO Login
+
+If you do not configure Kiali with SSO you will have [4 options](https://kiali.io/documentation/latest/configuration/authentication/) for authentication. Big Bang will default to using the token method.
+
+- Token: Uses the Kubernetes service account token for authentication. This method makes use of your cluster's RBAC and you can create additional service accounts/tokens to restrict access. In general Kiali gives the same access as whatever is granted to the token used for login (additional [details provided upstream](https://kiali.io/documentation/latest/configuration/rbac/)).
+  - To get the default Kiali SA token for login: `kubectl get secret -n kiali | grep kiali-service-account-token | awk '{print $1}' | xargs kubectl get secret -n kiali -o go-template='{{.data.token | base64decode}}'`
+- OpenShift: This method will redirect users to the OpenShift console login page for authentication (and is only available for use on OpenShift). Details and setup can be seen in the [upstream docs](https://kiali.io/documentation/latest/configuration/authentication/openshift/).
+- Header: Requires use of reverse proxy to inject token into the header of the request. More details and considerations are noted [upstream](https://kiali.io/documentation/latest/configuration/authentication/header/).
+- Anonymous: No authentication, Kiali is open to whoever can access the URL.
 
 ## Licensing
 
