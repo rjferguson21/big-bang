@@ -7,10 +7,12 @@ This quick start guide explains how to do the following tasks in under a hour:
 2. Quickly Deploy Big Bang using a Demo deployment workflow.
 3. Customize your Big Bang Deployment.
 
-Make a table? 
+Make a table? No go with KISS
         Demo Deployment Workflow       Production Deployment Workflow
 Git Repo
 Encrypted Secrets in Git
+
+Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
 
 Use helm to imperatively deploy the Big Bang helm chart into the cluster using the [workflow used by developers of Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration.md#imperative), instead of using the GitOps deployment methodology which involves Flux GitRepository and Kustomization CR's, which must be used for production deployments and is covered in the [customer template repo](https://repo1.dso.mil/platform-one/big-bang/customers/template))     
 `(Note: This quick start guide is purposefully not using the GitOps production deployment methodology in order to minimize dependencies needed for a user to be able to quickly get started and tinkering with BigBang. The customer template repo requires a git repository )`
@@ -78,6 +80,9 @@ The following requirements are recommended for Demo Purposes:
 
     [ubuntu@Ubuntu_VM:~]
     ```
+-----------------------------------------------------------------------
+(Split this in it's own section per feedback about supporting local dev, read through to see if anything would need tweaked like if local dev logout and back in on the ssh k3d part)
+
 
 3. Install Docker and add $USER to docker group
 
@@ -86,7 +91,7 @@ The following requirements are recommended for Demo Purposes:
     curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
     ```
 
-4. Logout and login so usermod add $USER to docker group change can take effect
+4. Logout and login to allow the "usermod add $USER to docker group" change to take effect
 
     ```bash
     [ubuntu@Ubuntu_VM:~]
@@ -139,6 +144,22 @@ The following requirements are recommended for Demo Purposes:
     kubectl version --client
     # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
     ```
+
+10. Install Kustomize 
+
+    ```bash
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash 
+    chmod +x kustomize 
+    sudo mv kustomize /usr/bin/kustomize 
+    ```
+
+11. Verify Kustomize installation
+
+    ```bash
+    kustomize version
+    # {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
+    ```
+
 
 10. Install helm
 
@@ -193,27 +214,59 @@ The following requirements are recommended for Demo Purposes:
     ```
 
 ## Step 4. Spin up a k3d Cluster
+You'll be copy pasting some commands to spin up a k3d cluster.
+
+The following notes explain some of the commands flags:
+1. `SERVER_IP="10.10.16.11" #(Change this value)`    
+`--k3s-server-arg "--tls-san=$SERVER_IP"`
+If (k3d is running on your beefy localhost)
+
+If you plan to run 100% of kubectl and helm commands from the k3d server then this flag isn't needed and using an incorrect value like 10.10.16.11 (or removing the flag entirely) won't hurt. 
+
+This flag is not needed if you plan to run 100% of your commands
+
+# ^-- If you're on the same network as the server hosting k3d 
+# then you can use the private IP, otherwise use the public IP.
 
 
-Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
+2. `--volume /etc/machine-id:/etc/machine-id` is needed by fluentbit log shipper
+3. --volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content
 
-APPLICATION=big-bang-quick-start
-IMAGE_CACHE=${HOME}/.bigbang-container-image-cache
+The image cache makes it so that if you run 
+k3d cluster delete k3s-default
+And then rerun the above command to reset your cluster for a from scratch deployment.
+Then the 2nd time you deploy the images will already be cached locally / won't be repulled from IronBank, so iterative redeployments from scratch will occur faster. 
+
+1. `--servers 1 --agents 3` flags are not used, because the image cacheing works more reliably on a 1 node dockerized cluster, vs a 4 node dockerized cluster.
+
+4. 
+If you don't specify this flag then only the server hosting k3d will be able to kubectl to the cluster. 
+
+
+scp k3d:~/.kube/config ~/.kube/config
+vi ~/.kube/config #(replace 0.0.0.0 with the value of SERVER_IP)
+(now kubectl from laptop is an option)
+
+
+
+
+```bash
+SERVER_IP="10.10.16.11" #(Change this value)
+
+IMAGE_CACHE=${HOME}/.k3d-container-image-cache
 
 cd ~
 mkdir -p ${IMAGE_CACHE}
 
 k3d cluster create \
-    --servers 1 \
-    --agents 3 \
+    --k3s-server-arg "--tls-san=$SERVER_IP" \
     --volume /etc/machine-id:/etc/machine-id \
     --volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content \
     --k3s-server-arg "--disable=traefik" \
     --port 80:80@loadbalancer \
     --port 443:443@loadbalancer \
-    --api-port 6443 \
-    ${APPLICATION}
-
+    --api-port 6443
+```
 
 
 
@@ -242,60 +295,85 @@ k3d cluster create \
     # Login Succeeded
     ```
 
-## Step 5. Clone the Big Bang Quick Start Repo
+## Step 5. 
 
-<https://repo1.dso.mil/platform-one/quick-start/big-bang#big-bang-quick-start>
 
-1. Clone the repo
 
-    ```shell
-    # [ubuntu@k3d:~]
-    cd ~
-    git clone https://repo1.dso.mil/platform-one/quick-start/big-bang.git
-    cd ~/big-bang
-    ```
+```bash
+set +o history  #turn off bash history
+export REGISTRY1_USERNAME=REPLACE_ME
+export REGISTRY1_PASSWORD=REPLACE_ME
+docker login registry1.dso.mil -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+set -o history  #turn on bash history
+```
 
-2. Create a terraform.tfvars file with your registry1 credentials in your copy of the cloned repo
 
-    ```shell
-    # [ubuntu@k3d:~/big-bang]
-    vi ~/big-bang/terraform.tfvars
-    ```
+### Clone vervion 1.14.0 of BB UHC
+cd ~
+git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.
+cd ~/bigbang
+git checkout tags/1.14.0 #Checkout version 1.14.0 of Big Bang
 
-3. Add the following contents to the newly created file
 
-    ```plaintext
-    registry1_username="REPLACE_ME"
-    registry1_password="REPLACE_ME"
-    ```
 
-## Step 6. Follow the deployment directions on the Big Bang Quick Start Repo
+### Install Flux
+cd ~/bigbang
+$HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
 
-[Link to Big Bang Quick Start Repo](https://repo1.dso.mil/platform-one/quick-start/big-bang#big-bang-quick-start)
 
-## Step 7. Add the LEF HTTPS Demo Certificate
+### Create values yaml files
 
-* A Lets Encrypt Free HTTPS Wildcard Certificate, for *.bigbang.dev is included in the repo, we'll apply it from a regularly updated upstream source of truth.
 
-    ```shell
-    [ubuntu@k3d:~/big-bang]
-    # Download Encrypted HTTPS Wildcard Demo Cert
-    curl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/hack/secrets/ingress-cert.yaml > ~/ingress-cert.enc.yaml
-    
-    # Download BigBang's Demo GPG Key Pair to a local file
-    curl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/hack/bigbang-dev.asc > /tmp/demo-bigbang-gpg-keypair.dev
-    
-    # Import the Big Bang Demo Key Pair into keychain
-    gpg --import /tmp/demo-bigbang-gpg-keypair.dev
-    
-    # Install sops (Secret Operations CLI tool by Mozilla)
-    curl -L https://github.com/mozilla/sops/releases/download/v3.6.1/sops-v3.6.1.linux > sops
-    chmod +x sops
-    sudo mv sops /usr/bin/sops
-    
-    # Decrypt and apply to the cluster
-    sops --decrypt ~/ingress-cert.enc.yaml | kubectl apply -f - --namespace=istio-system
-    ```
+cat << EOF > ~/ib_creds.yaml
+registryCredentials:
+  registry: registry1.dso.mil
+  username: "$REGISTRY1_USERNAME"
+  password: "$REGISTRY1_PASSWORD"
+EOF
+
+
+
+cat << EOF > ~/demo_values.yaml
+logging:
+  values: 
+    kibana:
+      count: 1
+    elasticsearch:
+      master:
+        count: 1
+        resources:
+          requests:
+            cpu: 0.5
+            memory: 2Gi
+          limits: {}
+      data:
+        count: 1
+        resources:
+          requests:
+            cpu: 0.5
+            memory: 2Gi
+          limits: {}
+gatekeeper:
+  enabled: false
+  values:
+    replicas: 1
+    resources:
+      limits: {}
+    violations:
+      allowedDockerRegistries:
+        enforcementAction: dryrun
+EOF
+
+
+helm upgrade --install bigbang $HOME/bigbang/chart \
+--values $HOME/ib_creds.yaml \
+--values $HOME/bigbang/chart/ingress-certs.yaml \
+--values $HOME/bigbang/tests/ci/keycloak-certs/keycloak-passthrough-values.yaml \
+--values $HOME/demo_values.yaml \
+--namespace=bigbang --create-namespace
+
+# ^-- run throug the above command explaining it to new users and explain ingress-certs.yaml = the dev demo cert deployed from the helm values file.
+
 
 ## Step 8. Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
 
