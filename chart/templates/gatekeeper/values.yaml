@@ -28,11 +28,6 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
       repos:
         - registry1.dso.mil
         - registry.dso.mil
-      {{- if .Values.addons.mattermost.enabled }}
-      exemptContainers:
-        # Mattermost needs postgres:13 image and cannot override the upstream
-        - init-check-database
-      {{- end }}
 
   {{- if .Values.monitoring.enabled}}
   allowedHostFilesystem:

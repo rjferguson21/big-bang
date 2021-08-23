@@ -91,6 +91,10 @@ gatekeeper:
           excludedNamespaces:
           # Allows load balancer images for k3d from public repo
           - istio-system
+        parameters:
+          excludedResources:
+            # Mattermost needs postgres:13 image and cannot override the upstream
+            - mattermost/init-check-database
       hostNetworking:
         match:
           excludedNamespaces:
