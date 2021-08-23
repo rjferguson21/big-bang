@@ -51,8 +51,8 @@ function check_if_hr_exist() {
 function wait_all_repo() {
     all_repos=$(kubectl get gitrepositories -A -o jsonpath={.items[*].metadata.name})
     for repo in $all_repos; do
-        status=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
-        until [[ $status == True ]]; do
+        state=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
+        until [[ ${state} == True ]]; do
             sleep 5
         done
     done
