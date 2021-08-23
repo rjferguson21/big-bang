@@ -34,7 +34,7 @@ function array_contains() {
 }
 
 ## Function to check/wait on HR existence
-function check_if_exist() {
+function check_if_hr_exist() {
     timeElapsed=0
     echo "Waiting for $1 HR to exist"
     until kubectl get hr -n bigbang $1 &> /dev/null; do
@@ -45,6 +45,18 @@ function check_if_exist() {
          exit 1
       fi
     done
+}
+
+## Function to wait on all GitRepositories
+function wait_all_repo() {
+    all_repos=$(kubectl get gitrepositories -A -o jsonpath={.items[*].metadata.name})
+    for repo in $all_repos; do
+        repo_status=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
+        until [ $repo_status == True ]; do
+            sleep 5
+        done
+    done
+    echo "All GitRepositories are Ready: $all_repos"
 }
 
 ## Function to wait on all HRs
@@ -140,9 +152,12 @@ elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
     echo "Found enabled helmreleases: ${HELMRELEASES[@]}"
 fi
 
+echo "Waiting on GitRepositories"
+wait_all_repo
+
 for package in "${HELMRELEASES[@]}";
 do
-    check_if_exist "$package"
+    check_if_hr_exist "$package"
 done
 
 echo "Waiting on helm releases..."
