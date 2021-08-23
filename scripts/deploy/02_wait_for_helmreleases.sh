@@ -47,18 +47,6 @@ function check_if_hr_exist() {
     done
 }
 
-## Function to wait on all GitRepositories
-function wait_all_repo() {
-    all_repos=$(kubectl get gitrepositories -A -o jsonpath={.items[*].metadata.name})
-    for repo in $all_repos; do
-        state=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
-        until [[ ${state} == True ]]; do
-            sleep 5
-        done
-    done
-    echo "All GitRepositories are Ready: $all_repos"
-}
-
 ## Function to wait on all HRs
 function wait_all_hr() {
     timeElapsed=0
@@ -155,7 +143,7 @@ elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
 fi
 
 echo "Waiting on GitRepositories"
-wait_all_repo
+kubectl wait --for=condition=Ready --timeout 60s gitrepositories -n bigbang --all
 
 for package in "${HELMRELEASES[@]}";
 do
