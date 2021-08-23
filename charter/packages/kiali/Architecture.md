@@ -144,6 +144,16 @@ If you do not configure Kiali with SSO you will have [4 options](https://kiali.i
 - Header: Requires use of reverse proxy to inject token into the header of the request. More details and considerations are noted [upstream](https://kiali.io/documentation/latest/configuration/authentication/header/).
 - Anonymous: No authentication, Kiali is open to whoever can access the URL.
 
+Example of how to override the authentication method:
+```yaml
+kiali:
+  values:
+    cr:
+      spec:
+        auth:
+          strategy: "anonymous"
+```
+
 ## Licensing
 
 Kiali is open source and released under [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0.txt). There are no paid options for licensing or support.
