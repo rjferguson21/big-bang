@@ -52,20 +52,18 @@ function wait_all_hr() {
     timeElapsed=0
     while true; do
         if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ Failed ]]; then
-            state=$(kubectl get hr -n bigbang  -o go-template='{{range $items,$contents := .items}}{{printf "HR %s" $contents.metadata.name}}{{printf " status is %s\n" (index $contents.status.conditions 0).reason}}{{end}}')
-            if [[ ${state} =~ ArtifactFailed ]]; then
-                failed=$(echo "${state}" | grep "Failed")
-                echo "Found failed Helm Release(s). Exiting now."
-                echo "${failed}"
-                failed_hrs=$(echo "{$failed}" | awk  '{print $2}')
-                for hr in $failed_hrs; do
-                    kubectl describe hr -n bigbang $hr
-                done
-                exit 1
-            fi
+            state=$(kubectl get hr -A -o go-template='{{range $items,$contents := .items}}{{printf "HR %s" $contents.metadata.name}}{{printf " status is %s\n" (index $contents.status.conditions 0).reason}}{{end}}')
+            failed=$(echo "${state}" | grep "Failed")
+            echo "Found failed Helm Release(s). Exiting now."
+            echo "${failed}"
+            failed_hrs=$(echo "{$failed}" | awk  '{print $2}')
+            for hr in $failed_hrs; do
+                kubectl describe hr -n bigbang $hr
+            done
+            exit 1
         fi
-        if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *DependencyNotReady* ]]; then
-            if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *Failed* ]]; then
+        if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].status}')" != *Unknown* ]]; then
+            if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].status}')" != *False* ]]; then
                 echo "All HR's deployed"
                 break
             fi
@@ -121,26 +119,26 @@ function wait_daemonset(){
 
 ## Append all add-ons to hr list if "all-packages" or default branch/tag. Else, add specific ci labels to hr list.
 HELMRELEASES=(${CORE_HELMRELEASES[@]})
-if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
-    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
-    echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
-elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
-    IFS=","
-    for package in $CI_MERGE_REQUEST_LABELS; do
-        # Check if package is in addons
-        if array_contains ADD_ON_HELMRELEASES "$package"; then
-            HELMRELEASES+=("$package")
-        # Check to see if there is a mapping from label -> HR
-        elif [ ${ADD_ON_HELMRELEASES_MAP[$package]+_} ]; then
-            package="${ADD_ON_HELMRELEASES_MAP[$package]}"
-            # Safeguard to doublecheck new package name is valid HR name
-            if array_contains ADD_ON_HELMRELEASES "$package"; then
-                HELMRELEASES+=("$package")
-            fi
-        fi
-    done
-    echo "Found enabled helmreleases: ${HELMRELEASES[@]}"
-fi
+# if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
+#     HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
+#     echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
+# elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
+#     IFS=","
+#     for package in $CI_MERGE_REQUEST_LABELS; do
+#         # Check if package is in addons
+#         if array_contains ADD_ON_HELMRELEASES "$package"; then
+#             HELMRELEASES+=("$package")
+#         # Check to see if there is a mapping from label -> HR
+#         elif [ ${ADD_ON_HELMRELEASES_MAP[$package]+_} ]; then
+#             package="${ADD_ON_HELMRELEASES_MAP[$package]}"
+#             # Safeguard to doublecheck new package name is valid HR name
+#             if array_contains ADD_ON_HELMRELEASES "$package"; then
+#                 HELMRELEASES+=("$package")
+#             fi
+#         fi
+#     done
+#     echo "Found enabled helmreleases: ${HELMRELEASES[@]}"
+# fi
 
 echo "Waiting on GitRepositories"
 kubectl wait --for=condition=Ready --timeout 60s gitrepositories -n bigbang --all
