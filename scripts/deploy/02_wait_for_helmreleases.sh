@@ -51,8 +51,10 @@ function check_if_exist() {
 function wait_all_hr() {
     timeElapsed=0
     while true; do
-        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ Failed ]]; then
-            state=$(kubectl get hr -A -o go-template='{{range $items,$contents := .items}}{{printf "HR %s" $contents.metadata.name}}{{printf " status is %s\n" (index $contents.status.conditions 0).reason}}{{end}}')
+        if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ Failed ]]; then
+            state=$(kubectl get hr -n bigbang  -o go-template='{{range $items,$contents := .items}}{{printf "HR %s" $contents.metadata.name}}{{printf " status is %s\n" (index $contents.status.conditions 0).reason}}{{end}}')
+            if [[ ${state} =~ ArtifactFailed ]]; then
+
             failed=$(echo "${state}" | grep "Failed")
             echo "Found failed Helm Release(s). Exiting now."
             echo "${failed}"
@@ -62,8 +64,8 @@ function wait_all_hr() {
             done
             exit 1
         fi
-        if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" != *DependencyNotReady* ]]; then
-            if [[ "$(kubectl get hr -A -o jsonpath='{.items[*].status.conditions[0].reason}')" != *Failed* ]]; then
+        if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *DependencyNotReady* ]]; then
+            if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *Failed* ]]; then
                 echo "All HR's deployed"
                 break
             fi
