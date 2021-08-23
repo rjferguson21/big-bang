@@ -6,7 +6,7 @@ set -e
 CORE_HELMRELEASES=("gatekeeper" "istio-operator" "istio" "monitoring" "eck-operator" "ek" "fluent-bit" "twistlock" "cluster-auditor" "jaeger" "kiali")
 
 ## Array of addon HRs
-ADD_ON_HELMRELEASES=("argocd" "authservice" "haproxy-sso" "gitlab" "gitlab-runner" "anchore" "sonarqube" "minio-operator" "minio" "mattermost-operator" "mattermost" "nexus-repository-manager" "velero")
+ADD_ON_HELMRELEASES=("argocd" "authservice" "gitlab" "gitlab-runner" "anchore" "sonarqube" "minio-operator" "minio" "mattermost-operator" "mattermost" "nexus-repository-manager" "velero")
 
 ## Map of values-keys/labels to HRs: Only needed if HR name =/= label name
 declare -A ADD_ON_HELMRELEASES_MAP
