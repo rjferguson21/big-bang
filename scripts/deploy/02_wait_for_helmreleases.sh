@@ -141,10 +141,8 @@ done
 echo "Waiting on helm releases..."
 wait_all_hr
 
-# TODO: Collapse this output by default with https://docs.gitlab.com/ee/ci/jobs/#custom-collapsible-sections
 kubectl get helmreleases,kustomizations,gitrepositories -A
 
-# TODO: Is this needed? Should it be before HRs?
 echo "Waiting on Secrets Kustomization"
 kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
