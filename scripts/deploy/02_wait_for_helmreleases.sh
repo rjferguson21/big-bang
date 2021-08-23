@@ -51,8 +51,8 @@ function check_if_hr_exist() {
 function wait_all_repo() {
     all_repos=$(kubectl get gitrepositories -A -o jsonpath={.items[*].metadata.name})
     for repo in $all_repos; do
-        repo_status=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
-        until [ $repo_status == True ]; do
+        status=$(kubectl get gitrepository -n bigbang $repo -o jsonpath={.status.conditions[0].status})
+        until [ $status == True ]; do
             sleep 5
         done
     done
@@ -66,15 +66,15 @@ function wait_all_hr() {
         if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ Failed ]]; then
             state=$(kubectl get hr -n bigbang  -o go-template='{{range $items,$contents := .items}}{{printf "HR %s" $contents.metadata.name}}{{printf " status is %s\n" (index $contents.status.conditions 0).reason}}{{end}}')
             if [[ ${state} =~ ArtifactFailed ]]; then
-
-            failed=$(echo "${state}" | grep "Failed")
-            echo "Found failed Helm Release(s). Exiting now."
-            echo "${failed}"
-            failed_hrs=$(echo "{$failed}" | awk  '{print $2}')
-            for hr in $failed_hrs; do
-                kubectl describe hr -n bigbang $hr
-            done
-            exit 1
+                failed=$(echo "${state}" | grep "Failed")
+                echo "Found failed Helm Release(s). Exiting now."
+                echo "${failed}"
+                failed_hrs=$(echo "{$failed}" | awk  '{print $2}')
+                for hr in $failed_hrs; do
+                    kubectl describe hr -n bigbang $hr
+                done
+                exit 1
+            fi
         fi
         if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *DependencyNotReady* ]]; then
             if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" != *Failed* ]]; then
