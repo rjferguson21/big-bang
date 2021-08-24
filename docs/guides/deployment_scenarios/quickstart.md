@@ -1,47 +1,33 @@
 # Big Bang Quick Start
 
+
 ## Overview
-
-This quick start guide explains how to do the following tasks in under a hour:
-1. Turn a VM into a k3d single node dev cluster.
-2. Quickly Deploy Big Bang using a Demo deployment workflow.
-3. Customize your Big Bang Deployment.
-
-Make a table? No go with KISS
-        Demo Deployment Workflow       Production Deployment Workflow
-Git Repo
-Encrypted Secrets in Git
-
-Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
-
-Use helm to imperatively deploy the Big Bang helm chart into the cluster using the [workflow used by developers of Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration.md#imperative), instead of using the GitOps deployment methodology which involves Flux GitRepository and Kustomization CR's, which must be used for production deployments and is covered in the [customer template repo](https://repo1.dso.mil/platform-one/big-bang/customers/template))     
-`(Note: This quick start guide is purposefully not using the GitOps production deployment methodology in order to minimize dependencies needed for a user to be able to quickly get started and tinkering with BigBang. The customer template repo requires a git repository )`
+This quick start guide explains in beginner friendly level of detail how to complete the following tasks in under a hour:
+1. Turn a VM into a k3d single node Kubernets Cluster.
+2. Deploy Big Bang on the Cluster using a Demo/local development friendly workflow.    
+> (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang. If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
+3. Customize the Demo Deployment of Big Bang.
 
 
-in under an hour of gaining access to a VM, 
+## Important Background Contextual Information:
+**BLUF: This quickstart guide optimizes the speed at which a demoable tinkerable deployment can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.**
+* OS Prerequisite: Any Linux distro that supports docker should work.
+* OS Preconfiguration: This quickstart includes easy copy pasteable commands to quickly satisfy this prerequisite.
+* Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in docker)
+* Default Storage Class Prerequisite: k3d ships with a local volume storage class.
+* Support for automated provisioning of Kubernetes Service of type LB Prerequisite: is implemented by taking advantage of k3d's ability to easily map port 443 of the VM to port 443 of a Docker-ized LB that forwards traffic to a single Istio Ingress Gateway.     
+Important limitations of this quickstart guide's implementation of k3d to be aware of:    
+  * Multiple Ingress Gateways aren't supported by this implementation as they would each require their own LB, and this trick of using the host's port 443 only works for automated provisioning of a single service of type LB that leverages port 443.
+  * Multiple Ingress Gateways makes a demoable/tinkerable KeyCloak and locally hosted SSO deployment much easier.
+  * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you're developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
+  * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, MetalLB + k3s (or another non dockerized Kubernetes Distro) would be a happy path to look into. (It'd be highly recommended that you have solid Kubernetes chops and are able to successfully implement this quickstart, before investigating an advanced use case, but if you figure it out a PR for a Multi Ingress Gateway and Keycloak quickstart would be welcome, and if that's something you'd like to see prioritized make an issue ticket.)
+* Access to Container Images Prerequsite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
+* Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
+* Encrypting Secrets as code Prerequsite is substituted with clear text secrets on your local machine.
+* Installing and Configuring Flux Prerequisite: Not using GitOps for the quickstart eliminates the need to configure flux, and installation is covered within this guide.
+* HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev, *.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
+* DNS Prerequisite: is substituted by making use of your Laptop's hostfile.
 
-
-to quickly provision a BigBang Cluster for the purpose of demoing and trying out BigBang in a non production fassion. by using a k3d Single Node Dev Cluster, and use the imperative developer workflow non GitOps (Non Production deployment method) quickly deploy BigBang for demo purposes. 
-
-
-
-Using the following directions a demo Big Bang cluster can be deployed in under an hour.
-For the sake of speed the qu
-
-
-The resulting "cluster" is not intended to reflect  
-The deployment methodology used 
-
-
-how to turn a VM into a k3d cluster, install BigBang on the k3d cluster. For simplicity sake the 
-
-Note: The quick start repositories' `init-k3d.sh` starts up k3d using flags to disable the default ingress controller and map the virtual machine's port 443 to a Docker-ized Load Balancer's port 443, which will eventually map to the istio ingress gateway. That along with some other things (Like leveraging a Lets Encrypt Free HTTPS Wildcard Certificate) are done to lower the prerequisites barrier to make basic demos easier.
-
-
-guide is designed to offer an easy to deploy preview of BigBang, so new users can get to a hands-on state as quickly as possible.  
-
-
-Note: The current implementation of the Quick Start limits the ability to customize the BigBang Deployment. It is doing a GitOps defined deployment from a repository you don't control.
 
 ## Step 1. Provision a Virtual Machine
 
