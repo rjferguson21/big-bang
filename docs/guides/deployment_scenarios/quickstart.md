@@ -5,7 +5,7 @@
 This quick start guide explains in beginner friendly level of detail how to complete the following tasks in under a hour:
 1. Turn a VM into a k3d single node Kubernets Cluster.
 2. Deploy Big Bang on the Cluster using a Demo/local development friendly workflow.    
-> (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang. If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
+> (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
 3. Customize the Demo Deployment of Big Bang.
 
 
@@ -20,34 +20,35 @@ Important limitations of this quickstart guide's implementation of k3d to be awa
   * Multiple Ingress Gateways aren't supported by this implementation as they would each require their own LB, and this trick of using the host's port 443 only works for automated provisioning of a single service of type LB that leverages port 443.
   * Multiple Ingress Gateways makes a demoable/tinkerable KeyCloak and locally hosted SSO deployment much easier.
   * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you're developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
-  * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, MetalLB + k3s (or another non dockerized Kubernetes Distro) would be a happy path to look into. (It'd be highly recommended that you have solid Kubernetes chops and are able to successfully implement this quickstart, before investigating an advanced use case, but if you figure it out a PR for a Multi Ingress Gateway and Keycloak quickstart would be welcome, and if that's something you'd like to see prioritized make an issue ticket.)
+  * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, then MetalLB + k3s (or another non dockerized Kubernetes Distro) would be a happy path to look into. (or alternatively create an issue ticket requesting prioritization of a keycloak quickstart or better yet a Merge Request.)
 * Access to Container Images Prerequsite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
 * Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
 * Encrypting Secrets as code Prerequsite is substituted with clear text secrets on your local machine.
 * Installing and Configuring Flux Prerequisite: Not using GitOps for the quickstart eliminates the need to configure flux, and installation is covered within this guide.
 * HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev, *.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
-* DNS Prerequisite: is substituted by making use of your Laptop's hostfile.
+* DNS Prerequisite: is substituted by making use of your workstation's hostfile.
 
 
-## Step 1. Provision a Virtual Machine
-
+## Step 1: Provision a Virtual Machine
 The following requirements are recommended for Demo Purposes:
-
-* 1 Virtual Machine with 32GB RAM, 8-Core CPU (This will become a single node cluster) (Note 64GB RAM / 16 CPU core is recommended for those who want to do lots of customizing.)
-* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, although both work fine)
+* 1 Virtual Machine with 32GB RAM, 8-Core CPU (m5a.2xlarge for AWS users) should be sufficient.
+* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux Distro with docker installed should work)
 * Network connectivity to said Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a vagrant box Virtual Machine configured for remote ssh works fine.)
+* Note: If your workstation has docker, lots of ram/cpu, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote VM and do local development.
 
 
-## Step 2. SSH into machine and install prerequisite software
+## Step 2: SSH to Remote VM
 * ssh and passwordless sudo should be configured on the remote machine
+* You can skip this step if you're doing local development.
 
 1. Setup SSH
 
     ```shell
-    # [User@Laptop:~]
+    # [User@Unix_Laptop:~]
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
     touch ~/.ssh/config
     chmod 600 ~/.ssh/config
-    cat ~/.ssh/config
     temp="""##########################
     Host k3d
       Hostname 1.2.3.4  #IP Address of k3d node
@@ -66,18 +67,19 @@ The following requirements are recommended for Demo Purposes:
 
     [ubuntu@Ubuntu_VM:~]
     ```
------------------------------------------------------------------------
-(Split this in it's own section per feedback about supporting local dev, read through to see if anything would need tweaked like if local dev logout and back in on the ssh k3d part)
 
 
-3. Install Docker and add $USER to docker group
+## Step 3: Install Prerequisite Software    
+Note: This guide follows the DevOps best practice of left shifting feedback on mistakes / surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands. 
+
+1. Install Docker and add $USER to docker group
 
     ```shell
     [ubuntu@Ubuntu_VM:~]
     curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
     ```
 
-4. Logout and login to allow the "usermod add $USER to docker group" change to take effect
+2. Logout and login to allow the "usermod add $USER to docker group" change to take effect
 
     ```bash
     [ubuntu@Ubuntu_VM:~]
@@ -87,7 +89,7 @@ The following requirements are recommended for Demo Purposes:
     ssh k3d
     ```
 
-5. Verify Docker Installation
+3. Verify Docker Installation
     ```bash
     [ubuntu@Ubuntu_VM:~]
     docker ps
@@ -95,7 +97,7 @@ The following requirements are recommended for Demo Purposes:
     # ^-- represents success
     ```
 
-6. Install k3d
+4. Install k3d
   
     ```bash
     [ubuntu@Ubuntu_VM:~]
@@ -105,7 +107,7 @@ The following requirements are recommended for Demo Purposes:
     sudo mv -v /tmp/k3d /usr/local/bin/
     ```
 
-7. Verify k3d installation
+5. Verify k3d installation
 
     ```bash
     [ubuntu@Ubuntu_VM:~]
@@ -114,7 +116,7 @@ The following requirements are recommended for Demo Purposes:
     # k3s version v1.21.2-k3s1 (default)
     ```
 
-8. Install Kubectl
+6. Install Kubectl
 
     ```bash
     [ubuntu@Ubuntu_VM:~]
@@ -124,14 +126,14 @@ The following requirements are recommended for Demo Purposes:
     sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k  #equivalent of alias k=kubectl
     ```
 
-9. Verify kubectl installation
+7. Verify kubectl installation
 
     ```bash
     kubectl version --client
     # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
     ```
 
-10. Install Kustomize 
+8. Install Kustomize 
 
     ```bash
     curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash 
@@ -139,7 +141,7 @@ The following requirements are recommended for Demo Purposes:
     sudo mv kustomize /usr/bin/kustomize 
     ```
 
-11. Verify Kustomize installation
+9. Verify Kustomize installation
 
     ```bash
     kustomize version
@@ -159,9 +161,10 @@ The following requirements are recommended for Demo Purposes:
     ```shell
     [ubuntu@Ubuntu_VM:~]
     helm version
+    # version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
     ```
 
-## Step 3. Configure Host OS prerequisites
+## Step 4: Configure Host OS prerequisites
 * Run Operating System Pre-configuration
 
     ```shell
@@ -199,7 +202,7 @@ The following requirements are recommended for Demo Purposes:
     # cat /etc/fstab
     ```
 
-## Step 4. Spin up a k3d Cluster
+## Step 5: Spin up a k3d Cluster
 You'll be copy pasting some commands to spin up a k3d cluster.
 
 The following notes explain some of the commands flags:
