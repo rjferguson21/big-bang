@@ -586,8 +586,7 @@ addons:
       tag: "4.12.9-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
-    flux:
-      timeout: 20m
+    flux: {}
 
     # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
