@@ -260,7 +260,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "0.3.0-bb.5"
+    tag: "0.3.0-bb.6"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -281,7 +281,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.5.1-bb.13"
+    tag: "3.5.1-bb.15"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
@@ -306,7 +306,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.18-bb.1"
+    tag: "0.1.19-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -467,7 +467,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.5"
+      tag: "3.6.8-bb.6"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -816,7 +816,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.6"
+      tag: "1.13.0-bb.7"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
