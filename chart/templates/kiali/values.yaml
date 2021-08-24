@@ -36,27 +36,24 @@ cr:
       strategy: token
       {{- end }}
     external_services:
-      # TODO: Prometheus toggle?
-      custom_dashboards:
-        enabled: true
       grafana:
-        # TODO: Grafana toggle?
-        enabled: true
+        enabled: {{ .Values.monitoring.enabled }}
         {{- $grafanaUrl := first (dig "istio" "grafana" "hosts" list .Values.monitoring.values) }}
         url: https://{{ tpl ($grafanaUrl | default (printf "%s.%s" "grafana" .Values.hostname)) . }}
+        {{- if .Values.monitoring.enabled }}
         auth:
-        {{- if (dig "grafana" "admin" "existingSecret" "" .Values.monitoring.values) }}
+          {{- if (dig "grafana" "admin" "existingSecret" "" .Values.monitoring.values) }}
           {{- $userKey := (dig "grafana" "admin" "userKey" "admin-user" .Values.monitoring.values) }}
           {{- with lookup "v1" "Secret" "monitoring" .Values.monitoring.values.grafana.admin.existingSecret }}
           username: {{ (get .data $userKey | b64dec) | default "admin" }}
           {{- end }}
-        {{- else }}
+          {{- else }}
           username: {{ dig "grafana" "adminUser" "admin" .Values.monitoring.values }}
-        {{- end }}
+          {{- end }}
           password: "secret:grafana-auth:password"
+        {{- end }}
       tracing:
-        # TODO: Jaeger toggle?
-        enabled: true
+        enabled: {{ .Values.jaeger.enabled }}
         {{- $tracingUrl := first (dig "istio" "jaeger" "hosts" list .Values.jaeger.values) }}
         url: https://{{ tpl ($tracingUrl | default (printf "%s.%s" "tracing" .Values.hostname)) . }}
       istio:
