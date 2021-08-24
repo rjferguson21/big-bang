@@ -36,7 +36,12 @@ cr:
       strategy: token
       {{- end }}
     external_services:
+      # TODO: Prometheus toggle?
+      custom_dashboards:
+        enabled: true
       grafana:
+        # TODO: Grafana toggle?
+        enabled: true
         {{- $grafanaUrl := first (dig "istio" "grafana" "hosts" list .Values.monitoring.values) }}
         url: https://{{ tpl ($grafanaUrl | default (printf "%s.%s" "grafana" .Values.hostname)) . }}
         auth:
@@ -50,6 +55,8 @@ cr:
         {{- end }}
           password: "secret:grafana-auth:password"
       tracing:
+        # TODO: Jaeger toggle?
+        enabled: true
         {{- $tracingUrl := first (dig "istio" "jaeger" "hosts" list .Values.jaeger.values) }}
         url: https://{{ tpl ($tracingUrl | default (printf "%s.%s" "tracing" .Values.hostname)) . }}
       istio:
