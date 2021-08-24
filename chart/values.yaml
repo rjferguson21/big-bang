@@ -306,7 +306,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.18-bb.1"
+    tag: "0.1.19-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -467,7 +467,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.5"
+      tag: "3.6.8-bb.6"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
