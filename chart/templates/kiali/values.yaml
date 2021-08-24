@@ -37,10 +37,10 @@ cr:
       {{- end }}
     external_services:
       grafana:
-        enabled: {{ .Values.monitoring.enabled }}
+        enabled: {{ dig "grafana" "enabled" true .Values.monitoring.values }}
         {{- $grafanaUrl := first (dig "istio" "grafana" "hosts" list .Values.monitoring.values) }}
         url: https://{{ tpl ($grafanaUrl | default (printf "%s.%s" "grafana" .Values.hostname)) . }}
-        {{- if .Values.monitoring.enabled }}
+        {{- if (dig "grafana" "enabled" true .Values.monitoring.values) }}
         auth:
           {{- if (dig "grafana" "admin" "existingSecret" "" .Values.monitoring.values) }}
           {{- $userKey := (dig "grafana" "admin" "userKey" "admin-user" .Values.monitoring.values) }}
