@@ -209,8 +209,8 @@ After reading notes on the purpose of the k3d command's flags, you'll be able to
 1. `SERVER_IP="10.10.16.11"` and    
 `--k3s-server-arg "--tls-san=$SERVER_IP"`
 This associates an extra IP to the kubernete's api server's generated HTTPS certificate. Here's an explanation of the effect:     
-  * 1A. If (you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server) then you can ommit these flags or copy paste unmodified incorrect values with no ill effect.
-  * 1B. If (you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward) then you would need to specify the remote server's public or private IP address here. And after copy pasting the ~/.kube/config file from the k3d server to your workstation edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+  * 1A. If (you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server) then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
+  * 1B. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
 2. `--volume /etc/machine-id:/etc/machine-id`      
 is required for fluentbit log shipper to work.
 3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`      
