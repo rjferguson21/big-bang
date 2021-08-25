@@ -97,14 +97,11 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     # ^-- represents success
     ```
 
-4. Install k3d
+4. Install latest version of k3d
   
     ```bash
     # [ubuntu@Ubuntu_VM:~]
-    wget -q -P  /tmp https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64
-    mv /tmp/k3d-linux-amd64 /tmp/k3d
-    sudo chmod +x /tmp/k3d
-    sudo mv -v /tmp/k3d /usr/local/bin/
+    wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
     ```
 
 5. Verify k3d installation
@@ -116,7 +113,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     # k3s version v1.21.2-k3s1 (default)
     ```
 
-6. Install Kubectl
+6. Install latest version of kubectl
 
     ```bash
     # [ubuntu@Ubuntu_VM:~]
