@@ -224,6 +224,20 @@ Map the VM's port 80 and 443 to port 80 and 443 of a dockerized LB that will poi
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
+# The following methods can help you look up the value of SERVER_IP
+# Method 1: If your k3d server is a remote box
+#           Then run the following command from your workstation
+#           cat ~/.ssh/config | grep k3d -A 6
+# 
+# Method 2: If the remote server was provisioned with a Public IP
+#           Then run the following command from the server hosting k3d
+#           curl ifconfig.me --ipv4
+#
+# Method 3: If the server only has a Private IP
+#           Then run the following command from the server hosting k3d
+#           ip address
+#           (Note you'll likely see more than 1, use the one in the same subnet as your workstation)
+
 
 IMAGE_CACHE=${HOME}/.k3d-container-image-cache
 
