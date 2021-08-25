@@ -208,9 +208,22 @@ After reading notes on the purpose of the k3d command's flags, you'll be able to
 ### Explanation of k3d command flags, relevant to the quickstart:     
 1. `SERVER_IP="10.10.16.11"` and    
 `--k3s-server-arg "--tls-san=$SERVER_IP"`
-This associates an extra IP to the kubernete's api server's generated HTTPS certificate. Here's an explanation of the effect:     
-  * 1A. If (you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server) then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
+This associates an extra IP to the kubernete's api server's generated HTTPS certificate.    
+**Here's an explanation of the effect:**     
+  * 1A. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
   * 1B. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+
+**Tips for looking up the value to plug into SERVER_IP:**    
+  * Method 1: If your k3d server is a remote box    
+    Then run the following command from your workstation    
+    `cat ~/.ssh/config | grep k3d -A 6`
+  * Method 2: If the remote server was provisioned with a Public IP    
+    Then run the following command from the server hosting k3d    
+    `curl ifconfig.me --ipv4`
+  * Method 3: If the server hosting k3d only has a Private IP    
+    Then run the following command from the server hosting k3d
+    `ip address`    
+    (You'll see more than 1 address, use the one in the same subnet as your workstation)
 2. `--volume /etc/machine-id:/etc/machine-id`      
 is required for fluentbit log shipper to work.
 3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`      
@@ -224,20 +237,6 @@ Map the VM's port 80 and 443 to port 80 and 443 of a dockerized LB that will poi
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
-# The following methods can help you look up the value of SERVER_IP
-# Method 1: If your k3d server is a remote box
-#           Then run the following command from your workstation
-#           cat ~/.ssh/config | grep k3d -A 6
-# 
-# Method 2: If the remote server was provisioned with a Public IP
-#           Then run the following command from the server hosting k3d
-#           curl ifconfig.me --ipv4
-#
-# Method 3: If the server only has a Private IP
-#           Then run the following command from the server hosting k3d
-#           ip address
-#           (Note you'll likely see more than 1, use the one in the same subnet as your workstation)
-
 
 IMAGE_CACHE=${HOME}/.k3d-container-image-cache
 
