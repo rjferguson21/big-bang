@@ -160,8 +160,8 @@ Using GitOps for development is NOT recommended. Your development iteration will
   
 ```shell
 # Verify chart code before committing
-helm template bigbang ./chart -n bigbang -f ../customers/template/dev/configmap.yaml --debug
-helm install bigbang ./chart -n bigbang -f ../customers/template/dev/configmap.yaml --dry-run
+helm template bigbang ./chart -n bigbang -f ../overrides/override-values.yaml --debug
+helm install bigbang ./chart -n bigbang -f ../overrides/override-values.yaml --dry-run
 # Commit and push your code
 # Deploy your bigbang template
 kubectl apply -f dev/bigbang.yaml
