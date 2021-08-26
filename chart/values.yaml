@@ -110,7 +110,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.9.7-bb.0"
+    tag: "1.10.3-bb.0"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -172,7 +172,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.9.7-bb.1"
+    tag: "1.10.3-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -224,7 +224,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.37.0-bb.2"
+    tag: "1.37.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -281,7 +281,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.5.1-bb.15"
+    tag: "3.5.1-bb.16"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
@@ -306,7 +306,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.19-bb.0"
+    tag: "0.1.20-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -381,7 +381,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.6"
+    tag: "14.0.0-bb.7"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -511,7 +511,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.13"
+      tag: "0.4.0-bb.14"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -551,7 +551,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.1.2-bb.5"
+      tag: "4.1.2-bb.6"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
@@ -816,7 +816,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.6"
+      tag: "1.13.0-bb.7"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
