@@ -135,7 +135,7 @@ Under Settings → Repository → Default Branch, ensure that main is selected.
    mc ls minio                   < list the buckets
    ```
 
-   Cretate a local directory on your workstation where you store your helm values override files. Don't make test changes in the Package values.yaml because they could accidentally be committed. The most convenient location is in a sibling directory next to the Package repo. Here is an example directory structure:
+   Create a local directory on your workstation where you store your helm values override files. Don't make test changes in the Package values.yaml because they could accidentally be committed. The most convenient location is in a sibling directory next to the Package repo. Here is an example directory structure:
    ```text
    ├── PackageRepo/
    └── overrides/
