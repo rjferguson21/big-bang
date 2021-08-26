@@ -147,7 +147,7 @@ Under Settings → Repository → Default Branch, ensure that main is selected.
    # Test that the helm chart templates successfully and examine the output to insure expected results
    helm template <releasename> ./chart -n <namespace> -f ../overrides/override-values.yaml
    # Deploy with helm
-   helm upgrade -i <releasename> ./chart -n <namespace> --create-namespace -f ../everrides/override-values.yaml
+   helm upgrade -i <releasename> ./chart -n <namespace> --create-namespace -f ../overrides/override-values.yaml
    # Conduct testing
    # Tear down
    helm delete <releasename> -n <namespace>
