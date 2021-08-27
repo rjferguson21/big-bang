@@ -246,9 +246,8 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
 ### Explanation of k3d Command Flags, Relevant to the Quick Start
 
-1. `SERVER_IP="10.10.16.11"` and
-`--k3s-server-arg "--tls-san=$SERVER_IP"`
-This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
+`SERVER_IP="10.10.16.11"` and `--k3s-server-arg "--tls-san=$SERVER_IP"`
+: This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
 **Here's an explanation of the effect:**
 
    1. If you are running k3d from a local host or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or paste unmodified incorrect values with no ill effect.
@@ -273,9 +272,9 @@ is required for fluentbit log shipper to work.
 1. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
 Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
 1. `--servers 1 --agents 3` flags are not used and shouldn't be added
-This is because the image caching logic works more reliably on a 1 node Dockerized cluster, vs a 4 node Dockerized cluster. (If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.)
+This is because the image caching logic works more reliably on a one node Dockerized cluster, vs a four node Dockerized cluster. If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.
 1. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
-Map the VM's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the nodeports of the Dockerized k3s node.
+Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the nodeports of the Dockerized k3s node.
 
 ### k3d commands
 
@@ -298,7 +297,7 @@ k3d cluster create \
     --api-port 6443
 ```
 
-### Verification command
+### Verification Command
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
@@ -307,28 +306,31 @@ k get node    # (the paste-able install commands, symbolically linked k to kubec
 # k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
 ```
 
-## Step 6: Verify your IronBank Image Pull Credentials work
+## Step 6: Verify Your IronBank Image Pull Credentials
 
-1. Here we continue to follow the DevOps best practice of enabling early left shifted feedback whenever possible:
-So before adding credentials to a config file and not finding out there's an issue with them until after we see an ImagePullBackOff error during deployment, we'll do a quick left shifted verification of the credentials.
+1. Here we continue to follow the DevOps best practice of enabling early left-shifted feedback whenever possible; Before adding credentials to a configuration file and not finding out there is an issue until after we see an ImagePullBackOff error during deployment, we will do a quick left-shifted verification of the credentials.
 
-2. Look up your IronBank image pull credentials
-    1. In a web browser go to <https://registry1.dso.mil>
-    2. Login via OIDC provider
-    3. Top right of the page, click your name --> User Profile
-    4. Your image pull username is labeled "Username"
-    5. Your image pull password is labeled "CLI secret"
-       (Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after ~3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the <https://registry1.dso.mil> GUI)
+1. Look up your IronBank image pull credentials
+    1. In a web browser go to [https://registry1.dso.mil](https://registry1.dso.mil)
+    1. Login via OIDC provider
+    1. In the top right of the page, click your name, and then User Profile
+    1. Your image pull username is labeled "Username"
+    1. Your image pull password is labeled "CLI secret"
+      > Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after ~3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the [https://registry1.dso.mil](https://registry1.dso.mil) GUI
 
-3. Verify your credentials work
+1. Verify your credentials work
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    set +o history  #turn off bash history
-    export REGISTRY1_USERNAME=REPLACE_ME
-    export REGISTRY1_PASSWORD=REPLACE_ME
-    Docker login registry1.dso.mil -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
-    set -o history  #turn on bash history
+    # Turn off bash history
+    set +o history
+
+    export REGISTRY1_USERNAME=<REPLACE_ME>
+    export REGISTRY1_PASSWORD=<REPLACE_ME>
+    docker login registry1.dso.mil -username $REGISTRY1_USERNAME -password $REGISTRY1_PASSWORD
+    
+    # Turn on bash history
+    set -o history
     ```
 
 ## Step 7: Clone your desired version of the Big Bang Umbrella Helm Chart
@@ -338,9 +340,14 @@ So before adding credentials to a config file and not finding out there's an iss
 cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
-git checkout tags/1.14.0 #Checkout version 1.14.0 of Big Bang
+
+# Checkout version 1.14.0 of Big Bang
+git checkout tags/1.14.0
 git status
-# HEAD detached at 1.14.0
+```
+
+```console
+HEAD detached at 1.14.0
 # (Pinning to specific versions is a DevOps best practice)
 # HEAD is git speak for current context within a tree of commits
 ```
@@ -349,8 +356,8 @@ git status
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
-# Check the value of your env var to confirm it's still filled out
-# If you switch terminals or re-login you may need to re establish these variables.
+# Check the value of your environmental variable to confirm it's still populated.
+# If you switch terminals or re-login, you may need to reestablish these variables.
 echo $REGISTRY1_USERNAME
 cd ~/bigbang
 $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
