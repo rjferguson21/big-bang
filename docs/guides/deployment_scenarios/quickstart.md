@@ -195,16 +195,18 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     ulimit -n 131072  # Needed by Sonarqube
     ulimit -u 8192    # Needed by Sonarqube
 
-    # Preload kernel modules required by istio-init, required for selinux enforcing instances using istio-init
+    # Preload kernel modules required by istio-init, required for SELinux enforcing instances using istio-init
     modprobe xt_REDIRECT
     modprobe xt_owner
     modprobe xt_statistic
+    
     # Persist modules after reboots
     printf "xt_REDIRECT\nxt_owner\nxt_statistic\n" | sudo tee -a /etc/modules
 
     # Kubernetes requires swap disabled
     # Turn off all swap devices and files (won't last reboot)
     sudo swapoff -a 
+
     # For swap to stay off you can remove any references found via 
     # cat /proc/swaps
     # cat /etc/fstab
@@ -271,7 +273,7 @@ k3d cluster create \
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
-k get node    # (the copy pasteable install commands, symbolically linked k to kubectl)
+k get node    # (the paste-able install commands, symbolically linked k to kubectl)
 # NAME                       STATUS   ROLES                  AGE   VERSION
 # k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
 ```

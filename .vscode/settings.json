@@ -33,6 +33,7 @@
         "mkdir",
         "nodepool",
         "passwordless",
+        "preload",
         "rebased",
         "sshuttle",
         "storageclass",
