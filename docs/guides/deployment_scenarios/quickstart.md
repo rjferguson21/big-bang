@@ -113,7 +113,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```
 
 1. Install latest version of k3d
-  
+
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
@@ -135,7 +135,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    wget -q -P /tmp "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"    
+    wget -q -P /tmp "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     sudo chmod +x /tmp/kubectl
     sudo mv /tmp/kubectl /usr/local/bin/kubectl
 
@@ -158,9 +158,9 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash 
-    chmod +x kustomize 
-    sudo mv kustomize /usr/bin/kustomize 
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+    chmod +x kustomize
+    sudo mv kustomize /usr/bin/kustomize
     ```
 
 1. Verify Kustomize installation
@@ -187,7 +187,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     # [ubuntu@Ubuntu_VM:~]
     helm version
     ```
-  
+
     ```console
     version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
     ```
@@ -203,18 +203,25 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     # SonarQube host OS pre-requisites
     sudo sysctl -w fs.file-max=131072
-    ulimit -n 131072 
-    ulimit -u 8192 
+    ulimit -n 131072
+    ulimit -u 8192
 
-    echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf   # Needed for ECK to run correctly without OOM errors
-    echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf   # Needed by Sonarqube
-    sysctl --load  #reload updated config
+    # Needed for ECK to run correctly without OOM errors
+    echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf
+
+    # Needed by Sonarqube
+    echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf
+
+    # Load updated configuration
+    sysctl --load
+
     # Alternative form of above 3 commands:
     # sudo sysctl -w vm.max_map_count=524288
     # sudo sysctl -w fs.file-max=131072
 
-    ulimit -n 131072  # Needed by Sonarqube
-    ulimit -u 8192    # Needed by Sonarqube
+    # Needed by Sonarqube
+    ulimit -n 131072
+    ulimit -u 8192
 
     # Preload kernel modules required by istio-init, required for SELinux enforcing instances using istio-init
     modprobe xt_REDIRECT
@@ -226,26 +233,27 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     # Kubernetes requires swap disabled
     # Turn off all swap devices and files (won't last reboot)
-    sudo swapoff -a 
+    sudo swapoff -a
 
-    # For swap to stay off you can remove any references found via 
+    # For swap to stay off, you can remove any references found via
     # cat /proc/swaps
     # cat /etc/fstab
     ```
 
-## Step 5: Spin up a k3d Cluster
+## Step 5:  Create a k3d Cluster
 
-After reading notes on the purpose of the k3d command's flags, you'll be able to copy paste the command to spin up a k3d cluster.
+After reading the notes on the purpose of k3d's command flags, you will be able to copy and paste the command to create a k3d cluster.
 
-### Explanation of k3d command flags, relevant to the quick start
+### Explanation of k3d Command Flags, Relevant to the Quick Start
 
 1. `SERVER_IP="10.10.16.11"` and
 `--k3s-server-arg "--tls-san=$SERVER_IP"`
 This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
 **Here's an explanation of the effect:**
 
-* 1A. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
-* 1B. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+   1. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
+
+   2. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
 
 **Tips for looking up the value to plug into SERVER_IP:**
 
@@ -260,13 +268,13 @@ This associates an extra IP to the Kubernetes API server's generated HTTPS certi
     `ip address`
     (You'll see more than 1 address, use the one in the same subnet as your workstation)
 
-2. `--volume /etc/machine-id:/etc/machine-id`
+1. `--volume /etc/machine-id:/etc/machine-id`
 is required for fluentbit log shipper to work.
-3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
+1. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
 Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
-4. `--servers 1 --agents 3` flags are not used and shouldn't be added
+1. `--servers 1 --agents 3` flags are not used and shouldn't be added
 This is because the image caching logic works more reliably on a 1 node Dockerized cluster, vs a 4 node Dockerized cluster. (If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.)
-5. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
+1. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
 Map the VM's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the nodeports of the Dockerized k3s node.
 
 ### k3d commands
@@ -364,7 +372,7 @@ EOF
 
 cat << EOF > ~/demo_values.yaml
 logging:
-  values: 
+  values:
     kibana:
       count: 1
     elasticsearch:
