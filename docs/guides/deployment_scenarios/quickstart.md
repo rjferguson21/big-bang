@@ -19,7 +19,7 @@ This quick start guide optimizes the speed at which a demonstrable and tinker-ab
 
 * Operating System Prerequisite: Any Linux distribution that supports Docker should work.
 * Operating System Pre-configuration: This quick start includes easy paste-able commands to quickly satisfy this prerequisite.
-* Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in docker)
+* Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in Docker)
 * Default Storage Class Prerequisite: k3d ships with a local volume storage class.
 * Support for automated provisioning of Kubernetes Service of type LB Prerequisite: is implemented by taking advantage of k3d's ability to easily map port 443 of the VM to port 443 of a Dockerized LB that forwards traffic to a single Istio Ingress Gateway.
 Important limitations of this quick start guide's implementation of k3d to be aware of:
@@ -32,16 +32,16 @@ Important limitations of this quick start guide's implementation of k3d to be aw
 * Encrypting Secrets as code Prerequisite is substituted with clear text secrets on your local machine.
 * Installing and Configuring Flux Prerequisite: Not using GitOps for the quick start eliminates the need to configure flux, and installation is covered within this guide.
 * HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev,*.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
-* DNS Prerequisite: is substituted by making use of your workstation's hostfile.
+* DNS Prerequisite: is substituted by making use of your workstation's Hosts file.
 
 ## Step 1: Provision a Virtual Machine
 
 The following requirements are recommended for Demo Purposes:
 
 * 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users) should be sufficient.
-* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux Distro with docker installed should work)
+* Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux distribution with Docker installed should work)
 * Network connectivity to said Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a vagrant box Virtual Machine configured for remote ssh works fine.)
-* Note: If your workstation has docker, lots of ram/cpu, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote VM and do local development.
+* Note: If your workstation has Docker, lots of ram/cpu, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote VM and do local development.
 
 ## Step 2: SSH to Remote VM
 
@@ -58,7 +58,7 @@ The following requirements are recommended for Demo Purposes:
     chmod 600 ~/.ssh/config
     temp="""##########################
     Host k3d
-      Hostname 1.2.3.4  #IP Address of k3d node
+      Hostname x.x.x.x  #IP Address of k3d node
       IdentityFile ~/.ssh/bb-onboarding-attendees.ssh.privatekey   #ssh key authorized to access k3d node
       User ubuntu
       StrictHostKeyChecking no   #Useful for vagrant where you'd reuse IP from repeated tear downs
@@ -79,14 +79,14 @@ The following requirements are recommended for Demo Purposes:
 
 Note: This guide follows the DevOps best practice of left shifting feedback on mistakes / surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
-1. Install Docker and add $USER to docker group
+1. Install Docker and add $USER to Docker group
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
+    curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups Docker $USER
     ```
 
-2. Logout and login to allow the "usermod add $USER to docker group" change to take effect
+2. Logout and login to allow the "usermod add $USER to Docker group" change to take effect
 
     ```bash
     # [ubuntu@Ubuntu_VM:~]
@@ -100,7 +100,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
     ```bash
     # [ubuntu@Ubuntu_VM:~]
-    docker ps
+    Docker ps
     # CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS        PORTS
     # ^-- represents success
     ```
@@ -242,9 +242,9 @@ is required for fluentbit log shipper to work.
 3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
 Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
 4. `--servers 1 --agents 3` flags are not used and shouldn't be added
-This is because the image cacheing logic works more reliably on a 1 node dockerized cluster, vs a 4 node dockerized cluster. (If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.)
+This is because the image caching logic works more reliably on a 1 node Dockerized cluster, vs a 4 node Dockerized cluster. (If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.)
 5. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
-Map the VM's port 80 and 443 to port 80 and 443 of a dockerized LB that will point to the nodeports of the dockerized k3s node.
+Map the VM's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the nodeports of the Dockerized k3s node.
 
 ### k3d commands
 
@@ -296,7 +296,7 @@ So before adding credentials to a config file and not finding out there's an iss
     set +o history  #turn off bash history
     export REGISTRY1_USERNAME=REPLACE_ME
     export REGISTRY1_PASSWORD=REPLACE_ME
-    docker login registry1.dso.mil -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+    Docker login registry1.dso.mil -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
     set -o history  #turn on bash history
     ```
 
@@ -319,7 +319,7 @@ git status
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 # Check the value of your env var to confirm it's still filled out
-# If you switch terminals or relogin you may need to re establish these variables.
+# If you switch terminals or re-login you may need to re establish these variables.
 echo $REGISTRY1_USERNAME
 cd ~/bigbang
 $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
@@ -396,7 +396,7 @@ Means it'll install the bigbang helm chart in the bigbang namespace and create t
 
 ## Step 11: Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
 
-> Remember to un-edit your hostfile when your finished tinkering
+> Remember to un-edit your Hosts file when your finished tinkering
 
 ```bash
 # [ubuntu@Ubuntu_VM:~]
@@ -422,20 +422,22 @@ sudo vi /etc/hosts
 
 1. Right click Notepad -> Run as Administrator
 2. Open C:\Windows\System32\drivers\etc\hosts
-3. Add the following entries to the hostfile, where 1.2.3.4 = k3d virtual machine's IP (hint: find and replace is your friend)
+3. Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
+
+  > Hint: find and replace is your friend)
 
 ```plaintext
-1.2.3.4  alertmanager.bigbang.dev
-1.2.3.4  grafana.bigbang.dev
-1.2.3.4  prometheus.bigbang.dev
-1.2.3.4  argocd.bigbang.dev
-1.2.3.4  kiali.bigbang.dev
-1.2.3.4  tracing.bigbang.dev
+x.x.x.x  alertmanager.bigbang.dev
+x.x.x.x  grafana.bigbang.dev
+x.x.x.x  prometheus.bigbang.dev
+x.x.x.x  argocd.bigbang.dev
+x.x.x.x  kiali.bigbang.dev
+x.x.x.x  tracing.bigbang.dev
 ```
 
 ## Step 12: Visit a webpage
 
-In a browser visit one of the sites listed using the `k get vs -A` command
+In a browser, visit one of the sites listed using the `k get vs -A` command
 
 ## Step 13: Play
 
