@@ -25,7 +25,7 @@ This quick start guide optimizes the speed at which a demonstrable and tinker-ab
 Important limitations of this quick start guide's implementation of k3d to be aware of:
   * Multiple Ingress Gateways aren't supported by this implementation as they would each require their own LB, and this trick of using the host's port 443 only works for automated provisioning of a single service of type LB that leverages port 443.
   * Multiple Ingress Gateways makes a demoable/tinkerable KeyCloak and locally hosted SSO deployment much easier.
-  * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you're developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
+  * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you are developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
   * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, then MetalLB + k3s (or another non-Dockerized Kubernetes distribution) would be a happy path to look into. (or alternatively create an issue ticket requesting prioritization of a keycloak quick start or better yet a Merge Request.)
 * Access to Container Images Prerequisite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
 * Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
@@ -47,7 +47,7 @@ The following requirements are recommended for Demo Purposes:
 ## Step 2: SSH to Remote VM
 
 * ssh and passwordless sudo should be configured on the remote machine
-* You can skip this step if you're doing local development.
+* You can skip this step if you are doing local development.
 
 1. Setup SSH
 
@@ -251,9 +251,9 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
 **Here's an explanation of the effect:**
 
-   1. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
+   1. If you are running k3d from a local host or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or paste unmodified incorrect values with no ill effect.
 
-   2. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+   2. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After pasting the ~/.kube/config file from the k3d server to your workstation, you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
 
 **Tips for looking up the value to plug into SERVER_IP:**
 
