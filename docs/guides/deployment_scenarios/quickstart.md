@@ -88,7 +88,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 2. Logout and login to allow the "usermod add $USER to Docker group" change to take effect
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     exit
 
@@ -98,7 +98,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 3. Verify Docker Installation
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     Docker ps
     # CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS        PORTS
@@ -107,14 +107,14 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 4. Install latest version of k3d
   
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
     ```
 
 5. Verify k3d installation
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     k3d --version
     # k3d version v4.4.7
@@ -123,7 +123,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 6. Install latest version of kubectl
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     wget -q -P /tmp "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"    
     sudo chmod +x /tmp/kubectl
@@ -133,7 +133,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 7. Verify kubectl installation
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     kubectl version --client
     # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
@@ -141,7 +141,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 8. Install Kustomize
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash 
     chmod +x kustomize 
@@ -150,7 +150,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 9. Verify Kustomize installation
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     kustomize version
     # {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
@@ -158,7 +158,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 10. Install helm
 
-    ```bash
+    ```shell
     # [ubuntu@Ubuntu_VM:~]
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     ```
@@ -248,7 +248,7 @@ Map the VM's port 80 and 443 to port 80 and 443 of a Dockerized LB that will poi
 
 ### k3d commands
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
 
@@ -269,7 +269,7 @@ k3d cluster create \
 
 ### Verification command
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 k get node    # (the copy pasteable install commands, symbolically linked k to kubectl)
 # NAME                       STATUS   ROLES                  AGE   VERSION
@@ -302,7 +302,7 @@ So before adding credentials to a config file and not finding out there's an iss
 
 ## Step 7: Clone your desired version of the Big Bang Umbrella Helm Chart
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
@@ -316,7 +316,7 @@ git status
 
 ## Step 8: Install Flux
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 # Check the value of your env var to confirm it's still filled out
 # If you switch terminals or re-login you may need to re establish these variables.
@@ -329,7 +329,7 @@ kubectl get pods --namespace=flux-system
 
 ## Step 9: Create helm values .yaml files to act as input variables for the Big Bang Helm Chart
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 cat << EOF > ~/ib_creds.yaml
 registryCredentials:
@@ -373,7 +373,7 @@ EOF
 
 ## Step 10: Install Big Bang using the local development workflow
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 helm upgrade --install bigbang $HOME/bigbang/chart \
 --values $HOME/bigbang/chart/ingress-certs.yaml \
@@ -398,7 +398,7 @@ Means it'll install the bigbang helm chart in the bigbang namespace and create t
 
 > Remember to un-edit your Hosts file when your finished tinkering
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 k get vs -A
 kubectl get virtualservices --all-namespaces
@@ -445,7 +445,7 @@ Here's an example of post deployment customization of Big Bang.
 After looking at <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml>
 It should make sense that the following is a valid edit
 
-```bash
+```shell
 # [ubuntu@Ubuntu_VM:~]
 
 cat << EOF > ~/tinkering.yaml
