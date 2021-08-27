@@ -4,33 +4,33 @@
 
 ## Overview
 
-This quick start guide explains in a beginner-friendly level of detail how to complete the following tasks in under a hour:
+This quick start guide explains in beginner-friendly terminology how to complete the following tasks in under an hour:
 
-1. Turn a virtual machine (VM) into a k3d single node Kubernetes cluster.
-1. Deploy Big Bang on the cluster using a demonstration and local development friendly workflow.
+1. Turn a virtual machine (VM) into a k3d single-node Kubernetes cluster.
+1. Deploy Big Bang on the cluster using a demonstration and local development-friendly workflow.
 
-    > (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
+    > Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has sufficient resources, or you are willing to disable packages to lower the resource requirements, then local development is possible. This quick start guide is valid for both remote and local deployment scenarios.
 
-1. Customize the Demo Deployment of Big Bang.
+1. Customize the demonstration deployment of Big Bang.
 
 ## Important Background Contextual Information
 
-**BLUF: This quickstart guide optimizes the speed at which a demoable tinkerable deployment can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.**
+This quick start guide optimizes the speed at which a demonstrable and tinker-able deployment can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.
 
-* OS Prerequisite: Any Linux distro that supports docker should work.
-* OS Preconfiguration: This quickstart includes easy copy pasteable commands to quickly satisfy this prerequisite.
+* Operating System Prerequisite: Any Linux distribution that supports Docker should work.
+* Operating System Pre-configuration: This quick start includes easy paste-able commands to quickly satisfy this prerequisite.
 * Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in docker)
 * Default Storage Class Prerequisite: k3d ships with a local volume storage class.
 * Support for automated provisioning of Kubernetes Service of type LB Prerequisite: is implemented by taking advantage of k3d's ability to easily map port 443 of the VM to port 443 of a Dockerized LB that forwards traffic to a single Istio Ingress Gateway.
-Important limitations of this quickstart guide's implementation of k3d to be aware of:
+Important limitations of this quick start guide's implementation of k3d to be aware of:
   * Multiple Ingress Gateways aren't supported by this implementation as they would each require their own LB, and this trick of using the host's port 443 only works for automated provisioning of a single service of type LB that leverages port 443.
   * Multiple Ingress Gateways makes a demoable/tinkerable KeyCloak and locally hosted SSO deployment much easier.
   * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you're developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
-  * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, then MetalLB + k3s (or another non dockerized Kubernetes Distro) would be a happy path to look into. (or alternatively create an issue ticket requesting prioritization of a keycloak quickstart or better yet a Merge Request.)
+  * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, then MetalLB + k3s (or another non-Dockerized Kubernetes distribution) would be a happy path to look into. (or alternatively create an issue ticket requesting prioritization of a keycloak quick start or better yet a Merge Request.)
 * Access to Container Images Prerequisite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
 * Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
-* Encrypting Secrets as code Prerequsite is substituted with clear text secrets on your local machine.
-* Installing and Configuring Flux Prerequisite: Not using GitOps for the quickstart eliminates the need to configure flux, and installation is covered within this guide.
+* Encrypting Secrets as code Prerequisite is substituted with clear text secrets on your local machine.
+* Installing and Configuring Flux Prerequisite: Not using GitOps for the quick start eliminates the need to configure flux, and installation is covered within this guide.
 * HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev,*.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
 * DNS Prerequisite: is substituted by making use of your workstation's hostfile.
 
@@ -214,7 +214,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
 
 After reading notes on the purpose of the k3d command's flags, you'll be able to copy paste the command to spin up a k3d cluster.
 
-### Explanation of k3d command flags, relevant to the quickstart
+### Explanation of k3d command flags, relevant to the quick start
 
 1. `SERVER_IP="10.10.16.11"` and
 `--k3s-server-arg "--tls-san=$SERVER_IP"`
