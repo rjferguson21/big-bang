@@ -4,14 +4,14 @@
 
 ## Overview
 
-This quick start guide explains in beginner friendly level of detail how to complete the following tasks in under a hour:
+This quick start guide explains in a beginner-friendly level of detail how to complete the following tasks in under a hour:
 
-1. Turn a VM into a k3d single node Kubernetes Cluster.
-2. Deploy Big Bang on the Cluster using a Demo/local development friendly workflow.
+1. Turn a virtual machine (VM) into a k3d single node Kubernetes cluster.
+1. Deploy Big Bang on the cluster using a demonstration and local development friendly workflow.
 
-> (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
+    > (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
 
-3. Customize the Demo Deployment of Big Bang.
+1. Customize the Demo Deployment of Big Bang.
 
 ## Important Background Contextual Information
 
