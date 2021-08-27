@@ -40,8 +40,9 @@ The following requirements are recommended for Demo Purposes:
 
 * 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users) should be sufficient.
 * Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux distribution with Docker installed should work)
-* Network connectivity to said Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a vagrant box Virtual Machine configured for remote ssh works fine.)
-* Note: If your workstation has Docker, lots of ram/cpu, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote VM and do local development.
+* Network connectivity to Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a Vagrant Box Virtual Machine configured for remote ssh works fine.)
+
+> Note: If your workstation has Docker, lots of RAM/CPU, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote virtual machine and do local development.
 
 ## Step 2: SSH to Remote VM
 
@@ -66,7 +67,7 @@ The following requirements are recommended for Demo Purposes:
     echo "$temp" | sudo tee -a ~/.ssh/config  #tee -a, appends to preexisting config file
     ```
 
-2. ssh to instance
+1. SSH to instance
 
     ```shell
     # [admin@Laptop:~]
@@ -77,69 +78,83 @@ The following requirements are recommended for Demo Purposes:
 
 ## Step 3: Install Prerequisite Software
 
-Note: This guide follows the DevOps best practice of left shifting feedback on mistakes / surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
+Note: This guide follows the DevOps best practice of left-shifting feedback on mistakes and surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
-1. Install Docker and add $USER to Docker group
+1. Install Docker and add $USER to Docker group.
+
+    > Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively. The convenience script is not recommended for production environments.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups Docker $USER
     ```
 
-2. Logout and login to allow the "usermod add $USER to Docker group" change to take effect
+1. Logout and login to allow the `usermod` change to take effect.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     exit
+    ```
 
+    ```shell
     # [admin@Laptop:~]
     ssh k3d
     ```
 
-3. Verify Docker Installation
+1. Verify Docker Installation
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    Docker ps
-    # CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS        PORTS
-    # ^-- represents success
+    Docker run hello-world
     ```
 
-4. Install latest version of k3d
+    ```console
+    Hello from Docker!
+    ```
+
+1. Install latest version of k3d
   
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
     ```
 
-5. Verify k3d installation
+1. Verify k3d installation
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     k3d --version
+    ```
+
+    ```console
     # k3d version v4.4.7
     # k3s version v1.21.2-k3s1 (default)
     ```
 
-6. Install latest version of kubectl
+1. Install latest version of kubectl
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     wget -q -P /tmp "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"    
     sudo chmod +x /tmp/kubectl
     sudo mv /tmp/kubectl /usr/local/bin/kubectl
-    sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k  #equivalent of alias k=kubectl, using a symbolic link (equivalent of a shortcut in Windows)
+
+    # Create a symbolic link from k to kubectl
+    sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k
     ```
 
-7. Verify kubectl installation
+1. Verify kubectl installation
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     kubectl version --client
-    # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
     ```
 
-8. Install Kustomize
+    ```console
+    Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
+    ```
+
+1. Install Kustomize
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
@@ -148,27 +163,33 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     sudo mv kustomize /usr/bin/kustomize 
     ```
 
-9. Verify Kustomize installation
+1. Verify Kustomize installation
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     kustomize version
-    # {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
     ```
 
-10. Install helm
+    ```console
+    {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
+    ```
+
+1. Install Helm
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     ```
 
-11. Verify helm installation
+1. Verify Helm installation
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     helm version
-    # version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
+    ```
+  
+    ```console
+    version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
     ```
 
 ## Step 4: Configure Host OS prerequisites
@@ -199,7 +220,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     modprobe xt_REDIRECT
     modprobe xt_owner
     modprobe xt_statistic
-    
+
     # Persist modules after reboots
     printf "xt_REDIRECT\nxt_owner\nxt_statistic\n" | sudo tee -a /etc/modules
 
@@ -220,7 +241,7 @@ After reading notes on the purpose of the k3d command's flags, you'll be able to
 
 1. `SERVER_IP="10.10.16.11"` and
 `--k3s-server-arg "--tls-san=$SERVER_IP"`
-This associates an extra IP to the kubernete's api server's generated HTTPS certificate.
+This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
 **Here's an explanation of the effect:**
 
 * 1A. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
