@@ -1,43 +1,48 @@
 # Big Bang Quick Start
 
-
 ## Overview
+
 This quick start guide explains in beginner friendly level of detail how to complete the following tasks in under a hour:
-1. Turn a VM into a k3d single node Kubernets Cluster.
-2. Deploy Big Bang on the Cluster using a Demo/local development friendly workflow.    
+
+1. Turn a VM into a k3d single node Kubernetes Cluster.
+2. Deploy Big Bang on the Cluster using a Demo/local development friendly workflow.
+
 > (Note: This guide mainly focuses on the scenario of deploying Big Bang to a remote VM with enough resources to run Big Bang [(see step 1 for recommended resources)](#step-1:-provision-a-virtual-machine). If your workstation has enough resources, or you're willing to disable packages to lower the resource requirements, then local development is possible. This quickstart guide is valid for both remote and localhost deployment scenarios)
+
 3. Customize the Demo Deployment of Big Bang.
 
+## Important Background Contextual Information
 
-## Important Background Contextual Information:
 **BLUF: This quickstart guide optimizes the speed at which a demoable tinkerable deployment can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.**
+
 * OS Prerequisite: Any Linux distro that supports docker should work.
 * OS Preconfiguration: This quickstart includes easy copy pasteable commands to quickly satisfy this prerequisite.
 * Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in docker)
 * Default Storage Class Prerequisite: k3d ships with a local volume storage class.
-* Support for automated provisioning of Kubernetes Service of type LB Prerequisite: is implemented by taking advantage of k3d's ability to easily map port 443 of the VM to port 443 of a Docker-ized LB that forwards traffic to a single Istio Ingress Gateway.     
-Important limitations of this quickstart guide's implementation of k3d to be aware of:    
+* Support for automated provisioning of Kubernetes Service of type LB Prerequisite: is implemented by taking advantage of k3d's ability to easily map port 443 of the VM to port 443 of a Dockerized LB that forwards traffic to a single Istio Ingress Gateway.
+Important limitations of this quickstart guide's implementation of k3d to be aware of:
   * Multiple Ingress Gateways aren't supported by this implementation as they would each require their own LB, and this trick of using the host's port 443 only works for automated provisioning of a single service of type LB that leverages port 443.
   * Multiple Ingress Gateways makes a demoable/tinkerable KeyCloak and locally hosted SSO deployment much easier.
   * Multiple Ingress Gateways can be demoed on k3d if configuration tweaks are made, MetalLB is used, and you're developing using a local Linux Desktop. (network connectivity limitations of the implementation would only allow a the web browser on the k3d host server to see the webpages.)
   * If you want to easily demo and tinker with Multiple Ingress Gateways and Keycloak, then MetalLB + k3s (or another non dockerized Kubernetes Distro) would be a happy path to look into. (or alternatively create an issue ticket requesting prioritization of a keycloak quickstart or better yet a Merge Request.)
-* Access to Container Images Prerequsite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
+* Access to Container Images Prerequisite is satisfied by using personal image pull credentials and internet connectivity to <registry1.dso.mil>
 * Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
 * Encrypting Secrets as code Prerequsite is substituted with clear text secrets on your local machine.
 * Installing and Configuring Flux Prerequisite: Not using GitOps for the quickstart eliminates the need to configure flux, and installation is covered within this guide.
-* HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev, *.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
+* HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev,*.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
 * DNS Prerequisite: is substituted by making use of your workstation's hostfile.
 
-
 ## Step 1: Provision a Virtual Machine
+
 The following requirements are recommended for Demo Purposes:
+
 * 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users) should be sufficient.
 * Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux Distro with docker installed should work)
 * Network connectivity to said Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a vagrant box Virtual Machine configured for remote ssh works fine.)
 * Note: If your workstation has docker, lots of ram/cpu, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote VM and do local development.
 
-
 ## Step 2: SSH to Remote VM
+
 * ssh and passwordless sudo should be configured on the remote machine
 * You can skip this step if you're doing local development.
 
@@ -68,9 +73,9 @@ The following requirements are recommended for Demo Purposes:
     # [ubuntu@Ubuntu_VM:~]
     ```
 
+## Step 3: Install Prerequisite Software
 
-## Step 3: Install Prerequisite Software    
-Note: This guide follows the DevOps best practice of left shifting feedback on mistakes / surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands. 
+Note: This guide follows the DevOps best practice of left shifting feedback on mistakes / surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
 1. Install Docker and add $USER to docker group
 
@@ -90,6 +95,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     ```
 
 3. Verify Docker Installation
+
     ```bash
     # [ubuntu@Ubuntu_VM:~]
     docker ps
@@ -131,7 +137,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     # Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
     ```
 
-8. Install Kustomize 
+8. Install Kustomize
 
     ```bash
     # [ubuntu@Ubuntu_VM:~]
@@ -147,7 +153,6 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     kustomize version
     # {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
     ```
-
 
 10. Install helm
 
@@ -165,6 +170,7 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     ```
 
 ## Step 4: Configure Host OS prerequisites
+
 * Run Operating System Pre-configuration
 
     ```shell
@@ -203,37 +209,43 @@ Note: This guide follows the DevOps best practice of left shifting feedback on m
     ```
 
 ## Step 5: Spin up a k3d Cluster
+
 After reading notes on the purpose of the k3d command's flags, you'll be able to copy paste the command to spin up a k3d cluster.
 
-### Explanation of k3d command flags, relevant to the quickstart:     
-1. `SERVER_IP="10.10.16.11"` and    
-`--k3s-server-arg "--tls-san=$SERVER_IP"`
-This associates an extra IP to the kubernete's api server's generated HTTPS certificate.    
-**Here's an explanation of the effect:**     
-  * 1A. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
-  * 1B. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+### Explanation of k3d command flags, relevant to the quickstart
 
-**Tips for looking up the value to plug into SERVER_IP:**    
-  * Method 1: If your k3d server is a remote box    
-    Then run the following command from your workstation    
+1. `SERVER_IP="10.10.16.11"` and
+`--k3s-server-arg "--tls-san=$SERVER_IP"`
+This associates an extra IP to the kubernete's api server's generated HTTPS certificate.
+**Here's an explanation of the effect:**
+
+* 1A. If you're running k3d from a localhost or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or copy paste unmodified incorrect values with no ill effect.
+* 1B. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After copy pasting the ~/.kube/config file from the k3d server to your workstation you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+
+**Tips for looking up the value to plug into SERVER_IP:**
+
+* Method 1: If your k3d server is a remote box
+    Then run the following command from your workstation
     `cat ~/.ssh/config | grep k3d -A 6`
-  * Method 2: If the remote server was provisioned with a Public IP    
-    Then run the following command from the server hosting k3d    
-    `curl ifconfig.me --ipv4`
-  * Method 3: If the server hosting k3d only has a Private IP    
+* Method 2: If the remote server was provisioned with a Public IP
     Then run the following command from the server hosting k3d
-    `ip address`    
+    `curl ifconfig.me --ipv4`
+* Method 3: If the server hosting k3d only has a Private IP
+    Then run the following command from the server hosting k3d
+    `ip address`
     (You'll see more than 1 address, use the one in the same subnet as your workstation)
-2. `--volume /etc/machine-id:/etc/machine-id`      
+
+2. `--volume /etc/machine-id:/etc/machine-id`
 is required for fluentbit log shipper to work.
-3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`      
+3. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
 Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
-4. `--servers 1 --agents 3` flags are not used and shouldn't be added     
+4. `--servers 1 --agents 3` flags are not used and shouldn't be added
 This is because the image cacheing logic works more reliably on a 1 node dockerized cluster, vs a 4 node dockerized cluster. (If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.)
-5. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`    
+5. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
 Map the VM's port 80 and 443 to port 80 and 443 of a dockerized LB that will point to the nodeports of the dockerized k3s node.
 
-### k3d commands     
+### k3d commands
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
@@ -254,6 +266,7 @@ k3d cluster create \
 ```
 
 ### Verification command
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 k get node    # (the copy pasteable install commands, symbolically linked k to kubectl)
@@ -261,9 +274,9 @@ k get node    # (the copy pasteable install commands, symbolically linked k to k
 # k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
 ```
 
-
 ## Step 6: Verify your IronBank Image Pull Credentials work
-1. Here we continue to follow the DevOps best practice of enabling early left shifted feedback whenever possible:    
+
+1. Here we continue to follow the DevOps best practice of enabling early left shifted feedback whenever possible:
 So before adding credentials to a config file and not finding out there's an issue with them until after we see an ImagePullBackOff error during deployment, we'll do a quick left shifted verification of the credentials.
 
 2. Look up your IronBank image pull credentials
@@ -271,8 +284,8 @@ So before adding credentials to a config file and not finding out there's an iss
     2. Login via OIDC provider
     3. Top right of the page, click your name --> User Profile
     4. Your image pull username is labeled "Username"
-    5. Your image pull password is labeled "CLI secret"    
-       (Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after ~3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the <https://registry1.dso.mil> GUI)    
+    5. Your image pull password is labeled "CLI secret"
+       (Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after ~3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the <https://registry1.dso.mil> GUI)
 
 3. Verify your credentials work
 
@@ -285,8 +298,8 @@ So before adding credentials to a config file and not finding out there's an iss
     set -o history  #turn on bash history
     ```
 
-
 ## Step 7: Clone your desired version of the Big Bang Umbrella Helm Chart
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 cd ~
@@ -299,8 +312,8 @@ git status
 # HEAD is git speak for current context within a tree of commits
 ```
 
-
 ## Step 8: Install Flux
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 # Check the value of your env var to confirm it's still filled out
@@ -312,8 +325,8 @@ k get po -n=flux-system
 kubectl get pods --namespace=flux-system
 ```
 
-
 ## Step 9: Create helm values .yaml files to act as input variables for the Big Bang Helm Chart
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 cat << EOF > ~/ib_creds.yaml
@@ -356,8 +369,8 @@ gatekeeper:
 EOF
 ```
 
-
 ## Step 10: Install Big Bang using the local development workflow
+
 ```bash
 # [ubuntu@Ubuntu_VM:~]
 helm upgrade --install bigbang $HOME/bigbang/chart \
@@ -368,18 +381,19 @@ helm upgrade --install bigbang $HOME/bigbang/chart \
 ```
 
 Explanation of flags in the imperative helm install command:
-1. `upgrade --install`    
+
+1. `upgrade --install`
 This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
-2. `bigbang $HOME/bigbang/chart`     
+2. `bigbang $HOME/bigbang/chart`
 bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`
 $HOME/bigbang/chart is a reference to the helm chart being installed
-3. `--values $HOME/bigbang/chart/ingress-certs.yaml`      
+3. `--values $HOME/bigbang/chart/ingress-certs.yaml`
 references demo HTTPS certs embedded in the public repo (the *.bigbang.dev wildcard cert, signed by the Lets Encrypt Free, public internet Certificate Authority)
-4. `--namespace=bigbang --create-namespace`     
+4. `--namespace=bigbang --create-namespace`
 Means it'll install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
 
-
 ## Step 11: Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
+
 > Remember to un-edit your hostfile when your finished tinkering
 
 ```bash
@@ -395,13 +409,15 @@ kubectl get virtualservices --all-namespaces
 # jaeger       jaeger                                    ["istio-system/main"]   ["tracing.bigbang.dev"]        8d
 ```
 
-### Linux/Mac Users:
+### Linux/Mac Users
+
 ```shell
 # [admin@Laptop:~]
 sudo vi /etc/hosts
 ```
 
-### Windows Users:
+### Windows Users
+
 1. Right click Notepad -> Run as Administrator
 2. Open C:\Windows\System32\drivers\etc\hosts
 3. Add the following entries to the hostfile, where 1.2.3.4 = k3d virtual machine's IP (hint: find and replace is your friend)
@@ -416,9 +432,11 @@ sudo vi /etc/hosts
 ```
 
 ## Step 12: Visit a webpage
-In a webbrowser visit one of the sites listed using the `k get vs -A` command
+
+In a browser visit one of the sites listed using the `k get vs -A` command
 
 ## Step 13: Play
+
 Here's an example of post deployment customization of Big Bang.
 After looking at <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml>
 It should make sense that the following is a valid edit
