@@ -361,7 +361,6 @@ HEAD detached at 1.14.0
 echo $REGISTRY1_USERNAME
 cd ~/bigbang
 $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
-k get po -n=flux-system
 kubectl get pods --namespace=flux-system
 ```
 
