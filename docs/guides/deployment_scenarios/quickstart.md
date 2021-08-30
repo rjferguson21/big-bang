@@ -80,6 +80,18 @@ The following requirements are recommended for Demo Purposes:
 
 Note: This guide follows the DevOps best practice of left-shifting feedback on mistakes and surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
+1. Install Curl
+
+    ```shell
+    sudo apt install curl -y
+    ```
+
+1. Install Git
+
+    ```shell
+    sudo apt install git -y
+    ```
+
 1. Install Docker and add $USER to Docker group.
 
     > Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively. The convenience script is not recommended for production environments.
@@ -266,16 +278,13 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
 **Tips for looking up the value to plug into SERVER_IP:**
 
-* Method 1: If your k3d server is a remote box
-    Then run the following command from your workstation
+* Method 1: If your k3d server is a remote box, then run the following command from your workstation.
     `cat ~/.ssh/config | grep k3d -A 6`
-* Method 2: If the remote server was provisioned with a Public IP
-    Then run the following command from the server hosting k3d
+* Method 2: If the remote server was provisioned with a Public IP, hen run the following command from the server hosting k3d.
     `curl ifconfig.me --ipv4`
-* Method 3: If the server hosting k3d only has a Private IP
-    Then run the following command from the server hosting k3d
+* Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d
     `ip address`
-    (You'll see more than 1 address, use the one in the same subnet as your workstation)
+    (You will see more than one address, use the one in the same subnet as your workstation)
 
 1. `--volume /etc/machine-id:/etc/machine-id`
 is required for fluentbit log shipper to work.
@@ -290,11 +299,12 @@ Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB 
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
+# SERVER_IP=$( curl https://checkip.amazonaws.com )
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
 
+# Create image cache directory
 IMAGE_CACHE=${HOME}/.k3d-container-image-cache
 
-cd ~
 mkdir -p ${IMAGE_CACHE}
 
 k3d cluster create \
@@ -311,9 +321,14 @@ k3d cluster create \
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
-k get node    # (the paste-able install commands, symbolically linked k to kubectl)
-# NAME                       STATUS   ROLES                  AGE   VERSION
-# k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
+kubectl config use-context k3d-k3s-default
+kubectl get node
+```
+
+```console
+Switched to context "k3d-k3s-default".
+NAME                       STATUS   ROLES                  AGE   VERSION
+k3d-k3s-default-server-0   Ready    control-plane,master   11m   v1.21.3+k3s1
 ```
 
 ## Step 6: Verify Your IronBank Image Pull Credentials
@@ -337,7 +352,7 @@ k get node    # (the paste-able install commands, symbolically linked k to kubec
 
     export REGISTRY1_USERNAME=<REPLACE_ME>
     export REGISTRY1_PASSWORD=<REPLACE_ME>
-    docker login registry1.dso.mil -username $REGISTRY1_USERNAME -password $REGISTRY1_PASSWORD
+    echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
     
     # Turn on bash history
     set -o history
@@ -371,6 +386,7 @@ HEAD detached at 1.14.0
 echo $REGISTRY1_USERNAME
 cd ~/bigbang
 $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+k get po -n=flux-system
 kubectl get pods --namespace=flux-system
 ```
 
