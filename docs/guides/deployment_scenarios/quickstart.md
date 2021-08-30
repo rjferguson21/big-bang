@@ -105,7 +105,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    Docker run hello-world
+    docker run hello-world
     ```
 
     ```console
