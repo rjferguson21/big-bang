@@ -86,7 +86,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups Docker $USER
+    curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
     ```
 
 1. Logout and login to allow the `usermod` change to take effect.
