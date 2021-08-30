@@ -132,13 +132,13 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     # [ubuntu@Ubuntu_VM:~]
     # The following downloads the 64 bit linux version of k3d v4.4.7, checks it 
     # against a copy of the sha256 checksum, if they match k3d gets installed
-    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > /tmp/k3d
+    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
 
-    echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 /tmp/k3d | sha256sum -c | grep OK
+    echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 k3d | sha256sum -c | grep OK
     # 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 came from
     # wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1
 
-    if [ $? == 0 ]; then chmod +x /tmp/k3d && sudo mv /tmp/k3d /usr/local/bin/k3d; fi
+    if [ $? == 0 ]; then chmod +x k3d && sudo mv k3d /usr/local/bin/k3d; fi
 
 
     # Alternative command (less safe due to curl | bash, but more generic):
@@ -157,13 +157,19 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     k3s version v1.21.2-k3s1 (default)
     ```
 
-1. Install latest version of kubectl
+1. Install kubectl
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    wget -q -P /tmp "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    sudo chmod +x /tmp/kubectl
-    sudo mv /tmp/kubectl /usr/local/bin/kubectl
+    # The following downloads the 64 bit linux version of kubectl v1.22.1, checks it 
+    # against a copy of the sha256 checksum, if they match kubectl gets installed
+    wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
+
+    echo 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 kubectl | sha256sum -c | grep OK
+    # 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 came from
+    # wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl.sha256
+
+    if [ $? == 0 ]; then chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl; fi
 
     # Create a symbolic link from k to kubectl
     sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k
@@ -177,7 +183,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```
 
     ```console
-    Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.0", GitCommit:"c2b5237ccd9c0f1d600d3072634ca66cefdf272f", GitTreeState:"clean", BuildDate:"2021-08-04T18:03:20Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"linux/amd64"}
+    Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:45:37Z", GoVersion:"go1.16.7", Compiler:"gc", Platform:"linux/amd64"}
     ```
 
 1. Install Kustomize
@@ -185,7 +191,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it 
-    # against a copy of the sha256 checksum, if they match helm gets installed
+    # against a copy of the sha256 checksum, if they match kustomize gets installed
     wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
 
     echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
