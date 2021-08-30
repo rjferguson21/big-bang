@@ -112,11 +112,21 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     Hello from Docker!
     ```
 
-1. Install latest version of k3d
+1. Install k3d (v4.4.8 had integration issues, v4.4.7 is the most recent known to work version.)
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+    # The following downloads the 64 bit linux version of k3d and it's sha256 checksum, verifies they match, if they match, then it installs
+    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > /tmp/k3d
+
+    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1 > /tmp/k3d-linux-amd64_sha256sum.txt
+
+    echo $(cat /tmp/k3d-linux-amd64_sha256sum.txt) /tmp/k3d | sha256sum -c | grep OK
+
+    if [ $? == 0 ]; then chmod +x /tmp/k3d && sudo mv /tmp/k3d /usr/local/bin/k3d; fi
+
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash
     ```
 
 1. Verify k3d installation
