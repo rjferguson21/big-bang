@@ -125,7 +125,8 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```
 
 1. Install k3d 
-> Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
+
+    > Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
