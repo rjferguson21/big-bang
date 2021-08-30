@@ -80,6 +80,18 @@ The following requirements are recommended for Demo Purposes:
 
 Note: This guide follows the DevOps best practice of left-shifting feedback on mistakes and surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
+1. Install Curl
+
+    ```shell
+    sudo apt install curl -y
+    ```
+
+1. Install Git
+
+    ```shell
+    sudo apt install git -y
+    ```
+
 1. Install Docker and add $USER to Docker group.
 
     > Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively. The convenience script is not recommended for production environments.
@@ -282,6 +294,7 @@ SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
 
 # Create image cache directory
 IMAGE_CACHE=${HOME}/.k3d-container-image-cache
+
 mkdir -p ${IMAGE_CACHE}
 
 k3d cluster create \
@@ -299,12 +312,13 @@ k3d cluster create \
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 kubectl config use-context k3d-k3s-default
-kubectl cluster-info
+kubectl get node
 ```
 
 ```console
-# NAME                       STATUS   ROLES                  AGE   VERSION
-# k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
+Switched to context "k3d-k3s-default".
+NAME                       STATUS   ROLES                  AGE   VERSION
+k3d-k3s-default-server-0   Ready    control-plane,master   11m   v1.21.3+k3s1
 ```
 
 ## Step 6: Verify Your IronBank Image Pull Credentials
@@ -328,7 +342,7 @@ kubectl cluster-info
 
     export REGISTRY1_USERNAME=<REPLACE_ME>
     export REGISTRY1_PASSWORD=<REPLACE_ME>
-    docker login registry1.dso.mil -username $REGISTRY1_USERNAME -password $REGISTRY1_PASSWORD
+    echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
     
     # Turn on bash history
     set -o history
@@ -362,6 +376,7 @@ HEAD detached at 1.14.0
 echo $REGISTRY1_USERNAME
 cd ~/bigbang
 $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+k get po -n=flux-system
 kubectl get pods --namespace=flux-system
 ```
 
