@@ -256,16 +256,13 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
 **Tips for looking up the value to plug into SERVER_IP:**
 
-* Method 1: If your k3d server is a remote box
-    Then run the following command from your workstation
+* Method 1: If your k3d server is a remote box, then run the following command from your workstation.
     `cat ~/.ssh/config | grep k3d -A 6`
-* Method 2: If the remote server was provisioned with a Public IP
-    Then run the following command from the server hosting k3d
+* Method 2: If the remote server was provisioned with a Public IP, hen run the following command from the server hosting k3d.
     `curl ifconfig.me --ipv4`
-* Method 3: If the server hosting k3d only has a Private IP
-    Then run the following command from the server hosting k3d
+* Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d
     `ip address`
-    (You'll see more than 1 address, use the one in the same subnet as your workstation)
+    (You will see more than one address, use the one in the same subnet as your workstation)
 
 1. `--volume /etc/machine-id:/etc/machine-id`
 is required for fluentbit log shipper to work.
@@ -280,11 +277,11 @@ Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB 
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
+# SERVER_IP=$( curl https://checkip.amazonaws.com )
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
 
+# Create image cache directory
 IMAGE_CACHE=${HOME}/.k3d-container-image-cache
-
-cd ~
 mkdir -p ${IMAGE_CACHE}
 
 k3d cluster create \
@@ -301,7 +298,11 @@ k3d cluster create \
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
-k get node    # (the paste-able install commands, symbolically linked k to kubectl)
+kubectl config use-context k3d-k3s-default
+kubectl cluster-info
+```
+
+```console
 # NAME                       STATUS   ROLES                  AGE   VERSION
 # k3d-k3s-default-server-0   Ready    control-plane,master   40s   v1.21.2+k3s1
 ```
