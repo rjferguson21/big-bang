@@ -124,7 +124,8 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     Hello from Docker!
     ```
 
-1. Install k3d (v4.4.8 had integration issues, v4.4.7 is the most recent known to work version.)
+1. Install k3d 
+> Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
@@ -137,6 +138,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     # wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1
 
     if [ $? == 0 ]; then chmod +x /tmp/k3d && sudo mv /tmp/k3d /usr/local/bin/k3d; fi
+
 
     # Alternative command (less safe due to curl | bash, but more generic):
     # wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash
@@ -181,6 +183,16 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
+    # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it 
+    # against a copy of the sha256 checksum, if they match helm gets installed
+    wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
+
+    echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
+    # d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319
+    # came from https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/checksums.txt
+
+    if [ $? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv kustomize /usr/local/bin/kustomize && rm kustomize.tar.gz ; fi    
+
 
     # Alternative commands (less safe due to curl | bash, but more generic):
     # curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
@@ -196,7 +208,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```
 
     ```console
-    {Version:kustomize/v4.2.0 GitCommit:d53a2ad45d04b0264bcee9e19879437d851cb778 BuildDate:2021-06-30T22:49:26Z GoOs:linux GoArch:amd64}
+    {Version:kustomize/v4.3.0 GitCommit:cd17338759ef64c14307991fd25d52259697f1fb BuildDate:2021-08-24T19:24:28Z GoOs:linux GoArch:amd64}
     ```
 
 1. Install Helm
@@ -212,6 +224,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     # came from https://github.com/helm/helm/releases/tag/v3.6.3
 
     if [ $? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi    
+
 
     # Alternative command (less safe due to curl | bash, but more generic):
     # curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
