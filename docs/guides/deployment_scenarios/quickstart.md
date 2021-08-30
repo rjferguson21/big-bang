@@ -128,12 +128,13 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # The following downloads the 64 bit linux version of k3d and it's sha256 checksum, verifies they match, if they match, then it installs
+    # The following downloads the 64 bit linux version of k3d v4.4.7, checks it 
+    # against a copy of the sha256 checksum, if they match k3d gets installed
     wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > /tmp/k3d
 
-    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1 > /tmp/k3d-linux-amd64_sha256sum.txt
-
-    echo $(cat /tmp/k3d-linux-amd64_sha256sum.txt) /tmp/k3d | sha256sum -c | grep OK
+    echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 /tmp/k3d | sha256sum -c | grep OK
+    # 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 came from
+    # wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1
 
     if [ $? == 0 ]; then chmod +x /tmp/k3d && sudo mv /tmp/k3d /usr/local/bin/k3d; fi
 
@@ -149,8 +150,8 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     ```
 
     ```console
-    # k3d version v4.4.7
-    # k3s version v1.21.2-k3s1 (default)
+    k3d version v4.4.7
+    k3s version v1.21.2-k3s1 (default)
     ```
 
 1. Install latest version of kubectl
@@ -180,9 +181,11 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-    chmod +x kustomize
-    sudo mv kustomize /usr/bin/kustomize
+
+    # Alternative commands (less safe due to curl | bash, but more generic):
+    # curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+    # chmod +x kustomize
+    # sudo mv kustomize /usr/bin/kustomize
     ```
 
 1. Verify Kustomize installation
@@ -200,7 +203,18 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+    # The following downloads the 64 bit linux version of helm v3.6.3, checks it 
+    # against a copy of the sha256 checksum, if they match helm gets installed
+    wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
+
+    echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
+    # 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262
+    # came from https://github.com/helm/helm/releases/tag/v3.6.3
+
+    if [ $? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi    
+
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     ```
 
 1. Verify Helm installation
