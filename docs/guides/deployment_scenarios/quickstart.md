@@ -15,8 +15,9 @@ This quick start guide explains in beginner-friendly terminology how to complete
 
 ## Important Background Contextual Information
 
-This quick start guide optimizes the speed at which a demonstrable and tinker-able deployment can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.
+`BLUF:` This quick start guide optimizes the speed at which a demonstrable and tinker-able deployment of Big Bang can be achieved by minimizing prerequisite dependencies and substituting them with quickly implementable alternatives. Refer to the [Customer Template Repo](https://repo1.dso.mil/platform-one/big-bang/customers/template) for guidance on production deployments.
 
+`Details of how each prerequisite/dependency is quickly satisfied:`    
 * Operating System Prerequisite: Any Linux distribution that supports Docker should work.
 * Operating System Pre-configuration: This quick start includes easy paste-able commands to quickly satisfy this prerequisite.
 * Kubernetes Cluster Prerequisite: is implemented using k3d (k3s in Docker)
@@ -38,8 +39,21 @@ Important limitations of this quick start guide's implementation of k3d to be aw
 
 The following requirements are recommended for Demonstration Purposes:
 
-* 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users) should be sufficient.
+* 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users), and 100GB of disk space should be sufficient.
 * Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux distribution with Docker installed should work)
+* Most Cloud Service Provider provisioned VMs default to passwordless sudo being preconfigured, but if you're doing local development or a bare metal deployment then it's recommended that you configure passwordless sudo. 
+  * Steps for configuring passwordless sudo: [(source)](https://unix.stackexchange.com/questions/468416/setting-up-passwordless-sudo-on-linux-distributions)
+    1. `sudo visudo`
+    1. Change:
+       ```text
+       # Allow members of group sudo to execute any command
+       %sudo   ALL=(ALL:ALL) ALL
+       ```
+       To:
+       ```text
+       # Allow members of group sudo to execute any command, no password
+       %sudo   ALL=(ALL:ALL) NOPASSWD:ALL
+       ```
 * Network connectivity to Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a Vagrant Box Virtual Machine configured for remote ssh works fine.)
 
 > Note: If your workstation has Docker, sufficient compute, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote virtual machine and do local development.
