@@ -11,7 +11,8 @@ workflow:
     - if: '$CI_COMMIT_REF_NAME =~ /^doc*/i'
       when: never
     # Debugging
-    - if: $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::ci(,|$)/' || $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::infra(,|$)/'
+    - if: $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::ci(,|$)/'
+    - if: $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::infra(,|$)/'
 
 # include templates
 include:
