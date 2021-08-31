@@ -129,24 +129,24 @@ ci-cluster-up:
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
     - kubectl get all -A
 
-
-ci-cluster-down:
-  stage: cluster down
-  dependencies:
-    - ci-cluster-up
-  extends:
-    - .ci-cluster-common
-  variables:
-    CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
-  rules:
-    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
-      when: never
-    - *chart_changes
-  script:
-    - kubectl get all -A
-    - kubectl get gitrepository,helmrelease,kustomizations -A
-    - k3d cluster delete ${CI_JOB_ID}
-    - docker network rm ${CI_JOB_ID}
+#
+#ci-cluster-down:
+#  stage: cluster down
+#  dependencies:
+#    - ci-cluster-up
+#  extends:
+#    - .ci-cluster-common
+#  variables:
+#    CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
+#  rules:
+#    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
+#      when: never
+#    - *chart_changes
+#  script:
+#    - kubectl get all -A
+#    - kubectl get gitrepository,helmrelease,kustomizations -A
+#    - k3d cluster delete ${CI_JOB_ID}
+#    - docker network rm ${CI_JOB_ID}
 
 #ci-clean-bb-deploy:
 #  stage: ci-cluster-up
