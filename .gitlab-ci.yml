@@ -129,6 +129,7 @@ ci-cluster-up:
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
     - kubectl get all -A
 
+
 ci-cluster-down:
   stage: cluster down
   dependencies:
