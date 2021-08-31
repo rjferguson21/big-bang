@@ -576,13 +576,13 @@ Explanation of flags used in the imperative helm install command:
     #     or
     #     No resources found
     
-    # This error can occur if you run the command too early / don't give Big Bang 
-    # enough time to finish installing.
+    # The above errors could be seen if you run the command too early 
+    # Give Big Bang some time to finish installing, then run the following command to check it's status
     
     k get po -A
     ```
 
-* If after running `k get po -A` (which is the shorthand of `kubectl get pods --all-namespaces`) you see something like the following, it means you need to wait longer
+* If after running `k get po -A` (which is the shorthand of `kubectl get pods --all-namespaces`) you see something like the following, then you need to wait longer
 
     ```console
     NAMESPACE           NAME                                                READY   STATUS              RESTARTS   AGE
@@ -628,7 +628,7 @@ Explanation of flags used in the imperative helm install command:
 
 ## Step 12: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Cluster
 
-* Run the following command, which is the short hand equivalent of `kubectl get virtualservices --all-namespaces` to see a list of websites you'll need to add to your hosts file
+Run the following command, which is the short hand equivalent of `kubectl get virtualservices --all-namespaces` to see a list of websites you'll need to add to your hosts file
 
 ```shell
 k get vs -A
@@ -701,7 +701,7 @@ k get vs -A
 # Now ArgoCD should show up, if it doesn't wait a minute and rerun the command
 
 k get po -n=argocd
-# Once these are healthy you can visit argocd's webpage
+# Once these are all Running you can visit argocd's webpage
 ```
 
 > Remember to un-edit your Hosts file when you are finished tinkering.
