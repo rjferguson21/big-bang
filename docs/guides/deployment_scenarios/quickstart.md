@@ -329,7 +329,7 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
     `curl ifconfig.me --ipv4`
   * Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d    
     `ip address`    
-    (You will see more than one address, use the one in the same subnet as your workstation)
+    (You will see more than one address, use the one in the same subnet as your workstation)    
 
 * `--volume /etc/machine-id:/etc/machine-id`:    
 This is required for fluentbit log shipper to work.
@@ -343,11 +343,10 @@ These flags are not used and shouldn't be added. This is because the image cachi
 * `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`:    
 These map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the NodePorts of the Dockerized k3s node.
 
-### k3d Commands
+### k3d Cluster Creation Commands
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
-# SERVER_IP=$( curl https://checkip.amazonaws.com )
 SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
 
 # Create image cache directory
@@ -365,7 +364,7 @@ k3d cluster create \
     --api-port 6443
 ```
 
-### Verification Command
+### k3d Cluster Verification Command
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
