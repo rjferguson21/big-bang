@@ -566,68 +566,68 @@ Explanation of flags in the imperative helm install command:
 
 * If you try to run the command in Step 12 too soon, you'll see an ignorable temporary error message
 
-```shell
-# [ubuntu@Ubuntu_VM:~]
-kubectl get virtualservices --all-namespaces
-
-# Note after running the above command, you may see an ignorable temporary error message
-# The error message may be different based on your timing, but could look like this:
-#     error: the server doesn't have a resource type "virtualservices"
-#     or
-#     No resources found
-
-# This error can occur if you run the command too early / don't give Big Bang 
-# enough time to finish installing.
-
-# If when you run a verification command like this:
-k get po -A
-# Which is the shorthand of
-kubectl get pods --all-namespaces
-```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    kubectl get virtualservices --all-namespaces
+    
+    # Note after running the above command, you may see an ignorable temporary error message
+    # The error message may be different based on your timing, but could look like this:
+    #     error: the server doesn't have a resource type "virtualservices"
+    #     or
+    #     No resources found
+    
+    # This error can occur if you run the command too early / don't give Big Bang 
+    # enough time to finish installing.
+    
+    # If when you run a verification command like this:
+    k get po -A
+    # Which is the shorthand of
+    kubectl get pods --all-namespaces
+    ```
 
 * If after running `k get po -A` you see something like the following, it means you need to wait longer
 
-```console
-NAMESPACE           NAME                                                READY   STATUS              RESTARTS   AGE
-kube-system         metrics-server-86cbb8457f-dqsl5                     1/1     Running             0          39m
-kube-system         coredns-7448499f4d-ct895                            1/1     Running             0          39m
-flux-system         notification-controller-65dffcb7-qpgj5              1/1     Running             0          32m
-flux-system         kustomize-controller-d689c6688-6dd5n                1/1     Running             0          32m
-flux-system         source-controller-5fdb69cc66-s9pvw                  1/1     Running             0          32m
-kube-system         local-path-provisioner-5ff76fc89d-gnvp4             1/1     Running             1          39m
-flux-system         helm-controller-6c67b58f78-6dzqw                    1/1     Running             0          32m
-gatekeeper-system   gatekeeper-controller-manager-5cf7696bcf-xclc4      0/1     Running             0          4m6s
-gatekeeper-system   gatekeeper-audit-79695c56b8-qgfbl                   0/1     Running             0          4m6s
-istio-operator      istio-operator-5f6cfb6d5b-hx7bs                     1/1     Running             0          4m8s
-eck-operator        elastic-operator-0                                  1/1     Running             1          4m10s
-istio-system        istiod-65798dff85-9rx4z                             1/1     Running             0          87s
-istio-system        public-ingressgateway-6cc4dbcd65-fp9hv              0/1     ContainerCreating   0          46s
-logging             logging-fluent-bit-dbkxx                            0/2     Init:0/1            0          44s
-monitoring          monitoring-monitoring-kube-admission-create-q5j2x   0/1     ContainerCreating   0          42s
-logging             logging-ek-kb-564d7779d5-qjdxp                      0/2     Init:0/2            0          41s
-logging             logging-ek-es-data-0                                0/2     Init:0/2            0          44s
-istio-system        svclb-public-ingressgateway-ggkvx                   5/5     Running             0          39s
-logging             logging-ek-es-master-0                              0/2     Init:0/2            0          37s
-```
+    ```console
+    NAMESPACE           NAME                                                READY   STATUS              RESTARTS   AGE
+    kube-system         metrics-server-86cbb8457f-dqsl5                     1/1     Running             0          39m
+    kube-system         coredns-7448499f4d-ct895                            1/1     Running             0          39m
+    flux-system         notification-controller-65dffcb7-qpgj5              1/1     Running             0          32m
+    flux-system         kustomize-controller-d689c6688-6dd5n                1/1     Running             0          32m
+    flux-system         source-controller-5fdb69cc66-s9pvw                  1/1     Running             0          32m
+    kube-system         local-path-provisioner-5ff76fc89d-gnvp4             1/1     Running             1          39m
+    flux-system         helm-controller-6c67b58f78-6dzqw                    1/1     Running             0          32m
+    gatekeeper-system   gatekeeper-controller-manager-5cf7696bcf-xclc4      0/1     Running             0          4m6s
+    gatekeeper-system   gatekeeper-audit-79695c56b8-qgfbl                   0/1     Running             0          4m6s
+    istio-operator      istio-operator-5f6cfb6d5b-hx7bs                     1/1     Running             0          4m8s
+    eck-operator        elastic-operator-0                                  1/1     Running             1          4m10s
+    istio-system        istiod-65798dff85-9rx4z                             1/1     Running             0          87s
+    istio-system        public-ingressgateway-6cc4dbcd65-fp9hv              0/1     ContainerCreating   0          46s
+    logging             logging-fluent-bit-dbkxx                            0/2     Init:0/1            0          44s
+    monitoring          monitoring-monitoring-kube-admission-create-q5j2x   0/1     ContainerCreating   0          42s
+    logging             logging-ek-kb-564d7779d5-qjdxp                      0/2     Init:0/2            0          41s
+    logging             logging-ek-es-data-0                                0/2     Init:0/2            0          44s
+    istio-system        svclb-public-ingressgateway-ggkvx                   5/5     Running             0          39s
+    logging             logging-ek-es-master-0                              0/2     Init:0/2            0          37s
+    ```
 
 * Wait up to 10 minutes then re-run `k get po -A`, until all pods seem to be Running
 
 * `helm list -n=bigbang` should also show STATUS deployed
 
-```console
-NAME                         	NAMESPACE        	REVISION	UPDATED                                	STATUS  	CHART                            	APP VERSION
-bigbang                      	bigbang          	1       	2021-08-31 16:50:39.336392871 +0000 UTC	deployed	bigbang-1.15.0
-eck-operator-eck-operator    	eck-operator     	1       	2021-08-31 16:21:12.546012077 +0000 UTC	deployed	eck-operator-1.6.0-bb.2          	1.6.0
-gatekeeper-system-gatekeeper 	gatekeeper-system	1       	2021-08-31 16:21:13.146595333 +0000 UTC	deployed	gatekeeper-3.5.1-bb.16           	v3.5.1
-istio-operator-istio-operator	istio-operator   	1       	2021-08-31 16:21:12.726676226 +0000 UTC	deployed	istio-operator-1.9.7-bb.1
-istio-system-istio           	istio-system     	1       	2021-08-31 16:44:07.776386128 +0000 UTC	deployed	istio-1.9.7-bb.0
-jaeger-jaeger                	jaeger           	1       	2021-08-31 16:25:17.733322853 +0000 UTC	deployed	jaeger-operator-2.23.0-bb.1      	1.24.0
-kiali-kiali                  	kiali            	1       	2021-08-31 16:25:14.314905637 +0000 UTC	deployed	kiali-operator-1.37.0-bb.3       	1.37.0
-logging-cluster-auditor      	logging          	1       	2021-08-31 16:25:33.628134776 +0000 UTC	deployed	cluster-auditor-0.3.0-bb.6       	1.16.0
-logging-ek                   	logging          	1       	2021-08-31 16:22:12.609559643 +0000 UTC	deployed	logging-0.1.20-bb.0              	7.13.4
-logging-fluent-bit           	logging          	1       	2021-08-31 16:22:41.467862784 +0000 UTC	deployed	fluent-bit-0.16.1-bb.0           	1.8.1
-monitoring-monitoring        	monitoring       	1       	2021-08-31 16:22:26.03075708 +0000 UTC 	deployed	kube-prometheus-stack-14.0.0-bb.8	0.46.0
-```
+    ```console
+    NAME                         	NAMESPACE        	REVISION	UPDATED                                	STATUS  	CHART                            	APP VERSION
+    bigbang                      	bigbang          	1       	2021-08-31 16:50:39.336392871 +0000 UTC	deployed	bigbang-1.15.0
+    eck-operator-eck-operator    	eck-operator     	1       	2021-08-31 16:21:12.546012077 +0000 UTC	deployed	eck-operator-1.6.0-bb.2          	1.6.0
+    gatekeeper-system-gatekeeper 	gatekeeper-system	1       	2021-08-31 16:21:13.146595333 +0000 UTC	deployed	gatekeeper-3.5.1-bb.16           	v3.5.1
+    istio-operator-istio-operator	istio-operator   	1       	2021-08-31 16:21:12.726676226 +0000 UTC	deployed	istio-operator-1.9.7-bb.1
+    istio-system-istio           	istio-system     	1       	2021-08-31 16:44:07.776386128 +0000 UTC	deployed	istio-1.9.7-bb.0
+    jaeger-jaeger                	jaeger           	1       	2021-08-31 16:25:17.733322853 +0000 UTC	deployed	jaeger-operator-2.23.0-bb.1      	1.24.0
+    kiali-kiali                  	kiali            	1       	2021-08-31 16:25:14.314905637 +0000 UTC	deployed	kiali-operator-1.37.0-bb.3       	1.37.0
+    logging-cluster-auditor      	logging          	1       	2021-08-31 16:25:33.628134776 +0000 UTC	deployed	cluster-auditor-0.3.0-bb.6       	1.16.0
+    logging-ek                   	logging          	1       	2021-08-31 16:22:12.609559643 +0000 UTC	deployed	logging-0.1.20-bb.0              	7.13.4
+    logging-fluent-bit           	logging          	1       	2021-08-31 16:22:41.467862784 +0000 UTC	deployed	fluent-bit-0.16.1-bb.0           	1.8.1
+    monitoring-monitoring        	monitoring       	1       	2021-08-31 16:22:26.03075708 +0000 UTC 	deployed	kube-prometheus-stack-14.0.0-bb.8	0.46.0
+    ```
 
 ## Step 12: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Cluster
 
