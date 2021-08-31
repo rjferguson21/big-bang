@@ -312,9 +312,10 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
 ### Explanation of k3d Command Flags, Relevant to the Quick Start
 
-`SERVER_IP="10.10.16.11"` and `--k3s-server-arg "--tls-san=$SERVER_IP"`
-: This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
-  **Here's an explanation of the effect:**
+* `SERVER_IP="10.10.16.11"` and `--k3s-server-arg "--tls-san=$SERVER_IP"`:    
+  These associate an extra IP to the Kubernetes API server's generated HTTPS certificate.    
+
+  **Explanation of the effect:**
 
    1. If you are running k3d from a local host or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or paste unmodified incorrect values with no ill effect.
 
@@ -322,25 +323,25 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
   **Tips for looking up the value to plug into SERVER_IP:**
 
-* Method 1: If your k3d server is a remote box, then run the following command from your workstation.
+  * Method 1: If your k3d server is a remote box, then run the following command from your workstation.    
     `cat ~/.ssh/config | grep k3d -A 6`
-* Method 2: If the remote server was provisioned with a Public IP, hen run the following command from the server hosting k3d.
+  * Method 2: If the remote server was provisioned with a Public IP, hen run the following command from the server hosting k3d.    
     `curl ifconfig.me --ipv4`
-* Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d
-    `ip address`
+  * Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d    
+    `ip address`    
     (You will see more than one address, use the one in the same subnet as your workstation)
 
-`--volume /etc/machine-id:/etc/machine-id`
-: Is required for fluentbit log shipper to work.
+* `--volume /etc/machine-id:/etc/machine-id`:    
+This is required for fluentbit log shipper to work.
 
-`IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
-: Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
+* `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`:    
+These make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
 
-`--servers 1 --agents 3` 
-: Flags are not used and shouldn't be added. This is because the image caching logic works more reliably on a one node Dockerized cluster, vs a four node Dockerized cluster. If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.
+* `--servers 1 --agents 3`:     
+These flags are not used and shouldn't be added. This is because the image caching logic works more reliably on a one node Dockerized cluster, vs a four node Dockerized cluster. If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.
 
-`--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
-: Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the NodePorts of the Dockerized k3s node.
+* `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`:    
+These map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the NodePorts of the Dockerized k3s node.
 
 ### k3d Commands
 
