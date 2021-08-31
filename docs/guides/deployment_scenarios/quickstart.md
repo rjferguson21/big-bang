@@ -655,9 +655,12 @@ sudo vi /etc/hosts
 
 1. Right click Notepad -> Run as Administrator
 1. Open C:\Windows\System32\drivers\etc\hosts
-1. Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
 
-  > Hint: find and replace is your friend
+### Linux/Mac/Windows Users
+
+Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
+
+> Hint: find and replace is your friend
 
 ```plaintext
 x.x.x.x  kibana.bigbang.dev
