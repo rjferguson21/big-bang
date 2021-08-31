@@ -473,22 +473,22 @@ EOF
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 helm upgrade --install bigbang $HOME/bigbang/chart \
---values $HOME/bigbang/chart/ingress-certs.yaml \
---values $HOME/ib_creds.yaml \
---values $HOME/demo_values.yaml \
---namespace=bigbang --create-namespace
+  --values $HOME/bigbang/chart/ingress-certs.yaml \
+  --values $HOME/ib_creds.yaml \
+  --values $HOME/demo_values.yaml \
+  --namespace=bigbang --create-namespace
 ```
 
 Explanation of flags in the imperative helm install command:
 
 1. `upgrade --install`
 This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
-2. `bigbang $HOME/bigbang/chart`
+1. `bigbang $HOME/bigbang/chart`
 bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`
 $HOME/bigbang/chart is a reference to the helm chart being installed
-3. `--values $HOME/bigbang/chart/ingress-certs.yaml`
+1. `--values $HOME/bigbang/chart/ingress-certs.yaml`
 references demo HTTPS certs embedded in the public repo (the *.bigbang.dev wildcard cert, signed by the Lets Encrypt Free, public internet Certificate Authority)
-4. `--namespace=bigbang --create-namespace`
+1. `--namespace=bigbang --create-namespace`
 Means it'll install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
 
 ## Step 11: Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
