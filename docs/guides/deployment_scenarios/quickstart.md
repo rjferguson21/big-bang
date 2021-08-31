@@ -399,16 +399,17 @@ cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
 
-# Checkout version 1.14.0 of Big Bang
-git checkout tags/1.14.0
+# Checkout version 1.15.0 of Big Bang
+# (Pinning to specific versions is a DevOps best practice)
+git checkout tags/1.15.0
 git status
 ```
 
 ```console
-HEAD detached at 1.14.0
-# (Pinning to specific versions is a DevOps best practice)
-# HEAD is git speak for current context within a tree of commits
+HEAD detached at 1.15.0
 ```
+
+> HEAD is git speak for current context within a tree of commits
 
 ## Step 8: Install Flux
 
