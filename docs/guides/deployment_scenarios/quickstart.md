@@ -481,24 +481,29 @@ helm upgrade --install bigbang $HOME/bigbang/chart \
 
 Explanation of flags in the imperative helm install command:
 
-1. `upgrade --install`
-This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
-1. `bigbang $HOME/bigbang/chart`
-bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`
-$HOME/bigbang/chart is a reference to the helm chart being installed
-1. `--values $HOME/bigbang/chart/ingress-certs.yaml`
-references demo HTTPS certs embedded in the public repo (the *.bigbang.dev wildcard cert, signed by the Lets Encrypt Free, public internet Certificate Authority)
-1. `--namespace=bigbang --create-namespace`
-Means it'll install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
+`upgrade --install`
+: This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
 
-## Step 11: Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
+`bigbang $HOME/bigbang/chart`
+: bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`. `$HOME/bigbang/chart` is a reference to the helm chart being installed.
 
-> Remember to un-edit your Hosts file when your finished tinkering
+`--values $HOME/bigbang/chart/ingress-certs.yaml`
+: References demonstration HTTPS certificates embedded in the public repository. The *.bigbang.dev wildcard certificate is signed by  Lets Encrypt Free, a public internet Certificate Authority.
+
+`--namespace=bigbang --create-namespace`
+: Means it'll install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
+
+## Step 11: Edit your workstation's Hosts file to access the web pages hosted on the BigBang Cluster
+
+> Remember to un-edit your Hosts file when you are finished tinkering.
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 k get vs -A
 kubectl get virtualservices --all-namespaces
+```
+
+```console
 # NAMESPACE    NAME                                      GATEWAYS                HOSTS                          AGE
 # monitoring   monitoring-monitoring-kube-alertmanager   ["istio-system/main"]   ["alertmanager.bigbang.dev"]   8d
 # monitoring   monitoring-monitoring-kube-grafana        ["istio-system/main"]   ["grafana.bigbang.dev"]        8d
