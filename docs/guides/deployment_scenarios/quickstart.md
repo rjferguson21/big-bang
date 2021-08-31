@@ -413,10 +413,10 @@ HEAD detached at 1.15.0
 
 ## Step 8: Install Flux
 
+* The `echo $REGISTRY1_USERNAME` is there to verify the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
+
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # Check the value of your environmental variable to confirm it's still populated.
-    # If you switch terminals or re-login, you may need to reestablish these variables.
     echo $REGISTRY1_USERNAME
     cd ~/bigbang
     $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
