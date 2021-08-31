@@ -36,13 +36,13 @@ Important limitations of this quick start guide's implementation of k3d to be aw
 
 ## Step 1: Provision a Virtual Machine
 
-The following requirements are recommended for Demo Purposes:
+The following requirements are recommended for Demonstration Purposes:
 
 * 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users) should be sufficient.
 * Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux distribution with Docker installed should work)
 * Network connectivity to Virtual Machine (provisioning with a public IP and a security group locked down to your IP should work. Otherwise a Bare Metal server or even a Vagrant Box Virtual Machine configured for remote ssh works fine.)
 
-> Note: If your workstation has Docker, lots of RAM/CPU, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote virtual machine and do local development.
+> Note: If your workstation has Docker, sufficient compute, and has ports 80, 443, and 6443 free, you can use your workstation in place of a remote virtual machine and do local development.
 
 ## Step 2: SSH to Remote VM
 
