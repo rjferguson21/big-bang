@@ -547,7 +547,7 @@ helm upgrade --install bigbang $HOME/bigbang/chart \
   --namespace=bigbang --create-namespace
 ```
 
-Explanation of flags in the imperative helm install command:
+Explanation of flags used in the imperative helm install command:
 
 `upgrade --install`
 : This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
@@ -579,13 +579,10 @@ Explanation of flags in the imperative helm install command:
     # This error can occur if you run the command too early / don't give Big Bang 
     # enough time to finish installing.
     
-    # If when you run a verification command like this:
     k get po -A
-    # Which is the shorthand of
-    kubectl get pods --all-namespaces
     ```
 
-* If after running `k get po -A` you see something like the following, it means you need to wait longer
+* If after running `k get po -A` (which is the shorthand of `kubectl get pods --all-namespaces`) you see something like the following, it means you need to wait longer
 
     ```console
     NAMESPACE           NAME                                                READY   STATUS              RESTARTS   AGE
@@ -610,7 +607,7 @@ Explanation of flags in the imperative helm install command:
     logging             logging-ek-es-master-0                              0/2     Init:0/2            0          37s
     ```
 
-* Wait up to 10 minutes then re-run `k get po -A`, until all pods seem to be Running
+* Wait up to 10 minutes then re-run `k get po -A`, until all pods show STATUS Running
 
 * `helm list -n=bigbang` should also show STATUS deployed
 
