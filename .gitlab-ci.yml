@@ -49,7 +49,7 @@ variables:
   IMAGE_PKG: images.tar.gz
   REPOS_PKG: repositories.tar.gz
 
-.bigbang-dogfood-tags:
+.gitlab-runner-tags:
   tags:
     - bigbang
     - dogfood
@@ -57,7 +57,7 @@ variables:
 
 .bigbang:
   image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k8s-ci:v1.20.4-bb.3
-  extends: .bigbang-dogfood
+  extends: .gitlab-runner-tags
   after_script:
     - kubectl get all -A
     - kubectl get helmrelease -A
@@ -71,7 +71,7 @@ pre vars:
   image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/pre-envs:ubi8.3
   stage: .pre
   extends:
-    - .bigbang-dogfood-tags
+    - .gitlab-runner-tags
   artifacts:
     reports:
       dotenv: variables.env
@@ -213,7 +213,7 @@ upgrade:
 
 aws/network up:
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra fork
     - .network up
   environment:
@@ -222,7 +222,7 @@ aws/network up:
 
 aws/network down:
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra cleanup
     - .network down
   stage: network down
@@ -240,7 +240,7 @@ aws/network down:
 aws/rke2/cluster up:
   stage: cluster up
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra create
     - .rke2 up
   needs:
@@ -254,7 +254,7 @@ aws/rke2/cluster up:
 aws/rke2/bigbang up:
   stage: bigbang up
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra create
     - .bigbang
   needs:
@@ -275,7 +275,7 @@ aws/rke2/bigbang up:
 aws/rke2/bigbang test:
   stage: test
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra create
     - .bigbang
   needs:
@@ -298,7 +298,7 @@ aws/rke2/bigbang test:
 aws/rke2/bigbang down:
   stage: bigbang down
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra cleanup
     - .bigbang
   needs:
@@ -319,7 +319,7 @@ aws/rke2/bigbang down:
 aws/rke2/cluster down:
   stage: cluster down
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
     - .infra cleanup
     - .rke2 down
   needs:
@@ -339,7 +339,7 @@ package:
   stage: package
   image: registry.dso.mil/platform-one/big-bang/bigbang/synker:0.0.3
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
   rules:
     # run job for manual tag events or test-ci::release MRs
     - if: '$CI_COMMIT_TAG || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::release(,|$)/'
@@ -387,7 +387,7 @@ release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   extends:
-    - .bigbang-dogfood
+    - .gitlab-runner-tags
   rules:
     # run job for manual tag events or test-ci::release MRs
     - if: '$CI_COMMIT_TAG || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::release(,|$)/'
