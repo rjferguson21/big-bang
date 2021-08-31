@@ -1,7 +1,7 @@
 # global rules for when pipelines run
 workflow:
   rules:
-    # run pipeline for manual tag events
+    # run pipeline for manual tag events and releases
     - if: $CI_COMMIT_TAG
     # run pipeline on merge request events
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -10,20 +10,36 @@ workflow:
     # skip pipeline for branches that start with "docs"
     - if: '$CI_COMMIT_REF_NAME =~ /^doc*/i'
       when: never
+    # Debugging
+    - if: $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::ci(,|$)/' || $CI_COMMIT_MESSAGE =~ /(^|,)test-ci::infra(,|$)/'
 
 # include templates
 include:
   - local: '/.gitlab-ci/templates.yml'
 
+# Stage Operations:
+#   * Merge Requests and Master Branch Builds only execute the "smoke test" stage on a k3d cluster run within the gitlab runner.  All other stages are ignored
+#   * Release Builds (i.e., tag based builds) execute "smoke tests" and "package" and "release" only on a local gitlab runner k3d cluster.
+#   * Scheduled builds are designed to deploy the master branch to a a full AWS based RKE2 cluster and execute all stages except "smoke tests", "package", and "Release"
+
+#stages:
+#  - smoke tests
+#  - network up
+#  - cluster up
+#  - bigbang up
+#  - test
+#  - bigbang down
+#  - cluster down
+#  - network down
+#  - package
+#  - release
+
 stages:
-  - smoke tests
-  - network up
   - cluster up
   - bigbang up
-  - test
+  - validate and test
   - bigbang down
   - cluster down
-  - network down
   - package
   - release
 
@@ -33,7 +49,7 @@ variables:
   IMAGE_PKG: images.tar.gz
   REPOS_PKG: repositories.tar.gz
 
-.bigbang-dogfood:
+.bigbang-dogfood-tags:
   tags:
     - bigbang
     - dogfood
@@ -50,11 +66,12 @@ variables:
 # Pre Stage Jobs
 #
 
+# Setup environment variables for Terraforming
 pre vars:
   image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/pre-envs:ubi8.3
   stage: .pre
   extends:
-    - .bigbang-dogfood
+    - .bigbang-dogfood-tags
   artifacts:
     reports:
       dotenv: variables.env
@@ -396,3 +413,128 @@ release:
       fi
 
 #-----------------------------------------------------------------------------------------------------------------------
+
+ci-cluster-up:
+  stage: cluster up
+  extends:
+    - .k3d-ci
+  variables:
+    CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
+      when: never
+    - *chart_changes
+
+ci-clean-bb-deploy:
+  stage: ci-cluster-up
+  variables:
+    CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
+      when: never
+    - *chart_changes
+  script:
+    - *deploy_bigbang
+
+    # Fetch list of all images ran (retry crictl up to 6x)
+    - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
+    - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
+    - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
+  artifacts:
+    paths:
+      - images.txt
+      - "cypress-tests/*/tests/cypress/screenshots"
+      - "cypress-tests/*/tests/cypress/videos"
+    expire_in: 7 days
+    when: always
+
+ci-upgrade-bb-deploy:
+  stage: smoke tests
+  dependencies:
+    - pre vars
+    - ci-cluster-up
+  rules:
+    # skip job for nightly master and "test-ci::infra" labeled pipelines
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
+      when: never
+    # skip job when MR title starts with 'SKIP UPGRADE'
+    - if: '$CI_MERGE_REQUEST_TITLE =~ /^SKIP UPGRADE/'
+      when: never
+    # run pipeline on merge request events
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      <<: *chart_changes
+  variables:
+    CLUSTER_NAME: "upgrade-${CI_COMMIT_SHORT_SHA}"
+  script:
+    - echo "Install Big Bang from ${CI_DEFAULT_BRANCH}"
+    - git fetch && git checkout ${CI_DEFAULT_BRANCH}
+    - *deploy_bigbang
+    - *test_bigbang
+    - echo "Upgrade Big Bang from ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
+    - git reset --hard && git clean -fd
+    - git checkout ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    - *deploy_bigbang
+    - *test_bigbang
+  artifacts:
+    paths:
+      - "cypress-tests/*/tests/cypress/screenshots"
+      - "cypress-tests/*/tests/cypress/videos"
+    expire_in: 7 days
+    when: always
+
+# In cluster k3s using K3D with the docker daemon as a sidecar
+#
+#   This will connect to a remote docker daemon over tls tcp (defined at installation of gitlab runners) and create
+#   a k3d cluster in a custom built docker bridge network.
+#
+.k3d-ci:
+  #  services:
+  #      # Added in through gitlab ci configuration, left in incase some poor soul needs to come debug this later
+  #    - name: docker:20.10.5-dind
+  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k8s-ci:v1.20.4-bb.3
+  tags:
+    - bigbang
+    - umbrella
+    - privileged
+    - dogfood
+  variables:
+    DOCKER_HOST: tcp://localhost:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    DOCKER_DRIVER: overlay2
+  before_script:
+    # Give docker-in-docker time to come alive
+    - i=0; while [ "$i" -lt 12 ]; do docker info &>/dev/null && break; sleep 5; i=$(( i + 1 )) ; done
+    - docker network create ${CI_JOB_ID} --driver=bridge -o "com.docker.network.driver.mtu"="1450"
+    - k3d cluster create ${CI_JOB_ID} --config tests/ci/k3d/config.yaml --network ${CI_JOB_ID}
+    - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
+    - kubectl get all -A
+  after_script:
+    - kubectl get all -A
+    - kubectl get gitrepository,helmrelease,kustomizations -A
+    - k3d cluster delete ${CI_JOB_ID}
+    - docker network rm ${CI_JOB_ID}
+
+.rke2 tf:
+  extends: .terraformer
+  variables:
+    TF_ROOT: ".gitlab-ci/jobs/rke2/dependencies/terraform/env/ci"
+
+.rke2 up:
+  extends: .rke2 tf
+  script:
+    # Fetch dependencies
+    - apk add bash aws-cli
+    - terraform apply -input=false -auto-approve
+    - mv rke2.yaml ${CI_PROJECT_DIR}/rke2.yaml
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/rke2.yaml
+
+.rke2 down:
+  extends:
+    - .rke2 tf
+    - .terraform destroy workspace
+  script:
+    - terraform destroy -input=false -auto-approve
