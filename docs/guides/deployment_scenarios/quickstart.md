@@ -80,12 +80,6 @@ The following requirements are recommended for Demonstration Purposes:
 
 Note: This guide follows the DevOps best practice of left-shifting feedback on mistakes and surfacing errors as early in the process as possible. This is done by leveraging tests and verification commands.
 
-1. Install Curl
-
-    ```shell
-    sudo apt install curl -y
-    ```
-
 1. Install Git
 
     ```shell
@@ -94,11 +88,13 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
 1. Install Docker and add $USER to Docker group.
 
-    > Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively. The convenience script is not recommended for production environments.
-
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
+    sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker $USER
+
+
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
     ```
 
 1. Logout and login to allow the `usermod` change to take effect.
