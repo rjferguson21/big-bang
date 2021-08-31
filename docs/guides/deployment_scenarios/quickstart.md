@@ -413,16 +413,28 @@ HEAD detached at 1.15.0
 
 ## Step 8: Install Flux
 
-```shell
-# [ubuntu@Ubuntu_VM:~]
-# Check the value of your environmental variable to confirm it's still populated.
-# If you switch terminals or re-login, you may need to reestablish these variables.
-echo $REGISTRY1_USERNAME
-cd ~/bigbang
-$HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
-k get po -n=flux-system
-kubectl get pods --namespace=flux-system
-```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # Check the value of your environmental variable to confirm it's still populated.
+    # If you switch terminals or re-login, you may need to reestablish these variables.
+    echo $REGISTRY1_USERNAME
+    cd ~/bigbang
+    $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
+    # NOTE: The end of the .sh script has a kubectl wait command
+    # If you have slow internet/hardware it's possible you may see a false error message
+    # error: timed out waiting for the condition on deployments/helm-controller
+    
+    # As long as the following command shows STATUS Running you're good to move on
+    kubectl get pods --namespace=flux-system
+    ```
+    
+    ```console
+    NAME                                     READY   STATUS    RESTARTS   AGE
+    kustomize-controller-d689c6688-bnr96     1/1     Running   0          3m8s
+    notification-controller-65dffcb7-zk796   1/1     Running   0          3m8s
+    source-controller-5fdb69cc66-g5dlh       1/1     Running   0          3m8s
+    helm-controller-6c67b58f78-cvxmv         1/1     Running   0          3m8s
+    ```
 
 ## Step 9: Create helm values .yaml files to act as input variables for the Big Bang Helm Chart
 
