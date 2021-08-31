@@ -27,6 +27,7 @@
         "configmaps",
         "decryptable",
         "dockerized",
+        "fluentbit",
         "fluxcd",
         "forkable",
         "grafana",

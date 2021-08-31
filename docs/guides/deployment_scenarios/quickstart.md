@@ -244,7 +244,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
     ```
 
-## Step 4: Configure Host OS prerequisites
+## Step 4: Configure Host Operating System Prerequisites
 
 * Run Operating System Pre-configuration
 
@@ -300,13 +300,13 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
 `SERVER_IP="10.10.16.11"` and `--k3s-server-arg "--tls-san=$SERVER_IP"`
 : This associates an extra IP to the Kubernetes API server's generated HTTPS certificate.
-**Here's an explanation of the effect:**
+  **Here's an explanation of the effect:**
 
    1. If you are running k3d from a local host or you plan to run 100% of kubectl commands while ssh'd into the k3d server, then you can omit these flags or paste unmodified incorrect values with no ill effect.
 
-   2. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After pasting the ~/.kube/config file from the k3d server to your workstation, you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
+   1. If you plan to run k3d on a remote server, but run kubectl, helm, and kustomize commands from a workstation, which would be needed if you wanted to do something like kubectl port-forward then you would need to specify the remote server's public or private IP address here. After pasting the ~/.kube/config file from the k3d server to your workstation, you will need to edit the IP inside of the file from 0.0.0.0 to the value you used for SERVER_IP.
 
-**Tips for looking up the value to plug into SERVER_IP:**
+  **Tips for looking up the value to plug into SERVER_IP:**
 
 * Method 1: If your k3d server is a remote box, then run the following command from your workstation.
     `cat ~/.ssh/config | grep k3d -A 6`
@@ -316,16 +316,19 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
     `ip address`
     (You will see more than one address, use the one in the same subnet as your workstation)
 
-1. `--volume /etc/machine-id:/etc/machine-id`
-is required for fluentbit log shipper to work.
-1. `IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
-Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
-1. `--servers 1 --agents 3` flags are not used and shouldn't be added
-This is because the image caching logic works more reliably on a one node Dockerized cluster, vs a four node Dockerized cluster. If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.
-1. `--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
-Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the nodeports of the Dockerized k3s node.
+`--volume /etc/machine-id:/etc/machine-id`
+: Is required for fluentbit log shipper to work.
 
-### k3d commands
+`IMAGE_CACHE=${HOME}/.k3d-container-image-cache`, `cd ~`, `mkdir -p ${IMAGE_CACHE}`, and `--volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content`
+: Make it so that if you fully deploy Big Bang and then want to reset the cluster to a fresh state to retest some deployment logic. Then after running `k3d cluster delete k3s-default` and redeploying, subsequent redeployments will be faster because all container images used will have been prefetched.
+
+`--servers 1 --agents 3` 
+: Flags are not used and shouldn't be added. This is because the image caching logic works more reliably on a one node Dockerized cluster, vs a four node Dockerized cluster. If you need to add these flags to simulate multi nodes to test pod and node affinity rules, then you should remove the image cache flags, or you may experience weird image pull errors.
+
+`--port 80:80@loadbalancer` and `--port 443:443@loadbalancer`
+: Map the virtual machine's port 80 and 443 to port 80 and 443 of a Dockerized LB that will point to the NodePorts of the Dockerized k3s node.
+
+### k3d Commands
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
@@ -469,32 +472,37 @@ EOF
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 helm upgrade --install bigbang $HOME/bigbang/chart \
---values $HOME/bigbang/chart/ingress-certs.yaml \
---values $HOME/ib_creds.yaml \
---values $HOME/demo_values.yaml \
---namespace=bigbang --create-namespace
+  --values $HOME/bigbang/chart/ingress-certs.yaml \
+  --values $HOME/ib_creds.yaml \
+  --values $HOME/demo_values.yaml \
+  --namespace=bigbang --create-namespace
 ```
 
 Explanation of flags in the imperative helm install command:
 
-1. `upgrade --install`
-This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
-2. `bigbang $HOME/bigbang/chart`
-bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`
-$HOME/bigbang/chart is a reference to the helm chart being installed
-3. `--values $HOME/bigbang/chart/ingress-certs.yaml`
-references demo HTTPS certs embedded in the public repo (the *.bigbang.dev wildcard cert, signed by the Lets Encrypt Free, public internet Certificate Authority)
-4. `--namespace=bigbang --create-namespace`
-Means it'll install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
+`upgrade --install`
+: This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
 
-## Step 11: Edit your Laptop's HostFile to access the web pages hosted on the BigBang Cluster
+`bigbang $HOME/bigbang/chart`
+: bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`. `$HOME/bigbang/chart` is a reference to the helm chart being installed.
 
-> Remember to un-edit your Hosts file when your finished tinkering
+`--values $HOME/bigbang/chart/ingress-certs.yaml`
+: References demonstration HTTPS certificates embedded in the public repository. The *.bigbang.dev wildcard certificate is signed by Let's Encrypt, a free public internet Certificate Authority.
+
+`--namespace=bigbang --create-namespace`
+: Means it will install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
+
+## Step 11: Edit your workstation's Hosts file to access the web pages hosted on the BigBang Cluster
+
+> Remember to un-edit your Hosts file when you are finished tinkering.
 
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 k get vs -A
 kubectl get virtualservices --all-namespaces
+```
+
+```console
 # NAMESPACE    NAME                                      GATEWAYS                HOSTS                          AGE
 # monitoring   monitoring-monitoring-kube-alertmanager   ["istio-system/main"]   ["alertmanager.bigbang.dev"]   8d
 # monitoring   monitoring-monitoring-kube-grafana        ["istio-system/main"]   ["grafana.bigbang.dev"]        8d
@@ -514,8 +522,8 @@ sudo vi /etc/hosts
 ### Windows Users
 
 1. Right click Notepad -> Run as Administrator
-2. Open C:\Windows\System32\drivers\etc\hosts
-3. Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
+1. Open C:\Windows\System32\drivers\etc\hosts
+1. Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
 
   > Hint: find and replace is your friend)
 
