@@ -37,18 +37,19 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
   {{- if .Values.monitoring.enabled}}
   allowedHostFilesystem:
     match:
-      excludedNamespaces:
-        # Prometheus-node-exporter needs access to host to get node metrics
-        - monitoring
+      excludedResources:
+        # Currently excluding entire namespace
+        - monitoring/.*
   {{- end }}
 
   {{- if .Values.addons.mattermost.enabled }}
   httpsOnly:
     match:
-      excludedNamespaces:
+      excludedResources:
         # Mattermost currently does not useIngressTLS hence Ingress is created without TLS field by the operator.
         # Adding exemption, pending https://github.com/mattermost/mattermost-operator/issues/235
-        - mattermost
+        # Currently excluding entire namespace
+        - mattermost/.*
   {{- end }}
 
   namespacesHaveIstio:
@@ -57,53 +58,57 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
   {{- if .Values.logging.enabled }}
   noPrivilegedContainers:
     match:
-      excludedNamespaces:
+      excludedResources:
         # Fluentbit needs privileged to read and store the buffer for tailing logs from the nodes
-        - logging
+        # Currently excluding entire namespace
+        - logging/.*
   {{- end }}
 
   podsHaveIstio:
     enabled: {{ .Values.istio.enabled }}
     match:
-      excludedNamespaces:
+      excludedResources:
         # Istio does not inject sidecars in itself
-        - istio-operator
-        - istio-system
-
+        # Currently excluding entire namespace
+        - istio-operator/.*
+        - istio-system/.*
   {{- if .Values.monitoring.enabled }}
   restrictedTaint:
     match:
-      excludedNamespaces:
+      excludedResources:
         # Prometheus Node Exporter needs to be able to run on all nodes, regardless of taint, to gather node metrics
-        - monitoring
+        # Currently excluding entire namespace
+        - monitoring/.*
   {{- end }}
 
   {{- if .Values.logging.enabled }}
   selinuxPolicy:
     match:
-      excludedNamespaces:
+      excludedResources:
         # FluentBit needs selinux option type spc_t
-        - logging
+        # Currently excluding entire namespace
+        - logging/.*
   {{- end }}
 
   {{- if or .Values.fluentbit.enabled (or .Values.twistlock.enabled .Values.monitoring.enabled) }}
   volumeTypes:
     match:
-      excludedNamespaces:
+      excludedResources:
        {{- if .Values.fluentbit.enabled }}
         # fluent-bit container requires certain host level access to ship logs and for keep track of state
         # https://docs.fluentbit.io/manual/pipeline/filters/kubernetes#workflow-of-tail-kubernetes-filter
-        - logging
+        # Currently excluding entire namespace
+        - logging/.*
        {{- end }}
        {{- if .Values.twistlock.enabled }}
         # Twistlock requires /dev/log for its syslog daemon.
         # https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/audit/logging.html#
-        - twistlock
+        - twistlock/.*
        {{- end }}
        {{- if .Values.monitoring.enabled }}
         # Prometheus node exported requires hostpath hardcoded in upstream chart on which monitoring pkg has a direct dependency
         # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus-node-exporter/templates/daemonset.yaml#L150
-        - monitoring
+        - monitoring/.*
        {{- end }}
   {{- end }}
 {{- end -}}
