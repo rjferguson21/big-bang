@@ -204,22 +204,22 @@ cd ./bigbang
 ./scripts/install_flux.sh -u your-user-name -p your-pull-secret
 ```
 
-**Note1:** When deploying to k3d, istio-system should be added from `excludedNamespaces` under the `allowedDockerRegistries` violations for gatekeeper. This can be done by modifying `chart/values.yaml` file or passing an override file with the values set as seen below. This is for development purposes only: production should not allow containers in the `istio-system` namespace to be pulled from outside of Registry1. 
+**Note1:** When deploying to k3d, istio-system should be added from `excludedResources` under the `allowedDockerRegistries` violations for gatekeeper. This can be done by modifying `chart/values.yaml` file or passing an override file with the values set as seen below. This is for development purposes only: production should not allow containers in the `istio-system` namespace to be pulled from outside of Registry1. 
 
 ```yaml
 gatekeeper:
   values:
     violations:
       allowedDockerRegistries:
-        match:
-          excludedNamespaces:
+        parameters:
+          excludedResources:
             # Allows load balancer images for k3d from public repo
-            - istio-system
+            - istio-system/.*
       hostNetworking:
-        match:
-          excludedNamespaces:
+        parameters:
+          excludedResources:
             # Allows load balancer containers to map ports for k3d
-            - istio-system
+            - istio-system/.*
 ```
 **Note2:** The information in this note is simply to give you awareness in advance. You should create local directory on your workstation where you store your helm values override files. Development changes made in the code for testing could accidentally be committed. That is why you should create a separate local directory to hold your override values for testing. The location can be anywhere on your workstation but it is most convenient to place them in a sibling directory next to the BigBang repos. Below is an example directory structure. The directory names are fake (for example only). Other documents will give more specific detail as needed.
   ```text
