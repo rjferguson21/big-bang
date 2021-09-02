@@ -34,7 +34,7 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
         - mattermost/init-check-database
       {{- end }}
 
-  {{- if or .Values.monitoring.enabled .Values.fluentbit.enabled }}
+  {{- if or .Values.monitoring.enabled (or .Values.fluentbit.enabled .Values.twistlock.enabled) }}
   allowedHostFilesystem:
     {{- if .Values.monitoring.enabled }}
     match:
@@ -42,11 +42,27 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
         # Prometheus-node-exporter needs access to host to get node metrics
         - monitoring
     {{- end }}
-    {{- if .Values.fluentbit.enabled }}
+    {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled }}
     parameters:
       excludedResources:
+        {{- if .Values.fluentbit.enabled }}
         # Fluentbit pods need access to host to get log files
         - logging/logging-fluent-bit-.*
+        {{- end }}
+        {{- if .Values.twistlock.enabled }}
+        - twistlock/twistlock-defender-ds-.*
+        {{- end }}
+    {{- end }}
+  {{- end }}
+
+{{- if .Values.twistlock.enabled }}
+  hostNetworking:
+    {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled }}
+    parameters:
+      excludedResources:
+        {{- if .Values.twistlock.enabled }}
+        - twistlock/twistlock-defender-ds-.*
+        {{- end }}
     {{- end }}
   {{- end }}
 
