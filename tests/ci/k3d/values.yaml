@@ -389,8 +389,10 @@ addons:
         limits: {}
       persistence:
         enabled: false
-        size: 256Mi
+        size: 5Gi
       postgresql:
+        persistence:
+          size: 256Mi     
         resources:
           requests:
             cpu: 100m
@@ -447,7 +449,7 @@ addons:
     values:
       persistence:
         # Do NOT set this below 4Gi, nexus will fail to boot
-        storageSize: 5Gi
+        storageSize: 10Gi
       nexus:
       # https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-JVMDirectMemory
         env:
