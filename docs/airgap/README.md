@@ -20,6 +20,16 @@ This work was quickly developed to entertain certain paths for image packaging a
     * `/etc/docker/registry/config.yml` is templated to use new registry folder
     * This is due to the fact that `/var/lib/registry` is a docker volume
 
+`prune_images.sh` - Script to compare Big Bang releases and create a differential images.txt and images.tar.gz (optional).  This allows you to create a smaller, custom image package for airgap upgrades.
+
+* Dependencies
+  * `docker` - The docker CLI tool
+  * `jq` - The jq CLI tool
+  * `curl` - for accessing Big Bang releases
+* Deliverables
+  * `images.txt` containing only image repositories and tags for images that changed between releases
+  * `images.tar.gz` containing a registry with only images that changed between releases.  This can be mounted in a registry:2 container.
+
 `deploy_images.sh` - Proof of concept script for image deployment
 
 * Dependencies
