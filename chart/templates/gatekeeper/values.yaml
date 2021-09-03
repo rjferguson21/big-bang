@@ -94,12 +94,19 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
         - istio-operator
         - istio-system
 
-  {{- if .Values.monitoring.enabled }}
+  {{- if or .Values.monitoring.enabled .Values.twistlock.enabled }}
   restrictedTaint:
+    {{- if .Values.monitoring.enabled }}
     match:
       excludedNamespaces:
         # Prometheus Node Exporter needs to be able to run on all nodes, regardless of taint, to gather node metrics
         - monitoring
+    {{- end }}
+    {{- if .Values.twistlock.enabled }}
+    parameters:
+      excludedResources:
+        - twistlock/twistlock-defender-ds-.*
+    {{- end }}
   {{- end }}
 
   {{- if .Values.logging.enabled }}
