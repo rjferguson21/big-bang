@@ -30,7 +30,7 @@ image:
 {{- if .Values.addons.sonarqube.sso.enabled }}
 sonarProperties:
   sonar.auth.saml.enabled: {{ .Values.addons.sonarqube.sso.enabled }}
-  sonar.core.serverBaseURL: https://sonarqube.{{ $doaminName }}
+  sonar.core.serverBaseURL: https://sonarqube.{{ $domainName }}
   sonar.auth.saml.applicationId: {{ .Values.addons.sonarqube.sso.client_id }}
   sonar.auth.saml.providerName: {{ .Values.addons.sonarqube.sso.label }}
   sonar.auth.saml.providerId: https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}
