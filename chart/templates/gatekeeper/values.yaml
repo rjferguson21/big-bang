@@ -57,24 +57,13 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
 
   {{- if .Values.twistlock.enabled }}
   hostNetworking:
-    {{- if .Values.twistlock.enabled }} #removed or fluentbit
     parameters:
       excludedResources:
-        {{- if .Values.twistlock.enabled }}
         - twistlock/twistlock-defender-ds-.*
-        {{- end }}
-    {{- end }}
-  {{- end }}
-
-  {{- if .Values.twistlock.enabled }} 
-  noHostNamespace: #might be able to include in the if statement above hostNetworking...
-    {{- if .Values.twistlock.enabled }} #removed or fluentbit
+  noHostNamespace:
     parameters:
       excludedResources:
-        {{- if .Values.twistlock.enabled }}
         - twistlock/twistlock-defender-ds-.*
-        {{- end }}
-    {{- end }}
   {{- end }}
 
   {{- if .Values.addons.mattermost.enabled }}
