@@ -3,7 +3,6 @@
 {{- end }}
 
 {{- define "bigbang.defaults.nexus-repository-manager" -}}
-# hostname is deprecated and replaced with domain. But if hostname exists then use it.
 {{- $domainName := default .Values.domain .Values.hostname }}
 domain: {{ $domainName }}
 hostname: nexus
