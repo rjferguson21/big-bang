@@ -130,10 +130,10 @@ addons:
       redis:
         master:
           persistence:
-            size: 256Mi
+            size: 5Gi
         replica:
           persistence:
-            size: 256Mi
+            size: 5Gi
         resources:
           requests:
             cpu: 50m
@@ -449,7 +449,7 @@ addons:
     values:
       persistence:
         # Do NOT set this below 4Gi, nexus will fail to boot
-        storageSize: 10Gi
+        storageSize: 5Gi
       nexus:
       # https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-JVMDirectMemory
         env:
