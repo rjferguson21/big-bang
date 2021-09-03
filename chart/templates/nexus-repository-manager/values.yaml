@@ -3,7 +3,9 @@
 {{- end }}
 
 {{- define "bigbang.defaults.nexus-repository-manager" -}}
-domain: {{ .Values.hostname }}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
+domain: {{ $domainName }}
 hostname: nexus
 istio:
   enabled: {{ .Values.istio.enabled }}
@@ -33,7 +35,7 @@ license_key: "{{ .Values.addons.nexus.license_key }}"
 sso:
   enabled: {{ .Values.addons.nexus.sso.enabled }}
   idp_data:
-    entityId: "https://nexus.{{ .Values.hostname }}/service/rest/v1/security/saml/metadata"
+    entityId: "https://nexus.{{ $domainName }}/service/rest/v1/security/saml/metadata"
     usernameAttribute: "{{ .Values.addons.nexus.sso.idp_data.username }}"
     firstNameAttribute: "{{ .Values.addons.nexus.sso.idp_data.firstName }}"
     lastNameAttribute: "{{ .Values.addons.nexus.sso.idp_data.lastName }}"
