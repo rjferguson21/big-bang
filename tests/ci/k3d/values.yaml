@@ -127,8 +127,14 @@ addons:
             cpu: 10m
             memory: 128Mi
           limits: {}
+      redis-bb:
+        master:
+          persistence:
+            size: 256Mi
+        replica:
+          persistence:
+            size: 256Mi
       redis:
-        resources:
           requests:
             cpu: 50m
             memory: 64Mi
@@ -157,6 +163,13 @@ addons:
           cpu: 100m
           memory: 100Mi
         limits: {}
+      redis:
+        master:
+          persistence:
+            size: 256Mi
+        replica:
+          persistence:
+            size: 256Mi
 
   gitlab:
     enabled: false
@@ -227,6 +240,13 @@ addons:
           requests:
             cpu: 50m
           limits: {}
+      redis:
+        master:
+          persistence:
+            size: 256Mi
+        slave:
+          persistence:
+            size: 256Mi      
 
   gitlabRunner:
     enabled: false
@@ -413,6 +433,9 @@ addons:
     elasticsearch:
       enabled: true
     values:
+      postgresql:
+        persistence:
+          size: 256Mi
       replicaCount: 1
       resources:
         requests:
