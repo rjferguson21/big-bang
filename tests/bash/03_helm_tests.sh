@@ -6,8 +6,12 @@ set -e
 # Get original CoreDNS config
 kubectl get configmap -n kube-system coredns -o jsonpath='{.data.NodeHosts}' > newhosts
 
+# Safeguard in case configmap doesn't end with newline
+if [[ $(tail -c 1 newhosts) != "" ]]; then
+  echo "" >> newhosts
+fi
+
 # Get each VS hostname + ingress gateway IP and add to newhosts
-echo "" >> newhosts
 for vs in $(kubectl get vs -A -o go-template='{{range .items}}{{.metadata.name}}{{":"}}{{.metadata.namespace}}{{" "}}{{end}}'); do
   vs_name=$(echo ${vs} | awk -F: '{print $1}')
   vs_namespace=$(echo ${vs} | awk -F: '{print $2}')
@@ -16,6 +20,8 @@ for vs in $(kubectl get vs -A -o go-template='{{range .items}}{{.metadata.name}}
   ingress_gateway=$(kubectl get gateway -n istio-system $gateway -o jsonpath='{.spec.selector.app}')
   external_ip=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
   for host in $hosts; do
+    host=$(echo ${host} | xargs)
+    sed -i "/$host/d" newhosts
     echo "${external_ip} ${host}" >> newhosts
   done
 done
