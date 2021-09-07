@@ -128,12 +128,6 @@ addons:
             memory: 128Mi
           limits: {}
       redis:
-        master:
-          persistence:
-            size: 5Gi
-        replica:
-          persistence:
-            size: 5Gi
         resources:
           requests:
             cpu: 50m
@@ -163,13 +157,6 @@ addons:
           cpu: 100m
           memory: 100Mi
         limits: {}
-      redis:
-        master:
-          persistence:
-            size: 256Mi
-        replica:
-          persistence:
-            size: 256Mi
 
   gitlab:
     enabled: false
