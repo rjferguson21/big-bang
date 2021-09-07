@@ -3,6 +3,51 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [1.15.2]
+
+* [!846](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/846): Istio-cni hub correction to point to valid repo in registry1 & Add install-cni image to synker.yaml for air-gapped environments
+
+## [1.15.1]
+
+* [!834](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/834): Update istio to version 1.9.8
+* [!818](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/818): Fix minio istio pass down
+* [!831](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/831): Fix monitoring hostNetwork violation
+* [!835](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/835): Fix fluentbit hostFilesystem violation
+
+## [1.15.0]
+
+* [!1.15.0](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.15.0); List of merge requests in this release.
+
+## [1.14.1]
+
+* [!771](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/771): Intermediate update to authservice package to allow for cleaner certificate formatting
+* [!782](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/782): Bumping Authservice tag to 0.4.0-bb.13 to fix mapping for values passed to redis sub-chart and uploading correct dependency sub-chart
+
+## [1.14.0]
+
+* [!1.14.0](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.14.0); List of merge requests in this release.
+
+## [1.13.1]
+
+* [!722](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/722): Bumping Gatekeeper tag, reducing pod footprint, cleaning up constraints
+* [!730](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/730): Bumping Gatekeeper tag, properly excluding all of "kube-system" namespace from gatekeeper via upstream recommendation, removing "kube-system" exclusions from package values.
+
+## [1.13.0]
+
+[!1.13.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.13.0); List of Merge Requests in this Release
+
+## [1.12.1]
+
+* [!769](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/769): Add `kube-system` namespace exception to all constraints that cause violations
+
+## [1.12.0]
+
+[!1.12.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.12.0); List of Merge Requests in this Release
+
+## [1.11.0]
+
+[!1.11.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.11.0); List of Merge Requests in this Release
+
 ## [1.10.0]
 
 [!1.10.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.10.0); List of Merge Requests in this Release
@@ -99,6 +144,9 @@ curl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/scripts/de
 * [!463](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests/463): Update CODEOWNERS
 
 ### Upgrade Notice
+
+#### Sonarqube Release Information
+
 This release comes with a new version of Sonarqube which requires a manual database upgrade that can be easily done through the web interface. If you see a message stating Sonarqube is under maintenance go to the following url and click update database:
 ```
 https://sonarqube.your.url/setup

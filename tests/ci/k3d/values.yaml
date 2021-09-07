@@ -20,6 +20,9 @@ logging:
           requests:
             cpu: .5
           limits: {}
+        heap:
+          min: 1g
+          max: 1g
       data:
         count: 2
         persistence:
@@ -28,6 +31,9 @@ logging:
           requests:
             cpu: .5
           limits: {}
+        heap:
+          min: 1g
+          max: 1g
     kibana:
       count: 1
 
@@ -76,19 +82,6 @@ clusterAuditor:
 monitoring:
   enabled: true
   values:
-    alertmanager:
-      alertmanagerSpec:
-        resources:
-          requests:
-            cpu: 100m
-            memory: 200Mi
-          limits: {}
-    prometheusOperator:
-      resources:
-        requests:
-          cpu: 250m
-          memory: 400Mi
-        limits: {}
     prometheus:
       prometheusSpec:
         resources:
@@ -96,19 +89,13 @@ monitoring:
             cpu: 100m
             memory: 200Mi
           limits: {}
-    grafana:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi
-        limits: {}
-    kubeStateMetrics:
+    kube-state-metrics:
       resources:
         requests:
           cpu: 10m
           memory: 32Mi
         limits: {}
-    nodeExporter:
+    prometheus-node-exporter:
       resources:
         requests:
           cpu: 100m
@@ -124,6 +111,17 @@ gatekeeper:
         cpu: 100m
         memory: 256Mi
       limits: {}
+    violations:
+      allowedDockerRegistries:
+        match:
+          excludedNamespaces:
+          # Allows load balancer images for k3d from public repo
+          - istio-system
+      hostNetworking:
+        match:
+          excludedNamespaces:
+          # Allows load balancer containers to map ports for k3d
+          - istio-system
 
 twistlock:
   enabled: true
@@ -140,32 +138,32 @@ addons:
       controller:
         resources:
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: 500m
+            memory: 2Gi
           limits: {}
       dex:
         resources:
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: 10m
+            memory: 128Mi
           limits: {}
       redis:
         resources:
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: 50m
+            memory: 64Mi
           limits: {}
       server:
         resources:
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: 20m
+            memory: 128Mi
           limits: {}
       repoServer:
         resources:
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: 50m
+            memory: 128Mi
           limits: {}
 
   authservice:
@@ -184,6 +182,8 @@ addons:
     enabled: false
     sso:
       enabled: false
+    flux:
+      timeout: 20m
     values:
       global:
         rails:
@@ -252,9 +252,30 @@ addons:
   anchore:
     enabled: false
     values:
+      ensureDbJobs:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
+      sso:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
       postgresql:
-        persistence:
-          size: 20Gi
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi 
+          limits: {}       
+        metrics:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits: {}
       anchoreAnalyzer:
         resources:
           requests:
@@ -285,14 +306,38 @@ addons:
             cpu: 100m
             memory: 200Mi
           limits: {}
+      anchoreEngineUpgradeJob:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
+      anchore-feeds-db:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
+        metrics:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits: {}
       anchoreEnterpriseFeeds:
         resources:
           requests:
             cpu: 100m
             memory: 200Mi
           limits: {}
+      anchoreEnterpriseFeedsUpgradeJob:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
       anchoreEnterpriseRbac:
-        authResource:
+        authResources:
           resources:
             requests:
               cpu: 100m
@@ -310,11 +355,6 @@ addons:
             cpu: 100m
             memory: 200Mi
           limits: {}
-        resources:
-          requests:
-            cpu: 100m
-            memory: 200Mi
-          limits: {}
       anchoreEnterpriseNotifications:
         resources:
           requests:
@@ -322,6 +362,12 @@ addons:
             memory: 200Mi
           limits: {}
       anchoreEntperpiseUi:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
+      anchoreEnterpriseEngineUpgradeJob:
         resources:
           requests:
             cpu: 100m
@@ -356,6 +402,8 @@ addons:
   minio:
     enabled: false
     values:
+      upgradeTenants:
+        enabled: true
       zones:
         servers: 1
       volumesPerServer: 1
@@ -375,6 +423,8 @@ addons:
           memory: 128Mi
         limits: {}
       minio:
+        upgradeTenants:
+          enabled: true
         zones:
           servers: 1
         volumesPerServer: 1
@@ -395,7 +445,8 @@ addons:
     enabled: false
     values:
       persistence:
-        storageSize: 3Gi
+        # Do NOT set this below 4Gi, nexus will fail to boot
+        storageSize: 10Gi
       nexus:
       # https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-JVMDirectMemory
         env:
@@ -444,6 +495,8 @@ addons:
 
   keycloak:
     enabled: false
+    ingress:
+      gateway: "public"
     values:
       replicas: 1
       resources:

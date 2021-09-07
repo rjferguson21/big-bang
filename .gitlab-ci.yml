@@ -40,7 +40,7 @@ variables:
     - generic
 
 .bigbang:
-  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k3d-builder:0.0.6
+  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k8s-ci:v1.20.4-bb.3
   extends: .bigbang-dogfood
   after_script:
     - kubectl get all -A
@@ -76,6 +76,7 @@ pre vars:
     - .gitlab-ci/jobs/**/*
     - scripts/**/*
     - tests/**/*
+    - base/flux/*
 
 .deploy_bigbang: &deploy_bigbang
   - |
@@ -102,16 +103,17 @@ clean install:
   variables:
     CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master"'
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
       when: never
     - *chart_changes
   script:
     - *deploy_bigbang
     - *test_bigbang
 
-    # Fetch list of all images ran
+    # Fetch list of all images ran (retry crictl up to 6x)
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
-    - docker exec $cid crictl images -o json | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
+    - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
+    - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
   artifacts:
     paths:
       - images.txt
@@ -127,6 +129,9 @@ upgrade:
   extends:
     - .k3d-ci
   rules:
+    # skip job for nightly master and "test-ci::infra" labeled pipelines
+    - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
+      when: never
     # skip job when MR title starts with 'SKIP UPGRADE'
     - if: '$CI_MERGE_REQUEST_TITLE =~ /^SKIP UPGRADE/'
       when: never
@@ -243,13 +248,6 @@ aws/rke2/bigbang up:
     - cp ${CI_PROJECT_DIR}/rke2.yaml ~/.kube/config
     # Deploy a default storage class for aws
     - kubectl apply -f ${CI_PROJECT_DIR}/.gitlab-ci/jobs/rke2/dependencies/k8s-resources/aws/default-ebs-sc.yaml
-    - echo "Patching default rke2 PSPs to be less restrictive so OPA Gatekeeper can successfully deploy"
-    - |
-      kubectl --kubeconfig rke2.yaml patch psp global-unrestricted-psp  -p '{"metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
-    - |
-      kubectl --kubeconfig rke2.yaml patch psp system-unrestricted-psp  -p '{ "metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
-    - |
-      kubectl --kubeconfig rke2.yaml patch psp global-restricted-psp  -p '{ "metadata": { "annotations": { "seccomp.security.alpha.kubernetes.io/allowedProfileNames": "*" } } }'
 
   script:
     - *deploy_bigbang

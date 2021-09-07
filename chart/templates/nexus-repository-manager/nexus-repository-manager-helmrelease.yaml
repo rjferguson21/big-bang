@@ -12,7 +12,6 @@ metadata:
 spec:
   targetNamespace: nexus-repository-manager
   releaseName: nexus-repository-manager
-  interval: 10m
   chart:
     spec:
       chart: {{ .Values.addons.nexus.git.path }}
@@ -24,6 +23,10 @@ spec:
 
   {{- toYaml $fluxSettingsNexus | nindent 2 }}
 
+  {{- if .Values.addons.nexus.postRenderers }}
+  postRenderers:
+  {{ toYaml .Values.addons.nexus.postRenderers | nindent 4 }}
+  {{- end }}
   valuesFrom:
     - name: {{ .Release.Name }}-nexus-repository-manager-values
       kind: Secret
