@@ -3,6 +3,8 @@
 {{- end }}
 
 {{- define "bigbang.defaults.authservice" -}}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
 
 imagePullSecrets:
   - name: private-registry
