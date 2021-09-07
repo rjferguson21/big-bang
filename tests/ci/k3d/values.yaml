@@ -63,6 +63,10 @@ jaeger:
 kiali:
   enabled: true
   values:
+    cr:
+      spec:
+        auth:
+          strategy: "anonymous"
     bbtests:
       enabled: true
       cypress:
