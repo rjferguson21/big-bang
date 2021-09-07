@@ -3,12 +3,39 @@
 # exit on error
 set -e
 
+# Get original CoreDNS config
+kubectl get configmap -n kube-system coredns -o jsonpath='{.data.NodeHosts}' > newhosts
+
+# Get each VS hostname + ingress gateway IP and add to newhosts
+echo "" >> newhosts
+for vs in $(kubectl get vs -A -o go-template='{{range .items}}{{.metadata.name}}{{":"}}{{.metadata.namespace}}{{" "}}{{end}}'); do
+  vs_name=$(echo ${vs} | awk -F: '{print $1}')
+  vs_namespace=$(echo ${vs} | awk -F: '{print $2}')
+  hosts=$(kubectl get vs ${vs_name} -n ${vs_namespace} -o go-template='{{range .spec.hosts}}{{.}}{{" "}}{{end}}')
+  gateway=$(kubectl get vs ${vs_name} -n ${vs_namespace} -o jsonpath='{.spec.gateways[0]}' | awk -F/ '{print $2}')
+  ingress_gateway=$(kubectl get gateway -n istio-system $gateway -o jsonpath='{.spec.selector.app}')
+  external_ip=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  for host in $hosts; do
+    echo "${external_ip} ${host}" >> newhosts
+  done
+done
+
+echo "Hosts being setup:"
+cat newhosts
+
+# Patch CoreDNS and restart pod
+hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
+kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
+kubectl rollout restart deployment -n kube-system coredns
+
+# Gather all HRs we should test
 installed_helmreleases=$(helm list -n bigbang -o json | jq '.[].name' | tr -d '"' | grep -v "bigbang")
 
 mkdir -p cypress-tests
 
 ERRORS=0
 
+# For each HR, if it has helm tests: run them, capture exit code, output logs, and save cypress artifacts
 for hr in $installed_helmreleases; do
   test_result=$(helm test $hr -n bigbang) && export EXIT_CODE=$? || export EXIT_CODE=$?
   echo "$test_result"
@@ -39,6 +66,6 @@ for hr in $installed_helmreleases; do
 done
 
 if [ $ERRORS -gt 0 ]; then
-  echo "Encountered $ERRORS errors while running tests. See output logs above and artifacts in the clean install job."
-  exit 1
+  echo "Encountered $ERRORS errors while running tests. See output logs above and artifacts in the job."
+  exit 123
 fi

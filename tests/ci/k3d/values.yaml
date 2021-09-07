@@ -437,9 +437,6 @@ addons:
             cypress_mm_email: "test@bigbang.dev"
             cypress_mm_user: "bigbang"
             cypress_mm_password: "Bigbang#123"
-        istio:
-          hosts:
-            - "chat.{{ .Values.hostname }}"
 
   nexus:
     enabled: false
