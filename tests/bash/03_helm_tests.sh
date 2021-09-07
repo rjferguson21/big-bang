@@ -21,18 +21,17 @@ for vs in $(kubectl get vs -A -o go-template='{{range .items}}{{.metadata.name}}
   external_ip=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
   for host in $hosts; do
     host=$(echo ${host} | xargs)
+    # Remove previous entry if on upgrade job
     sed -i "/$host/d" newhosts
     echo "${external_ip} ${host}" >> newhosts
   done
 done
 
-echo "Hosts being setup:"
-cat newhosts
-
 # Patch CoreDNS and restart pod
 hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
 kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
 kubectl rollout restart deployment -n kube-system coredns
+kubectl rollout status deployment -n kube-system coredns --timeout=30s
 
 # Gather all HRs we should test
 installed_helmreleases=$(helm list -n bigbang -o json | jq '.[].name' | tr -d '"' | grep -v "bigbang")
