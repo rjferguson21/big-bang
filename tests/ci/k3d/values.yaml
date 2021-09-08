@@ -51,7 +51,7 @@ logging:
       scripts:
         image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
-          elasticsearch_host: "https://logging-ek-es-http.logging.svc.cluster.local:9200"
+          elasticsearch_host: "https://{{ .Release.Name }}-es-http.{{ .Release.Namespace }}.svc.cluster.local:9200"
           desired_version: "{{ .Values.elasticsearch.version }}"
         secretEnvs:
           - name: ELASTIC_PASSWORD
@@ -64,6 +64,12 @@ fluentbit:
   values:
     securityContext:
       privileged: true
+    bbtests:
+      scripts:
+        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
+        envs:
+          fluent_host: "http://{{ include \"fluent-bit.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
+          desired_version: "{{ .Values.image.tag }}"
 
 istio:
   enabled: true
@@ -131,8 +137,14 @@ monitoring:
     grafana:
       testFramework:
         enabled: false
-
-
+    bbtests:
+      enabled: true
+      cypress:
+        artifacts: true
+        envs:
+          cypress_prometheus_url: 'https://prometheus.bigbang.dev'
+          cypress_grafana_url: 'https://grafana.bigbang.dev'
+          cypress_alertmanager_url: 'https://alertmanager.bigbang.dev'
 
 gatekeeper:
   enabled: true
@@ -154,6 +166,22 @@ gatekeeper:
           excludedNamespaces:
           # Allows load balancer containers to map ports for k3d
           - istio-system
+    # TODO: I think this test won't work as is, disable for now? Refactor test?
+    bbtests:
+      enabled: true
+      scripts:
+        image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
+        additionalVolumeMounts:
+          - name: "{{ .Chart.Name }}-test-config"
+            mountPath: /yaml
+          - name: "{{ .Chart.Name }}-kube-cache"
+            mountPath: /.kube/cache
+        additionalVolumes:
+          - name: "{{ .Chart.Name }}-test-config"
+            configMap:
+              name: "{{ .Chart.Name }}-test-config"
+          - name: "{{ .Chart.Name }}-kube-cache"
+            emptyDir: {}
 
 twistlock:
   enabled: true
@@ -161,8 +189,19 @@ twistlock:
     console:
       persistence:
         size: 256Mi
+    bbtests:
+      enabled: true
+      cypress:
+        artifacts: true
+        envs:
+          cypress_baseUrl: "https://twistlock.bigbang.dev"
+      scripts:
+        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
+        envs:
+          twistlock_host: "https://twistlock.bigbang.dev"
+          desired_version: "{{ .Values.console.image.tag }}"
 
-# Explicitly enable all addons for CI
+# Addons are toggled based on labels in CI
 addons:
   argocd:
     enabled: false
