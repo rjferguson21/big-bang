@@ -119,6 +119,7 @@ function wait_daemonset(){
 
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
+set +e
 yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
   if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
     gitrepo=`yq e ".${package}.git.repo" "chart/values.yaml"`
@@ -138,6 +139,7 @@ yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r
       echo "not found"
     fi
   fi
+set -e
 done
 }
 
