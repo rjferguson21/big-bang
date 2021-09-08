@@ -135,6 +135,7 @@ addons:
           persistence:
             size: 256Mi
       redis:
+        resources:
           requests:
             cpu: 50m
             memory: 64Mi
