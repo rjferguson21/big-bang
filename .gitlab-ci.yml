@@ -81,7 +81,7 @@ pre vars:
 .deploy_bigbang: &deploy_bigbang
   - |
     set -e
-    for deploy_script in $(find ./scripts/deploy -type f -name '*.sh' | sort); do
+    for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
       echo "Executing ${deploy_script}..."
       ./${deploy_script}
