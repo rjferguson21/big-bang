@@ -190,7 +190,8 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.23.0-bb.1"
+    tag: ""
+    branch: "main"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
@@ -225,7 +226,8 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.39.0-bb.0"
+    tag: ""
+    branch: "main:
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -924,7 +926,8 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.2.0-bb.1"
+      tag: ""
+      branch: "main"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
