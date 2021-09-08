@@ -227,7 +227,7 @@ kiali:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
     tag: ""
-    branch: "main:
+    branch: "main"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
