@@ -90,7 +90,7 @@ pre vars:
 .test_bigbang: &test_bigbang
   - |
     set -e
-    for test_script in $(find ./tests -type f -name '*.sh' | sort); do
+    for test_script in $(find ./tests/tests -type f -name '*.sh' | sort); do
       chmod +x ${test_script}
       echo "Executing ${test_script}..."
       ./${test_script}
