@@ -243,6 +243,17 @@ addons:
             cpu: 50m
             memory: 128Mi
           limits: {}
+      configs:
+        secret:
+          argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          envs:
+            cypress_url: "https://argocd.bigbang.dev"
+            cypress_user: "admin"
+            cypress_password: "Password123"
 
   authservice:
     enabled: false
@@ -339,6 +350,19 @@ addons:
         slave:
           persistence:
             size: 256Mi      
+      bbtests:
+        # TODO: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47 needed before enabling?
+        enabled: true
+        cypress:
+          artifacts: true
+          secretEnvs:
+            - name: cypress_adminpassword
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-gitlab-initial-root-password
+                  key: password
+        scripts:
+          image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.3"
 
   gitlabRunner:
     enabled: false
@@ -348,6 +372,22 @@ addons:
           memory: 64Mi
           cpu: 50m
         limits: {}
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          secretEnvs:
+            - name: cypress_adminpassword
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-gitlab-initial-root-password
+                  key: password
+          envs:
+            cypress_baseUrl: "https://gitlab.bigbang.dev"      
+            cypress_gitlab_email: "gitlab@bigbang.dev"
+            cypress_gitlab_user: "gitlab_user"
+            cypress_gitlab_password: "gitlab_pass"
+            cypress_gitlab_project: "hello-world"
 
   anchore:
     enabled: false
@@ -475,6 +515,19 @@ addons:
             cpu: 100m
             memory: 200Mi
           limits: {}
+      bbtests:
+        enabled: true
+        scripts:
+          image: registry1.dso.mil/ironbank/anchore/cli/cli:0.9.1
+          envs:
+            ANCHORE_CLI_URL: "https://anchore-api.bigbang.dev/v1"
+            ANCHORE_CLI_USER: admin
+          secretEnvs:
+            - name: ANCHORE_CLI_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ template \"anchore-engine.fullname\" . }}-admin-pass"
+                  key: ANCHORE_ADMIN_PASSWORD
 
   sonarqube:
     enabled: false
@@ -499,6 +552,15 @@ addons:
           limits: {}
       tests:
         enabled: false
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          envs:
+            cypress_url: "https://sonarqube.bigbang.dev"
+            cypress_user: "admin"
+            cypress_password: "admin"
+            cypress_newpassword: "new_admin_password"
 
   minioOperator:
     enabled: false
@@ -516,6 +578,39 @@ addons:
         - servers: 1
           volumesPerServer: 4
           size: 256Mi
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          envs:
+            cypress_url: 'https://minio.bigbang.dev'
+          secretEnvs:
+            - name: cypress_secretkey
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.tenants.secrets.name }}"
+                  key: secretkey
+            - name: cypress_accesskey
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.tenants.secrets.name }}"
+                  key: accesskey
+        scripts:
+          image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-03-23T05-46-11Z
+          envs:
+            MINIO_PORT: '443'
+            MINIO_HOST: 'https://minio.bigbang.dev'
+          secretEnvs:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.tenants.secrets.name }}"
+                  key: secretkey
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.tenants.secrets.name }}"
+                  key: accesskey
 
   mattermostoperator:
     enabled: false
@@ -570,42 +665,75 @@ addons:
           requests:
             cpu: 100m
             memory: 1500Mi
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          envs:
+            cypress_nexus_url: "https://nexus.bigbang.dev"
+            cypress_nexus_user: "admin"
+            cypress_nexus_pass_new: "new_admin_password"
+          secretEnvs:
+            - name: cypress_nexus_pass
+              valueFrom:
+                secretKeyRef:
+                  name: nexus-repository-manager-secret
+                  key: admin.password
 
   velero:
     enabled: false
     plugins:
     - aws
     values:
-      # Set provider name and backup storage location bucket name
-      configuration:
-        provider: aws
-        # TODO: Bucket for this
-        backupStorageLocation:
-          bucket: bigbang-dogfood-velero
-          prefix: ci
-      #    config:
-      #      region: us-west-1
-      #      profile: test
-      #  volumeSnapshotLocation:
-      #    provider: aws
-      #    config:
-      #      bucket: velero
-      #      region: us-west-1
-
-      # schedules:
-      #  mybackup:
-      #    labels:
-      #      myenv: foo
-      #    schedule: "0 0 * * *"
-      #    template:
-      #      ttl: "240h"
-      #      includedNamespaces:
-      #        - foo
-
-      # Set a service account so that the CRD clean up job has proper permissions to delete CRDs
       serviceAccount:
         server:
           name: velero
+      configuration:
+        # minio uses s3 provider
+        provider: aws
+        backupStorageLocation:
+          bucket: velero
+          config: &minio-config
+            region: velero
+            insecureSkipTLSVerify: "true"
+            s3ForcePathStyle: "true"
+            s3Url: &minio-address https://minio.bigbang.dev
+        volumeSnapshotLocation:
+          provider: aws
+          config:
+            region: velero
+      credentials:
+        useSecret: true
+        secretContents:
+          cloud: |
+            [default]
+            aws_access_key_id = minio
+            aws_secret_access_key = minio123
+      bbtests:
+        scripts:
+          image: registry1.dso.mil/ironbank/opensource/velero/velero:v1.6.0
+          additionalVolumes:
+            - name: transfer-kubectl
+              emptyDir: {}
+            - name: &yamlVolName yaml-configs
+              configMap:
+                name: "{{ .Chart.Name }}-backup-restore-files-config"
+          additionalVolumeMounts:
+            - name: transfer-kubectl
+              mountPath: /usr/local/bin/kubectl
+              subPath: kubectl
+            - name: *yamlVolName
+              mountPath: &yamlMountPath /yaml
+          envs:
+            MINIO_HOST: *minio-address
+            TEST_YAML_DIR: *yamlMountPath
+            MINIO_USER: minio
+            MINIO_PASS: minio123
+          secretEnvs:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
 
   keycloak:
     enabled: false
@@ -618,3 +746,10 @@ addons:
           cpu: 10m
           memory: 16Mi
         limits: {}
+      bbtests:
+        # TODO: Keycloak in CI not supported yet
+        enabled: false
+        cypress:
+          artifacts: true
+          envs:
+            cypress_url: "https://keycloak.bigbang.dev"
