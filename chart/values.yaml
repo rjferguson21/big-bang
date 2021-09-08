@@ -903,7 +903,7 @@ addons:
   # Mattermost Operator and Instance
   #
   mattermostoperator:
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
@@ -920,7 +920,7 @@ addons:
 
   mattermost:
     # -- Toggle deployment of Mattermost.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
