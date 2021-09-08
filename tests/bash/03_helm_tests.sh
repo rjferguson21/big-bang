@@ -70,6 +70,8 @@ for hr in $installed_helmreleases; do
   fi
 done
 
+sleep 600
+
 if [ $ERRORS -gt 0 ]; then
   echo "Encountered $ERRORS errors while running tests. See output logs above and artifacts in the job."
   exit 123
