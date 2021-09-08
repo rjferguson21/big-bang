@@ -129,7 +129,7 @@ yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r
     if [[ -z "$version" ]]; then
       continue
     fi
-    echo -n "Checking for tests/wait.sh in ${package}:${version}... "
+    echo -n "Checking for tests/wait.sh in ${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false ..."
     if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" > ${package}.wait.sh; then
       echo "found, running"
       . ./${package}.wait.sh
