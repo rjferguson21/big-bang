@@ -247,7 +247,8 @@ addons:
         secret:
           argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
       bbtests:
-        enabled: true
+        # Disabled pending https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/merge_requests/45
+        enabled: false
         cypress:
           artifacts: true
           envs:
