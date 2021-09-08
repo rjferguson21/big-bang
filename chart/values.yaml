@@ -307,7 +307,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.20-bb.0"
+    tag: "0.1.21-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -677,7 +677,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "29.1.0-bb.8"
+      tag: "34.0.0-bb.0"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -754,7 +754,7 @@ addons:
       client_id: ""
 
       # -- SonarQube SSO login button label
-      label: ""
+      provider_name: ""
 
       # -- SonarQube plaintext SAML sso certificate.
       # example: MITCAYCBFyIEUjNBkqhkiG9w0BA....
@@ -1023,7 +1023,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.23.5-bb.1"
+      tag: "2.23.6-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
