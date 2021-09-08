@@ -295,6 +295,8 @@ addons:
         webservice:
           minReplicas: 1
           maxReplicas: 1
+          helmTests:
+            enabled: false
         sidekiq:
           minReplicas: 1
           maxReplicas: 1
