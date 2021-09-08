@@ -48,7 +48,7 @@ for hr in $installed_helmreleases; do
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
     echo "***** Helm Test Logs for Helmrelease ${hr} *****"
-    for pod in $(cat output | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
+    for pod in $(echo "$test_suite" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
       if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
         echo -e "---\nLogs for ${pod}:\n---"
         kubectl logs --tail=-1 -n ${namespace} ${pod}
