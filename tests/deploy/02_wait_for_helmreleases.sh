@@ -130,13 +130,13 @@ yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r
     if [[ -z "$version" || "$version" == "null" ]]; then
       continue
     fi
-    echo -n "Checking for tests/wait.sh in ${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false ...\c"
+    printf "Checking for tests/wait.sh in %s/-/raw/%s/tests/wait.sh?inline=false ..." ${gitrepo%.git} ${version}
     if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1> ${package}.wait.sh 2>/dev/null; then
-      echo "found, running"
+      printf "found, running\n"
       . ./${package}.wait.sh
       wait_project
     else
-      echo "not found"
+      printf "not found\n"
     fi
   fi
 set -e
