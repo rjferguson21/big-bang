@@ -119,6 +119,10 @@ function wait_daemonset(){
 
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
+printf "listing file descriptors\n"
+ls -la /proc/$$/fd
+printf "running shopt:\n"
+shopt
 set +e
 yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
   if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
@@ -131,12 +135,12 @@ yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r
       continue
     fi
     printf "Checking for tests/wait.sh in %s/-/raw/%s/tests/wait.sh: " ${gitrepo%.git} ${version}
-    if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1> ${package}.wait.sh 2>/dev/null; then
-      printf "\b found, running\n"
+    if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1> ${package}.wait.sh 2>/dev/null 3>&2; then
+      printf "found, running\n"
       . ./${package}.wait.sh
       wait_project
     else
-      printf "\b not found\n"
+      printf "not found\n"
     fi
   fi
 set -e
