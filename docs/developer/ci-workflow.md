@@ -74,7 +74,7 @@ The infrastructure pipeline is designed to have _no_ human interaction, and are 
 
 More information on the full set of infrastructure tests are below:
 
-![Infra Pipeline](Infra_test_pipelines.png)
+![Infra Pipeline](imgs/Infra_test_pipelines.png)
 
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 ##### Network Creation
