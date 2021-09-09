@@ -9,6 +9,10 @@ This pipeline to triggered by following for individual bigbang packages:
 - manual tag events
 - commits to default branch
 
+![Package Pipeline](imgs/Package_pipeline.png)
+
+[Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
+
 ### Package Tests
 This stage verifies several easy to check assumptions such as:
 
@@ -22,6 +26,9 @@ If required, the upgrade step can skipped when MR title starts with 'SKIP UPGRAD
 
 The pipeline is split into several stages:
 
+![BB Pipeline](imgs/BB_pipelines.png)
+
+[Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 #### Linting
 
 Several linting rules are first run to ensure yaml standards are met within the primary `./charts` folder.
@@ -67,6 +74,9 @@ The infrastructure pipeline is designed to have _no_ human interaction, and are 
 
 More information on the full set of infrastructure tests are below:
 
+![Infra Pipeline](Infra_test_pipelines.png)
+
+[Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 ##### Network Creation
 
 For each cloud, a BigBang owned network will be created that conform with the appropriate set of tests about to be ran.  For example, to validate that Big Bang deploys in a connected environment on AWS, a VPC, subnets, route tables, etc... are created, and the outputs are made available through terraform's remote `data` source.
