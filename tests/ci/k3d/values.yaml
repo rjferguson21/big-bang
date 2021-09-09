@@ -354,8 +354,8 @@ addons:
           persistence:
             size: 256Mi      
       bbtests:
-        # TODO: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47 needed before enabling?
-        enabled: true
+        # https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47 needed before enabling
+        enabled: false
         cypress:
           artifacts: true
           secretEnvs:

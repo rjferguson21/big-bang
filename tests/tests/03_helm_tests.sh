@@ -49,14 +49,19 @@ for hr in $installed_helmreleases; do
   namespace=$(echo "$test_result" | yq eval '."NAMESPACE"' -)
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
-    echo "***** Helm Test Logs for Helmrelease ${hr} *****"
-    for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
-      if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
-        echo -e "---\nLogs for ${pod}:\n---"
-        kubectl logs --tail=-1 -n ${namespace} ${pod}
-      fi
-    done
-    echo "***** End Helm Test Logs for Helmrelease ${hr} *****"
+    # Since logs are cluttery, only output when failed
+    if [[ ${EXIT_CODE} -ne 0 ]]; then
+      ERRORS=$((ERRORS + 1))
+      echo "***** Helm Test Logs for Helmrelease ${hr} *****"
+      for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
+        if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
+          echo -e "---\nLogs for ${pod}:\n---"
+          kubectl logs --tail=-1 -n ${namespace} ${pod}
+        fi
+      done
+      echo "***** End Helm Test Logs for Helmrelease ${hr} *****"
+    fi
+    # Always save off the artifacts if they exist
     if kubectl get configmap -n ${namespace} cypress-screenshots &>/dev/null; then
       mkdir -p cypress-tests/${hr}/tests/cypress
       kubectl get configmap -n ${namespace} cypress-screenshots -o jsonpath='{.data.cypress-screenshots\.tar\.gz\.b64}' > cypress-screenshots.tar.gz.b64
@@ -70,9 +75,6 @@ for hr in $installed_helmreleases; do
       cat cypress-videos.tar.gz.b64 | base64 -d > cypress-videos.tar.gz
       tar -zxf cypress-videos.tar.gz --strip-components=2 -C cypress-tests/${hr}/tests/cypress
       rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
-    fi
-    if [[ ${EXIT_CODE} -ne 0 ]]; then
-      ERRORS=$((ERRORS + 1))
     fi
   fi
 done
