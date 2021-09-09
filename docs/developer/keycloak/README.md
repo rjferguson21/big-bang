@@ -2,6 +2,7 @@
 This example values override file is provided for development purposes only. Operational deployments use a different configuration including but not limited to:
 - a custom realm would not automatically be loaded. 
 - needed secrets would be created independently through a GitOps process rather than using the keycolak chart to create secrets
+- the certificate would not be inlined in the values.yaml but instead the keycloak-tlscert and keycloak-tlskey secrets are created independently through a GitOps process
 - an external database would be used
 - master realm would be disabled to prevent admin login
 
