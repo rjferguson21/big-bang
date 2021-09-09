@@ -1,0 +1,103 @@
+## Merge requests process
+
+The following is meant to serve as an overview of the pipeline stages required to get a commit merged. There are both package pipelines and bigbang pipelines
+
+### Generic Package Pipeline Stages
+This pipeline is triggered by: 
+- merge request events
+- manual tag events
+- commits to default branch
+
+### Package Tests
+This stage verifies several easy to check assumptions such as:
+
+- does package successfully install
+- does package successfully upgrade (from master)
+- package specific tests
+
+If required, the upgrade step can skipped when MR title starts with 'SKIP UPGRADE'
+
+### BigBang Pipeline Stages
+
+The pipeline is split into several stages:
+
+#### Linting
+
+Several linting rules are first run to ensure yaml standards are met within the primary `./charts` folder.
+
+This stage is ran on every commit, and is a requirement for merging.
+
+#### Smoke Testing
+
+For fast feedback testing, an ephemeral in cluster pipeline is created using [`k3d`](https://k3d.io) that lives for the lifetime of the gitlab ci job.  Within that cluster, BigBang is deployed, and an initial set of smoke tests are performed against the deployment to ensure basic conformance.
+
+This stage verifies several easy to check assumptions such as:
+
+- does BigBang successfully install
+- does BigBang successfully upgrade (from master)
+- are endpoints routable
+
+This stage will fail if:
+- script failures
+- gitrepositories status condition != ready
+- expected helm releases are not present
+- helm releases fail or timeout
+- kustomization secrets are not ready or timeout
+- deployments status condition != ready
+- jobs status condition != complete
+- statefulsets/daemonsets not 100% ready (ex. 0/1)
+
+This stage also serves as a guide for local development, and care is taken to ensure all pipeline actions within this stage are repeatable locally.
+
+This stage is ran on every merge request event, and is a requirement for merging.
+
+#### Infrastructure Testing
+
+Ultimately, BigBang is designed to deploy production ready workloads on real infrastructure.  While local and ephemeral clusters are excellent for fast feedback during development, changes must ultimately be tested on real clusters on real infrastructure.
+
+As part of BigBang's [charter](https://repo1.dso.mil/platform-one/big-bang/charter), it is expected work on any CNCF conformant kubernetes cluster, on multiple clouds, and on premise environments.  By very definition, this means infrastructure testing is _slow_.  To strive for a pipeline with a happy medium of providing fast feedback while still exhaustively testing against environments that closely mirror production, __infrastructure testing only occurs on manual actions on merge request commits.__
+This requires adding `test ci` tag to your MR. In addition, infrastructure testing pipeline is run nightly on a schedule.
+
+When you are comfortable your branch is ready to be merged, opening up an merge request will trigger the creation of a suite of infrastructure testing jobs which will require a manual action from a project maintainer (assuming previous linting and smoke tests have passed).  Once the commit(s) are validated against the infrastructure tests, your changes are ready to be merged!
+
+For _most_ of the infrastructure testing, `terraform` is chosen as the IAC tool of choice for infrastructure that BigBang owns, while the cluster creation process follows the vendors recommended installation process.
+
+The infrastructure pipeline is designed to have _no_ human interaction, and are scoped to the lifecycle of the pipeline.  This means a single pipeline is fully responsible for provisioning infrastructure, but just as important, deprovisioning infrastructure, ensuring resources are not orphaned.
+
+More information on the full set of infrastructure tests are below:
+
+##### Network Creation
+
+For each cloud, a BigBang owned network will be created that conform with the appropriate set of tests about to be ran.  For example, to validate that Big Bang deploys in a connected environment on AWS, a VPC, subnets, route tables, etc... are created, and the outputs are made available through terraform's remote `data` source.
+
+##### Cluster(s) Creation
+
+Several types of clusters are created within the previously provisioned network(s), and follow the vendors recommended iac approach.
+
+For example, an `rke2` cluster is created that leverages the upstream [terraform modules](https://repo1.dso.mil/platform-one/distros/rancher-federal/rke2/rke2-aws-terraform), and an `eks` cluster is created with the upstream [terraform modules](https://docs.microsoft.com/en-us/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks).
+
+The infrastructure pipeline is currently setup to standup an `rke2` cluster by default.
+
+It is a hard requriement at this stage that every cluster outputs an admin scoped `kubeconfig` as a gitlab ci artifact.  This artifact will be leveraged in the following stages for interacting with the created cluster.
+
+##### Big Bang Installation
+
+Given the kubeconfig created in the previous stage, BigBang is installed on the cluster using the same installation process used in the smoke tests.
+
+Like any BigBang installation, several cluster requirements (TODO: doc these) must be met before BigBang is installed, and it is up to the vendor to ensure those requirements are met.
+
+##### Big Bang Tests
+
+Assuming BigBang has installed successfully, additional tests residing within the `./tests` folder of this repository are run against the deployed cluster.  These tests range from automated UI testing, to internal kubernetes resource validation and verification.
+
+TODO: Document these tests more once they are flushed out.
+
+#### Teardown
+
+Infrastructure teardown happens in the reverse sequence as to which they are deployed, and the pipeline will ensure these teardown jobs are _always_ ran, regardless of whether or not the previous jobs were successful.
+
+Combined with terraform's declarative remote state, the "always on" teardown ensures no orphaned resources are left over once tests are run.
+
+Within the teardown process, the commit scoped terraform workspace is also deleted to ensure the remote state remains clean.
+
+For example, if an EKS cluster fails to provision, a full teardown of BigBang, EKS, and the network will be run, even though BigBang was never deployed.  This will result in 2 failing jobs (EKS up and BigBang down), but will ensure that no infrastructure resources become orphaned.
