@@ -14,4 +14,4 @@ https://keycloak.bigbang.dev/auth/admin
 User registration and/or account page  
 https://keycloak.bigbang.dev/  
 
-For a keycloak realm config file that already has some sso clients configured ask one of the Keycloak codeowners. Using the Keycloak admin UI delete the existing custom realm and then import the new one. The cert in the example values override file will eventually expire. Get a current *.bigbang.dev cert at [/chart/ingress-certs.yaml](/chart/ingress-certs.yaml)
+For a keycloak realm config file that already has some sso clients configured, reach out to one of the Keycloak package codeowners. Within the Keycloak admin UI delete the existing custom realm, and then import the new one. If the cert in the example values override file has expired. Get a current *.bigbang.dev cert at [/chart/ingress-certs.yaml](/chart/ingress-certs.yaml) and open a Gitlab issue so we can update the example values override file.
