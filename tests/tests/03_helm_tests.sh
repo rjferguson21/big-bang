@@ -43,6 +43,8 @@ ERRORS=0
 # For each HR, if it has helm tests: run them, capture exit code, output logs, and save cypress artifacts
 for hr in $installed_helmreleases; do
   test_result=$(helm test $hr -n bigbang) && export EXIT_CODE=$? || export EXIT_CODE=$?
+  # Trim off the notes because they mess with our yq magic
+  test_result=$(echo "${test_result}" | sed '/NOTES/Q')
   echo "$test_result"
   namespace=$(echo "$test_result" | yq eval '."NAMESPACE"' -)
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
