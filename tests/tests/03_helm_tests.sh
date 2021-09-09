@@ -45,7 +45,8 @@ for hr in $installed_helmreleases; do
   test_result=$(helm test $hr -n bigbang) && export EXIT_CODE=$? || export EXIT_CODE=$?
   # Trim off the notes because they mess with our yq magic
   test_result=$(echo "${test_result}" | sed '/NOTES/Q')
-  echo "$test_result"
+  # This is mostly useless info about the run, as long as we save it off here we don't need to print it.
+  # echo "$test_result"
   namespace=$(echo "$test_result" | yq eval '."NAMESPACE"' -)
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
