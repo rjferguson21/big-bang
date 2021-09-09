@@ -28,6 +28,7 @@ for vs in $(kubectl get virtualservice -A -o go-template='{{range .items}}{{.met
 done
 
 # Patch CoreDNS and restart pod
+echo "Setting up CoreDNS for VS resolution..."
 hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
 kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
 kubectl rollout restart deployment -n kube-system coredns
@@ -42,6 +43,7 @@ ERRORS=0
 
 # For each HR, if it has helm tests: run them, capture exit code, output logs, and save cypress artifacts
 for hr in $installed_helmreleases; do
+  echo "Running helm tests for ${hr}..."
   test_result=$(helm test $hr -n bigbang) && export EXIT_CODE=$? || export EXIT_CODE=$?
   # Trim off the notes because they mess with our yq magic
   test_result=$(echo "${test_result}" | sed '/NOTES/Q')
@@ -83,4 +85,6 @@ done
 if [ $ERRORS -gt 0 ]; then
   echo "Encountered $ERRORS errors while running tests. See output logs above and artifacts in the job."
   exit 123
+else
+  echo "All helm tests run successfully."
 fi
