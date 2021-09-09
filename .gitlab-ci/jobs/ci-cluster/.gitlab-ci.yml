@@ -34,7 +34,6 @@
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
     - kubectl get all -A
   after_script:
-    - sleep 600
     - kubectl get all -A
     - kubectl get gitrepository,helmrelease,kustomizations -A
     - k3d cluster delete ${CI_JOB_ID}
