@@ -3,7 +3,8 @@
 The following is meant to serve as an overview of the pipeline stages required to get a commit merged. There are both package pipelines and bigbang pipelines
 
 ### Generic Package Pipeline Stages
-This pipeline is triggered by: 
+
+This pipeline to triggered by following for individual bigbang packages: 
 - merge request events
 - manual tag events
 - commits to default branch
