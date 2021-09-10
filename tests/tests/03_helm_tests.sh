@@ -53,7 +53,6 @@ for hr in $installed_helmreleases; do
     if [[ ${EXIT_CODE} -ne 0 ]]; then
       echo "❌ One or more tests failed for ${hr}"
       ERRORS=$((ERRORS + 1))
-      echo "***** Logs for failed test(s) for ${hr} *****"
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
         # Only output failed pod logs, not all test pods
         if [[ $(kubectl get pod -n ${namespace} ${pod} -o jsonpath='{.status.phase}' 2>/dev/null | xargs) == "Failed" ]]; then
@@ -61,7 +60,6 @@ for hr in $installed_helmreleases; do
           kubectl logs --tail=-1 -n ${namespace} ${pod}
         fi
       done
-      echo "***** End logs for ${hr} *****"
     else
       echo "✅ All tests sucessful for ${hr}"
     fi
