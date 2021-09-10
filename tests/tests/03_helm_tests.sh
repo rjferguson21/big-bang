@@ -68,8 +68,8 @@ for hr in $installed_helmreleases; do
 
     # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
     for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
-      if [ ! $pod == *"cypress"* ]; then
-        if kubectl get pod -n ${namespace} ${pod} 2>/dev/null; then
+      if [ ! "$pod" =~ "cypress" ]; then
+        if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
           mkdir -p test-artifacts/${hr}/scripts
           kubectl logs --tail=-1 -n ${namespace} ${pod} >> test-artifacts/${hr}/scripts/pod-logs.txt
         fi
