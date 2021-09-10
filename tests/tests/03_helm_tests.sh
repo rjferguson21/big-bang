@@ -49,12 +49,9 @@ for hr in $installed_helmreleases; do
   namespace=$(echo "$test_result" | yq eval '."NAMESPACE"' -)
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
-    # Grab logs to save for the artifacts
-    mkdir -p test-artifacts/${hr}
-    kubectl logs --tail=-1 -n ${namespace} -l helm-test=enabled > test-artifacts/${hr}/logs
     # Since logs are cluttery, only output when failed
     if [[ ${EXIT_CODE} -ne 0 ]]; then
-      echo "One or more tests failed for ${hr}"
+      echo "  One or more tests failed for ${hr}"
       ERRORS=$((ERRORS + 1))
       echo "***** Logs for failed test(s) for ${hr} *****"
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
@@ -66,8 +63,19 @@ for hr in $installed_helmreleases; do
       done
       echo "***** End logs for failed test(s) for ${hr} *****"
     else
-      echo "All tests sucessful for ${hr}"
+      echo "  All tests sucessful for ${hr}"
     fi
+
+    # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
+    for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
+      if [ ! $pod == *"cypress"* ]; then
+        if kubectl get pod -n ${namespace} ${pod} 2>/dev/null; then
+          mkdir -p test-artifacts/${hr}/scripts
+          kubectl logs --tail=-1 -n ${namespace} ${pod} >> test-artifacts/${hr}/scripts/pod-logs.txt
+        fi
+      fi
+    done
+
     # Always save off the artifacts if they exist
     if kubectl get configmap -n ${namespace} cypress-screenshots &>/dev/null; then
       mkdir -p test-artifacts/${hr}/cypress
@@ -84,7 +92,7 @@ for hr in $installed_helmreleases; do
       rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
     fi
   else
-    echo "No tests found for ${hr}"
+    echo "  No tests found for ${hr}"
   fi
 done
 
