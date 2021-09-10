@@ -37,7 +37,7 @@ kubectl rollout status deployment -n kube-system coredns --timeout=30s
 # Gather all HRs we should test
 installed_helmreleases=$(helm list -n bigbang -o json | jq '.[].name' | tr -d '"' | grep -v "bigbang")
 
-mkdir -p cypress-tests
+mkdir -p test-artifacts
 
 ERRORS=0
 
@@ -45,17 +45,18 @@ ERRORS=0
 for hr in $installed_helmreleases; do
   echo "Running helm tests for ${hr}..."
   test_result=$(helm test $hr -n bigbang) && export EXIT_CODE=$? || export EXIT_CODE=$?
-  # Trim off the notes because they mess with our yq magic
   test_result=$(echo "${test_result}" | sed '/NOTES/Q')
-  # This is mostly useless info about the run, as long as we save it off here we don't need to print it.
-  # echo "$test_result"
   namespace=$(echo "$test_result" | yq eval '."NAMESPACE"' -)
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
+    # Grab logs to save for the artifacts
+    mkdir -p test-artifacts/${hr}
+    kubectl logs --tail=-1 -n ${namespace} -l helm-test=enabled > test-artifacts/${hr}/logs
     # Since logs are cluttery, only output when failed
     if [[ ${EXIT_CODE} -ne 0 ]]; then
+      echo "One or more tests failed for ${hr}"
       ERRORS=$((ERRORS + 1))
-      echo "***** Helm Test Logs for Helmrelease ${hr} *****"
+      echo "***** Logs for failed test(s) for ${hr} *****"
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
         # Only output failed pod logs, not all test pods
         if [[ $(kubectl get pod -n ${namespace} ${pod} -o jsonpath='{.status.phase}' 2>/dev/null | xargs) == "Failed" ]]; then
@@ -63,28 +64,32 @@ for hr in $installed_helmreleases; do
           kubectl logs --tail=-1 -n ${namespace} ${pod}
         fi
       done
-      echo "***** End Helm Test Logs for Helmrelease ${hr} *****"
+      echo "***** End logs for failed test(s) for ${hr} *****"
+    else
+      echo "All tests sucessful for ${hr}"
     fi
     # Always save off the artifacts if they exist
     if kubectl get configmap -n ${namespace} cypress-screenshots &>/dev/null; then
-      mkdir -p cypress-tests/${hr}/tests/cypress
+      mkdir -p test-artifacts/${hr}/cypress
       kubectl get configmap -n ${namespace} cypress-screenshots -o jsonpath='{.data.cypress-screenshots\.tar\.gz\.b64}' > cypress-screenshots.tar.gz.b64
       cat cypress-screenshots.tar.gz.b64 | base64 -d > cypress-screenshots.tar.gz
-      tar -zxf cypress-screenshots.tar.gz --strip-components=2 -C cypress-tests/${hr}/tests/cypress
+      tar -zxf cypress-screenshots.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
       rm -rf cypress-screenshots.tar.gz.b64 cypress-screenshots.tar.gz
     fi
     if kubectl get configmap -n ${namespace} cypress-videos &>/dev/null; then
-      mkdir -p cypress-tests/${hr}/tests/cypress
+      mkdir -p test-artifacts/${hr}/cypress
       kubectl get configmap -n ${namespace} cypress-videos -o jsonpath='{.data.cypress-videos\.tar\.gz\.b64}' > cypress-videos.tar.gz.b64
       cat cypress-videos.tar.gz.b64 | base64 -d > cypress-videos.tar.gz
-      tar -zxf cypress-videos.tar.gz --strip-components=2 -C cypress-tests/${hr}/tests/cypress
+      tar -zxf cypress-videos.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
       rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
     fi
+  else
+    echo "No tests found for ${hr}"
   fi
 done
 
 if [ $ERRORS -gt 0 ]; then
-  echo "Encountered $ERRORS errors while running tests. See output logs above and artifacts in the job."
+  echo "Encountered $ERRORS package(s) with errors while running tests. See output logs for failed test(s) above and artifacts in the job."
   exit 123
 else
   echo "All helm tests run successfully."

@@ -117,8 +117,7 @@ clean install:
   artifacts:
     paths:
       - images.txt
-      - "cypress-tests/*/tests/cypress/screenshots"
-      - "cypress-tests/*/tests/cypress/videos"
+      - "test-artifacts/"
     expire_in: 3 days
     when: always
 
@@ -152,8 +151,7 @@ upgrade:
     - *test_bigbang
   artifacts:
     paths:
-      - "cypress-tests/*/tests/cypress/screenshots"
-      - "cypress-tests/*/tests/cypress/videos"
+      - "test-artifacts/"
     expire_in: 3 days
     when: always
 
