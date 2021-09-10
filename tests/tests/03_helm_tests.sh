@@ -58,8 +58,11 @@ for hr in $installed_helmreleases; do
       echo "***** Helm Test Logs for Helmrelease ${hr} *****"
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
         if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
-          echo -e "---\nLogs for ${pod}:\n---"
-          kubectl logs --tail=-1 -n ${namespace} ${pod}
+          # Only output failed pod logs, not all test pods
+          if [[ $(kubectl get pod -n ${namespace} ${pod} -o jsonpath='{.status.phase}' 2>/dev/null | xargs) == "Failed" ]]; then
+            echo -e "---\nLogs for ${pod}:\n---"
+            kubectl logs --tail=-1 -n ${namespace} ${pod}
+          fi
         fi
       done
       echo "***** End Helm Test Logs for Helmrelease ${hr} *****"
