@@ -1,5 +1,5 @@
 {{- if or .Values.gatekeeper.enabled .Values.clusterAuditor.enabled }}
-{{- include "values-secret" (dict "root" $ "package" .Values.gatekeeper "name" "gatekeeper" "defaults" (include "bigbang.defaults.gatekeeper" .)) }}
+{{- include "values-secret" (dict "root" $ "package" (dict "values" (fromYaml (include "bigbang.overlays.gatekeeper" .))) "name" "gatekeeper" "defaults" (include "bigbang.defaults.gatekeeper" .)) }}
 {{- end }}
 
 {{- define "bigbang.defaults.gatekeeper" -}}
@@ -34,16 +34,36 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
         - mattermost/init-check-database
       {{- end }}
 
-  {{- if or .Values.monitoring.enabled .Values.fluentbit.enabled }}
+  {{- if or .Values.monitoring.enabled (or .Values.fluentbit.enabled .Values.twistlock.enabled) }}
   allowedHostFilesystem:
-    {{- if .Values.fluentbit.enabled }}
+    {{- if .Values.monitoring.enabled }}
+    match:
+      excludedNamespaces:
+        # Prometheus-node-exporter needs access to host to get node metrics
+        - monitoring
+    {{- end }}
+    {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled }}
     parameters:
       excludedResources:
+        {{- if .Values.fluentbit.enabled }}
         # Fluentbit pods need access to host to get log files
         - logging/logging-fluent-bit-.*
-        # Prometheus-node-exporter needs access to host to get node metrics
-        - monitoring/.*
+        {{- end }}
+        {{- if .Values.twistlock.enabled }}
+        - twistlock/twistlock-defender-ds-.*
+        {{- end }}
     {{- end }}
+  {{- end }}
+
+  {{- if .Values.twistlock.enabled }}
+  hostNetworking:
+    parameters:
+      excludedResources:
+        - twistlock/twistlock-defender-ds-.*
+  noHostNamespace:
+    parameters:
+      excludedResources:
+        - twistlock/twistlock-defender-ds-.*
   {{- end }}
 
   {{- if .Values.addons.mattermost.enabled }}
@@ -74,12 +94,19 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
         - istio-operator/.*
         - istio-system/.*
 
-  {{- if .Values.monitoring.enabled }}
+  {{- if or .Values.monitoring.enabled .Values.twistlock.enabled }}
   restrictedTaint:
+    {{- if .Values.monitoring.enabled }}
+    match:
+      excludedNamespaces:
+        # Prometheus Node Exporter needs to be able to run on all nodes, regardless of taint, to gather node metrics
+        - monitoring
+    {{- end }}
+    {{- if .Values.twistlock.enabled }}
     parameters:
       excludedResources:
-        # Prometheus Node Exporter needs to be able to run on all nodes, regardless of taint, to gather node metrics
-        - monitoring/.*
+        - twistlock/twistlock-defender-ds-.*
+    {{- end }}
   {{- end }}
 
   {{- if .Values.logging.enabled }}
@@ -111,3 +138,31 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
        {{- end }}
   {{- end }}
 {{- end -}}
+
+
+{{- /* This function merges defaults in lists from above into overlays */ -}}
+{{- /* The end user will not have to replicate exclusions/repos from above when providing an overlay */ -}}
+{{- /* There is a hidden flag `skipOverlayMerge` that can be added to any constraint to ignore the defaults */ -}}
+{{- define "bigbang.overlays.gatekeeper" }}
+  {{- $defaults := fromYaml (include "bigbang.defaults.gatekeeper" .) }}
+  {{- $overlays := dig "values" dict .Values.gatekeeper }}
+  {{- range $constraint, $default := $defaults.violations }}
+    {{- $overlay := (dig "violations" $constraint dict $overlays) }}
+    # Only continue if an overlay matches a default constriant and hidden "skipOverlayMerge" is not set
+    {{- if and $overlay (not $overlay.skipOverlayMerge) }}
+      # Add any default excludedNamespaces to overlay
+      {{- if and (dig "match" "excludedNamespaces" list $default) (dig "match" "excludedNamespaces" list $overlay) }}
+         {{ $_ := set $overlay.match "excludedNamespaces" (concat $default.match.excludedNamespaces $overlay.match.excludedNamespaces) }}
+      {{- end }}
+      # Add any default excludedResources to overlay
+      {{- if and (dig "parameters" "excludedResources" list $default) (dig "parameters" "excludedResources" list $overlay) }}
+         {{ $_ := set $overlay.parameters "excludedResources" (concat $default.parameters.excludedResources $overlay.parameters.excludedResources) }}
+      {{- end }}
+      # Special case to add registries for allowed registries to overlay
+      {{- if and (dig "parameters" "repos" list $default) (dig "parameters" "repos" list $overlay) }}
+         {{ $_ := set $overlay.parameters "repos" (concat $default.parameters.repos $overlay.parameters.repos) }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{ toYaml $overlays }}
+{{- end }}
