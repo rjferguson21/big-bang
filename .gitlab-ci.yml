@@ -79,7 +79,6 @@ pre vars:
     - base/flux/*
 
 .deploy_bigbang: &deploy_bigbang
-  - echo -e "\e[0Ksection_start:`date +%s`:Deploy Big Bang\r\e[0KDeploy Big Bang"
   - |
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
@@ -87,7 +86,6 @@ pre vars:
       echo "Executing ${deploy_script}..."
       ./${deploy_script}
     done
-   - echo -e "\e[0Ksection_end:`date +%s`:Deploy Big Bang\r\e[0K"
 
 .test_bigbang: &test_bigbang
   - |
