@@ -61,7 +61,7 @@ for hr in $installed_helmreleases; do
           kubectl logs --tail=-1 -n ${namespace} ${pod}
         fi
       done
-      echo "***** End logs for failed test(s) for ${hr} *****"
+      echo "***** End logs for ${hr} *****"
     else
       echo "✅ All tests sucessful for ${hr}"
     fi
@@ -83,6 +83,7 @@ for hr in $installed_helmreleases; do
       cat cypress-screenshots.tar.gz.b64 | base64 -d > cypress-screenshots.tar.gz
       tar -zxf cypress-screenshots.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
       rm -rf cypress-screenshots.tar.gz.b64 cypress-screenshots.tar.gz
+      kubectl delete configmap -n ${namespace} cypress-screenshots &>/dev/null
     fi
     if kubectl get configmap -n ${namespace} cypress-videos &>/dev/null; then
       mkdir -p test-artifacts/${hr}/cypress
@@ -90,10 +91,12 @@ for hr in $installed_helmreleases; do
       cat cypress-videos.tar.gz.b64 | base64 -d > cypress-videos.tar.gz
       tar -zxf cypress-videos.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
       rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
+      kubectl delete configmap -n ${namespace} cypress-videos &>/dev/null
     fi
   else
     echo "😞 No tests found for ${hr}"
   fi
+  echo "Finished running all helm tests."
 done
 
 if [ $ERRORS -gt 0 ]; then
