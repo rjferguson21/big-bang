@@ -120,6 +120,8 @@ clean install:
       - "test-artifacts/"
     expire_in: 3 days
     when: always
+  allow_failure:
+    exit_codes: 123
 
 upgrade:
   stage: smoke tests
@@ -154,6 +156,8 @@ upgrade:
       - "test-artifacts/"
     expire_in: 3 days
     when: always
+  allow_failure:
+    exit_codes: 123
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -274,6 +278,8 @@ aws/rke2/bigbang test:
     - *test_bigbang
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
+  allow_failure:
+    exit_codes: 123
 
 # Uninstall BigBang on RKE2 cluster on AWS
 aws/rke2/bigbang down:
