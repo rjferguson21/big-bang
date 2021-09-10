@@ -36,9 +36,7 @@ kubectl rollout status deployment -n kube-system coredns --timeout=30s
 
 # Gather all HRs we should test
 installed_helmreleases=$(helm list -n bigbang -o json | jq '.[].name' | tr -d '"' | grep -v "bigbang")
-
 mkdir -p test-artifacts
-
 ERRORS=0
 
 # For each HR, if it has helm tests: run them, capture exit code, output logs, and save cypress artifacts
