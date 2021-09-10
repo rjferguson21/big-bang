@@ -121,26 +121,26 @@ function wait_daemonset(){
 function wait_crd(){
   set +e
   yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
-  if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
-    gitrepo=$(yq e ".${package}.git.repo" "chart/values.yaml")
-    version=$(yq e ".${package}.git.tag" "chart/values.yaml")
-    if [[ -z "$version" ]]; then
-      version=$(yq e ".${package}.git.branch" "chart/values.yaml")
+    if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
+      gitrepo=$(yq e ".${package}.git.repo" "chart/values.yaml")
+      version=$(yq e ".${package}.git.tag" "chart/values.yaml")
+      if [[ -z "$version" ]]; then
+        version=$(yq e ".${package}.git.branch" "chart/values.yaml")
+      fi
+      if [[ -z "$version" || "$version" == "null" ]]; then
+        continue
+      fi
+      printf "Checking for tests/wait.sh in %s:%s... " ${package} ${version}
+      if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1>${package}.wait.sh 2>/dev/null; then
+        printf "found, running\n"
+        . ./${package}.wait.sh
+        wait_project
+      else
+        printf "not found\n"
+      fi
     fi
-    if [[ -z "$version" || "$version" == "null" ]]; then
-      continue
-    fi
-    printf "Checking for tests/wait.sh in %s:%s... " ${package} ${version}
-    if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1>${package}.wait.sh 2>/dev/null; then
-      printf "found, running\n"
-      . ./${package}.wait.sh
-      wait_project
-    else
-      printf "not found\n"
-    fi
-  fi
+  done
   set -e
-done
 }
 
 
