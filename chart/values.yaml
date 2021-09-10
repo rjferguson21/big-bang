@@ -282,7 +282,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.5.2-bb.0"
+    tag: "3.5.2-bb.1"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
@@ -307,7 +307,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.20-bb.0"
+    tag: "0.1.21-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -361,7 +361,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.16.5-bb.0"
+    tag: "0.16.6-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -468,7 +468,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.6"
+      tag: "3.6.8-bb.7"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -585,7 +585,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.12.9-bb.3"
+      tag: "4.12.9-bb.5"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -736,7 +736,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.2.6-bb.17"
+      tag: "9.6.3-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -1023,7 +1023,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.23.5-bb.1"
+      tag: "2.23.6-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
