@@ -51,7 +51,7 @@ for hr in $installed_helmreleases; do
   if [ ! $test_suite == "None" ]; then
     # Since logs are cluttery, only output when failed
     if [[ ${EXIT_CODE} -ne 0 ]]; then
-      echo "  One or more tests failed for ${hr}"
+      echo "❌ One or more tests failed for ${hr}"
       ERRORS=$((ERRORS + 1))
       echo "***** Logs for failed test(s) for ${hr} *****"
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
@@ -63,7 +63,7 @@ for hr in $installed_helmreleases; do
       done
       echo "***** End logs for failed test(s) for ${hr} *****"
     else
-      echo "  All tests sucessful for ${hr}"
+      echo "✅ All tests sucessful for ${hr}"
     fi
 
     # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
@@ -92,13 +92,13 @@ for hr in $installed_helmreleases; do
       rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
     fi
   else
-    echo "  No tests found for ${hr}"
+    echo "😞 No tests found for ${hr}"
   fi
 done
 
 if [ $ERRORS -gt 0 ]; then
-  echo "Encountered $ERRORS package(s) with errors while running tests. See output logs for failed test(s) above and artifacts in the job."
+  echo "❌ Encountered $ERRORS package(s) with errors while running tests. See output logs for failed test(s) above and artifacts in the job."
   exit 123
 else
-  echo "All helm tests run successfully."
+  echo "✅ All helm tests run successfully."
 fi
