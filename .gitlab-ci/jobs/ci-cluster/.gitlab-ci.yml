@@ -27,14 +27,16 @@
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
     DOCKER_DRIVER: overlay2
   before_script:
-    - echo -e "\\e[0Ksection_start:`date +%s`:create_k3d_cluster[collapsed=true]\r\e[0KK3D Cluster Creation"
+    #- echo -e "\\e[0Ksection_start:`date +%s`:create_k3d_cluster[collapsed=true]\r\e[0KK3D Cluster Creation"
+    - echo -e "section_start:`date +%s`:create_k3d_cluster\r\e[0Kcreate_k3d_cluster"
     # Give docker-in-docker time to come alive
     - i=0; while [ "$i" -lt 12 ]; do docker info &>/dev/null && break; sleep 5; i=$(( i + 1 )) ; done
     - docker network create ${CI_JOB_ID} --driver=bridge -o "com.docker.network.driver.mtu"="1450"
     - k3d cluster create ${CI_JOB_ID} --config tests/ci/k3d/config.yaml --network ${CI_JOB_ID}
     - until kubectl get deployment coredns -n kube-system -o go-template='{{.status.availableReplicas}}' | grep -v -e '<no value>'; do sleep 1s; done
     - kubectl get all -A
-    - echo -e "\\e[0Ksection_end:`date +%s`:create_k3d_cluster\r\e[0K"
+    #- echo -e "\\e[0Ksection_end:`date +%s`:create_k3d_cluster\r\e[0K"
+    - echo -e "section_end:`date +%s`:create_k3d_cluster\r\e[0K"
   after_script:
     - kubectl get all -A
     - kubectl get gitrepository,helmrelease,kustomizations -A
