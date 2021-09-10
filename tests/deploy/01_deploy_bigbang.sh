@@ -4,8 +4,6 @@ set -ex
 
 CI_VALUES_FILE="tests/ci/k3d/values.yaml"
 
-echo -e "\e[0Ksection_start:`date +%s`:Deploy Big Bang\r\e[0KDeploy Big Bang"
-
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
   echo "all-packages label enabled, or on default branch or tag, enabling all addons"
   yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
@@ -70,5 +68,3 @@ else
     cat tests/ci/shared-secrets.yaml | sed 's|branch: master|tag: '"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
   fi
 fi
-
-echo -e "\e[0Ksection_end:`date +%s`:Deploy Big Bang\r\e[0K"
