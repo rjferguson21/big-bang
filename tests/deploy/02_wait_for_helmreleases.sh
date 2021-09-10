@@ -119,18 +119,18 @@ function wait_daemonset(){
 
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
-set +e
-yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
+  set +e
+  yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
   if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
-    gitrepo=`yq e ".${package}.git.repo" "chart/values.yaml"`
-    version=`yq e ".${package}.git.tag" "chart/values.yaml"`
+    gitrepo=$(yq e ".${package}.git.repo" "chart/values.yaml")
+    version=$(yq e ".${package}.git.tag" "chart/values.yaml")
     if [[ -z "$version" ]]; then
-      version=`yq e ".${package}.git.branch" "chart/values.yaml"`
+      version=$(yq e ".${package}.git.branch" "chart/values.yaml")
     fi
     if [[ -z "$version" || "$version" == "null" ]]; then
       continue
     fi
-    printf "Checking for tests/wait.sh in %s/-/raw/%s/tests/wait.sh: " ${gitrepo%.git} ${version}
+    printf "Checking for tests/wait.sh in %s:%s... " ${package} ${version}
     if curl -f "${gitrepo%.git}/-/raw/${version}/tests/wait.sh?inline=false" 1>${package}.wait.sh 2>/dev/null; then
       printf "found, running\n"
       . ./${package}.wait.sh
@@ -139,7 +139,7 @@ yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r
       printf "not found\n"
     fi
   fi
-set -e
+  set -e
 done
 }
 
