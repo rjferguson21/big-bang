@@ -60,6 +60,7 @@ for hr in $installed_helmreleases; do
           kubectl logs --tail=-1 -n ${namespace} ${pod}
         fi
       done
+      echo "---"
     else
       echo "✅ All tests sucessful for ${hr}"
     fi
@@ -94,8 +95,9 @@ for hr in $installed_helmreleases; do
   else
     echo "😞 No tests found for ${hr}"
   fi
-  echo "Finished running all helm tests."
 done
+
+echo "Finished running all helm tests."
 
 if [ $ERRORS -gt 0 ]; then
   echo "❌ Encountered $ERRORS package(s) with errors while running tests. See output logs for failed test(s) above and artifacts in the job."
