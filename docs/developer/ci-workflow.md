@@ -125,7 +125,7 @@ It is a hard requriement at this stage that every cluster outputs an admin scope
 
 Given the kubeconfig created in the previous stage, BigBang is installed on the cluster using the same installation process used in the smoke tests.
 
-Like any BigBang installation, several cluster requirements (TODO: doc these) must be met before BigBang is installed, and it is up to the vendor to ensure those requirements are met.
+Like any BigBang installation, several cluster requirements (see [Pre-requisites](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tree/master/docs/guides/prerequisites)) must be met before BigBang is installed, and it is up to the vendor to ensure those requirements are met.
 
 #### Big Bang Tests
 
