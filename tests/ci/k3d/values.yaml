@@ -391,7 +391,7 @@ addons:
                   name: gitlab-gitlab-initial-root-password
                   key: password
           envs:
-            cypress_baseUrl: "https://gitlab.bigbang.dev"      
+            cypress_baseUrl: "https://gitlab.bigbang.dev"
             cypress_gitlab_email: "gitlab@bigbang.dev"
             cypress_gitlab_user: "gitlab_user"
             cypress_gitlab_password: "gitlab_pass"
@@ -566,9 +566,13 @@ addons:
           artifacts: true
           envs:
             cypress_url: "https://sonarqube.bigbang.dev"
+            cypress_url_setup: "https://sonarqube.bigbang.dev/setup"
             cypress_user: "admin"
-            cypress_password: "admin"
-            cypress_newpassword: "new_admin_password"
+            cypress_password: "new_admin_password"
+      account:
+        adminPassword: new_admin_password
+        currentAdminPassword: admin
+      curlContainerImage: registry1.dso.mil/ironbank/big-bang/base:8.4
 
   minioOperator:
     enabled: false
@@ -607,8 +611,8 @@ addons:
           image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-03-23T05-46-11Z
           envs:
             # API is not exposed via virtual service
-            MINIO_PORT: '80'
-            MINIO_HOST: 'minio'
+            MINIO_PORT: '{{ include "minio.servicePort" . | trim }}'
+            MINIO_HOST: '{{ include "minio.serviceName" . | trim }}'
           secretEnvs:
             - name: SECRET_KEY
               valueFrom:
@@ -719,6 +723,9 @@ addons:
             aws_access_key_id = minio
             aws_secret_access_key = minio123
       bbtests:
+        # TODO: Velero test is messy and times out running in BB CI
+        # https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/issues/9
+        enabled: false
         scripts:
           image: registry1.dso.mil/ironbank/opensource/velero/velero:v1.6.0
           additionalVolumes:
