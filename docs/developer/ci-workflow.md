@@ -115,9 +115,13 @@ Like any BigBang installation, several cluster requirements (TODO: doc these) mu
 
 ##### Big Bang Tests
 
-Assuming BigBang has installed successfully, additional tests residing within the `./tests` folder of this repository are run against the deployed cluster.  These tests range from automated UI testing, to internal kubernetes resource validation and verification.
+Assuming BigBang has installed successfully, additional tests residing within the `./tests` folder of this repository are run against the deployed cluster.
 
-TODO: Document these tests more once they are flushed out.
+Currently there are 3 test scripts that test the following:
+
+- wait for resources to be ready, ensures everything goes to running at a kubernetes level
+- curl VirtualService endpoints, to validate istio works + the UIs are up
+- fetch a list of non-IB images (this test never fails but provides some contextual info)
 
 #### Teardown
 
