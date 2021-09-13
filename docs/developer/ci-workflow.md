@@ -6,6 +6,7 @@ The following is meant to serve as an overview of the pipeline stages required t
 
 This pipeline to triggered by following for individual bigbang packages: 
 - merge request events
+  -  Note: Currently upgrade step only runs during MR events
 - manual tag events
 - commits to default branch
 
@@ -30,6 +31,12 @@ This stage verifies several easy to check assumptions such as:
 If required, the upgrade step can skipped when MR title starts with 'SKIP UPGRADE'
 
 ### BigBang Pipeline Stages
+
+This pipeline to triggered by following for individual bigbang packages: 
+- merge request events
+  -  Note: Currently upgrade step only runs during MR events
+- manual tag events
+- commits to default branch
 
 The pipeline is split into several stages:
 
