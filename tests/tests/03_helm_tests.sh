@@ -95,8 +95,6 @@ for hr in $installed_helmreleases; do
   fi
 done
 
-curl http://www.africau.edu/images/default/sample.pdf > test-artifacts/sample.pdf
-
 echo "Finished running all helm tests."
 
 if [ $ERRORS -gt 0 ]; then
