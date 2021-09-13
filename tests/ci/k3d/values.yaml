@@ -606,8 +606,9 @@ addons:
         scripts:
           image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-03-23T05-46-11Z
           envs:
-            MINIO_PORT: '443'
-            MINIO_HOST: 'https://minio.bigbang.dev'
+            # API is not exposed via virtual service
+            MINIO_PORT: '80'
+            MINIO_HOST: 'minio'
           secretEnvs:
             - name: SECRET_KEY
               valueFrom:
