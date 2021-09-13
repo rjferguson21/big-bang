@@ -13,7 +13,7 @@ This pipeline to triggered by following for individual bigbang packages:
 
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 
-### Package Tests
+#### Package Tests
 This stage verifies several easy to check assumptions such as:
 
 - does package successfully install
@@ -64,7 +64,7 @@ This stage is ran on every merge request event, and is a requirement for merging
 Ultimately, BigBang is designed to deploy production ready workloads on real infrastructure.  While local and ephemeral clusters are excellent for fast feedback during development, changes must ultimately be tested on real clusters on real infrastructure.
 
 As part of BigBang's [charter](https://repo1.dso.mil/platform-one/big-bang/charter), it is expected work on any CNCF conformant kubernetes cluster, on multiple clouds, and on premise environments.  By very definition, this means infrastructure testing is _slow_.  To strive for a pipeline with a happy medium of providing fast feedback while still exhaustively testing against environments that closely mirror production, __infrastructure testing only occurs on manual actions on merge request commits.__
-This requires adding `test ci` tag to your MR. In addition, infrastructure testing pipeline is run nightly on a schedule.
+This requires adding `test-ci::infra` label to your MR. In addition, infrastructure testing pipeline is run nightly on a schedule.
 
 When you are comfortable your branch is ready to be merged, opening up an merge request will trigger the creation of a suite of infrastructure testing jobs which will require a manual action from a project maintainer (assuming previous linting and smoke tests have passed).  Once the commit(s) are validated against the infrastructure tests, your changes are ready to be merged!
 
