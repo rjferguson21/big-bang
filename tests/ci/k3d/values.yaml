@@ -166,9 +166,10 @@ gatekeeper:
           excludedNamespaces:
           # Allows load balancer containers to map ports for k3d
           - istio-system
-    # TODO: I think this test won't work as is, disable for now? Refactor test?
     bbtests:
-      enabled: true
+      # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
+      # https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/issues/133
+      enabled: false
       scripts:
         image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
         additionalVolumeMounts:
@@ -354,7 +355,8 @@ addons:
           persistence:
             size: 256Mi      
       bbtests:
-        # https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47 needed before enabling
+        # TODO: Test needs to be adjusted to allow for dynamic hostname provisioning in the tests via values
+        # https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47
         enabled: false
         cypress:
           artifacts: true
