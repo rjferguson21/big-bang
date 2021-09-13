@@ -13,6 +13,13 @@ This pipeline to triggered by following for individual bigbang packages:
 
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 
+#### Configuration Validation
+
+This stage runs a `helm conftest` which is a plugin for testing helm charts with Open Policy Agent. It provides the following checks:
+
+- confirms that the helm chart is valid (should fail similar to how a helm lint fails if there is bad yaml, etc)
+- runs the helm chart against a set of rego policies - currently these tests will only raise warnings on "insecure" things and will allow pipeline to proceed.
+
 #### Package Tests
 This stage verifies several easy to check assumptions such as:
 
