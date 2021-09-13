@@ -378,6 +378,8 @@ addons:
           memory: 64Mi
           cpu: 50m
         limits: {}
+      runners:
+        protected: false
       bbtests:
         enabled: true
         cypress:
