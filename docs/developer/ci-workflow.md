@@ -97,13 +97,13 @@ More information on the full set of infrastructure tests are below:
 
 For each cloud, a BigBang owned network will be created that conform with the appropriate set of tests about to be ran.  For example, to validate that Big Bang deploys in a connected environment on AWS, a VPC, subnets, route tables, etc... are created, and the outputs are made available through terraform's remote `data` source.
 
+At this time the infrastructue testing pipeline is only utilizing internet-connect AWS govcloud.
+
 ##### Cluster(s) Creation
 
-Several types of clusters are created within the previously provisioned network(s), and follow the vendors recommended iac approach.
-
-For example, an `rke2` cluster is created that leverages the upstream [terraform modules](https://repo1.dso.mil/platform-one/distros/rancher-federal/rke2/rke2-aws-terraform), and an `eks` cluster is created with the upstream [terraform modules](https://docs.microsoft.com/en-us/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks).
-
 The infrastructure pipeline is currently setup to standup an `rke2` cluster by default.
+
+An `rke2` cluster is created that leverages the upstream [terraform modules](https://repo1.dso.mil/platform-one/distros/rancher-federal/rke2/rke2-aws-terraform)
 
 It is a hard requriement at this stage that every cluster outputs an admin scoped `kubeconfig` as a gitlab ci artifact.  This artifact will be leveraged in the following stages for interacting with the created cluster.
 
@@ -127,4 +127,4 @@ Combined with terraform's declarative remote state, the "always on" teardown ens
 
 Within the teardown process, the commit scoped terraform workspace is also deleted to ensure the remote state remains clean.
 
-For example, if an EKS cluster fails to provision, a full teardown of BigBang, EKS, and the network will be run, even though BigBang was never deployed.  This will result in 2 failing jobs (EKS up and BigBang down), but will ensure that no infrastructure resources become orphaned.
+For example, if an RKE2 cluster fails to provision, a full teardown of BigBang, RKE2, and the network will be run, even though BigBang was never deployed.  This will result in 2 failing jobs (RKE2 up and BigBang down), but will ensure that no infrastructure resources become orphaned.
