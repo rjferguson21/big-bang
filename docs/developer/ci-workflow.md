@@ -65,6 +65,7 @@ This stage will fail if:
 - deployments status condition != ready
 - jobs status condition != complete
 - statefulsets/daemonsets not 100% ready (ex. 0/1)
+- any virtual service endpoints are not accessible
 
 This stage also serves as a guide for local development, and care is taken to ensure all pipeline actions within this stage are repeatable locally.
 
