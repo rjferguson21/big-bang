@@ -1,7 +1,21 @@
-## Merge requests process
+## Gitlab-ci Workflow
 
-The following is meant to serve as an overview of the pipeline stages required to get a commit merged. There are both package pipelines and bigbang pipelines
+The following is meant to serve as an overview of the pipeline stages required to get a commit merged. There are package, bigbang, and infrastructure pipelines.
 
+### Table of Contents:
+
+- [Generic Package Pipeline Stages](#generic-package-pipeline-stages)
+  - [Configuration Validation](#configuration-validation)
+  - [Package Tests](#package-tests)
+- [BigBang Pipeline Stages](#bigbang-pipeline-stages)
+  - [Pre Vars](#pre-vars)
+  - [Smoke Tests](#smoke-tests)
+- [Infrastructure Testing Pipeline Stages](#infrastructure-testing-pipeline-stages)
+  - [Network Creation](#network-creation)
+  - [Cluster Creation](#cluster-creation) 
+  - [Big Bang Installation](#big-bang-installation)
+  - [Big Bang Tests](#big-bang-tests)
+  - [Teardown](#teardown)
 ### Generic Package Pipeline Stages
 
 This pipeline to triggered by following for individual bigbang packages: 
@@ -46,7 +60,7 @@ The pipeline is split into several stages:
 #### Pre Vars
 
 This stage currently has one purpose at this point which is to generate a TF var.
-#### Smoke Testing
+#### Smoke Tests
 
 For fast feedback testing, an ephemeral in cluster pipeline is created using [`k3d`](https://k3d.io) that lives for the lifetime of the gitlab ci job.  Within that cluster, BigBang is deployed, and an initial set of smoke tests are performed against the deployment to ensure basic conformance.
 
@@ -71,7 +85,7 @@ This stage also serves as a guide for local development, and care is taken to en
 
 This stage is ran on every merge request event, and is a requirement for merging.
 
-#### Infrastructure Testing
+### Infrastructure Testing Pipeline Stages
 
 Ultimately, BigBang is designed to deploy production ready workloads on real infrastructure.  While local and ephemeral clusters are excellent for fast feedback during development, changes must ultimately be tested on real clusters on real infrastructure.
 
@@ -93,13 +107,13 @@ More information on the full set of infrastructure tests are below:
 ![Infra Pipeline](imgs/Infra_test_pipelines.png)
 
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
-##### Network Creation
+#### Network Creation
 
 For each cloud, a BigBang owned network will be created that conform with the appropriate set of tests about to be ran.  For example, to validate that Big Bang deploys in a connected environment on AWS, a VPC, subnets, route tables, etc... are created, and the outputs are made available through terraform's remote `data` source.
 
 At this time the infrastructue testing pipeline is only utilizing internet-connect AWS govcloud.
 
-##### Cluster(s) Creation
+#### Cluster Creation
 
 The infrastructure pipeline is currently setup to standup an `rke2` cluster by default.
 
@@ -107,13 +121,13 @@ An `rke2` cluster is created that leverages the upstream [terraform modules](htt
 
 It is a hard requriement at this stage that every cluster outputs an admin scoped `kubeconfig` as a gitlab ci artifact.  This artifact will be leveraged in the following stages for interacting with the created cluster.
 
-##### Big Bang Installation
+#### Big Bang Installation
 
 Given the kubeconfig created in the previous stage, BigBang is installed on the cluster using the same installation process used in the smoke tests.
 
 Like any BigBang installation, several cluster requirements (TODO: doc these) must be met before BigBang is installed, and it is up to the vendor to ensure those requirements are met.
 
-##### Big Bang Tests
+#### Big Bang Tests
 
 Assuming BigBang has installed successfully, additional tests residing within the `./tests` folder of this repository are run against the deployed cluster.
 

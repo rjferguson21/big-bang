@@ -19,15 +19,6 @@ Table of Contents:
   - [DNS](#dns)
   - [Secrets & Certificates](#secrets--certificates)
   - [Merge requests process](#merge-requests-process)
-    - [Pipeline Stages](#pipeline-stages)
-      - [Linting](#linting)
-      - [Smoke Testing](#smoke-testing)
-      - [Infrastructure Testing](#infrastructure-testing)
-        - [Network Creation](#network-creation)
-        - [Cluster(s) Creation](#clusters-creation)
-        - [Big Bang Installation](#big-bang-installation)
-        - [Big Bang Tests](#big-bang-tests)
-      - [Teardown](#teardown)
 
 ## Developers Guide 
 
@@ -98,7 +89,7 @@ Follow instructions in the [Big Bang encryption guide](docs/3_encryption.md) for
 
 ## Merge requests process
 
-The merge request process is meant to serve as an overview of the pipeline stages required to get a commit merged.
+The merge request process is provided as an overview of the pipeline stages required to get a commit merged.
 
 Follow instruction in [CI-Workflow](docs/developer/ci-workflow.md) for specific details on the pipeline stages.
 
