@@ -36,12 +36,9 @@ The pipeline is split into several stages:
 ![BB Pipeline](imgs/BB_pipelines.png)
 
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
-#### Linting
+#### Pre Vars
 
-Several linting rules are first run to ensure yaml standards are met within the primary `./charts` folder.
-
-This stage is ran on every commit, and is a requirement for merging.
-
+This stage currently has one purpose at this point which is to generate a TF var.
 #### Smoke Testing
 
 For fast feedback testing, an ephemeral in cluster pipeline is created using [`k3d`](https://k3d.io) that lives for the lifetime of the gitlab ci job.  Within that cluster, BigBang is deployed, and an initial set of smoke tests are performed against the deployment to ensure basic conformance.
