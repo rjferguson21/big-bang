@@ -79,7 +79,6 @@ pre vars:
     - base/flux/*
 
 .deploy_bigbang: &deploy_bigbang
-  - *ci_collapse_start
   - |
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
@@ -87,7 +86,6 @@ pre vars:
       echo "Executing ${deploy_script}..."
       ./${deploy_script}
     done
-  - *ci_collapse_end
 
 .test_bigbang: &test_bigbang
   - |
@@ -109,8 +107,12 @@ clean install:
       when: never
     - *chart_changes
   script:
+    - *.ci_collapse_start
     - *deploy_bigbang
+    - *.ci_collapse_end
+    - *.ci_collapse_start
     - *test_bigbang
+    - *.ci_collapse_end
     # Fetch list of all images ran (retry crictl up to 6x)
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
     - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
