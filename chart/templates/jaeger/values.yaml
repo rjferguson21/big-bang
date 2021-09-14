@@ -24,12 +24,14 @@ elasticsearch:
 {{- if .Values.jaeger.sso.enabled }}
 jaeger:
   spec:
+    {{- $authserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+    {{- $authserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
     allInOne:
       labels:
-        protect: keycloak
+        {{ $authserviceKey }}: {{ $authserviceValue }}
     query:
       labels:
-        protect: keycloak
+        {{ $authserviceKey }}: {{ $authserviceValue }}
 {{- end }}
 openshift:
   enabled: {{ .Values.openshift }}
