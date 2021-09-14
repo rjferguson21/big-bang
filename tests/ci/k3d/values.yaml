@@ -248,7 +248,9 @@ addons:
         secret:
           argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
       bbtests:
-        enabled: true
+        # TODO: Disabled pending resolution of some "timing?" issues
+        # https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/issues/17
+        enabled: false
         cypress:
           artifacts: true
           envs:
@@ -679,7 +681,9 @@ addons:
             cpu: 100m
             memory: 1500Mi
       bbtests:
-        enabled: true
+        # TODO: Disabled pending resolution of "timing?" issues
+        # https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus/-/issues/9
+        enabled: false
         cypress:
           artifacts: true
           envs:
