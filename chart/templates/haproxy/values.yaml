@@ -11,10 +11,10 @@ domain: {{ $domainName }}
 istio:
   gateway: {{ default "public" .Values.addons.haproxy.ingress.gateway }}
 
-{{- $authserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
-{{- $authserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+{{- $haproxyAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+{{- $haproxyAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
 podLabels:
-  {{ $authserviceKey }}: {{ $authserviceValue }}
+  {{ $haproxyAuthserviceKey }}: {{ $haproxyAuthserviceValue }}
 config: |
   global
     maxconn 1024
