@@ -648,6 +648,11 @@ addons:
         zones:
           servers: 1
         volumesPerServer: 1
+        tenants:
+          pools:
+          - servers: 2
+            volumesPerServer: 2
+            size: 256Mi
       bbtests:
         enabled: true
         cypress:
@@ -657,11 +662,6 @@ addons:
             cypress_mm_email: "test@bigbang.dev"
             cypress_mm_user: "bigbang"
             cypress_mm_password: "Bigbang#123"
-        tenants:
-          pools:
-          - servers: 2
-            volumesPerServer: 2
-            size: 256Mi
 
   nexus:
     enabled: false
