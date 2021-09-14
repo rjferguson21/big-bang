@@ -79,6 +79,7 @@ pre vars:
     - base/flux/*
 
 .deploy_bigbang: &deploy_bigbang
+  - *ci_collapse_start
   - |
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
@@ -86,6 +87,7 @@ pre vars:
       echo "Executing ${deploy_script}..."
       ./${deploy_script}
     done
+  - *ci_collapse_end
 
 .test_bigbang: &test_bigbang
   - |
@@ -107,12 +109,8 @@ clean install:
       when: never
     - *chart_changes
   script:
-    - echo -e "\e[0Ksection_start:`date +%s`:deploy_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *deploy_bigbang
-    - echo -e "\e[0Ksection_end:`date +%s`:deploy_big_bang\r\e[0K"
-    - echo -e "\e[0Ksection_start:`date +%s`:test_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *test_bigbang
-    - echo -e "\e[0Ksection_start:`date +%s`:test_big_bang\r\e[0KDeploy Big Bang"
     # Fetch list of all images ran (retry crictl up to 6x)
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
     - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
@@ -146,21 +144,13 @@ upgrade:
   script:
     - echo "Install Big Bang from ${CI_DEFAULT_BRANCH}"
     - git fetch && git checkout ${CI_DEFAULT_BRANCH}
-    - echo -e "\e[0Ksection_start:`date +%s`:deploy_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *deploy_bigbang
-    - echo -e "\e[0Ksection_end:`date +%s`:deploy_big_bang\r\e[0K"
-    - echo -e "\e[0Ksection_start:`date +%s`:test_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *test_bigbang
-    - echo -e "\e[0Ksection_start:`date +%s`:test_big_bang\r\e[0KDeploy Big Bang"
     - echo "Upgrade Big Bang from ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
     - git reset --hard && git clean -fd
     - git checkout ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
-    - echo -e "\e[0Ksection_start:`date +%s`:upgrade_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *deploy_bigbang
-    - echo -e "\e[0Ksection_end:`date +%s`:upgrade_big_bang\r\e[0K"
-    - echo -e "\e[0Ksection_start:`date +%s`:test_upgrade_big_bang[collapsed=true]\r\e[0KDeploy Big Bang"
     - *test_bigbang
-    - echo -e "\e[0Ksection_start:`date +%s`:test_upgrade_big_bang\r\e[0KDeploy Big Bang"
   artifacts:
     paths:
       - "cypress-tests/*/tests/cypress/screenshots"

@@ -30,3 +30,11 @@ include:
   after_script:
     - cd ${CI_PROJECT_DIR}/${TF_ROOT}
     - terraform workspace select default && terraform workspace delete "${TF_VAR_env}"
+
+.ci_collapse_start:
+  script:
+    - echo -e "\e[0Ksection_start:`date +%s`:'$CI_JOB_STAGE'\r\e[0K'$CI_JOB_STAGE'"
+
+.ci_collapse_end:
+  script:
+    - echo -e "\e[0Ksection_end:`date +%s`:'$CI_JOB_STAGE'\r\e[0K"
