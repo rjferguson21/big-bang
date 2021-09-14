@@ -587,15 +587,15 @@ addons:
       volumesPerServer: 1
       tenants:
         pools:
-        - servers: 2
-          volumesPerServer: 2
+        - servers: 1
+          volumesPerServer: 4
           size: 256Mi
       bbtests:
         enabled: true
         cypress:
           artifacts: true
           envs:
-            cypress_url: 'https://minio.bigbang.dev'
+            cypress_url: 'http://minio.bigbang.dev/login'
           secretEnvs:
             - name: cypress_secretkey
               valueFrom:
@@ -608,11 +608,10 @@ addons:
                   name: "{{ .Values.tenants.secrets.name }}"
                   key: accesskey
         scripts:
-          image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-03-23T05-46-11Z
+          image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-09-02T09-21-27Z
           envs:
-            # API is not exposed via virtual service
-            MINIO_PORT: '{{ include "minio.servicePort" . | trim }}'
-            MINIO_HOST: '{{ include "minio.serviceName" . | trim }}'
+            MINIO_PORT: '80'
+            MINIO_HOST: 'http://minio'
           secretEnvs:
             - name: SECRET_KEY
               valueFrom:
@@ -648,8 +647,8 @@ addons:
         volumesPerServer: 1
         tenants:
           pools:
-          - servers: 2
-            volumesPerServer: 2
+          - servers: 1
+            volumesPerServer: 4
             size: 256Mi
       bbtests:
         enabled: true
