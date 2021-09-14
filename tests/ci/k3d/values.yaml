@@ -587,8 +587,8 @@ addons:
       volumesPerServer: 1
       tenants:
         pools:
-        - servers: 1
-          volumesPerServer: 4
+        - servers: 2
+          volumesPerServer: 2
           size: 256Mi
       bbtests:
         enabled: true
@@ -659,8 +659,8 @@ addons:
             cypress_mm_password: "Bigbang#123"
         tenants:
           pools:
-          - servers: 1
-            volumesPerServer: 4
+          - servers: 2
+            volumesPerServer: 2
             size: 256Mi
 
   nexus:
