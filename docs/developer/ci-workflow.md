@@ -18,7 +18,7 @@ The following is meant to serve as an overview of the pipeline stages required t
   - [Teardown](#teardown)
 ### Generic Package Pipeline Stages
 
-This pipeline to triggered by following for individual bigbang packages: 
+This pipeline is triggered by the following for individual bigbang packages: 
 - merge request events
   -  Note: Currently upgrade step only runs during MR events
 - manual tag events
@@ -46,7 +46,7 @@ If required, the upgrade step can skipped when MR title starts with 'SKIP UPGRAD
 
 ### BigBang Pipeline Stages
 
-This pipeline to triggered by following for individual bigbang packages: 
+This pipeline is triggered by the following for individual bigbang packages: 
 - merge request events
   -  Note: Currently upgrade step only runs during MR events
 - manual tag events
@@ -59,7 +59,7 @@ The pipeline is split into several stages:
 [Link to draw.io diagram file](diagrams/BB_gitlab_ci_diagram.drawio). This diagram file should be modified on draw.io and exported into this repository when the developer / ci workflow changes. It is provided here for ease of use.
 #### Pre Vars
 
-This stage currently has one purpose at this point which is to generate a TF var.
+This stage currently has one purpose at this point which is to generate a terraform var.
 #### Smoke Tests
 
 For fast feedback testing, an ephemeral in cluster pipeline is created using [`k3d`](https://k3d.io) that lives for the lifetime of the gitlab ci job.  Within that cluster, BigBang is deployed, and an initial set of smoke tests are performed against the deployment to ensure basic conformance.
@@ -100,7 +100,7 @@ When you are comfortable your branch is ready to be merged, opening up an merge 
 
 For _most_ of the infrastructure testing, `terraform` is chosen as the IAC tool of choice for infrastructure that BigBang owns, while the cluster creation process follows the vendors recommended installation process.
 
-The infrastructure pipeline is designed to have _no_ human interaction, and are scoped to the lifecycle of the pipeline.  This means a single pipeline is fully responsible for provisioning infrastructure, but just as important, deprovisioning infrastructure, ensuring resources are not orphaned.
+The infrastructure pipeline is designed to have _no_ human interaction, and is scoped to the lifecycle of the pipeline.  This means a single pipeline is fully responsible for provisioning infrastructure, but just as important, deprovisioning infrastructure, ensuring resources are not orphaned.
 
 More information on the full set of infrastructure tests are below:
 
