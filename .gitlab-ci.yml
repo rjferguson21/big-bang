@@ -32,6 +32,7 @@ variables:
   IMAGE_LIST: images.txt
   IMAGE_PKG: images.tar.gz
   REPOS_PKG: repositories.tar.gz
+  VALUES_FILE: chart/values.yaml
 
 .bigbang-dogfood:
   tags:
