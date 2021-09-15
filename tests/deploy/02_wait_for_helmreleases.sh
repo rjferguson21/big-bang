@@ -175,6 +175,9 @@ do
     check_if_hr_exist "$package"
 done
 
+echo "print env..."
+env
+
 echo "Waiting on helm releases..."
 wait_all_hr
 echo "Waiting for custom resources..."
