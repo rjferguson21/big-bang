@@ -9,8 +9,8 @@ rm -rf cypress-tests/
 mkdir -p cypress-tests/
 
 #Cloning core
-yq e '. | keys | .[] | ... comments=""' "tests/ci/k3d/values.yaml" | while IFS= read -r package; do
-  if [[ "$(yq e ".${package}.enabled" "tests/ci/k3d/values.yaml")" == "true" ]]; then
+yq e '. | keys | .[] | ... comments=""' "${CI_VALUES_FILE}" | while IFS= read -r package; do
+  if [[ "$(yq e ".${package}.enabled" "${CI_VALUES_FILE}")" == "true" ]]; then
     #Checking for branch not tag
     if [ "$(yq e ".${package}.git.tag" "${VALUES_FILE}")" != null ]; then
       echo "Cloning ${package} into cypress-tests"
@@ -23,8 +23,8 @@ yq e '. | keys | .[] | ... comments=""' "tests/ci/k3d/values.yaml" | while IFS= 
 done
 
 #Cloning addons
-yq e '.addons | keys | .[] | ... comments=""' "tests/ci/k3d/values.yaml" | while IFS= read -r package; do
-  if [ "$(yq e ".addons.${package}.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
+yq e '.addons | keys | .[] | ... comments=""' "${CI_VALUES_FILE}" | while IFS= read -r package; do
+  if [ "$(yq e ".addons.${package}.enabled" "${CI_VALUES_FILE}")" == "true" ]; then
     #Checking for branch not tag
     if [ "$(yq e ".addons.${package}.git.tag" "${VALUES_FILE}")" != null ]; then
       echo "Cloning ${package} into cypress-tests"
@@ -40,7 +40,7 @@ done
 for dir in cypress-tests/*/
 do
   if [ -f "${dir}tests/cypress.json" ]; then
-    if [ "$(yq e ".addons.keycloak.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
+    if [ "$(yq e ".addons.keycloak.enabled" "${CI_VALUES_FILE}")" == "true" ]; then
       echo "Running cypress tests. Keycloak is enabled. Directory is ${dir}"
       if [ "${dir}" == "cypress-tests/elasticsearch-kibana/" ]; then
         echo "Keycloak is enabled and cypress directory is ${dir}"
