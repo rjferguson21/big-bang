@@ -109,7 +109,6 @@ clean install:
   script:
     - *deploy_bigbang
     - *test_bigbang
-
     # Fetch list of all images ran (retry crictl up to 6x)
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
     - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
