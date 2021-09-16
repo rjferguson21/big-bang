@@ -25,9 +25,10 @@ include:
     - terraform init -input=false
     # Loop to retry terraform workspace creation due to issues locking terraform.state in s3
     - |
+      set -e
       attempt_counter=0
       max_attempts=5
-      until [[ $(terraform workspace select $TF_VAR_env >/dev/null || terraform workspace new $TF_VAR_env >/dev/null; echo $?) -eq 0 ]]; do
+      until [ $(terraform workspace select $TF_VAR_env >/dev/null || terraform workspace new $TF_VAR_env >/dev/null; echo $?) -eq 0 ]; do
         if [ ${attempt_counter} -eq ${max_attempts} ];then
           echo "Error creating workspace"
           exit 1

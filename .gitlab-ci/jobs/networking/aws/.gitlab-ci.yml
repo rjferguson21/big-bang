@@ -15,11 +15,12 @@
   script:
     - *calc_unique_cidr
     - echo "Creating network with cidr range ${TF_VAR_vpc_cidr}"
-    # Loop to retry terraform apply due to issues locking terraform.state in s3
+    # Loop to retry network up terraform apply due to issues locking terraform.state in s3
     - |
+      set -e
       attempt_counter=0
       max_attempts=2
-      until [[ $(terraform apply -auto-approve >/dev/null; echo $?) -eq 0 ]]; do
+      until [ $(terraform apply -auto-approve >/dev/null; echo $?) -eq 0 ]; do
         if [ ${attempt_counter} == ${max_attempts} ];then
           echo "Error applying network up terraform"
           exit 1
@@ -28,7 +29,6 @@
         echo "First attempt failed to apply will retry in 30 seconds"
         sleep 30
       done
-    #- terraform apply -auto-approve
 
 .network down:
   extends:
