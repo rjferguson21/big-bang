@@ -126,9 +126,9 @@ istio:
       type: "LoadBalancer" # or "NodePort"
       kubernetesResourceSpec: {} # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
 
-    private-ingressgateway:
-      type: "LoadBalancer" # or "NodePort"
-      kubernetesResourceSpec: {} # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
+    # private-ingressgateway:
+    #   type: "LoadBalancer" # or "NodePort"
+    #   kubernetesResourceSpec: {} # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
         # serviceAnnotations: # Example for AWS internal load balancer
         #   service.beta.kubernetes.io/aws-load-balancer-type: nlb
         #   service.beta.kubernetes.io/aws-load-balancer-internal: "true"
@@ -149,13 +149,13 @@ istio:
       tls:
         key: ""
         cert: ""
-    private:
-      ingressGateway: "private-ingressgateway"
-      hosts:
-      - "*.{{ .Values.domain }}"
-      tls:
-        key: ""
-        cert: ""
+    # private:
+    #   ingressGateway: "private-ingressgateway"
+    #   hosts:
+    #   - "*.{{ .Values.domain }}"
+    #   tls:
+    #     key: ""
+    #     cert: ""
     passthrough:
       ingressGateway: "passthrough-ingressgateway"
       hosts:
