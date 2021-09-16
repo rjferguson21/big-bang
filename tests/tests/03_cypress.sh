@@ -12,12 +12,12 @@ mkdir -p cypress-tests/
 yq e '. | keys | .[] | ... comments=""' "tests/ci/k3d/values.yaml" | while IFS= read -r package; do
   if [[ "$(yq e ".${package}.enabled" "tests/ci/k3d/values.yaml")" == "true" ]]; then
     #Checking for branch not tag
-    if [ "$(yq e ".${package}.git.tag" "chart/values.yaml")" != null ]; then
+    if [ "$(yq e ".${package}.git.tag" "${VALUES_FILE}")" != null ]; then
       echo "Cloning ${package} into cypress-tests"
-      git -C cypress-tests/ clone -b $(yq e ".${package}.git.tag" "chart/values.yaml") $(yq e ".${package}.git.repo" "chart/values.yaml")
+      git -C cypress-tests/ clone -b $(yq e ".${package}.git.tag" "${VALUES_FILE}") $(yq e ".${package}.git.repo" "${VALUES_FILE}")
     else
       echo "Cloning ${package} into cypress-tests"
-      git -C cypress-tests/ clone -b $(yq e ".${package}.git.branch" "chart/values.yaml") $(yq e ".${package}.git.repo" "chart/values.yaml")
+      git -C cypress-tests/ clone -b $(yq e ".${package}.git.branch" "${VALUES_FILE}") $(yq e ".${package}.git.repo" "${VALUES_FILE}")
     fi
   fi
 done
@@ -26,12 +26,12 @@ done
 yq e '.addons | keys | .[] | ... comments=""' "tests/ci/k3d/values.yaml" | while IFS= read -r package; do
   if [ "$(yq e ".addons.${package}.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
     #Checking for branch not tag
-    if [ "$(yq e ".addons.${package}.git.tag" "chart/values.yaml")" != null ]; then
+    if [ "$(yq e ".addons.${package}.git.tag" "${VALUES_FILE}")" != null ]; then
       echo "Cloning ${package} into cypress-tests"
-      git -C cypress-tests/ clone -b $(yq e ".addons.${package}.git.tag" "chart/values.yaml") $(yq e ".addons.${package}.git.repo" "chart/values.yaml")
+      git -C cypress-tests/ clone -b $(yq e ".addons.${package}.git.tag" "${VALUES_FILE}") $(yq e ".addons.${package}.git.repo" "${VALUES_FILE}")
     else
       echo "Cloning ${package} into cypress-tests"
-      git -C cypress-tests/ clone -b $(yq e ".addons.${package}.git.branch" "chart/values.yaml") $(yq e ".addons.${package}.git.repo" "chart/values.yaml")
+      git -C cypress-tests/ clone -b $(yq e ".addons.${package}.git.branch" "${VALUES_FILE}") $(yq e ".addons.${package}.git.repo" "${VALUES_FILE}")
     fi
   fi
 done
