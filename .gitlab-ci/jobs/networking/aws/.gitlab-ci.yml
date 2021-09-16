@@ -16,6 +16,8 @@
     - *calc_unique_cidr
     - echo "Creating network with cidr range ${TF_VAR_vpc_cidr}"
     # Loop to retry terraform apply due to issues locking terraform.state in s3
+    - /bin/sh
+    - -c
     - |
       attempt_counter=0
       max_attempts=2

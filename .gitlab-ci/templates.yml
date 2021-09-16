@@ -24,6 +24,8 @@ include:
     - terraform version
     - terraform init -input=false
     # Loop to retry terraform workspace creation due to issues locking terraform.state in s3
+    - /bin/sh
+    - -c
     - |
       attempt_counter=0
       max_attempts=5
