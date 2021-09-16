@@ -10,7 +10,7 @@ include:
 
 .terraformer:
   image:
-    name: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/terraform:0.13.5
+    name: registry1.dso.mil/ironbank/hashicorp/terraform/terraform:0.13.5
     entrypoint:
       - /usr/bin/env
       - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -23,7 +23,18 @@ include:
     - cd ${CI_PROJECT_DIR}/${TF_ROOT}
     - terraform version
     - terraform init -input=false
-    - terraform workspace select $TF_VAR_env || terraform workspace new $TF_VAR_env
+    # Loop to retry terraform workspace creation due to issues locking terraform.state in s3
+    - |
+      attempt_counter=0
+      max_attempts=5
+      until [ $(terraform workspace select $TF_VAR_env || terraform workspace new $TF_VAR_env; echo $?) -eq 0 ]; do
+        if [ ${attempt_counter} -eq ${max_attempts} ];then
+          echo "Error creating workspace"
+          exit 1
+        fi
+        attempt_counter=$(($attempt_counter+1))
+        sleep 5
+      done
     - terraform validate
 
 .terraform destroy workspace:
