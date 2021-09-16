@@ -19,6 +19,7 @@ include:
     TF_IN_AUTOMATION: "1"
     TF_VAR_ci_pipeline_url: $CI_PIPELINE_URL
   before_script:
+    - apk add bash
     - echo "$TF_VAR_env"
     - cd ${CI_PROJECT_DIR}/${TF_ROOT}
     - terraform version
@@ -27,8 +28,8 @@ include:
     - |
       attempt_counter=0
       max_attempts=5
-      until [ $(terraform workspace select $TF_VAR_env || terraform workspace new $TF_VAR_env; echo $?) == 0 ]; do
-        if [ ${attempt_counter} == ${max_attempts} ];then
+      until [[ $(terraform workspace select $TF_VAR_env || terraform workspace new $TF_VAR_env; echo $?) -eq 0 ]]; do
+        if [ ${attempt_counter} -eq ${max_attempts} ];then
           echo "Error creating workspace"
           exit 1
         fi

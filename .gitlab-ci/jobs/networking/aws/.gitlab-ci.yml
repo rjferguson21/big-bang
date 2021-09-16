@@ -1,5 +1,5 @@
 .calc_unique_cidr: &calc_unique_cidr
-  - apk add python3 py3-boto3
+  - apk add python3 py3-boto3 bash
   - echo "Calculating unique cidr range for vpc"
   - TF_VAR_vpc_cidr=$(terraform output vpc_cidr | tr -d '\n' | tr -d '\r' | grep 10) || TF_VAR_vpc_cidr=$(python3 ../../../get-vpc.py | tr -d '\n' | tr -d '\r')
   - echo "Using VPC CIDR $TF_VAR_vpc_cidr for $CLUSTER_NAME cluster"
@@ -19,7 +19,7 @@
     - |
       attempt_counter=0
       max_attempts=2
-      until [ $(terraform apply -auto-approve; echo $?) == 0 ]; do
+      until [[ $(terraform apply -auto-approve; echo $?) == 0 ]]; do
         if [ ${attempt_counter} == ${max_attempts} ];then
           echo "Error applying network up terraform"
           exit 1
