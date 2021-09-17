@@ -40,22 +40,6 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
   --set registryCredentials[0].registry=registry1.dso.mil \
   -f ${CI_VALUES_FILE}
 
-# if keycloak is enabled use *.admin.bigbang.dev cert
-# otherwise use *.bigbang.dev
-# if [ "$(yq e ".addons.keycloak.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
-#   # apply secrets kustomization pointing to current branch
-#   if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
-#     echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
-#     kubectl apply -f tests/ci/keycloak.yaml
-#   elif [ -z "$CI_COMMIT_TAG" ]; then
-#     echo "Deploying secrets from the ${CI_COMMIT_REF_NAME} branch"
-#     cat tests/ci/keycloak.yaml | sed 's|master|'"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
-#   else
-#     echo "Deploying secrets from the ${CI_COMMIT_REF_NAME} tag"
-#     # NOTE: $CI_COMMIT_REF_NAME = $CI_COMMIT_TAG when running on a tagged build
-#     cat tests/ci/keycloak.yaml | sed 's|branch: master|tag: '"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
-#   fi
-# else
   # apply secrets kustomization pointing to current branch or master if an upgrade job
   if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
     echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
@@ -68,4 +52,4 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
     # NOTE: $CI_COMMIT_REF_NAME = $CI_COMMIT_TAG when running on a tagged build
     cat tests/ci/shared-secrets.yaml | sed 's|branch: master|tag: '"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
   fi
-# fi
+
