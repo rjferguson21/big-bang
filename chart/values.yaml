@@ -916,7 +916,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
 
-    # -- Values to passthrough to the mattermost operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator/-/blob/main/${VALUES_FILE}
+    # -- Values to passthrough to the mattermost operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator/-/blob/main/chart/values.yaml , or $VALUES_FILE defined in .gitlab-ci.yml
     values: {}
 
     # -- Post Renderers.  See docs/postrenders.md
@@ -1009,12 +1009,12 @@ addons:
 
     # -- Mattermost Elasticsearch integration - requires enterprise E20 license - https://docs.mattermost.com/deployment/elasticsearch.html
     # Connection info defaults to the BB deployed Elastic, all values can be overridden via the "values" passthrough for other connections.
-    # See values spec in MM chart "elasticsearch" yaml block - https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/${VALUES_FILE}
+    # See values spec in MM chart "elasticsearch" yaml block - https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/chart/values.yaml , or $VALUES_FILE defined in .gitlab-ci.yml
     elasticsearch:
       # -- Toggle interaction with Elastic for optimized search indexing
       enabled: false
 
-    # -- Values to passthrough to the Mattermost chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/${VALUES_FILE}
+    # -- Values to passthrough to the Mattermost chart: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost/-/blob/main/chart/values.yaml , or $VALUES_FILE defined in .gitlab-ci.yml
     values: {}
 
     # -- Post Renderers.  See docs/postrenders.md
@@ -1036,7 +1036,7 @@ addons:
     plugins: []
     # - aws
 
-    # -- Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/${VALUES_FILE}
+    # -- Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/chart/values.yaml , or $VALUES_FILE defined in .gitlab-ci.yml
     values: {}
 
     # -- Post Renderers.  See docs/postrenders.md
