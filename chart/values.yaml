@@ -74,6 +74,9 @@ sso:
   # -- OIDC auth URL template string (to be used as default)
   auth_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/auth"
 
+  # -- Kubernetes Secret containing the sso.certificate_authority value for SSO enabled application namespaces
+  secretName: "tls-ca-sso"
+
 # -- (Advanced) Flux reconciliation parameters.
 # The default values provided will be sufficient for the majority of workloads.
 flux:
@@ -265,7 +268,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "0.3.0-bb.6"
+    tag: "0.3.0-bb.7"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -461,6 +464,7 @@ twistlock:
 
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
+
 
 #
 # ----------------------------------------------------------------------------------------------------------------------
@@ -825,7 +829,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.7"
+      tag: "1.13.0-bb.8"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
