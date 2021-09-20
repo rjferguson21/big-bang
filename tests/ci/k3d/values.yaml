@@ -591,7 +591,9 @@ addons:
           volumesPerServer: 4
           size: 256Mi
       bbtests:
-        enabled: true
+        # TODO: Seems like a timing issue with BB CI
+        # https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio/-/issues/7
+        enabled: false
         cypress:
           artifacts: true
           envs:
