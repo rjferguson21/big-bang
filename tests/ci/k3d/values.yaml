@@ -51,7 +51,7 @@ logging:
       scripts:
         image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
-          elasticsearch_host: "https://{{ .Release.Name }}-es-http.{{ .Release.Namespace }}.svc.cluster.local:9200"
+          elasticsearch_host: "https://logging-ek-es-http.logging.svc.cluster.local:9200"
           desired_version: "{{ .Values.elasticsearch.version }}"
         secretEnvs:
           - name: ELASTIC_PASSWORD
@@ -68,7 +68,7 @@ fluentbit:
       scripts:
         image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
-          fluent_host: "http://{{ include \"fluent-bit.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
+          fluent_host: "http://logging-fluent-bit.logging.svc.cluster.local:2020"
           desired_version: "{{ .Values.image.tag }}"
 
 istio:
