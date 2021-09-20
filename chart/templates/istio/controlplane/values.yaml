@@ -15,6 +15,9 @@ imagePullSecrets:
 
 openshift: {{ .Values.openshift }}
 
+authservice:
+  enabled: {{ .Values.addons.authservice.enabled }}
+
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
@@ -31,6 +34,9 @@ ingressGateways:
 {{- range $name, $values := .Values.istio.ingressGateways }}
   {{ $name | nindent 2 }}:
     {{- toYaml (merge (dict "k8s" $values.kubernetesResourceSpec) (fromYaml (include "istio.ingressgateway.k8s" $values))) | nindent 4 }}
+    {{- if $values.extraLabels }} 
+    {{- toYaml (dict "extraLabels" $values.extraLabels) | nindent 4 }}
+    {{- end}}
 {{- end }}
 
 {{- if .Values.istio.gateways }}

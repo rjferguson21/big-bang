@@ -1,7 +1,18 @@
+# Bigbang CI pipelines defintiions
+# There are 4 different use-cases/pipelines that are supported by this file:
+#   1) Build and test changes made from a Merge Reuqest using a docker-in-docker (DIND) K3D cluster deployment inside the
+#      gitlab runner.
+#   2) Build and test a commit to the Master branch (default branch) using a AWS created K3S cluster which is deployed
+#       using Terraform
+#   3) Build and test a new release and/or tagged commit using a docker-in-docker (DIND) K3D cluster deployment inside the
+#      gitlab runner.   Once a successful build and test is completed, package the build and perform a release operation.
+#   4) Periodically at a scheduled time, build and test the master branch  using a AWS created K3S cluster which is deployed
+#       using Terraform
+
 # global rules for when pipelines run
 workflow:
   rules:
-    # run pipeline for manual tag events
+    # run pipeline for manual tag events such as a new release
     - if: $CI_COMMIT_TAG
     # run pipeline on merge request events
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -10,11 +21,16 @@ workflow:
     # skip pipeline for branches that start with "docs"
     - if: '$CI_COMMIT_REF_NAME =~ /^doc*/i'
       when: never
+    # Enabled CI pipeline testing it commit message contains "test-ci"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE =~ /.*test-ci.*/i
 
-# include templates
+# Include templates and cluster creation jobs
 include:
   - local: '/.gitlab-ci/templates.yml'
 
+# Pipeline stages
+#  - Smoke tests are executed for all pipelines except scheduled nightly runs.
+#  -
 stages:
   - smoke tests
   - network up
@@ -33,28 +49,15 @@ variables:
   IMAGE_PKG: images.tar.gz
   REPOS_PKG: repositories.tar.gz
 
-.bigbang-dogfood:
-  tags:
-    - bigbang
-    - dogfood
-    - generic
-
-.bigbang:
-  image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k8s-ci:v1.20.4-bb.3
-  extends: .bigbang-dogfood
-  after_script:
-    - kubectl get all -A
-    - kubectl get helmrelease -A
-
 #-----------------------------------------------------------------------------------------------------------------------
-# Pre Stage Jobs
+# Pre Stage Jobs.   This execute before any job is run.
 #
 
 pre vars:
   image: registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/pre-envs:ubi8.3
   stage: .pre
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
   artifacts:
     reports:
       dotenv: variables.env
@@ -83,8 +86,9 @@ pre vars:
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
-      echo "Executing ${deploy_script}..."
+      echo -e "\e[0Ksection_start:`date +%s`:${deploy_script##*/}[collapsed=true]\r\e[0K\e[33;1m${deploy_script##*/}\e[37m"  
       ./${deploy_script}
+      echo -e "\e[0Ksection_end:`date +%s`:${deploy_script##*/}\r\e[0K"
     done
 
 .test_bigbang: &test_bigbang
@@ -92,8 +96,9 @@ pre vars:
     set -e
     for test_script in $(find ./tests/tests -type f -name '*.sh' | sort); do
       chmod +x ${test_script}
-      echo "Executing ${test_script}..."
+      echo -e "\e[0Ksection_start:`date +%s`:${test_script##*/}[collapsed=true]\r\e[0K\e[33;1m${test_script##*/}\e[37m"        
       ./${test_script}
+      echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
 
 clean install:
@@ -103,6 +108,7 @@ clean install:
   variables:
     CLUSTER_NAME: "clean-${CI_COMMIT_SHORT_SHA}"
   rules:
+    # Always run a clean installation test unless we are deploying the AWS cluster installation during a scheduled test (nightly master test)
     - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
       when: never
     - *chart_changes
@@ -111,9 +117,11 @@ clean install:
     - *test_bigbang
 
     # Fetch list of all images ran (retry crictl up to 6x)
+    - echo -e "\e[0Ksection_start:`date +%s`:images_used[collapsed=true]\r\e[0K\e[33;1mImages Used\e[37m"
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
     - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
     - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
+    - echo -e "\e[0Ksection_end:`date +%s`:images_used\r\e[0K"
   artifacts:
     paths:
       - images.txt
@@ -142,12 +150,16 @@ upgrade:
     CLUSTER_NAME: "upgrade-${CI_COMMIT_SHORT_SHA}"
   script:
     - echo "Install Big Bang from ${CI_DEFAULT_BRANCH}"
+    - echo -e "\e[0Ksection_start:`date +%s`:git_master[collapsed=true]\r\e[0K\e[33;1mGit Fetch Master\e[37m"  
     - git fetch && git checkout ${CI_DEFAULT_BRANCH}
+    - echo -e "\e[0Ksection_end:`date +%s`:git_master\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
     - echo "Upgrade Big Bang from ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
+    - echo -e "\e[0Ksection_start:`date +%s`:git_upgrade[collapsed=true]\r\e[0K\e[33;1mGit Upgrade\e[37m"    
     - git reset --hard && git clean -fd
     - git checkout ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    - echo -e "\e[0Ksection_end:`date +%s`:git_upgrade\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
   artifacts:
@@ -158,9 +170,7 @@ upgrade:
     when: always
 
 #-----------------------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Infrastructure: Management Jobs
+# Rules for execution of AWS based K3S cluster deployment:  Infrastructure jobs
 #
 
 # Abstract for job manually triggering infrastructure builds
@@ -189,14 +199,12 @@ upgrade:
       when: always
 
 #-----------------------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Infrastructure: Networking
 #
 
 aws/network up:
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra fork
     - .network up
   environment:
@@ -211,7 +219,7 @@ aws/network up:
 
 aws/network down:
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra cleanup
     - .network down
   stage: network down
@@ -235,7 +243,7 @@ aws/network down:
 aws/rke2/cluster up:
   stage: cluster up
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra create
     - .rke2 up
   needs:
@@ -255,9 +263,9 @@ aws/rke2/cluster up:
 aws/rke2/bigbang up:
   stage: bigbang up
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra create
-    - .bigbang
+    - .kubectl-output
   needs:
     - job: aws/rke2/cluster up
       artifacts: true
@@ -282,9 +290,9 @@ aws/rke2/bigbang up:
 aws/rke2/bigbang test:
   stage: test
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra create
-    - .bigbang
+    - .kubectl-output
   needs:
     - job: aws/rke2/cluster up
       artifacts: true
@@ -295,8 +303,10 @@ aws/rke2/bigbang test:
   script:
     ## Move this yum install to the dockerfile for the builder
     ## putting it here now for a quick way to install dig
+    - echo -e "\e[0Ksection_start:`date +%s`:host_setup[collapsed=true]\r\e[0K\e[33;1mHost Setup\e[37m"
     - yum install bind-utils -y
     - ./scripts/hosts.sh
+    - echo -e "\e[0Ksection_end:`date +%s`:host_setup\r\e[0K"
     - *test_bigbang
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
@@ -311,9 +321,9 @@ aws/rke2/bigbang test:
 aws/rke2/bigbang down:
   stage: bigbang down
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra cleanup
-    - .bigbang
+    - .kubectl-output
   needs:
     - job: aws/rke2/cluster up
       artifacts: true
@@ -332,7 +342,7 @@ aws/rke2/bigbang down:
 aws/rke2/cluster down:
   stage: cluster down
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
     - .infra cleanup
     - .rke2 down
   needs:
@@ -358,7 +368,7 @@ package:
   stage: package
   image: registry.dso.mil/platform-one/big-bang/bigbang/synker:0.0.3
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
   rules:
     # run job for manual tag events or test-ci::release MRs
     - if: '$CI_COMMIT_TAG || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::release(,|$)/'
@@ -371,6 +381,7 @@ package:
         --arg registry1_auth ${REGISTRY1_AUTH} \
         --arg il2_registry_auth ${IL2_REGISTRY_AUTH} > /root/.docker/config.json
   script:
+    - echo -e "\e[0Ksection_start:`date +%s`:synker_pull[collapsed=true]\r\e[0K\e[33;1mSynker Pull\e[37m"
     - cp ./scripts/package/synker.yaml ./synker.yaml
     # Populate images list in synker config
     - |
@@ -378,6 +389,7 @@ package:
         yq -i e "(.source.images |= . + \"${image}\")" "./synker.yaml"
       done
     - synker pull -b=1
+    - echo -e "\e[0Ksection_end:`date +%s`:synker_pull\r\e[0K"
     # Create image list from synker, overwrite since ./synker.yaml contains everything at this point
     - yq e '.source.images | .[] | ... comments=""' "./synker.yaml" > images.txt
     # Tar up synker as well?
@@ -385,11 +397,17 @@ package:
     # Grab the registry image
     - crane pull registry:2 registry.tar
     - mv registry.tar /var/lib/registry/
+    - echo -e "\e[0Ksection_start:`date +%s`:package_synker[collapsed=true]\r\e[0K\e[33;1mPackage Images\e[37m"
     - tar -C /var/lib/registry -czvf $IMAGE_PKG .
+    - echo -e "\e[0Ksection_end:`date +%s`:package_synker\r\e[0K"
+    - echo -e "\e[0Ksection_start:`date +%s`:unpack_images[collapsed=true]\r\e[0K\e[33;1mUnpack Images\e[37m"
     - tar -czvf $IMAGE_PKG /var/lib/registry
+    - echo -e "\e[0Ksection_end:`date +%s`:unpack_images\r\e[0K"
     # Package dependent repos
+    - echo -e "\e[0Ksection_start:`date +%s`:package_repos[collapsed=true]\r\e[0K\e[33;1mPackage Repos\e[37m"
     - ./scripts/package/gits.sh
     - tar -czf $REPOS_PKG repos/
+    - echo -e "\e[0Ksection_end:`date +%s`:package_repos\r\e[0K"
     # Prep release
     - mkdir -p release
     - mv $IMAGE_LIST $IMAGE_PKG $REPOS_PKG release/
@@ -406,7 +424,7 @@ release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   extends:
-    - .bigbang-dogfood
+    - .bigbang-gitlab-runner-tags
   rules:
     # run job for manual tag events or test-ci::release MRs
     - if: '$CI_COMMIT_TAG || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::release(,|$)/'

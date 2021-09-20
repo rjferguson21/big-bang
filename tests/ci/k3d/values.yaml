@@ -288,6 +288,7 @@ addons:
               memory: 200Mi
             limits: {}
       anchoreAnalyzer:
+        replicaCount: 1
         resources:
           requests:
             cpu: 100m
@@ -415,8 +416,6 @@ addons:
   minio:
     enabled: false
     values:
-      upgradeTenants:
-        enabled: true
       zones:
         servers: 1
       volumesPerServer: 1
@@ -444,8 +443,6 @@ addons:
           memory: 128Mi
         limits: {}
       minio:
-        upgradeTenants:
-          enabled: true
         zones:
           servers: 1
         volumesPerServer: 1

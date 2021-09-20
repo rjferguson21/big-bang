@@ -101,6 +101,10 @@ networkPolicies:
   # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
   # Used by package NetworkPolicies to allow Kube API access
   controlPlaneCidr: 0.0.0.0/0
+  # -- Node CIDR, defaults to allowing "10.0.0.0/8" "172.16.0.0/12" "192.168.0.0/16" "100.64.0.0/10" networks.
+  # use `kubectl get nodes -owide` and review the `INTERNAL-IP` column to derive CIDR range.
+  # Must be an IP CIDR range (x.x.x.x/x - ideally a /16 or /24 to include multiple IPs)
+  nodeCidr: ""
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Istio
@@ -111,7 +115,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.10.4-bb.0"
+    tag: "1.10.4-bb.3"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -225,7 +229,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.39.0-bb.0"
+    tag: "1.39.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -261,7 +265,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "0.3.0-bb.6"
+    tag: "0.3.0-bb.7"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -443,7 +447,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.0.8-bb.1"
+    tag: "0.0.9-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
@@ -468,7 +472,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.7"
+      tag: "3.6.8-bb.8"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -512,7 +516,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.15"
+      tag: "0.4.0-bb.17"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -535,7 +539,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
-      tag: "4.1.2-bb.3"
+      tag: "4.2.3-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Minio Operator Package
     flux: {}
@@ -552,7 +556,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.1.2-bb.6"
+      tag: "4.2.3-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
@@ -736,7 +740,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.0"
+      tag: "9.6.3-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -821,7 +825,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.7"
+      tag: "1.13.0-bb.8"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -924,7 +928,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.2.0-bb.1"
+      tag: "0.2.0-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
@@ -1051,7 +1055,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.1-bb.2"
+      tag: "11.0.1-bb.6"
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
