@@ -915,7 +915,9 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.14.0-bb.4"
+      tag: null
+      # tag: "1.15.0-bb.0"
+      branch: istio-inject
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
