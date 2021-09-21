@@ -361,12 +361,17 @@ addons:
           persistence:
             size: 256Mi      
       bbtests:
-        # TODO: Test needs to be adjusted to allow for dynamic hostname provisioning in the tests via values
-        # https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/issues/47
-        # NOTE: This may affect the gitlab runner test once this one is enabled
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
+          envs:
+            cypress_baseUrl: https://gitlab.bigbang.dev
+            cypress_gitlab_first_name: "test"
+            cypress_gitlab_last_name: "user"
+            cypress_gitlab_username: "testuser"
+            cypress_gitlab_password: "12345678"
+            cypress_gitlab_email: "testuser@example.com"
+            cypress_gitlab_project: "my-awesome-project"
           secretEnvs:
             - name: cypress_adminpassword
               valueFrom:
@@ -375,6 +380,14 @@ addons:
                   key: password
         scripts:
           image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.3"
+          envs:
+            GITLAB_USER: "testuser"
+            GITLAB_PASS: "12345678"
+            GITLAB_EMAIL: "testuser@example.com"
+            GITLAB_PROJECT: "my-awesome-project"
+            GITLAB_REPOSITORY: https://gitlab.bigbang.dev
+            GITLAB_ORIGIN: https://testuser:12345678@gitlab.bigbang.dev
+            GITLAB_REGISTRY: registry.bigbang.dev
 
   gitlabRunner:
     enabled: false
