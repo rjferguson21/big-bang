@@ -134,7 +134,7 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
        {{- if .Values.monitoring.enabled }}
         # Prometheus node exported requires hostpath hardcoded in upstream chart on which monitoring pkg has a direct dependency
         # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus-node-exporter/templates/daemonset.yaml#L150
-        - monitoring/monitoring-monitoring-prometheus-node-exporter-*
+        - monitoring/monitoring-monitoring-prometheus-node-exporter-.*
        {{- end }}
   {{- end }}
 {{- end -}}
