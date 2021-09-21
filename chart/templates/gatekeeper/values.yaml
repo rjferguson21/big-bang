@@ -74,7 +74,7 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
   namespacesHaveIstio:
     enabled: {{ .Values.istio.enabled }}
 
-  {{- if .Values.logging.enabled }}
+  {{- if .Values.fluentbit.enabled }}
   noPrivilegedContainers:
     parameters:
       excludedResources:
@@ -103,11 +103,11 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
       {{- end }}
   {{- end }}
 
-  {{- if or .Values.logging.enabled .Values.twistlock.enabled }}
+  {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled }}
   selinuxPolicy:
     parameters:
       excludedResources:
-      {{- if .Values.logging.enabled }}
+      {{- if .Values.fluentbit.enabled }}
       # FluentBit needs selinux option type spc_t
       - logging/fluent-bit
       {{- end }}
