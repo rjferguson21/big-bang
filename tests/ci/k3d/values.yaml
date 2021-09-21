@@ -37,7 +37,9 @@ logging:
     kibana:
       count: 1
     bbtests:
-      enabled: true
+      # TODO: Connection refused on the script test currently
+      # https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana/-/issues/39
+      enabled: false
       cypress:
         artifacts: true
         envs:
@@ -65,8 +67,11 @@ fluentbit:
     securityContext:
       privileged: true
     bbtests:
+      # TODO: Connection refused on the test currently
+      # https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit/-/issues/18
       scripts:
-        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
+        # Image commented out to disable the test since the BB Test Lib version being used doesn't have the enabled flag
+        # image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
           fluent_host: "http://{{ include \"fluent-bit.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
           desired_version: "{{ .Values.image.tag }}"
