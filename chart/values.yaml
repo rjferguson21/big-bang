@@ -74,6 +74,9 @@ sso:
   # -- OIDC auth URL template string (to be used as default)
   auth_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/auth"
 
+  # -- Kubernetes Secret containing the sso.certificate_authority value for SSO enabled application namespaces
+  secretName: "tls-ca-sso"
+
 # -- (Advanced) Flux reconciliation parameters.
 # The default values provided will be sufficient for the majority of workloads.
 flux:
@@ -462,6 +465,7 @@ twistlock:
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
 
+
 #
 # ----------------------------------------------------------------------------------------------------------------------
 #
@@ -589,7 +593,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.12.9-bb.5"
+      tag: "4.12.9-bb.6"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
