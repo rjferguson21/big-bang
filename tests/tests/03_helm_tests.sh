@@ -3,16 +3,16 @@
 # exit on error
 set -e
 
-# Get original CoreDNS config for k3d, RKE2 doesn't have any built in NodeHosts
-environment="unknown"
+# Check clusterType and get original CoreDNS config
+clusterType="unknown"
 coreDnsName="unknown"
 touch newhosts
 if kubectl get configmap -n kube-system coredns &>/dev/null; then
-  environment="k3d"
+  clusterType="k3d"
   coreDnsName="coredns"
   kubectl get configmap -n kube-system ${coreDnsName} -o jsonpath='{.data.NodeHosts}' > newhosts
 elif kubectl get configmap -n kube-system rke2-coredns-rke2-coredns &>/dev/null; then
-  environment="rke2"
+  clusterType="rke2"
   coreDnsName="rke2-coredns-rke2-coredns"
   kubectl get configmap -n kube-system ${coreDnsName} -o jsonpath='{.data.Corefile}' > newcorefile
 fi
@@ -42,12 +42,12 @@ done
 echo "Setting up CoreDNS for VS resolution..."
 hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
 # For k3d
-if [[ ${environment} == "k3d" ]]; then
+if [[ ${clusterType} == "k3d" ]]; then
   kubectl patch configmap -n kube-system ${coreDnsName} --patch "$(cat patch.yaml)"
   kubectl rollout restart deployment -n kube-system ${coreDnsName}
   kubectl rollout status deployment -n kube-system ${coreDnsName} --timeout=30s
 # For rke2
-elif [[ ${environment} == "rke2" ]]; then
+elif [[ ${clusterType} == "rke2" ]]; then
   # Add an entry to the corefile
   sed -i '/prometheus/i \ \ \ \ hosts /etc/coredns/NodeHosts {\n        ttl 60\n        reload 15s\n        fallthrough\n    }' newcorefile
   corefile=$(cat newcorefile) yq e -i '.data.Corefile = strenv(corefile)' patch.yaml
