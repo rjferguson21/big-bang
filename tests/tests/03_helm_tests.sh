@@ -52,7 +52,7 @@ elif [[ ${clusterType} == "rke2" ]]; then
   sed -i '/prometheus/i \ \ \ \ hosts /etc/coredns/NodeHosts {\n        ttl 60\n        reload 15s\n        fallthrough\n    }' newcorefile
   corefile=$(cat newcorefile) yq e -i '.data.Corefile = strenv(corefile)' patch.yaml
   kubectl patch configmap -n kube-system ${coreDnsName} --patch "$(cat patch.yaml)"
-  kubectl patch deployment rke2-coredns-rke2-coredns -n kube-system -p '{"spec":{"template":{"spec":{"volumes":[{"configMap":{"items":[{"key":"Corefile","path":"Corefile"},{"key":"NodeHosts","path":"NodeHosts"}],"name":"coredns"}}]}}}}'
+  kubectl patch deployment ${coreDnsName} -n kube-system -p '{"spec":{"template":{"spec":{"volumes":[{"name":"config-volume","configMap":{"items":[{"key":"Corefile","path":"Corefile"},{"key":"NodeHosts","path":"NodeHosts"}],"name":"'${coreDnsName}'"}}]}}}}'
   kubectl rollout status deployment -n kube-system ${coreDnsName} --timeout=30s
 # Add other distros in future as needed, catchall so tests won't error on this
 else
