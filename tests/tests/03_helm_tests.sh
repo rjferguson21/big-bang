@@ -30,7 +30,13 @@ done
 # Patch CoreDNS and restart pod
 echo "Setting up CoreDNS for VS resolution..."
 hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
-kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
+if kubectl get configmap -n kube-system coredns &>/dev/null; then
+  kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
+elif kubectl get configmap -n kube-system rke2-coredns &>/dev/null; then
+  kubectl patch configmap -n kube-system rke2-coredns --patch "$(cat patch.yaml)"
+else
+  echo "No known CoreDNS deployment found, skipping patching."
+fi
 kubectl rollout restart deployment -n kube-system coredns
 kubectl rollout status deployment -n kube-system coredns --timeout=30s
 
