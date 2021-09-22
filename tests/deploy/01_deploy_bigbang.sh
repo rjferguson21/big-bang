@@ -2,7 +2,7 @@
 
 set -ex
 
-if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
+if [[ "${CI_COMMIT_BRANCH}" == "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
   echo "all-packages label enabled, or on default branch or tag, enabling all addons"
   yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
 else
@@ -39,8 +39,8 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
   -f ${CI_VALUES_FILE}
 
 # apply secrets kustomization pointing to current branch or master if an upgrade job
-if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
-  echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
+if [[ $(git branch --show-current) == "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]]; then
+  echo "Deploying secrets from the ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} branch"
   kubectl apply -f tests/ci/shared-secrets.yaml
 elif [ -z "$CI_COMMIT_TAG" ]; then
   echo "Deploying secrets from the ${CI_COMMIT_REF_NAME} branch"
