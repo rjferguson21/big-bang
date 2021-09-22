@@ -118,7 +118,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.10.4-bb.3"
+    tag: "1.11.2-bb.0"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -180,7 +180,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.10.4-bb.1"
+    tag: "1.11.2-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -470,6 +470,21 @@ twistlock:
 # ----------------------------------------------------------------------------------------------------------------------
 #
 addons:
+  vault:
+    # -- Toggle deployment of Vault.
+    enabled: true
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/vault.git
+      path: "./chart"
+      branch: "deploy-vault"
+    # -- Flux reconciliation overrides specifically for the Twistlock Package
+    flux: {}
+    ingress:
+      gateway: ""
+    values: {}
+    postRenderers: []
+
+
   argocd:
     # -- Toggle deployment of ArgoCD.
     enabled: false
@@ -533,18 +548,6 @@ addons:
 
     # -- Additional authservice chain configurations.
     chains: {}
-
-  # ----------------------------------------------------------------------------------------------------------------------  
-  # Vault
- #
-  vault:
-  # -- Toggle deployment of vault.
-    enabled: true
-    git:
-      repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/vault.git
-      path: "./chart"
-      branch: "deploy-vault"
-  # ----------------------------------------------------------------------------------------------------------------------  
 
   # ----------------------------------------------------------------------------------------------------------------------
   # Minio Operator and Instance
@@ -756,7 +759,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.1"
+      tag: "9.6.3-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
