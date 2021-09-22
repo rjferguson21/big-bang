@@ -29,7 +29,13 @@ for vs in $(kubectl get virtualservice -A -o go-template='{{range .items}}{{.met
   hosts=$(kubectl get virtualservice ${vs_name} -n ${vs_namespace} -o go-template='{{range .spec.hosts}}{{.}}{{" "}}{{end}}')
   gateway=$(kubectl get virtualservice ${vs_name} -n ${vs_namespace} -o jsonpath='{.spec.gateways[0]}' | awk -F/ '{print $2}')
   ingress_gateway=$(kubectl get gateway -n istio-system $gateway -o jsonpath='{.spec.selector.app}')
-  external_ip=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  external_ip=""
+  if [[ ${clusterType} == "k3d" ]]; then
+    external_ip=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  elif [[ ${clusterType} == "rke2" ]]; then
+    external_hostname=$(kubectl get svc -n istio-system $ingress_gateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+    external_ip=$(dig +short ${external_hostname} | tail -n1)
+  fi
   for host in $hosts; do
     host=$(echo ${host} | xargs)
     # Remove previous entry if on upgrade job
