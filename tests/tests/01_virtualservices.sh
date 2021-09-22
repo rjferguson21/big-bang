@@ -2,6 +2,7 @@
 
 # exit on error
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 # Populate /etc/hosts
 ip=$(kubectl -n istio-system get service public-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')

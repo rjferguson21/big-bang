@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 # Installs/Configures:
 #  - Docker Registy Container with self-signed cert

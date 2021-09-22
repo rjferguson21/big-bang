@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 ## Adds all the vs hostnames and LB IP to /etc/hosts
 ## Get the LB Hostname

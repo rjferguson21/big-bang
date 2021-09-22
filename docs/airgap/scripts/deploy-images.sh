@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 REGISTRY_PACKAGE_IMAGE="registry:package"
 REGISTRY_PACKAGE_TGZ="${REGISTRY_PACKAGE_IMAGE}.tar.gz"

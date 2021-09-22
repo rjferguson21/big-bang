@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 ## Array of core HRs
 CORE_HELMRELEASES=("gatekeeper" "istio-operator" "istio" "monitoring" "eck-operator" "ek" "fluent-bit" "twistlock" "cluster-auditor" "jaeger" "kiali")
@@ -141,6 +142,7 @@ function wait_crd(){
     fi
   done
   set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 }
 
 

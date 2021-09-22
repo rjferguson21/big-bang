@@ -2,6 +2,7 @@
 
 # exit on error
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 # Quick check for non iron bank images
 echo "Showing images not from ironbank:"

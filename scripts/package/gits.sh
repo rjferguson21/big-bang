@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 mkdir -p repos/
 

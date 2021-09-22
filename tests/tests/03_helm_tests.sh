@@ -2,6 +2,7 @@
 
 # exit on error
 set -e
+trap 'echo exit at $0:$LINENO command: $_ 1>&2' EXIT
 
 # Get original CoreDNS config
 kubectl get configmap -n kube-system coredns -o jsonpath='{.data.NodeHosts}' > newhosts
