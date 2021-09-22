@@ -3,8 +3,19 @@
 # exit on error
 set -e
 
-# Get original CoreDNS config
-kubectl get configmap -n kube-system coredns -o jsonpath='{.data.NodeHosts}' > newhosts
+# Get original CoreDNS config for k3d, RKE2 doesn't have any built in NodeHosts
+environment="unknown"
+coreDnsName="unknown"
+touch newhosts
+if kubectl get configmap -n kube-system coredns &>/dev/null; then
+  environment="k3d"
+  coreDnsName="coredns"
+  kubectl get configmap -n kube-system ${coreDnsName} -o jsonpath='{.data.NodeHosts}' > newhosts
+elif kubectl get configmap -n kube-system rke2-coredns-rke2-coredns &>/dev/null; then
+  environment="rke2"
+  coreDnsName="rke2-coredns-rke2-coredns"
+  kubectl get configmap -n kube-system ${coreDnsName} -o jsonpath='{.data.Corefile}' > newcorefile
+fi
 
 # Safeguard in case configmap doesn't end with newline
 if [[ $(tail -c 1 newhosts) != "" ]]; then
@@ -31,17 +42,22 @@ done
 echo "Setting up CoreDNS for VS resolution..."
 hosts=$(cat newhosts) yq e -n '.data.NodeHosts = strenv(hosts)' > patch.yaml
 # For k3d
-if kubectl get configmap -n kube-system coredns &>/dev/null; then
-  kubectl patch configmap -n kube-system coredns --patch "$(cat patch.yaml)"
+if [[ ${environment} == "k3d" ]]; then
+  kubectl patch configmap -n kube-system ${coreDnsName} --patch "$(cat patch.yaml)"
+  kubectl rollout restart deployment -n kube-system ${coreDnsName}
+  kubectl rollout status deployment -n kube-system ${coreDnsName} --timeout=30s
 # For rke2
-elif kubectl get configmap -n kube-system rke2-coredns-rke2-coredns &>/dev/null; then
-  kubectl patch configmap -n kube-system rke2-coredns-rke2-coredns --patch "$(cat patch.yaml)"
+elif [[ ${environment} == "rke2" ]]; then
+  # Add an entry to the corefile
+  sed -i '/prometheus/i \ \ \ \ hosts /etc/coredns/NodeHosts {\n        ttl 60\n        reload 15s\n        fallthrough\n    }' newcorefile
+  corefile=$(cat newcorefile) yq e -i '.data.Corefile = strenv(corefile)' patch.yaml
+  kubectl patch configmap -n kube-system ${coreDnsName} --patch "$(cat patch.yaml)"
+  kubectl rollout restart deployment -n kube-system ${coreDnsName}
+  kubectl rollout status deployment -n kube-system ${coreDnsName} --timeout=30s
 # Add other distros in future as needed, catchall so tests won't error on this
 else
   echo "No known CoreDNS deployment found, skipping patching."
 fi
-kubectl rollout restart deployment -n kube-system coredns
-kubectl rollout status deployment -n kube-system coredns --timeout=30s
 
 # Gather all HRs we should test
 installed_helmreleases=$(helm list -n bigbang -o json | jq '.[].name' | tr -d '"' | grep -v "bigbang")
