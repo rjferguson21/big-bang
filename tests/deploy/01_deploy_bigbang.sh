@@ -41,7 +41,10 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
 # apply secrets kustomization pointing to current branch or master if an upgrade job
 if [[ $(git branch --show-current) == "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]]; then
   echo "Deploying secrets from the ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} branch"
-  kubectl apply -f tests/ci/shared-secrets.yaml
+  cat tests/ci/shared-secrets.yaml | sed 's|master|'"$CI_DEFAULT_BRANCH"'|g' | kubectl apply -f -
+elif [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
+  echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
+  kubectl apply -f tests/ci/shared-secrets.yaml  
 elif [ -z "$CI_COMMIT_TAG" ]; then
   echo "Deploying secrets from the ${CI_COMMIT_REF_NAME} branch"
   cat tests/ci/shared-secrets.yaml | sed 's|master|'"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
