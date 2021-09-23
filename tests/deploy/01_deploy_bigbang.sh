@@ -4,7 +4,7 @@ set -ex
 
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
   echo "all-packages label enabled, or on default branch or tag, enabling all addons"
-  yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && yq e ".addons.nexus.enabled = "false"" tmpfile > tmpfile && mv tmpfile $CI_VALUES_FILE
+  yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && yq e ".addons.nexus.enabled = "false"" tmpfile > tmpfile && cat tmpfile && mv tmpfile $CI_VALUES_FILE
 else
   IFS=","
   for package in $CI_MERGE_REQUEST_LABELS; do
