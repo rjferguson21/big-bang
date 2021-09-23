@@ -149,7 +149,7 @@ HELMRELEASES=(${CORE_HELMRELEASES[@]})
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
     HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
     ## Remove when NEXUS FIPS is fixed
-    HELMRELEASES-=(${ADD_ON_HELMRELEASES_MAP["nexus"]})
+    HELMRELEASES-=("nexus-repository-manager")
     echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
 elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
     IFS=","
