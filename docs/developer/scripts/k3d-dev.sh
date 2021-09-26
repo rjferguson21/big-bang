@@ -7,12 +7,68 @@ if [[ -z "${MY_NAME}" ]]; then
   exit 1
 fi
 
-if [  -z $1 ]
-then 
-  echo "no modifier entered, bringing up a standard instance"
-  InstSize="t3a.2xlarge"
-  SpotPrice="0.35"
-elif [ $1 = "big" ]
+####Configure Environment
+# Assign a name for your SSH Key Pair.  Typically, people use their username to make it easy to identify
+KeyName="${MY_NAME}-dev"
+# Assign a name for your Security Group.  Typically, people use their username to make it easy to identify
+SGname="${MY_NAME}-dev"
+# Identify which VPC to create the spot instance in
+VPC="vpc-2ffbd44b"  # default VPC
+
+
+while [ -n "$1" ]; do # while loop starts
+
+	case "$1" in
+
+	-b) echo "-b option passed for big k3d cluster using M5 instance" 
+        BIG_INSTANCE=true
+        ;;
+
+	-p) echo "-p option passed to cretate k3d cluster with private ip" 
+        PRIVATE_IP=true
+        ;;
+
+	-m) echo "-m option passed to install MetalLB" 
+        METAL_LB=true
+        ;; 
+
+	-d) echo "-d opttion passed to destroy the AWS resources"
+		# TODO: destroy resources here
+
+		AWSINSTANCEID=$(aws ec2 describe-instances \
+    		--output text \
+    		--query "Reservations[].Instances[].InstanceId" \
+    		--filters "Name=tag:Name,Values=${MY_NAME}-dev")
+		echo "aws instances being terminated: ${AWSINSTANCEID}"
+		aws ec2 terminate-instances --instance-ids ${AWSINSTANCEID}
+		echo "SecurityGroup name to be deleted: ${SGname}"
+		aws ec2 delete-security-group --group-name=${SGname}
+		echo "KeyPair to be deleted: ${KeyName}"
+		aws ec2 delete-key-pair --key-name ${KeyName}
+		exit 0 
+        ;;
+    -h)
+        echo "Usage:"
+        echo "k3d-dev.sh -b -p -m -h -d"
+        echo ""
+        echo " -b   use BIG M5 instance. Default is t3.2xlarge"
+        echo " -p   use private IP for security group and k3d cluster"
+        echo " -m   create k3d cluster with metalLB"
+		echo " -d   destroy related AWS resources"
+        echo " -h   output help"
+        exit 0
+        ;;
+
+	*) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
+
+	esac
+
+	shift
+
+done
+
+
+if [[ "$BIG_INSTANCE" == true ]]
 then 
   echo "Bringing up large spot instance"
   InstSize="m5a.4xlarge"
@@ -22,15 +78,6 @@ else
   InstSize="t3a.2xlarge"
   SpotPrice="0.35"
 fi
-
-
-####Configure Environment
-# Assign a name for your SSH Key Pair.  Typically, people use their username to make it easy to identify
-KeyName="${MY_NAME}-dev"
-# Assign a name for your Security Group.  Typically, people use their username to make it easy to identify
-SG="${MY_NAME}-dev"
-# Identify which VPC to create the spot instance in
-VPC="vpc-2ffbd44b"  # default VPC
 
 
 #### SSH Key Pair
@@ -49,32 +96,37 @@ fi
 
 #### Security Group
 # Create security group if it doesn't exist
-echo -n "Checking if security group ${SG} exists ..."
-aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SG} > /dev/null 2>&1 || secgrp=missing
+echo -n "Checking if security group ${SGname} exists ..."
+aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SGname} > /dev/null 2>&1 || secgrp=missing
 if [ "${secgrp}" == "missing" ]; then
-  echo -e "missing\nCreating security group ${SG} ... "
-  aws ec2 create-security-group --output json --no-cli-pager --description "IP based filtering for ${SG}" --group-name ${SG} --vpc-id ${VPC}
+  echo -e "missing\nCreating security group ${SGname} ... "
+  aws ec2 create-security-group --output json --no-cli-pager --description "IP based filtering for ${SGname}" --group-name ${SGname} --vpc-id ${VPC}
   echo done
 else
   echo found
 fi
 
 # Lookup the security group created to get the ID
-echo -n Retrieving ID for security group ${SG} ...
-SecurityGroupId=$(aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SG} --query "SecurityGroups[0].GroupId" --output text)
+echo -n Retrieving ID for security group ${SGname} ...
+SecurityGroupId=$(aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SGname} --query "SecurityGroups[0].GroupId" --output text)
 echo done
 
 # Add name tag to security group
-aws ec2 create-tags --resources ${SecurityGroupId} --tags Key=Name,Value=${SG}
+aws ec2 create-tags --resources ${SecurityGroupId} --tags Key=Name,Value=${SGname}
 
 
 # Add rule for IP based filtering
 WorkstationIP=`curl http://checkip.amazonaws.com/ 2> /dev/null`
 echo -n Checking if ${WorkstationIP} is authorized in security group ...
-aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SG} | grep ${WorkstationIP} > /dev/null || ipauth=missing
+aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SGname} | grep ${WorkstationIP} > /dev/null || ipauth=missing
 if [ "${ipauth}" == "missing" ]; then
-  echo -e "missing\nAdding ${WorkstationIP} to security group ${SG} ..."
-  aws ec2 authorize-security-group-ingress --output json --no-cli-pager --group-name ${SG} --protocol all --cidr ${WorkstationIP}/32
+  echo -e "missing\nAdding ${WorkstationIP} to security group ${SGname} ..."
+  if [[ "$PRIVATE_IP" == true || "$METAL_LB" == true ]];
+	then
+	  	aws ec2 authorize-security-group-ingress --output json --no-cli-pager --group-name ${SGname} --protocol tcp --port 22 --cidr ${WorkstationIP}/32
+	else  # all protocols to all ports is the default
+		aws ec2 authorize-security-group-ingress --output json --no-cli-pager --group-name ${SGname} --protocol all --cidr ${WorkstationIP}/32
+	fi
   echo done
 else
   echo found
@@ -232,18 +284,76 @@ echo
 echo "k3d version"
 ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d version"
 echo
+
 echo "creating k3d cluster"
 
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PublicIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+if [[ "$METAL_LB" == true ]]
+then
+	# create docker network for k3d cluster
+	echo creating docker network for k3d cluster
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
 
-echo
-echo
-echo "copy kubeconfig"
-scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
-sed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${MY_NAME}-dev-config
+	# create k3d cluster
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --k3s-server-arg "--disable=servicelb" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
+	# install MetalLB
+	echo installing MetalLB
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml"
+
+
+	# create the metalLB config
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+	#run this command on remote
+	cat << EOF > metallb-config.yaml
+	apiVersion: v1
+	kind: ConfigMap
+	metadata:
+	namespace: metallb-system
+	name: config
+	data:
+	config: |
+		address-pools:
+		- name: default
+		protocol: layer2
+		addresses:
+		- 172.20.1.240-172.20.1.243
+	EOF
+	ENDSSH
+
+	# apply the metalLB config
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f metallb-config.yaml"
+
+	echo
+	echo
+	echo "copy kubeconfig"
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${MY_NAME}-dev-config
+
+elif [[ "$PRIVATE_IP" == true ]]
+then
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+	echo
+	echo
+	echo "copy kubeconfig"
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${MY_NAME}-dev-config
+
+else # default is public ip
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PublicIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+
+	echo
+	echo
+	echo "copy kubeconfig"
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${MY_NAME}-dev-config
+fi
 
 # add tools
 echo Installing k9s...
@@ -253,17 +363,56 @@ ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} '
 ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo mv /home/ubuntu/kubectl /usr/local/bin/'
 ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo chmod +x /usr/local/bin/kubectl'
 
-# fix /etc/hosts for new cluster
-# echo "Fixing /etc/hosts"
-# sudo sed -i '/bigbang.dev/d' /etc/hosts
-# sudo bash -c "echo '## begin bigbang.dev section' >> /etc/hosts"
-# for i in {kibana,alertmanager,grafana,prometheus,twistlock,argocd,kiali,tracing}; do sudo bash -c "echo \"${PublicIP} ${i}.bigbang.dev\" >> /etc/hosts" ; done
-# sudo bash -c "echo '## end bigbang.dev section' >> /etc/hosts"
 
+if [[ "$METAL_LB" == true ]]; then
+	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+	# run this command on remote
+	# fix /etc/hosts for new cluster
+	sudo sed -i '/bigbang.dev/d' /etc/hosts
+	sudo bash -c "echo '## begin bigbang.dev section' >> /etc/hosts"
+	sudo bash -c "echo 172.20.1.240  keycloak.bigbang.dev >> /etc/hosts"
+	sudo bash -c "echo 172.20.1.241  kiali.bigbang.dev >> /etc/hosts"
+	sudo bash -c "echo 172.20.1.242  gitlab.bigbang.dev >> /etc/hosts"
+	sudo bash -c "echo '## end bigbang.dev section' >> /etc/hosts"
+	ENDSSH
+fi
+
+
+# ending instructions
 echo
 echo "ssh to instance:"
 echo "ssh -i ~/.ssh/${KeyName}.pem ubuntu@${PublicIP}"
 echo
+
+if [[ "$METALLB" == true ]]
+then	
+	echo "Start sshuttle:"
+	echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem -D 127.0.0.1:12345'"
+	echo "You must use Firefox browser with with manual SOCKsv5 proxy configuration"
+	echo
+
+elif [[ "$PRIVATE_IP" == true ]]
+then	
+	echo "Start sshuttle:"
+	echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem'"
+	echo
+fi	
+
+echo
 echo "To use kubectl from your local workstation you must set the KUBECONFIG environment variable:"
 echo "export KUBECONFIG=~/.kube/${MY_NAME}-dev-config"
 echo
+
+if [[ "$PRIVATE_IP" == true ]]
+then
+	echo "To access apps from a browser edit your /etc/hosts to add the private IP of your instance with application hostnames. Example:"
+	echo "${PrivateIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
+	echo
+else   #default is to use the public ip
+	echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames. Example:"
+	echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
+	echo
+fi
+
+
+
