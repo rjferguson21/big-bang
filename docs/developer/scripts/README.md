@@ -2,6 +2,8 @@
 
 > NOTE: This script does not does not install Flux or deploy BigBang. You must handle those deployments after your k3d dev cluster is ready.
 
+The instance will automatically terminate in the middle of the night at 08:00 UTC.
+
 ## Install and Configure Dependencies
 
 1. Install aws cli
