@@ -24,44 +24,44 @@ VPC="vpc-2ffbd44b"  # default VPC
 
 while [ -n "$1" ]; do # while loop starts
 
-	case "$1" in
+  case "$1" in
 
-	-b) echo "-b option passed for big k3d cluster using M5 instance" 
+  -b) echo "-b option passed for big k3d cluster using M5 instance" 
       BIG_INSTANCE=true
-    ;;
+  ;;
 
-	-p) echo "-p option passed to cretate k3d cluster with private ip" 
+  -p) echo "-p option passed to cretate k3d cluster with private ip" 
       PRIVATE_IP=true
-    ;;
+  ;;
 
-	-m) echo "-m option passed to install MetalLB" 
+  -m) echo "-m option passed to install MetalLB" 
       METAL_LB=true
-    ;; 
+  ;; 
 
-	-d) echo "-d option passed to destroy the AWS resources"
-	  AWSINSTANCEIDs=$( aws ec2 describe-instances \
-	    --output text \
-	    --query "Reservations[].Instances[].InstanceId" \
-	    --filters "Name=tag:Name,Values=${AWSUSERNAME}-dev" "Name=instance-state-name,Values=running" )
+  -d) echo "-d option passed to destroy the AWS resources"
+      AWSINSTANCEIDs=$( aws ec2 describe-instances \
+        --output text \
+        --query "Reservations[].Instances[].InstanceId" \
+        --filters "Name=tag:Name,Values=${AWSUSERNAME}-dev" "Name=instance-state-name,Values=running" )
       # If instance exists then terminate it 
       if [[ ! -z "${AWSINSTANCEIDs}" ]]; then 
-		echo "aws instances being terminated: ${AWSINSTANCEIDs}"
-		# TODO: should we add a user confirmation prompt here for safety?
-		aws ec2 terminate-instances --instance-ids ${AWSINSTANCEIDs}
-		echo -n "waiting for instance termination..."
-		aws ec2 wait instance-terminated --instance-ids ${AWSINSTANCEIDs}
-		echo "done"
-	  else
-	    echo "You had no running instances."
-	  fi
-	  echo "SecurityGroup name to be deleted: ${SGname}"
-	  aws ec2 delete-security-group --group-name=${SGname}
-	  echo "KeyPair to be deleted: ${KeyName}"
-	  aws ec2 delete-key-pair --key-name ${KeyName}
-	  exit 0 
-	;;
+        echo "aws instances being terminated: ${AWSINSTANCEIDs}"
+        # TODO: should we add a user confirmation prompt here for safety?
+        aws ec2 terminate-instances --instance-ids ${AWSINSTANCEIDs}
+        echo -n "waiting for instance termination..."
+        aws ec2 wait instance-terminated --instance-ids ${AWSINSTANCEIDs}
+        echo "done"
+      else
+        echo "You had no running instances."
+      fi
+      echo "SecurityGroup name to be deleted: ${SGname}"
+      aws ec2 delete-security-group --group-name=${SGname}
+      echo "KeyPair to be deleted: ${KeyName}"
+      aws ec2 delete-key-pair --key-name ${KeyName}
+      exit 0 
+  ;;
 
-    -h) echo "Usage:"
+  -h) echo "Usage:"
       echo "k3d-dev.sh -b -p -m -d -h"
       echo ""
       echo " -b   use BIG M5 instance. Default is t3.2xlarge"
@@ -70,12 +70,12 @@ while [ -n "$1" ]; do # while loop starts
 	  echo " -d   destroy related AWS resources"
       echo " -h   output help"
       exit 0
-    ;;
+  ;;
 
-	*) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
+  *) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
 
-	esac
-	shift
+  esac
+  shift
 done
 
 
