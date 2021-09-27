@@ -48,6 +48,8 @@ variables:
   IMAGE_LIST: images.txt
   IMAGE_PKG: images.tar.gz
   REPOS_PKG: repositories.tar.gz
+  VALUES_FILE: chart/values.yaml
+  CI_VALUES_FILE: tests/ci/k3d/values.yaml
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Pre Stage Jobs.   This execute before any job is run.
@@ -119,13 +121,13 @@ clean install:
     - *chart_changes
   script:
     - *deploy_bigbang
-    - *test_bigbang
     # Fetch list of all images ran (retry crictl up to 6x)
     - echo -e "\e[0Ksection_start:`date +%s`:images_used[collapsed=true]\r\e[0K\e[33;1mImages Used\e[37m"
     - cid=$(docker ps -aqf "name=k3d-${CI_JOB_ID}-server-0")
     - images=$(timeout 65 bash -c "until docker exec $cid crictl images -o json; do sleep 10; done;")
     - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
     - echo -e "\e[0Ksection_end:`date +%s`:images_used\r\e[0K"
+    - *test_bigbang
   artifacts:
     paths:
       - images.txt
@@ -145,8 +147,8 @@ upgrade:
     # skip job for nightly master and "test-ci::infra" labeled pipelines
     - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
       when: never
-    # skip job when MR title starts with 'SKIP UPGRADE'
-    - if: '$CI_MERGE_REQUEST_TITLE =~ /^SKIP UPGRADE/'
+    # skip job when MR title starts with 'SKIP UPGRADE' 
+    - if: '$CI_MERGE_REQUEST_TITLE =~ /SKIP UPGRADE/'
       when: never
     # run pipeline on merge request events
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -154,9 +156,9 @@ upgrade:
   variables:
     CLUSTER_NAME: "upgrade-${CI_COMMIT_SHORT_SHA}"
   script:
-    - echo "Install Big Bang from ${CI_DEFAULT_BRANCH}"
+    - echo "Install Big Bang from ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
     - echo -e "\e[0Ksection_start:`date +%s`:git_master[collapsed=true]\r\e[0K\e[33;1mGit Fetch Master\e[37m"  
-    - git fetch && git checkout ${CI_DEFAULT_BRANCH}
+    - git fetch && git checkout ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
     - echo -e "\e[0Ksection_end:`date +%s`:git_master\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
@@ -324,6 +326,11 @@ aws/rke2/bigbang test:
       - unknown_failure
       - stuck_or_timeout_failure
       - runner_system_failure
+  artifacts:
+    paths:
+      - "test-artifacts/"
+    expire_in: 3 days
+    when: always
 
 # Uninstall BigBang on RKE2 cluster on AWS
 aws/rke2/bigbang down:

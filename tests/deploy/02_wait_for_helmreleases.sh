@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+trap 'echo exit at ${0}:${LINENO}, command was: ${BASH_COMMAND} 1>&2' ERR
 
 ## Array of core HRs
 CORE_HELMRELEASES=("gatekeeper" "istio-operator" "istio" "monitoring" "eck-operator" "ek" "fluent-bit" "twistlock" "cluster-auditor" "jaeger" "kiali")
@@ -133,12 +134,12 @@ function wait_daemonset(){
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
   set +e
-  yq e '. | keys | .[] | ... comments=""' "chart/values.yaml" | while IFS= read -r package; do
-    if [[ "$(yq e ".${package}.enabled" "chart/values.yaml")" == "true" ]]; then
-      gitrepo=$(yq e ".${package}.git.repo" "chart/values.yaml")
-      version=$(yq e ".${package}.git.tag" "chart/values.yaml")
+  yq e '. | keys | .[] | ... comments=""' "${VALUES_FILE}" | while IFS= read -r package; do
+    if [[ "$(yq e ".${package}.enabled" "${VALUES_FILE}")" == "true" ]]; then
+      gitrepo=$(yq e ".${package}.git.repo" "${VALUES_FILE}")
+      version=$(yq e ".${package}.git.tag" "${VALUES_FILE}")
       if [[ -z "$version" ]]; then
-        version=$(yq e ".${package}.git.branch" "chart/values.yaml")
+        version=$(yq e ".${package}.git.branch" "${VALUES_FILE}")
       fi
       if [[ -z "$version" || "$version" == "null" ]]; then
         continue
@@ -160,7 +161,7 @@ function wait_crd(){
 ## Append all add-ons to hr list if "all-packages" or default branch/tag. Else, add specific ci labels to hr list.
 HELMRELEASES=(${CORE_HELMRELEASES[@]})
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
-    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
+    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]/"nexus-repository-manager"})
     echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
 elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
     IFS=","

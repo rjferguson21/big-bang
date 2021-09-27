@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 set -ex
-
-CI_VALUES_FILE="tests/ci/k3d/values.yaml"
+trap 'echo exit at ${0}:${LINENO}, command was: ${BASH_COMMAND} 1>&2' ERR
 
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
   echo "all-packages label enabled, or on default branch or tag, enabling all addons"
   yq e ".addons.*.enabled = "true"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
+  yq e ".addons.nexus.enabled = "false"" $CI_VALUES_FILE > tmpfile && mv tmpfile $CI_VALUES_FILE
 else
   IFS=","
   for package in $CI_MERGE_REQUEST_LABELS; do
@@ -18,7 +18,7 @@ else
 fi
 
 # if keycloak enabled add ingress passthrough cert to addons.keycloak.ingress
-if [ "$(yq e ".addons.keycloak.enabled" "tests/ci/k3d/values.yaml")" == "true" ]; then
+if [ "$(yq e ".addons.keycloak.enabled" "${CI_VALUES_FILE}")" == "true" ]; then
   yq eval-all 'select(fileIndex == 0) * select(filename == "tests/ci/keycloak-certs/keycloak-passthrough-values.yaml")' $CI_VALUES_FILE tests/ci/keycloak-certs/keycloak-passthrough-values.yaml > tmpfile && mv tmpfile $CI_VALUES_FILE
 #if keycloak is enabled add passthrough ingress gateway and gateway to istio.
   yq eval-all 'select(filename == "tests/ci/k3d/values.yaml") * select(filename == "tests/ci/passthrough-gateway.yaml")' $CI_VALUES_FILE tests/ci/passthrough-gateway.yaml > tmpfile && mv tmpfile $CI_VALUES_FILE
@@ -44,6 +44,9 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace \
 if [[ $(git branch --show-current) == "${CI_DEFAULT_BRANCH}" ]]; then
   echo "Deploying secrets from the ${CI_DEFAULT_BRANCH} branch"
   kubectl apply -f tests/ci/shared-secrets.yaml
+elif [[ $(git branch --show-current) == "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]]; then
+  echo "Deploying secrets from the ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} branch"
+  cat tests/ci/shared-secrets.yaml | sed 's|master|'"$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"'|g' | kubectl apply -f -
 elif [ -z "$CI_COMMIT_TAG" ]; then
   echo "Deploying secrets from the ${CI_COMMIT_REF_NAME} branch"
   cat tests/ci/shared-secrets.yaml | sed 's|master|'"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
@@ -52,4 +55,3 @@ else
   # NOTE: $CI_COMMIT_REF_NAME = $CI_COMMIT_TAG when running on a tagged build
   cat tests/ci/shared-secrets.yaml | sed 's|branch: master|tag: '"$CI_COMMIT_REF_NAME"'|g' | kubectl apply -f -
 fi
-

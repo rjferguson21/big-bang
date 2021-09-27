@@ -118,7 +118,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.10.4-bb.3"
+    tag: "1.11.2-bb.0"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -180,7 +180,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.10.4-bb.1"
+    tag: "1.11.2-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -354,7 +354,7 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.6.0-bb.2"
+    tag: "1.6.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
@@ -389,7 +389,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.9"
+    tag: "14.0.0-bb.10"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -744,7 +744,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.1"
+      tag: "9.6.3-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -829,7 +829,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.13.0-bb.8"
+      tag: "1.13.0-bb.10"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
@@ -915,7 +915,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.14.0-bb.4"
+      tag: "1.15.0-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
@@ -1059,7 +1059,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.1-bb.6"
+      tag: "11.0.1-bb.7"
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
