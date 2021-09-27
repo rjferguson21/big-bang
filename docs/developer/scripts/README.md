@@ -29,12 +29,9 @@
       aws configure list
       ```
 
-1. Install jq  
+1. Install jq
+      Follow jq installation instructions for your workstation operating system.
       <https://stedolan.github.io/jq/download/>
-
-      ```Shell
-      sudo apt-get install jq -y
-      ```
 
 ## Usage
 
