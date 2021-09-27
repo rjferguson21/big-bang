@@ -48,6 +48,7 @@ function check_if_hr_exist() {
     done
 }
 
+## Function to wait on all HRs
 function wait_all_hr() {
     timeElapsed=0
     while true; do
