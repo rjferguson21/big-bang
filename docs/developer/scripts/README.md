@@ -1,5 +1,4 @@
-# Start here
-
+# Development k3d cluster automation
 
 ## Install and Configure Dependencies
 
@@ -27,4 +26,19 @@ aws configure list
 Install jq  https://stedolan.github.io/jq/download/
 
 
+## Usage
 
+The default with not options specified is to use the EC2 public IP for the k3d cluster and the security group.
+
+```
+./docs/developer/scripts/k3d-dev.sh -h
+AWS User Name: your.name
+Usage:
+k3d-dev.sh -b -p -m -d -h
+
+ -b   use big M5 instance. Default is t3.2xlarge
+ -p   use private IP for security group and k3d cluster
+ -m   create k3d cluster with metalLB
+ -d   destroy related AWS resources
+ -h   output help
+```
