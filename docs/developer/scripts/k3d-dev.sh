@@ -3,7 +3,7 @@
 # getting AWs user name
 AWSUSERNAME=$( aws sts get-caller-identity --query Arn --output text | cut -f 2 -d '/' )
 
-# check for environment variable
+# check for aws username environment variable. If not found then terminate script
 if [[ -z "${AWSUSERNAME}" ]]; then
   echo "You must configure your AWS credentials. Your AWS user name is used to name resources in AWS. Example:"
   echo "   aws configure"
