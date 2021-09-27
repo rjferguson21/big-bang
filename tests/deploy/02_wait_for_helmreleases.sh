@@ -54,10 +54,12 @@ function wait_all_hr() {
         # HR ArtifactFailed, retry
         artifactfailedcounter=0
         while [[ $artifactfailedcounter -lt 3 ]]; do
-            if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ ArtifactFailed ]];then
+            if [[ "$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')" =~ ArtifactFailed ]]; then
               artifactfailedcounter=$(($artifactfailedcounter+1))
               echo "Helm Artifact Failed, waiting 5 seconds."
               sleep 5
+            else
+              artifactfailedcounter=$(($artifactfailedcounter+3))
             fi
         done
         # HR *Failed, exit
