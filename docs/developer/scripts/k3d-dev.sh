@@ -1,17 +1,23 @@
 #!/bin/bash
 
+# getting AWs user name
+AWSUSERNAME=$( aws sts get-caller-identity --query Arn --output text | cut -f 2 -d '/' )
+
 # check for environment variable
-if [[ -z "${MY_NAME}" ]]; then
-  echo "You must set MY_NAME environment variable. This is used to name resources in AWS:"
-  echo "export MY_NAME=happy.camper"
+if [[ -z "${AWSUSERNAME}" ]]; then
+  echo "You must configure your AWS credentials. Your AWS user name is used to name resources in AWS. Example:"
+  echo "   aws configure"
   exit 1
+else
+    echo "AWS User Name: ${AWSUSERNAME}"
 fi
+
 
 ####Configure Environment
 # Assign a name for your SSH Key Pair.  Typically, people use their username to make it easy to identify
-KeyName="${MY_NAME}-dev"
+KeyName="${AWSUSERNAME}-dev"
 # Assign a name for your Security Group.  Typically, people use their username to make it easy to identify
-SGname="${MY_NAME}-dev"
+SGname="${AWSUSERNAME}-dev"
 # Identify which VPC to create the spot instance in
 VPC="vpc-2ffbd44b"  # default VPC
 
@@ -38,9 +44,11 @@ while [ -n "$1" ]; do # while loop starts
 		AWSINSTANCEID=$(aws ec2 describe-instances \
     		--output text \
     		--query "Reservations[].Instances[].InstanceId" \
-    		--filters "Name=tag:Name,Values=${MY_NAME}-dev")
+    		--filters "Name=tag:Name,Values=${AWSUSERNAME}-dev" "Name=instance-state-name,Values=running" )
 		echo "aws instances being terminated: ${AWSINSTANCEID}"
 		aws ec2 terminate-instances --instance-ids ${AWSINSTANCEID}
+		# TODO: use filter to wait for instance-state-name 'terminated' status instead of a sleep
+		sleep 60    # wait for instance termination.
 		echo "SecurityGroup name to be deleted: ${SGname}"
 		aws ec2 delete-security-group --group-name=${SGname}
 		echo "KeyPair to be deleted: ${KeyName}"
@@ -49,7 +57,7 @@ while [ -n "$1" ]; do # while loop starts
         ;;
     -h)
         echo "Usage:"
-        echo "k3d-dev.sh -b -p -m -h -d"
+        echo "k3d-dev.sh -b -p -m -d -h"
         echo ""
         echo " -b   use BIG M5 instance. Default is t3.2xlarge"
         echo " -p   use private IP for security group and k3d cluster"
@@ -207,7 +215,7 @@ aws ec2 wait spot-instance-request-fulfilled --output json --no-cli-pager --spot
 InstId=`aws ec2 describe-spot-instance-requests --output json --no-cli-pager --spot-instance-request-ids ${SIR} | jq -r '.SpotInstanceRequests[0].InstanceId'`
 
 # Add name tag to spot instance
-aws ec2 create-tags --resources ${InstId} --tags Key=Name,Value=${MY_NAME}-dev
+aws ec2 create-tags --resources ${InstId} --tags Key=Name,Value=${AWSUSERNAME}-dev
 
 # Request was fulfilled, but instance is still spinng up, so wait on that
 echo Waiting for instance ${InstId} to be ready ...
@@ -311,15 +319,15 @@ then
 	apiVersion: v1
 	kind: ConfigMap
 	metadata:
-	namespace: metallb-system
-	name: config
+	  namespace: metallb-system
+	  name: config
 	data:
-	config: |
-		address-pools:
-		- name: default
-		protocol: layer2
-		addresses:
-		- 172.20.1.240-172.20.1.243
+	  config: |
+	    address-pools:
+	    - name: default
+	      protocol: layer2
+	      addresses:
+	      - 172.20.1.240-172.20.1.243
 	EOF
 	ENDSSH
 
@@ -329,8 +337,8 @@ then
 	echo
 	echo
 	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
-	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${MY_NAME}-dev-config
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 
 elif [[ "$PRIVATE_IP" == true ]]
 then
@@ -340,8 +348,8 @@ then
 	echo
 	echo
 	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
-	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${MY_NAME}-dev-config
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 
 else # default is public ip
 	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PublicIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
@@ -351,8 +359,8 @@ else # default is public ip
 	echo
 	echo
 	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${MY_NAME}-dev-config
-	sed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${MY_NAME}-dev-config
+	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+	sed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 fi
 
 # add tools
@@ -384,7 +392,7 @@ echo "ssh to instance:"
 echo "ssh -i ~/.ssh/${KeyName}.pem ubuntu@${PublicIP}"
 echo
 
-if [[ "$METALLB" == true ]]
+if [[ "$METAL_LB" == true ]]
 then	
 	echo "Start sshuttle:"
 	echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem -D 127.0.0.1:12345'"
@@ -400,7 +408,7 @@ fi
 
 echo
 echo "To use kubectl from your local workstation you must set the KUBECONFIG environment variable:"
-echo "export KUBECONFIG=~/.kube/${MY_NAME}-dev-config"
+echo "export KUBECONFIG=~/.kube/${AWSUSERNAME}-dev-config"
 echo
 
 if [[ "$PRIVATE_IP" == true ]]
