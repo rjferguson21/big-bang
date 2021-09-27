@@ -28,7 +28,7 @@ Install jq  https://stedolan.github.io/jq/download/
 
 ## Usage
 
-The default with not options specified is to use the EC2 public IP for the k3d cluster and the security group.
+The default with no options specified is to use the EC2 public IP for the k3d cluster and the security group.
 
 ```
 ./docs/developer/scripts/k3d-dev.sh -h
