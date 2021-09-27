@@ -72,7 +72,7 @@ while [ -n "$1" ]; do # while loop starts
       exit 0
   ;;
 
-  *) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
+  *) echo "Option $1 not recognized" ;; # In case a non-existant option is submitted
 
   esac
   shift
