@@ -32,6 +32,10 @@
 1. Install jq  
       <https://stedolan.github.io/jq/download/>
 
+      ```Shell
+      sudo apt-get install jq -y
+      ```
+
 ## Usage
 
 The default with no options specified is to use the EC2 public IP for the k3d cluster and the security group.
