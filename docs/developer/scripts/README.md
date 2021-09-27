@@ -1,8 +1,9 @@
 # Start here
 
 
-## Dependencies
+## Install and Configure Dependencies
 
+1. 
 install aws cli
 ```
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -21,4 +22,9 @@ aws configure
 # Verify configuration
 aws configure list
 ```
+
+2.
+Install jq  https://stedolan.github.io/jq/download/
+
+
 

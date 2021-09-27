@@ -38,17 +38,16 @@ while [ -n "$1" ]; do # while loop starts
         METAL_LB=true
         ;; 
 
-	-d) echo "-d opttion passed to destroy the AWS resources"
-		# TODO: destroy resources here
-
-		AWSINSTANCEID=$(aws ec2 describe-instances \
+	-d) echo "-d option passed to destroy the AWS resources"
+		AWSINSTANCEIDs=$(aws ec2 describe-instances \
     		--output text \
     		--query "Reservations[].Instances[].InstanceId" \
     		--filters "Name=tag:Name,Values=${AWSUSERNAME}-dev" "Name=instance-state-name,Values=running" )
-		echo "aws instances being terminated: ${AWSINSTANCEID}"
-		aws ec2 terminate-instances --instance-ids ${AWSINSTANCEID}
-		# TODO: use filter to wait for instance-state-name 'terminated' status instead of a sleep
-		sleep 60    # wait for instance termination.
+		echo "aws instances being terminated: ${AWSINSTANCEIDs}"
+		aws ec2 terminate-instances --instance-ids ${AWSINSTANCEIDs}
+		echo -n "waiting for instance termination..."
+		aws ec2 wait instance-terminated --instance-ids ${AWSINSTANCEIDs}
+		echo "done"
 		echo "SecurityGroup name to be deleted: ${SGname}"
 		aws ec2 delete-security-group --group-name=${SGname}
 		echo "KeyPair to be deleted: ${KeyName}"
