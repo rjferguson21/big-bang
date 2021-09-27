@@ -1,45 +1,52 @@
-{{- $fluxSettingsIstioOperator := merge .Values.istiooperator.flux .Values.flux -}}
-{{- if .Values.istiooperator.enabled }}
+{{- $operators := dict "deprecated" .Values.istiooperator }}
+{{- range $name, $values := .Values.istio.operators }}{{- $_ := set $operators $name $values }}{{- end }}
+{{- range $name, $values := $operators }}
+{{- if $values.enabled }}
+---
+{{- if or (eq $name "default") (eq $name "deprecated") }}{{- $name = "istio-operator" }}{{- else }}{{- $name = printf "istio-operator-%s" $name }}{{- end }}
+{{- $fluxSettingsIstioOperator := $.Values.flux -}}
+{{- if hasKey $values "flux" }}{{- $fluxSettingsIstioOperator = merge $.Values.flux $values.flux -}}{{- end }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: istio-operator
-  namespace: {{ .Release.Namespace }}
+  name: {{ $name }}
+  namespace: {{ $.Release.Namespace }}
   labels:
     app.kubernetes.io/name: istio-operator
     app.kubernetes.io/component: "core"
-    {{- include "commonLabels" . | nindent 4}}
+    {{- include "commonLabels" $ | nindent 4}}
 spec:
   targetNamespace: istio-operator
   chart:
     spec:
-      chart: {{ .Values.istiooperator.git.path }}
+      chart: {{ $values.git.path }}
       interval: 5m
       sourceRef:
         kind: GitRepository
-        name: istio-operator
-        namespace: {{ .Release.Namespace }}
+        name: {{ $name }}
+        namespace: {{ $.Release.Namespace }}
 
   {{- toYaml $fluxSettingsIstioOperator | nindent 2 }}
 
-  {{- if .Values.istiooperator.postRenderers }}
+  {{- if $values.postRenderers }}
   postRenderers:
-  {{ toYaml .Values.istiooperator.postRenderers | nindent 4 }}
+  {{ toYaml $values.postRenderers | nindent 4 }}
   {{- end }}
   valuesFrom:
-    - name: {{ .Release.Name }}-istio-operator-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "common"
-    - name: {{ .Release.Name }}-istio-operator-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "defaults"
-    - name: {{ .Release.Name }}-istio-operator-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "overlays"
 
-  {{- if .Values.gatekeeper.enabled }}
+  {{- if $.Values.gatekeeper.enabled }}
   dependsOn:
     - name: gatekeeper
-      namespace: {{ .Release.Namespace }}
+      namespace: {{ $.Release.Namespace }}
   {{- end }}
+{{- end }}
 {{- end }}

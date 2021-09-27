@@ -1,0 +1,23 @@
+{{ $enabled := false }}
+{{- range $values := .Values.istio.controlplanes }}
+{{ if and ($values.enabled) (eq $enabled false) }}{{ $enabled = true }}{{- end }}
+{{- end }}
+
+{{- if and $enabled (not .Values.istio.enabled) (hasKey .Values.istio "gateways") (not .Values.offline) }}
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: istio-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: istio-controlplane
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
+spec:
+  interval: {{ .Values.flux.interval }}
+  url: {{ .Values.istio.gatewayGit.repo }}
+  ref:
+    {{- include "validRef" .Values.istio.gatewayGit | nindent 4 }}
+  {{ include "gitIgnore" . }}
+  {{- include "gitCreds" . | nindent 2 }}
+{{- end }}

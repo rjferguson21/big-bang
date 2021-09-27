@@ -11,7 +11,7 @@ domain: {{ $domainName }}
 openshift: {{ .Values.openshift}}
 
 istio:
-  enabled: {{ .Values.istio.enabled }}
+  {{ include "istioEnabled" . }}
   kiali:
     gateways:
     - istio-system/{{ default "public" .Values.kiali.ingress.gateway }}
@@ -65,16 +65,7 @@ cr:
             - app_label: istiod
               is_core: true
               is_proxy: false
-            {{- range $name, $values := .Values.istio.ingressGateways }}
-            - app_label: {{ $name }}
-              is_core: true
-              is_proxy: true
-            {{- end }}
-            {{- range $name, $values := .Values.istio.values.ingressGateways }}
-            - app_label: {{ $name }}
-              is_core: true
-              is_proxy: true
-            {{- end }}
+            {{- include "istio.component.labels" . | indent 12 }}
     api:
       namespaces:
         # bigbang watches all!
@@ -82,8 +73,22 @@ cr:
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
-  ingressLabels:
-    {{- $gateway := default "public" .Values.kiali.ingress.gateway }}
-    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
-    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  {{ include "ingressLabels" (dict "root" . "gateway" .Values.kiali.ingress.gateway) }}
+{{- end -}}
+
+{{- define "istio.component.labels" -}}
+{{- $ingresses := .Values.istio.ingressGateways | default dict }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+  {{- if $values.enabled }}{{- $_ := set $ingresses $name $values.ingressGateways }}{{- end }}
+{{- end }}
+{{- if hasKey .Values.istio.values "ingressGateways" }}
+  {{- range $name, $values := .Values.istio.values.ingressGateways }}
+    {{- if $values.enabled }}{{- $_ := set $ingresses $name $values.ingressGateways }}{{- end }}
+  {{- end }}
+{{- end }}
+{{- range $name, $values := $ingresses.ingressGateways }}
+- app_label: {{ $name }}
+  is_core: true
+  is_proxy: true
+{{- end }}
 {{- end -}}

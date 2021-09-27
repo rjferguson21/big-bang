@@ -1,48 +1,64 @@
-{{- $fluxSettingsIstioCp := merge .Values.istio.flux .Values.flux -}}
-{{- if .Values.istio.enabled }}
+{{- $controlplanes := dict "deprecated" .Values.istio }}
+{{- range $name, $values := .Values.istio.controlplanes }}{{- $_ := set $controlplanes $name $values }}{{- end }}
+{{- range $name, $values := $controlplanes }}
+{{- if $values.enabled }}
+---
+{{- $opName := "istio-operator" }}
+{{- if or (ne $name "default") (ne $name "deprecated") }}
+{{- $operators := dict "deprecated" $.Values.istiooperator }}
+{{- range $name, $values := $.Values.istio.operators }}{{- $_ := set $operators $name $values }}{{- end }}
+{{- range $n, $v := $operators }}
+{{- if and (eq $n $name) (ne $n "default") (ne $n "deprecated") }}{{- $opName = printf "%s-%s" $opName $n }}{{- end }}
+{{- end }}
+{{- end }}
+{{- $repoName := "istio-controlplane" }}
+{{- if or (eq $name "default") (eq $name "deprecated") }}{{- $name = "istio" }}{{- else }}{{- $repoName = printf "%s-%s" $repoName $name }}{{- $name = printf "istio-%s" $name }}{{- end }}
+{{- $fluxSettingsIstioCp := $.Values.flux -}}
+{{- if hasKey $values "flux" }}{{- $fluxSettingsIstioCp = merge $.Values.flux $values.flux -}}{{- end }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: istio
-  namespace: {{ .Release.Namespace }}
+  name: {{ $name }}
+  namespace: {{ $.Release.Namespace }}
   labels:
     app.kubernetes.io/name: istio-controlplane
     app.kubernetes.io/component: "core"
-    {{- include "commonLabels" . | nindent 4}}
+    {{- include "commonLabels" $ | nindent 4}}
 spec:
   targetNamespace: istio-system
   chart:
     spec:
-      chart: {{ .Values.istio.git.path }}
+      chart: {{ $values.git.path }}
       interval: 5m
       sourceRef:
         kind: GitRepository
-        name: istio-controlplane
-        namespace: {{ .Release.Namespace }}
+        name: {{ $repoName }}
+        namespace: {{ $.Release.Namespace }}
 
   {{- toYaml $fluxSettingsIstioCp | nindent 2 }}
 
-  {{- if .Values.istio.postRenderers }}
+  {{- if $values.postRenderers }}
   postRenderers:
-  {{ toYaml .Values.istio.postRenderers | nindent 4 }}
+  {{ toYaml $values.postRenderers | nindent 4 }}
   {{- end }}
   valuesFrom:
-    - name: {{ .Release.Name }}-istio-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "common"
-    - name: {{ .Release.Name }}-istio-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "defaults"
-    - name: {{ .Release.Name }}-istio-values
+    - name: {{ $.Release.Name }}-{{ $name }}-values
       kind: Secret
       valuesKey: "overlays"
 
   dependsOn:
-    - name: istio-operator
-      namespace: {{ .Release.Namespace }}
+    - name: {{ $opName }}
+      namespace: {{ $.Release.Namespace }}
 
-    {{- if .Values.gatekeeper.enabled }}
+    {{- if $.Values.gatekeeper.enabled }}
     - name: gatekeeper
-      namespace: {{ .Release.Namespace }}
+      namespace: {{ $.Release.Namespace }}
     {{- end }}
+{{- end }}
 {{- end }}

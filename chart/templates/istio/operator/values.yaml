@@ -1,14 +1,45 @@
-{{- if .Values.istiooperator.enabled }}
-{{- include "values-secret" (dict "root" $ "package" .Values.istiooperator "name" "istio-operator" "defaults" (include "bigbang.defaults.istiooperator" .)) }}
+{{/*
+Ensure both deprecated and default operators are not enabled.
+*/}}
+{{- if and (.Values.istiooperator.enabled) (.Values.istio.operators.default.enabled) }}
+{{- fail "Only one of '.Values.istiooperator' or `.Values.istio.operators.default` may be enabled." }}
+{{- end }}
+{{/*
+Ensure operator and controlplane revisions match.
+*/}}
+{{- $operators := dict "deprecated" .Values.istiooperator }}
+{{- range $name, $values := .Values.istio.operators }}{{- $_ := set $operators $name $values }}{{- end }}
+{{- $controlplanes := dict "deprecated" .Values.istio }}
+{{- range $name, $values := .Values.istio.controlplanes }}{{- $_ := set $controlplanes $name $values }}{{- end }}
+{{- range $name, $values := $operators }}
+{{- if and ($values.enabled) (hasKey $values "revision") }}
+{{- range $n, $v := $controlplanes }}
+{{- if eq $n $name }}
+{{- if not (hasKey $v "revision") }}{{- fail (printf "Istio %q is missing revision %q." $n $values.revision) }}{{- end }}
+{{- if ne $v.revision $values.revision }}{{- fail (printf "Revision for istio %q and istio operator %q differ." $n $name) }}{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{/*
+Create the values secret for enabled operators.
+*/}}
+{{- if $values.enabled }}
+---
+{{- if or (eq $name "default") (eq $name "deprecated") }}{{- $name = "istio-operator" }}{{- else }}{{- $name = printf "istio-operator-%s" $name }}{{- end }}
+{{- $defaults := include "bigbang.defaults.istiooperator" (dict "root" $ "package" $values) }}
+{{- include "values-secret" (dict "root" $ "package" $values "name" $name "defaults" $defaults) }}
+{{- end }}
 {{- end }}
 
 {{- define "bigbang.defaults.istiooperator" -}}
 createNamespace: false
-
+{{ if hasKey .package "revision" }}
+revision: {{ .package.revision }}
+{{ end }}
 imagePullSecrets:
   - private-registry
 
 networkPolicies:
-  enabled: {{ .Values.networkPolicies.enabled }}
-  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  enabled: {{ .root.Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .root.Values.networkPolicies.controlPlaneCidr }}
 {{- end -}}

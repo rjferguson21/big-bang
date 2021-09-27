@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: minio-operator
   labels:
-    istio-injection: enabled
+    {{- include "istioInjectionLabel" .  | nindent 4}}
     app.kubernetes.io/name: minioOperator
     app.kubernetes.io/component: "application-utilities"
     {{- include "commonLabels" . | nindent 4}}

@@ -3,10 +3,9 @@
 We have to do it this way because ownership of "istio.enabled" is owned by the chart but also BigBang.  Sourcing values from the passthrough values also means
   we get to simplify the api space of BigBang just a little bit more.
 */ -}}
-{{- $istio := .Values.logging.values.istio | default dict }}
-{{- $istioInjection := "enabled" }}
-{{- if and (hasKey $istio "enabled") (not $istio.enabled) }}
-{{- $istioInjection = "disabled" }}
+{{- $istioEnabled := .Values.istio.enabled | default false }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+{{- if and $values.enabled (not $istioEnabled) }}{{ $istioEnabled = true }}{{- end }}
 {{- end }}
 ---
 apiVersion: v1
@@ -17,5 +16,5 @@ metadata:
     app.kubernetes.io/name: logging
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
-    istio-injection: {{ $istioInjection }}
+    {{- include "istioInjectionLabel" .  | nindent 4}}
 {{- end }}

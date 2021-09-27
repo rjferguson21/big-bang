@@ -1,4 +1,10 @@
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{ $istioEnabled := false }}
+{{- if .Values.istio.enabled }}{{ $istioEnabled = true }}{{- else }}
+{{- range $values := .Values.istio.controlplanes }}
+{{ if and ($values.enabled) (eq $istioEnabled false) }}{{ $istioEnabled = true }}{{- end }}
+{{- end }}
+{{- end }}
+{{- if and $istioEnabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:

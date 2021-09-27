@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: jaeger
   labels:
-    istio-injection: enabled
+    {{- include "istioInjectionLabel" .  | nindent 4}}
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}

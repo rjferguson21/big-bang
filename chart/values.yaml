@@ -143,6 +143,13 @@ istio:
     #   # Node port base should be in the range from 30000 to 32764
     #   nodePortBase: 32000  # Alternatively, the kubernetesResourceSpec can be used to configure all port parameters
 
+  # TODO: Update reference when the istio-gateway repo1 repo is created.
+  gatewayGit:
+    repo: https://github.com/danehans/istio-gateway.git
+    path: "./chart"
+    tag: null
+    branch: main
+
   gateways:
     public:
       ingressGateway: "public-ingressgateway"
@@ -173,6 +180,61 @@ istio:
 
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
+
+  # Interface for managing multiple Istio operators.
+  operators:
+    default:
+      # -- Toggle deployment of Istio Operator.
+      enabled: false
+      git:
+        repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
+        path: "./chart"
+        tag: "1.11.2-bb.0"
+
+      # -- Flux reconciliation overrides specifically for the Istio Operator Package
+      flux: { }
+
+      # -- Values to passthrough to the istio-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
+      values: { }
+
+      # -- Post Renderers.  See docs/postrenders.md
+      postRenderers: [ ]
+
+  # Interface for managing multiple Istio control planes.
+  controlplanes:
+    default:
+      # -- Toggle deployment of Istio.
+      enabled: false
+      git:
+        repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
+        path: "./chart"
+        tag: "1.11.2-bb.0"
+      # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
+      # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
+      # Besides some ports needed by Istio, only ports 80 and 443 are opened
+      # Ingress gateways that require more configuration can be completed using `istio.values`
+      ingressGateways:
+        public-ingressgateway:
+          type: "LoadBalancer" # or "NodePort"
+          kubernetesResourceSpec: { } # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
+        # private-ingressgateway:
+        #   type: "LoadBalancer" # or "NodePort"
+        #   kubernetesResourceSpec: # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
+        #     serviceAnnotations: # Example for AWS internal load balancer
+        #       service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        #       service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+        # passthrough-ingressgateway:
+        #   type: "NodePort" # or "LoadBalancer"
+        #   # Node ports are assigned starting from nodePortBase.  The nodePortBase specifies the start of a range of 4 unused node ports.
+        #   # Node port will be assigned as follows: Port 15021 (Status) = nodePortBase, Port 80 = nodePortBase+1, Port 443 = nodePortBase+2, Port 15443 (SNI) = nodePortBase+3
+        #   # Node port base should be in the range from 30000 to 32764
+        #   nodePortBase: 32000  # Alternatively, the kubernetesResourceSpec can be used to configure all port parameters
+      # -- Flux reconciliation overrides specifically for the Istio Package
+      flux: { }
+      # -- Values to passthrough to the istio-controlplane chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
+      values: { }
+      # -- Post Renderers.  See docs/postrenders.md
+      postRenderers: [ ]
 
 istiooperator:
   # -- Toggle deployment of Istio Operator.

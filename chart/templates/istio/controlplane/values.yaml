@@ -1,37 +1,64 @@
-{{- if .Values.istio.enabled }}
-{{- include "values-secret" (dict "root" $ "package" .Values.istio "name" "istio" "defaults" (include "bigbang.defaults.istio" .)) }}
+{{/*
+Ensure both deprecated and default control planes are not enabled.
+*/}}
+{{- if and (.Values.istio.enabled) (.Values.istio.controlplanes.default.enabled) }}
+{{- fail "Only one of '.Values.istio' or `.Values.istio.controlplanes.default` may be enabled." }}
+{{- end }}
+{{/*
+Ensure controlplane and operator revisions match.
+*/}}
+{{- $controlplanes := dict "deprecated" .Values.istio }}
+{{- range $name, $values := .Values.istio.controlplanes }}{{- $_ := set $controlplanes $name $values }}{{- end }}
+{{- $operators := dict "deprecated" .Values.istiooperator }}
+{{- range $name, $values := .Values.istio.operators }}{{- $_ := set $operators $name $values }}{{- end }}
+{{- range $name, $values := $controlplanes }}
+{{/*
+Create the values secret for enabled control planes.
+*/}}
+{{- if $values.enabled }}
+---
+{{- $secretName := "istio" }}
+{{- if and (ne $name "default") (ne $name "deprecated") }}{{- $secretName = printf "istio-%s" $name }}{{- end }}
+{{- $defaults := include "bigbang.defaults.istio" (dict "root" $ "name" $name "package" $values) }}
+{{- include "values-secret" (dict "root" $ "package" $values "name" $secretName "defaults" $defaults) }}
+{{- end }}
 {{- end }}
 
 {{- define "bigbang.defaults.istio" -}}
 # hostname is deprecated and replaced with domain. But if hostname exists then use it.
-{{- $domainName := default .Values.domain .Values.hostname }}
+{{- $domainName := default .root.Values.domain .root.Values.hostname }}
 domain: {{ $domainName }}
-
+{{ if hasKey .package "revision" }}
+revision: {{ .package.revision }}
+{{ end }}
 tracing:
-  enabled:  {{ .Values.jaeger.enabled }}
+  enabled:  {{ .root.Values.jaeger.enabled }}
 
 imagePullSecrets:
   - private-registry
 
-openshift: {{ .Values.openshift }}
+openshift: {{ .root.Values.openshift }}
 
 authservice:
-  enabled: {{ .Values.addons.authservice.enabled }}
+  enabled: {{ .root.Values.addons.authservice.enabled }}
+
+authservice:
+  enabled: {{ .root.Values.addons.authservice.enabled }}
 
 monitoring:
-  enabled: {{ .Values.monitoring.enabled }}
+  enabled: {{ .root.Values.monitoring.enabled }}
 
 networkPolicies:
-  enabled: {{ .Values.networkPolicies.enabled }}
-  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  enabled: {{ .root.Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .root.Values.networkPolicies.controlPlaneCidr }}
 
-{{- if .Values.istio.ingressGateways }}
+{{- if .package.ingressGateways }}
 ingressGateways:
   istio-ingressgateway:
     enabled: false
 {{- end }}
 
-{{- range $name, $values := .Values.istio.ingressGateways }}
+{{- range $name, $values := .package.ingressGateways }}
   {{ $name | nindent 2 }}:
     {{- toYaml (merge (dict "k8s" $values.kubernetesResourceSpec) (fromYaml (include "istio.ingressgateway.k8s" $values))) | nindent 4 }}
     {{- if $values.extraLabels }} 
@@ -39,17 +66,18 @@ ingressGateways:
     {{- end}}
 {{- end }}
 
-{{- if .Values.istio.gateways }}
+{{- if .root.Values.istio.gateways }}
 gateways:
   main: null
 {{- end }}
-{{- range $name, $values := .Values.istio.gateways }}
+{{- if and .root.Values.istio.enabled (eq .name "deprecated") }}
+{{- range $name, $values := .root.Values.istio.gateways }}
   {{ $name | nindent 2 }}:
     selector:
       app: {{ $values.ingressGateway }}
     servers:
     - hosts:
-      {{ tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
+      {{ tpl ($values.hosts | default (list) | toYaml) $.root | nindent 8 }}
       port:
         name: https
         number: 8443
@@ -57,6 +85,7 @@ gateways:
       tls:
         credentialName: {{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+{{- end }}
 {{- end }}
 {{- end }}
 

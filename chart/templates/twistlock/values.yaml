@@ -19,14 +19,11 @@ imagePullSecrets:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
-  ingressLabels:
-    {{- $gateway := default "public" .Values.twistlock.ingress.gateway }}
-    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
-    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  {{ include "ingressLabels" (dict "root" . "gateway" .Values.twistlock.ingress.gateway) }}
   nodeCidr: {{ .Values.networkPolicies.nodeCidr }}
 
 istio:
-  enabled: {{ .Values.istio.enabled }}
+  {{ include "istioEnabled" . }}
   console:
     gateways:
     - istio-system/{{ default "public" .Values.twistlock.ingress.gateway }}

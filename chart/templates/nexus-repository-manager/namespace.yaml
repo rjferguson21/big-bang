@@ -1,12 +1,14 @@
 {{- if .Values.addons.nexus.enabled }}
+{{- $istioEnabled := .Values.istio.enabled | default false }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+{{- if and $values.enabled (not $istioEnabled) }}{{ $istioEnabled = true }}{{- end }}
+{{- end }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: nexus-repository-manager
   labels:
-    {{- if .Values.istio.enabled }}
-    istio-injection: enabled
-    {{- end }}
+    {{- if $istioEnabled }}{{- include "istioInjectionLabel" .  | nindent 4}}{{- end }}
     app.kubernetes.io/name: "nexus-repository-manager"
     app.kubernetes.io/component: "developer-tools"
     {{- include "commonLabels" . | nindent 4}}

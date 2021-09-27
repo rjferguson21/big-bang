@@ -1,5 +1,9 @@
 {{- $fluxSettingsJaeger := merge .Values.jaeger.flux .Values.flux -}}
 {{- if .Values.jaeger.enabled }}
+{{- $istioEnabled := .Values.istio.enabled | default false }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+{{- if and $values.enabled (not $istioEnabled) }}{{ $istioEnabled = true }}{{- end }}
+{{- end }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -33,12 +37,9 @@ spec:
       kind: Secret
       valuesKey: "overlays"
 
-  {{ if or .Values.istio.enabled .Values.monitoring.enabled .Values.jaeger.sso.enabled .Values.logging.enabled }}
+  {{ if or $istioEnabled .Values.monitoring.enabled .Values.jaeger.sso.enabled .Values.logging.enabled }}
   dependsOn:
-  {{- if .Values.istio.enabled }}
-    - name: istio
-      namespace: {{ .Release.Namespace }}
-  {{- end }}
+  {{- if $istioEnabled }}{{ include "istioDependsOn" . }}{{- end }}
   {{- if .Values.monitoring.enabled }}
     - name: monitoring
       namespace: {{ .Release.Namespace }}

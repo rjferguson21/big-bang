@@ -1,5 +1,9 @@
+{{- $istioEnabled := .Values.istio.enabled | default false }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+{{- if and $values.enabled (not $istioEnabled) }}{{ $istioEnabled = true }}{{- end }}
+{{- end }}
 {{- $fluxSettingsAuthservice := merge .Values.addons.authservice.flux .Values.flux -}}
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{- if and $istioEnabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -38,9 +42,6 @@ spec:
       kind: Secret
       valuesKey: "overlays"
 
-  {{- if .Values.istio.enabled }}
   dependsOn:
-  - name: istio
-    namespace: {{ .Release.Namespace }}
-  {{- end }}
+  {{- include "istioDependsOn" . }}
 {{- end }}

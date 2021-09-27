@@ -11,7 +11,7 @@ domain: {{ $domainName }}
 openshift: {{ .Values.openshift }}
 
 istio:
-  enabled: {{ .Values.istio.enabled }}
+  {{ include "istioEnabled" . }}
   chat:
     gateways:
     - istio-system/{{ default "public" .Values.addons.mattermost.ingress.gateway }}
@@ -31,10 +31,7 @@ sso:
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
-  ingressLabels:
-    {{- $gateway := default "public" .Values.addons.mattermost.ingress.gateway }}
-    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
-    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  {{ include "ingressLabels" (dict "root" . "gateway" .Values.addons.mattermost.ingress.gateway) }}
 
 global:
   imagePullSecrets:

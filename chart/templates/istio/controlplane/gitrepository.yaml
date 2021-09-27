@@ -1,18 +1,24 @@
-{{- if and (not .Values.offline) .Values.istio.enabled }}
+{{- $controlplanes := dict "deprecated" .Values.istio }}
+{{- range $name, $values := .Values.istio.controlplanes }}{{- $_ := set $controlplanes $name $values }}{{- end }}
+{{- range $name, $values := $controlplanes }}
+{{- if or (eq $name "default") (eq $name "deprecated") }}{{- $name = "istio-controlplane" }}{{- else }}{{- $name = printf "istio-controlplane-%s" $name }}{{- end }}
+{{- if and (not $.Values.offline) $values.enabled }}
+---
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:
-  name: istio-controlplane
-  namespace: {{ .Release.Namespace }}
+  name: {{ $name }}
+  namespace: {{ $.Release.Namespace }}
   labels:
     app.kubernetes.io/name: istio-controlplane
     app.kubernetes.io/component: "core"
-    {{- include "commonLabels" . | nindent 4}}
+    {{- include "commonLabels" $ | nindent 4}}
 spec:
-  interval: {{ .Values.flux.interval }}
-  url: {{ .Values.istio.git.repo }}
+  interval: {{ $.Values.flux.interval }}
+  url: {{ $values.git.repo }}
   ref:
-    {{- include "validRef" .Values.istio.git | nindent 4 }}
-  {{ include "gitIgnore" . }}
-  {{- include "gitCreds" . | nindent 2 }}
+    {{- include "validRef" $values.git | nindent 4 }}
+  {{ include "gitIgnore" $ }}
+  {{- include "gitCreds" $ | nindent 2 }}
+{{- end }}
 {{- end }}

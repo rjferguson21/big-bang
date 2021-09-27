@@ -1,12 +1,14 @@
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{- $istioEnabled := .Values.istio.enabled | default false }}
+{{- range $name, $values := .Values.istio.controlplanes }}
+{{- if and $values.enabled (not $istioEnabled) }}{{ $istioEnabled = true }}{{- end }}
+{{- end }}
+{{- if and $istioEnabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: authservice
   labels:
-    {{- if .Values.istio.enabled }}
-    istio-injection: enabled
-    {{- end }}
+    {{- if $istioEnabled }}{{- include "istioInjectionLabel" .  | nindent 4}}{{- end }}
     app.kubernetes.io/name: authservice
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
