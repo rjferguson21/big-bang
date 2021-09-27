@@ -5,8 +5,7 @@ NOTE: This script does not does not install Flux or deploy BigBang.
 
 ## Install and Configure Dependencies
 
-1.
-      Install aws cli
+1. Install aws cli
 
       ```shell
       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -15,7 +14,7 @@ NOTE: This script does not does not install Flux or deploy BigBang.
       aws --version
       ```
 
-      configure aws cli
+1. Configure aws cli
 
       ```shell
       aws configure
@@ -28,8 +27,8 @@ NOTE: This script does not does not install Flux or deploy BigBang.
       aws configure list
       ```
 
-1.
-      Install jq  <https://stedolan.github.io/jq/download/>
+1.Install jq  
+      <https://stedolan.github.io/jq/download/>
 
 ## Usage
 
