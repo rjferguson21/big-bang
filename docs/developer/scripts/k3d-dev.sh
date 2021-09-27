@@ -175,6 +175,29 @@ cat << EOF > ~/aws/launch_spec.json
 }
 EOF
 
+# TODO: can spot instances be created with userdata?
+# Create userdata.txt
+# https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+cat << EOF > ~/aws/userdata.txt
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+
+--==MYBOUNDARY==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
+#!/bin/bash
+# Set the vm.max_map_count to 262144.
+# Required for Elastic to run correctly without OOM errors.
+echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf
+echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf
+sysctl -p
+ulimit -n 131072
+ulimit -u 8192
+modprobe xt_REDIRECT
+modprobe xt_owner
+modprobe xt_statistic
+EOF
+
 
 #### Request a Spot Instance
 # Location of your private SSH key created during setup
@@ -241,6 +264,7 @@ ssh -i ~/.ssh/${KeyName}.pem -o ConnectionAttempts=10 -o StrictHostKeyChecking=n
 echo
 
 ##### Configure Instance
+## TODO: replace these individual commands with userdata when the spot instance is created?
 echo
 echo
 echo "starting instance config"
