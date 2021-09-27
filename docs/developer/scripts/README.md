@@ -6,30 +6,30 @@ NOTE: This script does not does not install Flux or deploy BigBang.
 ## Install and Configure Dependencies
 
 1.
-install aws cli
+      Install aws cli
 
-```shell
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-aws --version
-```
+      ```shell
+      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      unzip awscliv2.zip
+      sudo ./aws/install
+      aws --version
+      ```
 
-configure aws cli
+      configure aws cli
 
-```shell
-aws configure
-# aws_access_key_id - The AWS access key part of your credentials
-# aws_secret_access_key - The AWS secret access key part of your credentials
-# region - us-gov-west-1
-# output - JSON
+      ```shell
+      aws configure
+      # aws_access_key_id - The AWS access key part of your credentials
+      # aws_secret_access_key - The AWS secret access key part of your credentials
+      # region - us-gov-west-1
+      # output - JSON
 
-# Verify configuration
-aws configure list
-```
+      # Verify configuration
+      aws configure list
+      ```
 
 1.
-Install jq  <https://stedolan.github.io/jq/download/>
+      Install jq  <https://stedolan.github.io/jq/download/>
 
 ## Usage
 
