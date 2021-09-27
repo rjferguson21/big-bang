@@ -27,7 +27,7 @@ NOTE: This script does not does not install Flux or deploy BigBang.
       aws configure list
       ```
 
-1.Install jq  
+1. Install jq  
       <https://stedolan.github.io/jq/download/>
 
 ## Usage
