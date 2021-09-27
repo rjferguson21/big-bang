@@ -53,6 +53,7 @@ function wait_all_hr() {
     timeElapsed=0
     while true; do
         hrstatus=$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].reason}')
+        hrready=$(kubectl get hr -n bigbang -o jsonpath='{.items[*].status.conditions[0].status}')
         # HR ArtifactFailed, retry
         artifactfailedcounter=0
         while [[ $artifactfailedcounter -lt 3 ]]; do
@@ -77,8 +78,8 @@ function wait_all_hr() {
             done
             exit 1
         fi
-        if [[ "$hrstatus" != *Unknown* ]]; then
-            if [[ "$hrstatus" != *False* ]]; then
+        if [[ "$hrready" != *Unknown* ]]; then
+            if [[ "$hrready" != *False* ]]; then
                 echo "All HR's deployed"
                 break
             fi
