@@ -1,5 +1,8 @@
 # Development k3d cluster automation
 
+NOTE: This script does not does not install Flux or deploy BigBang.  
+      You must handle those deployments after your k3d dev cluster is ready. 
+
 ## Install and Configure Dependencies
 
 1. 
@@ -42,3 +45,4 @@ k3d-dev.sh -b -p -m -d -h
  -d   destroy related AWS resources
  -h   output help
 ```
+
