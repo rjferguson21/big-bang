@@ -4,7 +4,7 @@
 
 The instance will automatically terminate in the middle of the night at 08:00 UTC.
 
-## Install and Configure Dependencies
+# Install and Configure Dependencies
 
 1. Install aws cli
 
@@ -35,7 +35,7 @@ The instance will automatically terminate in the middle of the night at 08:00 UT
       Follow jq installation instructions for your workstation operating system.
       <https://stedolan.github.io/jq/download/>
 
-## Usage
+# Usage
 
 The default with no options specified is to use the EC2 public IP for the k3d cluster and the security group.
 
@@ -51,3 +51,17 @@ k3d-dev.sh -b -p -m -d -h
  -d   destroy related AWS resources
  -h   output help
 ```
+
+#  Troubleshooting
+
+1. If you are on a Mac insure that you have GNU sed command installed. Otherwise you will see this error 
+      ```
+      copy kubeconfig
+      config                         100% 3019    72.9KB/s   00:00    
+      sed: 1: "/Users/p005295f/.kube/m ...": extra characters at the end of p command
+
+      ```
+
+2. If you get an error on the script correct the error. Then re-run script with "-d" option to clean up resources. Then re-run your original command.
+
+

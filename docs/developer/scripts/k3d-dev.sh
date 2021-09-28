@@ -49,15 +49,15 @@ while [ -n "$1" ]; do # while loop starts
         # TODO: should we add a user confirmation prompt here for safety?
         aws ec2 terminate-instances --instance-ids ${AWSINSTANCEIDs}
         echo -n "waiting for instance termination..."
-        aws ec2 wait instance-terminated --instance-ids ${AWSINSTANCEIDs}
+        aws ec2 wait instance-terminated --instance-ids ${AWSINSTANCEIDs} &> /dev/null
         echo "done"
       else
         echo "You had no running instances."
       fi
       echo "SecurityGroup name to be deleted: ${SGname}"
-      aws ec2 delete-security-group --group-name=${SGname}
+      aws ec2 delete-security-group --group-name=${SGname} &> /dev/null
       echo "KeyPair to be deleted: ${KeyName}"
-      aws ec2 delete-key-pair --key-name ${KeyName}
+      aws ec2 delete-key-pair --key-name ${KeyName} &> /dev/null
       exit 0 
   ;;
 
@@ -81,11 +81,11 @@ done
 
 if [[ "$BIG_INSTANCE" == true ]]
 then 
-  echo "Bringing up large spot instance"
+  echo "Will use large m5a.4xlarge spot instance"
   InstSize="m5a.4xlarge"
   SpotPrice="0.69"
 else
-  echo "Bringing up standard spot instance"
+  echo "Will use standard t3a.2xlarge spot instance"
   InstSize="t3a.2xlarge"
   SpotPrice="0.35"
 fi
@@ -96,7 +96,7 @@ fi
 echo -n Checking if key pair ${KeyName} exists ...
 aws ec2 describe-key-pairs --output json --no-cli-pager --key-names ${KeyName} > /dev/null 2>&1 || keypair=missing
 if [ "${keypair}" == "missing" ]; then
-  echo -e "missing\nCreating key pair ${KeyName} ... "
+  echo -n -e "missing\nCreating key pair ${KeyName} ... "
   aws ec2 create-key-pair --output json --no-cli-pager --key-name ${KeyName} | jq -r '.KeyMaterial' > ~/.ssh/${KeyName}.pem
   chmod 600 ~/.ssh/${KeyName}.pem
   echo done
@@ -235,7 +235,7 @@ fi
 
 # Request was created, now you need to wait for it to be filled
 echo Waiting for spot instance request ${SIR} to be fulfilled ...
-aws ec2 wait spot-instance-request-fulfilled --output json --no-cli-pager --spot-instance-request-ids ${SIR}
+aws ec2 wait spot-instance-request-fulfilled --output json --no-cli-pager --spot-instance-request-ids ${SIR} &> /dev/null
 
 # Get the instanceId
 InstId=`aws ec2 describe-spot-instance-requests --output json --no-cli-pager --spot-instance-request-ids ${SIR} | jq -r '.SpotInstanceRequests[0].InstanceId'`
@@ -245,10 +245,11 @@ aws ec2 create-tags --resources ${InstId} --tags Key=Name,Value=${AWSUSERNAME}-d
 
 # Request was fulfilled, but instance is still spinng up, so wait on that
 echo Waiting for instance ${InstId} to be ready ...
-aws ec2 wait instance-running --output json --no-cli-pager --instance-ids ${InstId}
+aws ec2 wait instance-running --output json --no-cli-pager --instance-ids ${InstId} &> /dev/null
 
-# Save the instance ID off into a file in case we need it later
-echo ${InstId} >> ~/aws/active_instances
+# allow some extra seconds for the instance to be fully initiallized
+echo "Wait a little longer..."
+sleep 15
 
 # Get the public IP address of our instance
 PublicIP=`aws ec2 describe-instances --output json --no-cli-pager --instance-ids ${InstId} | jq -r '.Reservations[0].Instances[0].PublicIpAddress'`
@@ -263,6 +264,7 @@ echo Instance at ${PublicIP} is ready.
 ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${PublicIP}"
 
 echo "ssh init"
+# this is a do-nothing remote ssh command just to initialize ssh and make sure that the connection is working
 ssh -i ~/.ssh/${KeyName}.pem -o ConnectionAttempts=10 -o StrictHostKeyChecking=no ubuntu@${publicIP} "hostname"
 echo
 
@@ -272,55 +274,55 @@ echo
 echo
 echo "starting instance config"
 echo "Machine config"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo sysctl -w vm.max_map_count=524288"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf\""
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf\""
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'sysctl -p'"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'ulimit -n 131072'"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'ulimit -u 8192'"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_REDIRECT'"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_owner'"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_statistic'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo sysctl -w vm.max_map_count=524288"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf\""
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf\""
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'sysctl -p'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'ulimit -n 131072'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'ulimit -u 8192'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_REDIRECT'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_owner'"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c 'modprobe xt_statistic'"
 
 echo "Instance will automatically terminate at 08:00 UTC"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo '0 8 * * * /usr/sbin/shutdown -h now' | crontab -\""
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo bash -c \"echo '0 8 * * * /usr/sbin/shutdown -h now' | crontab -\""
 echo
 
 echo
 echo "installing packages"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt remove -y docker docker-engine docker.io containerd runc"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt -y update"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt remove -y docker docker-engine docker.io containerd runc"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt -y update"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common"
 
 echo
 echo
 # Add the Docker repository, we are installing from Docker and not the Ubuntu APT repo.
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt-key fingerprint 0EBFCD88"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"'
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg'
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt-key fingerprint 0EBFCD88"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list'
 
 
 echo
 echo
 # Install Docker
 echo "install Docker"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io kubectl jq tree vim"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io kubectl jq tree vim"
 
 echo
 echo
 # Add your base user to the Docker group so that you do not need sudo to run docker commands
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo usermod -aG docker ubuntu"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "sudo usermod -aG docker ubuntu"
 
 echo
 echo
 # install k3d on instance
 echo "Installing k3d on instance"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash"
 echo
 echo "k3d version"
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d version"
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d version"
 echo
 
 echo "creating k3d cluster"
@@ -329,21 +331,21 @@ if [[ "$METAL_LB" == true ]]
 then
 	# create docker network for k3d cluster
 	echo creating docker network for k3d cluster
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
 
 	# create k3d cluster
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --k3s-server-arg "--disable=servicelb" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --k3s-server-arg "--disable=servicelb" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
 	# install MetalLB
 	echo installing MetalLB
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml"
 
 
 	# create the metalLB config
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
 	#run this command on remote
 	cat << EOF > metallb-config.yaml
 	apiVersion: v1
@@ -362,7 +364,7 @@ then
 	ENDSSH
 
 	# apply the metalLB config
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f metallb-config.yaml"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f metallb-config.yaml"
 
 	echo
 	echo
@@ -372,9 +374,9 @@ then
 
 elif [[ "$PRIVATE_IP" == true ]]
 then
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PrivateIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 	echo
 	echo
 	echo "copy kubeconfig"
@@ -382,9 +384,9 @@ then
 	sed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 
 else # default is public ip
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PublicIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create  --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id  --k3s-server-arg "--disable=traefik"  --k3s-server-arg "--disable=metrics-server" --k3s-server-arg "--tls-san=${PublicIP}" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
 	echo
 	echo
@@ -395,15 +397,15 @@ fi
 
 # add tools
 echo Installing k9s...
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'curl -sS https://webinstall.dev/k9s | bash'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'curl -sS https://webinstall.dev/k9s | bash'
 echo Installing kubectl...
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo mv /home/ubuntu/kubectl /usr/local/bin/'
-ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo chmod +x /usr/local/bin/kubectl'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo mv /home/ubuntu/kubectl /usr/local/bin/'
+ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sudo chmod +x /usr/local/bin/kubectl'
 
 
 if [[ "$METAL_LB" == true ]]; then
-	ssh -i ~/.ssh/${KeyName}.pem -t -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
 	# run this command on remote
 	# fix /etc/hosts for new cluster
 	sudo sed -i '/bigbang.dev/d' /etc/hosts
@@ -451,6 +453,3 @@ else   #default is to use the public ip
 	echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
 	echo
 fi
-
-
-
