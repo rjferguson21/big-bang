@@ -654,6 +654,18 @@ addons:
         - servers: 1
           volumesPerServer: 4
           size: 256Mi
+          resources:
+            requests:
+              cpu: 250m
+              memory: 2Gi
+            limits:
+              cpu: 250m
+              memory: 2Gi
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+
       bbtests:
         # TODO: Seems like a timing issue with BB CI
         # https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio/-/issues/7
@@ -716,6 +728,17 @@ addons:
           - servers: 1
             volumesPerServer: 4
             size: 256Mi
+            resources:
+              requests:
+                cpu: 250m
+                memory: 2Gi
+              limits:
+                cpu: 250m
+                memory: 2Gi
+            securityContext:
+              runAsUser: 1001
+              runAsGroup: 1001
+              fsGroup: 1001
       bbtests:
         enabled: true
         cypress:
