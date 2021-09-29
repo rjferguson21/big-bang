@@ -646,9 +646,6 @@ addons:
   minio:
     enabled: false
     values:
-      zones:
-        servers: 1
-      volumesPerServer: 1
       tenants:
         pools:
         - servers: 1
@@ -720,9 +717,6 @@ addons:
           memory: 128Mi
         limits: {}
       minio:
-        zones:
-          servers: 1
-        volumesPerServer: 1
         tenants:
           pools:
           - servers: 1
