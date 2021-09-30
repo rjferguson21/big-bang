@@ -453,7 +453,8 @@ then
  	echo "You must use Firefox browser with with manual SOCKs v5 proxy configuration to localhost with port 12345"
   echo
 else   #default is to use the public ip
-	echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames. Example:"
+	echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames."
+  echo "Example:"
 	echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
 	echo
 fi
