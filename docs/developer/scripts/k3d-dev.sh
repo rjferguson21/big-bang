@@ -257,8 +257,11 @@ PublicIP=`aws ec2 describe-instances --output json --no-cli-pager --instance-ids
 # Get the private IP address of our instance
 PrivateIP=`aws ec2 describe-instances --output json --no-cli-pager --instance-ids ${InstId} | jq -r '.Reservations[0].Instances[0].PrivateIpAddress'`
 
-echo Instance private IP is ${PrivateIP}
-echo Instance at ${PublicIP} is ready.
+echo
+echo "Instance ${InstId} is ready!"
+echo "Instance private IP is ${PrivateIP}"
+echo "Instance public IP is ${PublicIP}"
+echo
 
 # Remove previous keys related to this IP from your SSH known hosts so you don't end up with a conflict
 ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${PublicIP}"
