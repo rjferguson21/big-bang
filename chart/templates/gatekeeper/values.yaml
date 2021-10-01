@@ -55,6 +55,7 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
   hostNetworking:
     parameters:
       excludedResources:
+        # Twistlock, by default, does its own network monitoring. hostNetworking is enabled by default for this purpose
         - twistlock/twistlock-defender-ds-.*
   noHostNamespace:
     parameters:
