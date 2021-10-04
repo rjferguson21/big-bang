@@ -624,6 +624,8 @@ addons:
             cpu: 100m
             memory: 200Mi
           limits: {}
+      istio:
+        enabled: true
       tests:
         enabled: false
       bbtests:
