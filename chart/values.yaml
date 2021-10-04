@@ -389,7 +389,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.10"
+    tag: "14.0.0-bb.11"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -932,7 +932,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.2.1-bb.0"
+      tag: "0.2.2-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
