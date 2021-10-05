@@ -485,6 +485,10 @@ addons:
     ingress:
       gateway: ""
 
+    istio:
+      # -- Enable or disable automatic sidecar injection on the argocd namespace.  Valid values are enabled | disabled  
+      injection: enabled
+
     sso:
       # -- Toggle SSO for ArgoCD on and off
       enabled: false
