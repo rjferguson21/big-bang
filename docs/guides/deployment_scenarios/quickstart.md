@@ -264,37 +264,29 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # ECK implementation of ElasticSearch needs the following or will see OOM errors
-    sudo sysctl -w vm.max_map_count=524288
-
-    # SonarQube host OS pre-requisites
-    sudo sysctl -w fs.file-max=131072
-    ulimit -n 131072
-    ulimit -u 8192
-
     # Needed for ECK to run correctly without OOM errors
-    echo 'vm.max_map_count=524288' > /etc/sysctl.d/vm-max_map_count.conf
+    sudo sysctl -w vm.max_map_count=524288
+    # Alternatively can use: 
+    # echo 'vm.max_map_count=524288' | sudo tee -a /etc/sysctl.d/vm-max_map_count.conf
 
     # Needed by Sonarqube
-    echo 'fs.file-max=131072' > /etc/sysctl.d/fs-file-max.conf
+    sudo sysctl -w fs.file-max=131072
+    # Alternatively can use:  
+    # echo 'fs.file-max=131072' | sudo tee -a /etc/sysctl.d/fs-file-max.conf
+
+    # Also Needed by Sonarqube
+    ulimit -n 131072
+    ulimit -u 8192
 
     # Load updated configuration
-    sysctl --load
+    sudo sysctl --load
 
-    # Alternative form of above 3 commands:
-    # sudo sysctl -w vm.max_map_count=524288
-    # sudo sysctl -w fs.file-max=131072
+    # Preload kernel modules, required by istio-init running on SELinux enforcing instances
+    sudo modprobe xt_REDIRECT
+    sudo modprobe xt_owner
+    sudo modprobe xt_statistic
 
-    # Needed by Sonarqube
-    ulimit -n 131072
-    ulimit -u 8192
-
-    # Preload kernel modules required by istio-init, required for SELinux enforcing instances using istio-init
-    modprobe xt_REDIRECT
-    modprobe xt_owner
-    modprobe xt_statistic
-
-    # Persist modules after reboots
+    # Persist kernel modules settings after reboots
     printf "xt_REDIRECT\nxt_owner\nxt_statistic\n" | sudo tee -a /etc/modules
 
     # Kubernetes requires swap disabled
