@@ -1038,7 +1038,13 @@ addons:
 
     # -- Plugin provider for Velero - requires at least one plugin installed. Current supported values: aws, azure, csi 
     plugins: []
-    # - aws
+
+    # -- Velero csi plugin options"
+    csi:
+      # -- Driver to use for Velero csi plugin. Default: "ebs.csi.aws.com"
+      driver: "ebs.csi.aws.com"
+      # -- Set Velero VolumeSnapshotClass to default. Supported values: true/false
+      defaultClass: "true"
 
     # -- Values to passthrough to the Velero chart: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/chart/values.yaml
     values: {}

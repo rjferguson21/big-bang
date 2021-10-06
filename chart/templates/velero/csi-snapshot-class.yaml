@@ -1,0 +1,21 @@
+{{- if .Values.addons.velero.enabled }}
+
+{{- range .Values.addons.velero.plugins }}
+{{- if eq . "csi" }}
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-volumesnapshotclass
+  annotations:
+    {{- if eq ($.Values.addons.velero.csi.defaultClass) "" }}{{- fail "Must decide true/false to set Velero as default VolumeSnapshotClass" }}{{- end }}
+    snapshot.storage.kubernetes.io/is-default-class: {{ $.Values.addons.velero.csi.defaultClass | quote }}
+  labels:
+    # Required label for Velero
+    velero.io/csi-volumesnapshot-class: "true"
+{{- if eq ($.Values.addons.velero.csi.driver) "" }}{{- fail "Must choose csi driver if .Values.addons.velero.plugins.csi is chosen" }}{{- end }}
+driver: {{ $.Values.addons.velero.csi.driver }}
+deletionPolicy: Delete
+{{- end }}
+{{- end }}
+
+{{- end }}
