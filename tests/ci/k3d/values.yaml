@@ -692,7 +692,7 @@ addons:
       bbtests:
         # TODO: Seems like a timing issue with BB CI
         # https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio/-/issues/7
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
           envs:
