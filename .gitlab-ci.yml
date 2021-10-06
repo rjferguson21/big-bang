@@ -8,7 +8,6 @@
 #      gitlab runner.   Once a successful build and test is completed, package the build and perform a release operation.
 #   4) Periodically at a scheduled time, build and test the master branch  using a AWS created K3S cluster which is deployed
 #       using Terraform
-
 # global rules for when pipelines run
 workflow:
   rules:
