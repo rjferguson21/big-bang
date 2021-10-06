@@ -539,7 +539,7 @@ addons:
   #
   minioOperator:
     # -- Toggle deployment of minio operator and instance.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
@@ -556,7 +556,7 @@ addons:
 
   minio:
     # -- Toggle deployment of minio.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
