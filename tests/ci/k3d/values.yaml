@@ -860,7 +860,7 @@ addons:
                   fieldPath: metadata.namespace
 
   keycloak:
-    enabled: true
+    enabled: false
     ingress:
       gateway: "passthrough"
       key: |
@@ -993,7 +993,7 @@ addons:
         limits: {}
       bbtests:
         # TODO: Keycloak in CI not supported yet
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
           envs:
