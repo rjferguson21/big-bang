@@ -405,14 +405,14 @@ cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
 
-# Checkout version 1.15.0 of Big Bang
+# Checkout version 1.17.0 of Big Bang
 # (Pinning to specific version to improve reproducibility)
-git checkout tags/1.15.0
+git checkout tags/1.17.0
 git status
 ```
 
 ```console
-HEAD detached at 1.15.0
+HEAD detached at 1.17.0
 ```
 
 > HEAD is git speak for current context within a tree of commits
@@ -618,18 +618,18 @@ Explanation of flags used in the imperative helm install command:
 * `helm list -n=bigbang` should also show STATUS deployed
 
     ```console
-    NAME                         	NAMESPACE        	REVISION	UPDATED                                	STATUS  	CHART                            	APP VERSION
-    bigbang                      	bigbang          	1       	2021-08-31 16:50:39.336392871 +0000 UTC	deployed	bigbang-1.15.0
-    eck-operator-eck-operator    	eck-operator     	1       	2021-08-31 16:21:12.546012077 +0000 UTC	deployed	eck-operator-1.6.0-bb.2          	1.6.0
-    gatekeeper-system-gatekeeper 	gatekeeper-system	1       	2021-08-31 16:21:13.146595333 +0000 UTC	deployed	gatekeeper-3.5.1-bb.16           	v3.5.1
-    istio-operator-istio-operator	istio-operator   	1       	2021-08-31 16:21:12.726676226 +0000 UTC	deployed	istio-operator-1.9.7-bb.1
-    istio-system-istio           	istio-system     	1       	2021-08-31 16:44:07.776386128 +0000 UTC	deployed	istio-1.9.7-bb.0
-    jaeger-jaeger                	jaeger           	1       	2021-08-31 16:25:17.733322853 +0000 UTC	deployed	jaeger-operator-2.23.0-bb.1      	1.24.0
-    kiali-kiali                  	kiali            	1       	2021-08-31 16:25:14.314905637 +0000 UTC	deployed	kiali-operator-1.37.0-bb.3       	1.37.0
-    logging-cluster-auditor      	logging          	1       	2021-08-31 16:25:33.628134776 +0000 UTC	deployed	cluster-auditor-0.3.0-bb.6       	1.16.0
-    logging-ek                   	logging          	1       	2021-08-31 16:22:12.609559643 +0000 UTC	deployed	logging-0.1.20-bb.0              	7.13.4
-    logging-fluent-bit           	logging          	1       	2021-08-31 16:22:41.467862784 +0000 UTC	deployed	fluent-bit-0.16.1-bb.0           	1.8.1
-    monitoring-monitoring        	monitoring       	1       	2021-08-31 16:22:26.03075708 +0000 UTC 	deployed	kube-prometheus-stack-14.0.0-bb.8	0.46.0
+    NAME                         	NAMESPACE        	REVISION	UPDATED                                	STATUS  	CHART                             	APP VERSION
+    bigbang                      	bigbang          	1       	2021-10-07 19:16:13.990755769 +0000 UTC	deployed	bigbang-1.17.0
+    eck-operator-eck-operator    	eck-operator     	1       	2021-10-07 19:16:18.300583454 +0000 UTC	deployed	eck-operator-1.6.0-bb.2           	1.6.0
+    gatekeeper-system-gatekeeper 	gatekeeper-system	1       	2021-10-07 19:16:20.783813062 +0000 UTC	deployed	gatekeeper-3.5.2-bb.1             	v3.5.2
+    istio-operator-istio-operator	istio-operator   	1       	2021-10-07 19:16:20.564511742 +0000 UTC	deployed	istio-operator-1.10.4-bb.1
+    istio-system-istio           	istio-system     	1       	2021-10-07 19:17:18.267592579 +0000 UTC	deployed	istio-1.10.4-bb.3
+    jaeger-jaeger                	jaeger           	1       	2021-10-07 19:29:15.866513597 +0000 UTC	deployed	jaeger-operator-2.23.0-bb.2       	1.24.0
+    kiali-kiali                  	kiali            	1       	2021-10-07 19:29:14.362710144 +0000 UTC	deployed	kiali-operator-1.39.0-bb.2        	1.39.0
+    logging-cluster-auditor      	logging          	1       	2021-10-07 19:20:55.145508137 +0000 UTC	deployed	cluster-auditor-0.3.0-bb.7        	1.16.0
+    logging-ek                   	logging          	1       	2021-10-07 19:17:50.022767703 +0000 UTC	deployed	logging-0.1.21-bb.0               	7.13.4
+    logging-fluent-bit           	logging          	1       	2021-10-07 19:29:42.290601582 +0000 UTC	deployed	fluent-bit-0.16.6-bb.0            	1.8.6
+    monitoring-monitoring        	monitoring       	1       	2021-10-07 19:18:02.816162712 +0000 UTC	deployed	kube-prometheus-stack-14.0.0-bb.10	0.46.0
     ```
 
 ## Step 12: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Cluster
