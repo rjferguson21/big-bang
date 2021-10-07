@@ -23,11 +23,23 @@ function help {
 usage: $(basename "$0") <arguments>
 -h|--help              - print this help message and exit
 -r|--registry-url      - (optional, default: registry1.dso.mil) registry url to use for flux installation
+-s|--use-existing-secret - (optional) check if private-registry secret exists 
 -u|--registry-username - (required) registry username to use for flux installation
 -p|--registry-password - (required) registry password to use for flux installation
 -w|--wait-timeout      - (optional, default: 120) how long to wait; in seconds, for each key flux resource component
 EOF
 }
+
+
+#check if the FLUX secret already exists and set variable
+if kubectl get secrets/"$FLUX_SECRET" -n flux-system > /dev/null 2>&1;
+then
+    #the secret exists
+    FLUX_SECRET_EXISTS=0
+else
+    #the secret does not exist
+    FLUX_SECRET_EXISTS=1
+fi
 
 #
 # cli parsing
@@ -90,6 +102,27 @@ while (( "$#" )); do
     -h|--help)
       help; exit 0
       ;;
+    # Check if private-registry secret exists
+    -s|--use-existing-secret)
+      if  [[ $FLUX_SECRET_EXISTS == 0 ]]; then
+          echo "Success: $FLUX_SECRET is found in namespace flux-system" >&2
+          echo "Using existing secret $FLUX_SECRET in namespace flux-system"
+          echo "Installing flux from kustomization"
+          kustomize build "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
+          #
+          # verify flux
+          #
+          echo "Veriying flux installation"
+          kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/helm-controller"
+          kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/source-controller"
+          kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/kustomize-controller"
+          kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/notification-controller"
+          exit 1
+      else
+        echo "Error: $FLUX_SECRET is not found in namespace flux-system" >&2
+        exit 1
+      fi
+      ;;
     # unsupported flags
     -*|--*=)
       echo "Error: Unsupported flag $1" >&2
@@ -103,37 +136,40 @@ while (( "$#" )); do
   esac
 done
 
-# check required arguments
-if [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; then
-  help; exit 1
-fi
-
 # debug print cli args
 echo "REGISTRY_URL: $REGISTRY_URL"
 echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
 
+# check required arguments
+  if [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; then
+  help; exit 1
+  fi
 
 #
 # install flux
 #
-
+    
+#Create flux namespace
 kubectl create namespace flux-system || true
 
+#Create flux secret
+  echo "Creating secret $FLUX_SECRET in namespace flux-system"
+  kubectl create secret docker-registry "$FLUX_SECRET" -n flux-system \
+    --docker-server="$REGISTRY_URL" \
+    --docker-username="$REGISTRY_USERNAME" \
+    --docker-password="$REGISTRY_PASSWORD" \
+    --docker-email="$REGISTRY_EMAIL" \
+    --dry-run=client -o yaml | kubectl apply -n flux-system -f -
 
-echo "Creating secret $FLUX_SECRET in namespace flux-system"
-kubectl create secret docker-registry "$FLUX_SECRET" -n flux-system \
-  --docker-server="$REGISTRY_URL" \
-  --docker-username="$REGISTRY_USERNAME" \
-  --docker-password="$REGISTRY_PASSWORD" \
-  --docker-email="$REGISTRY_EMAIL" \
-  --dry-run=client -o yaml | kubectl apply -n flux-system -f -
+  echo "Installing flux from kustomization"
+  kustomize build "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
 
-echo "Installing flux from kustomization"
-kustomize build "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
+  exit 0
 
 #
 # verify flux
 #
+echo "Veriying flux installation"
 kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/helm-controller"
 kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/source-controller"
 kubectl wait --for=condition=available --timeout "${WAIT_TIMEOUT}s" -n "flux-system" "deployment/kustomize-controller"
