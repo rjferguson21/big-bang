@@ -118,7 +118,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.11.2-bb.0"
+    tag: "1.11.2-bb.1"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -148,6 +148,8 @@ istio:
       ingressGateway: "public-ingressgateway"
       hosts:
       - "*.{{ .Values.domain }}"
+      redirectHttpToHttps:
+        enabled: true
       tls:
         key: ""
         cert: ""
@@ -155,6 +157,8 @@ istio:
     #   ingressGateway: "private-ingressgateway"
     #   hosts:
     #   - "*.{{ .Values.domain }}"
+    #   redirectHttpToHttps:
+    #     enabled: true
     #   tls:
     #     key: ""
     #     cert: ""
@@ -162,6 +166,8 @@ istio:
     #   ingressGateway: "passthrough-ingressgateway"
     #   hosts:
     #   - "*.{{ .Values.domain }}"
+    #   redirectHttpToHttps:
+    #     enabled: true
     #   tls:
     #     mode: "PASSTHROUGH"
 
