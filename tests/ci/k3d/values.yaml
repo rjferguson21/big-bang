@@ -872,7 +872,7 @@ addons:
         limits: {}
       bbtests:
         # TODO: Keycloak in CI not supported yet
-        enabled: true
+        enabled: false
         cypress:
           artifacts: true
           envs:
