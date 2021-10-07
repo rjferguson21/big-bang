@@ -406,7 +406,7 @@ git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
 
 # Checkout version 1.15.0 of Big Bang
-# (Pinning to specific versions is a DevOps best practice)
+# (Pinning to specific version to improve reproducibility)
 git checkout tags/1.15.0
 git status
 ```
@@ -547,7 +547,7 @@ EOF
 ```shell
 # [ubuntu@Ubuntu_VM:~]
 helm upgrade --install bigbang $HOME/bigbang/chart \
-  --values $HOME/bigbang/chart/ingress-certs.yaml \
+  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
   --values $HOME/ib_creds.yaml \
   --values $HOME/demo_values.yaml \
   --namespace=bigbang --create-namespace
@@ -561,8 +561,8 @@ Explanation of flags used in the imperative helm install command:
 `bigbang $HOME/bigbang/chart`
 : bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`. `$HOME/bigbang/chart` is a reference to the helm chart being installed.
 
-`--values $HOME/bigbang/chart/ingress-certs.yaml`
-: References demonstration HTTPS certificates embedded in the public repository. The *.bigbang.dev wildcard certificate is signed by Let's Encrypt, a free public internet Certificate Authority.
+`--values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml`
+: References demonstration HTTPS certificates embedded in the public repository. The *.bigbang.dev wildcard certificate is signed by Let's Encrypt, a free public internet Certificate Authority. Note the URL path to the copy of the cert on master branch is used instead of `$HOME/bigbang/chart/ingress-certs.yaml`, because the Let's Encrypt certs expire after 3 months, and if you deploy a tagged release of BigBang, like 1.15.0, the version of the cert stored in the tagged git commit / release of Big Bang could be expired. Referencing the master branches copy via URL ensures you receive the latest version of the cert, which won't be expired.
 
 `--namespace=bigbang --create-namespace`
 : Means it will install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
@@ -698,7 +698,7 @@ addons:
 EOF
 
 helm upgrade --install bigbang $HOME/bigbang/chart \
---values $HOME/bigbang/chart/ingress-certs.yaml \
+--values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
 --values $HOME/ib_creds.yaml \
 --values $HOME/demo_values.yaml \
 --values $HOME/tinkering.yaml \
