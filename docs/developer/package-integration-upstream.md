@@ -57,13 +57,119 @@ To minimize maintenance, it is preferable to reuse existing Helm charts availabl
 
    > The `bb.#` will increment for each change we merge into our `main` branch.  It will also become our release label.
 
-1. Add a [CHANGELOG](#changelogmd) with an entry for initial commit:
+1. Add the following files to the Git repository at the root:
 
-   ```yaml
-   ## [6.0.0-bb.0] 2021-10-5
-   ### Added
-   - Initial Big Bang chart
-   ```
+   - CHANGELOG.md
+
+      The format of the changelog should be based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with versions equivalent to the Helm chart version.
+
+      Example:
+
+      ```markdown
+      # Changelog
+      ## [6.0.0-bb.0] - 2021-09-30
+      ### Added
+      - Initial creation of the chart
+      ```
+
+   - CODEOWNERS
+
+      Code owners are required approvals on merge requests in the Big Bang repository.  This file should be setup based on [GitLab's Code Owners guidance](https://docs.gitlab.com/ee/user/project/code_owners.html).
+
+      Example:
+
+      ```text
+      * @gitlabuser
+      ```
+
+   - CONTRIBUTING.md
+
+      This document should outline the steps required for someone new to contribute to the repository.
+
+      Example:
+
+      ```markdown
+      # Contributing
+
+      This repository uses the following conventions:
+
+      * [Semantic Versioning](https://semver.org/)
+      * [Keep a Changelog](https://keepachangelog.com/)
+      * [Conventional Commits](https://www.conventionalcommits.org/)
+      * [Cypress](https://www.cypress.io) or [Conftest](https://conftest.dev) for testing
+
+      Development requires the following tools
+      - Tool1
+      - Tool2
+
+      To contribute a change:
+
+      1. Open an issue in GitLab describe the scope of the work to be done
+      1. Assign yourself to the issue and label it with "status::doing"
+      1. Create a branch in the repository
+      1. Make changes in code and push to your branch
+      1. Write tests using [cypress](https://www.cypress.io) and [Conftest](https://conftest.dev)
+      1. Make commits using the [Conventional Commits](https://www.conventionalcommits.org/) format
+      1. Update `CHANGELOG.md` using the [Keep a Changelog](https://keepachangelog.com)
+      1. Open a merge request into the `main` branch
+      1. Add a reference to the issue in the merge request description
+      1. Resolve any failures from the pipeline
+      1. Resolve any merge conflicts
+      1. Label the Merge Request with "status::review"
+      1. Contact the code owners to expedite your MR review
+      1. Address any review comments and merge conflicts during the review process.
+      1. Wait for a code owner to approve and merge your changes
+      1. Request a repository maintainer to create a release and tag
+      ```
+
+   - LICENSE
+
+      The license file should contain the license terms and conditions for using the Helm charts.  In general, Big Bang uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+
+   - README.md
+
+      The readme contains high-level information about the package.  This document covers the following topics:
+
+      - Overview: What is in the Git repository
+      - Prerequisites: What tools do I need to install and use this?
+      - Install / Upgrade: How do I install / upgrade this?
+      - Usage: Once it is installed, how do I use this?
+      - Troubleshooting: What are some common problems and solutions I may run across?
+      - References: What other documentation exists that I can use to read about this?
+
+      Example:
+
+      ```markdown
+      # MyPackage
+
+      MyPackage does awesome things.  This repo contains an enhanced version of the [Helm charts for MyPackage](https://github.com/helm/charts) that is fully compatible with [Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang).
+
+      ## Prerequisites
+
+      The following tools are required to install and use MyPackage:
+
+      - [Helm](https://helm.sh/docs/intro/install/)
+      - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+      - A running Kubernetes cluster with Big Bang installed using default settings
+
+      ## Installation
+
+      Flux should already be installed on the cluster since it is used by Big Bang.  MyPackage can be installed or upgraded with Flux by running `helm upgrade -i -n bigbang ./flux`.
+
+      ## Usage
+
+      Once installed, you can connect to `https://mypackage.bigbang.dev` to login to MyPackage.
+
+      ## Troubleshooting
+
+      ### Timeout connecting to URL
+
+      If your browser times out connecting the URL, make sure you have a valid TLS certificate installed in Big Bang.
+
+      ## References
+
+      - [MyPackage Documentation](https://tools.usps.com/)
+      ```
 
 1. Commit changes
 
