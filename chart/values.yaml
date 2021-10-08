@@ -368,7 +368,8 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.16.6-bb.0"
+    tag: ""
+    branch: "18-enable-fluentbit-tests-for-bb-ci"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
