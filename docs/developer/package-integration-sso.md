@@ -5,3 +5,7 @@ Big Bang has configuration for Single Sign-On (SSO) authentication using an iden
 ## Prerequisites
 
 TBD
+
+## Integration
+
+## Validation

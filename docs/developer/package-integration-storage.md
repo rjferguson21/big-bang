@@ -5,3 +5,7 @@ If your package supports using object storage (e.g. S3 buckets), it must be inte
 ## Prerequisites
 
 TBD
+
+## Integration
+
+## Validation

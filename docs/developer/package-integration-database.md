@@ -5,3 +5,7 @@ If the package you are integrating connects to a database or cache server, you w
 ## Prerequisites
 
 TBD
+
+## Integration
+
+## Validation

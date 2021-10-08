@@ -12,3 +12,7 @@ Usually, Helm charts come with a set of Helm tests that can be run to test the d
 ## Prerequisites
 
 TBD
+
+## Integration
+
+## Validation

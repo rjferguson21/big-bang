@@ -7,3 +7,7 @@ When integrating your package, you must adhere to the policies that are enforced
 ## Prerequisites
 
 TBD
+
+## Integration
+
+## Validation
