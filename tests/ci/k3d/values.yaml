@@ -66,6 +66,8 @@ fluentbit:
   values:
     securityContext:
       privileged: true
+    tests:
+      enabled: true
     bbtests:
       enabled: true
       scripts:
