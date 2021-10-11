@@ -85,6 +85,7 @@ pre vars:
 
 .deploy_bigbang: &deploy_bigbang
   - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} >/dev/null
+  - docker pull postgres:13
   - |
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
