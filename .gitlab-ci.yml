@@ -86,6 +86,7 @@ pre vars:
 .deploy_bigbang: &deploy_bigbang
   - |
     set -e
+    docker login ${DOCKER_USER} ${DOCKER_PASSWORD}
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
       echo -e "\e[0Ksection_start:`date +%s`:${deploy_script##*/}[collapsed=true]\r\e[0K\e[33;1m${deploy_script##*/}\e[37m"  
