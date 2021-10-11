@@ -21,15 +21,3 @@ ports:
   - port: 443:443
     nodeFilters:
       - loadbalancer
-registries:
-  create: true
-  config: |
-    mirrors:
-      docker.io:
-        endpoint:
-          - https://docker.io
-    configs:
-      docker.io:
-        auth:
-          username: ${DOCKER_USER}
-          password: ${DOCKER_PASSWORD}
