@@ -9,11 +9,15 @@ networkPolicies:
   controlPlaneCidr: 172.16.0.0/12
 
 logging:
+  ## testvalues
   git:
     tag: ""
     branch: "39-enable-logging-tests-for-bb-ci"
   enabled: true
   values:
+    ##testvalues
+    networkPolicies:
+      enabled: false
     elasticsearch:
       master:
         count: 1
