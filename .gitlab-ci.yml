@@ -84,9 +84,9 @@ pre vars:
     - base/flux/*
 
 .deploy_bigbang: &deploy_bigbang
+  - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} >/dev/null
   - |
     set -e
-    docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} >/dev/null
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
       echo -e "\e[0Ksection_start:`date +%s`:${deploy_script##*/}[collapsed=true]\r\e[0K\e[33;1m${deploy_script##*/}\e[37m"  
