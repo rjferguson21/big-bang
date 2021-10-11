@@ -9,9 +9,9 @@ networkPolicies:
   controlPlaneCidr: 172.16.0.0/12
 
 logging:
- # git:
- #   tag: ""
- #   branch: "39-enable-logging-tests-for-bb-ci"
+  git:
+    tag: ""
+    branch: "39-enable-logging-tests-for-bb-ci"
   enabled: true
   values:
     elasticsearch:
