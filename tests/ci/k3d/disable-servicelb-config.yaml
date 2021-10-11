@@ -21,3 +21,10 @@ ports:
   - port: 443:443
     nodeFilters:
       - loadbalancer
+registries:
+  config: |
+    configs:
+      "docker.io":
+        auth:
+          username: ${DOCKER_USER}
+          password: ${DOCKER_PASSWORD}
