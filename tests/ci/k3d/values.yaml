@@ -8,6 +8,12 @@ flux:
 networkPolicies:
   controlPlaneCidr: 172.16.0.0/12
 
+##added 4 lines
+eckoperator:
+  values:
+    networkPolicies:
+      enabled: false
+
 logging:
   ## testvalues
   git:
