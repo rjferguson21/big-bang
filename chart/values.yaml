@@ -148,7 +148,7 @@ istio:
       ingressGateway: "public-ingressgateway"
       hosts:
       - "*.{{ .Values.domain }}"
-      redirectHttpToHttps:
+      autoHttpRedirect:
         enabled: true
       tls:
         key: ""
@@ -157,7 +157,7 @@ istio:
     #   ingressGateway: "private-ingressgateway"
     #   hosts:
     #   - "*.{{ .Values.domain }}"
-    #   redirectHttpToHttps:
+    #   autoHttpRedirect:
     #     enabled: true
     #   tls:
     #     key: ""
@@ -166,7 +166,7 @@ istio:
     #   ingressGateway: "passthrough-ingressgateway"
     #   hosts:
     #   - "*.{{ .Values.domain }}"
-    #   redirectHttpToHttps:
+    #   autoHttpRedirect:
     #     enabled: true
     #   tls:
     #     mode: "PASSTHROUGH"
