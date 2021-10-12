@@ -560,7 +560,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.2.3-bb.2"
+      tag: "4.2.3-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
@@ -1031,7 +1031,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.23.6-bb.1"
+      tag: "2.23.6-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
