@@ -19,7 +19,26 @@ This page contains the manual steps to create your k3d dev environment. There is
 ### Local Utilities
 
 - [Helm](https://helm.sh/docs/intro/install/)
+  ```shell
+   curl -s https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+   helm version
+   ```
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+    ```shell
+    sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl
+    sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    sudo apt-get update &&sudo apt-get install -y kubectl
+    kubectl version --client
+    ```
+- [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+  ```shell
+  mkdir $HOME/bin
+  curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s $HOME/bin/
+  source $HOME/.profile
+  kustomize version
+  ```
+
 
 ## Manual Creation of a Development Environment
 
