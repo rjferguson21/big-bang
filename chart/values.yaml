@@ -525,6 +525,15 @@ addons:
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
 
+    gateways: |-
+      {{- range $name, $val := .Values.istio.ingressGateways }}
+      - {{ $key | quote }}
+      {{- end }}
+
+    # List of domains that needs to be protected by authservice
+    domains:
+    - "*.{{ .Values.domain }}"
+
     # -- Values to passthrough to the authservice chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
     values: {}
 
