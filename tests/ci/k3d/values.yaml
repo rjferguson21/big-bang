@@ -8,22 +8,9 @@ flux:
 networkPolicies:
   controlPlaneCidr: 172.16.0.0/12
 
-##added 4 lines
-eckoperator:
-  values:
-    networkPolicies:
-      enabled: false
-
 logging:
-  ## testvalues
-  git:
-    tag: ""
-    branch: "39-enable-logging-tests-for-bb-ci"
-  enabled: true
+  enabled: false
   values:
-    ##testvalues
-    networkPolicies:
-      enabled: false
     elasticsearch:
       master:
         count: 1

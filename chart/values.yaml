@@ -314,7 +314,9 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.21-bb.0"
+    #tag: "0.1.21-bb.0"
+    tag: ""
+    branch: "39-enable-logging-tests-for-bb-ci"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -343,7 +345,9 @@ logging:
     keyJSON: ""
 
   # -- Values to passthrough to the elasticsearch-kibana chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
-  values: {}
+  values:
+    networkPolicies:
+      enabled: false
 
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
@@ -360,7 +364,9 @@ eckoperator:
   flux: {}
 
   # -- Values to passthrough to the eck-operator chart: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
-  values: {}
+  values:
+    networkPolicies:
+      enabled: false
 
 fluentbit:
   # -- Toggle deployment of Fluent-Bit.
