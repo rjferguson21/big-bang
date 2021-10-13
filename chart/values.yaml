@@ -482,7 +482,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.8"
+      tag: "3.6.8-bb.10"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -588,7 +588,7 @@ addons:
     postRenderers: []
 
   gitlab:
-    # -- Toggle deployment of Gitlab.
+    # -- Toggle deployment of Gitlab
     enabled: false
 
     hostnames:
@@ -599,7 +599,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "4.12.9-bb.6"
+      tag: "5.3.1-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -674,7 +674,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
       path: "./chart"
-      tag: "0.29.0-bb.1"
+      tag: "0.32.0-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Runner Package
     flux: {}
