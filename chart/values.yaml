@@ -148,6 +148,7 @@ istio:
       ingressGateway: "public-ingressgateway"
       hosts:
       - "*.{{ .Values.domain }}"
+      # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
       autoHttpRedirect:
         enabled: true
       tls:
