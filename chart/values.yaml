@@ -744,7 +744,11 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.5"
+      #tag: "9.6.3-bb.6"
+      branch: micah.nagel-main-patch-41324
+
+    istio:
+      injection: disabled
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
