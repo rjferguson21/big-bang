@@ -934,7 +934,7 @@ addons:
       path: "./chart"
       # tag: 0.2.3-bb.0
       tag: null
-      branch: mm-istio-inject
+      branch: istio-inject
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
