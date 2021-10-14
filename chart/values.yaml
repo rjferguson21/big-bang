@@ -668,7 +668,9 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
       path: "./chart"
-      tag: "0.32.0-bb.1"
+      #tag: "0.32.0-bb.1"
+      tag: ""
+      branch: "15-enable-support-for-gitlab-runner-tests-in-big-bang-ci"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Runner Package
     flux: {}
