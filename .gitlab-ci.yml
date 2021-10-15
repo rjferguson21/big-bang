@@ -64,9 +64,16 @@ pre vars:
     reports:
       dotenv: variables.env
   script:
-  # Create the TF_VAR_env variable
-  - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
-  - cat variables.env
+    # Create the TF_VAR_env variable
+    - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
+    - cat variables.env
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 
