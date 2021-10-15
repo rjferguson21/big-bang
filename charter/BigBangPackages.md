@@ -480,11 +480,9 @@ A clear an obvious example of this is PostgreSQL.
 ```mermaid
 graph TB
   subgraph "Package Utilities"
-    Postgres
-    MinIO(S3 Compatible Storage)
-    Redis
-    MySQL
-    MongoDB
+    S3 Compatible Storage
+    Cache Server
+    DB
   end
 
 ```
