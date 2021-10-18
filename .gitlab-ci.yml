@@ -301,7 +301,6 @@ aws/rke2/bigbang up:
     - cp ${CI_PROJECT_DIR}/rke2.yaml ~/.kube/config
     # Deploy a default storage class for aws
     - kubectl apply -f ${CI_PROJECT_DIR}/.gitlab-ci/jobs/rke2/dependencies/k8s-resources/aws/default-ebs-sc.yaml
-
   script:
     - *deploy_bigbang
   environment:
@@ -496,10 +495,10 @@ release:
           --assets-link "{\"name\":\"${REPOS_PKG}\",\"url\":\"${RELEASE_ENDPOINT}/${REPOS_PKG}\"}"
       fi
   retry:
-  max: 2
-  when:
-    - unknown_failure
-    - stuck_or_timeout_failure
-    - runner_system_failure
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 #-----------------------------------------------------------------------------------------------------------------------
