@@ -103,7 +103,7 @@ pre vars:
       ./${test_script} && export EXIT_CODE=$? || export EXIT_CODE=$?
       if [[ ${EXIT_CODE} -ne 0 ]]; then
         echo "${test_script} failed, see log output above and cluster debug."
-        exit ${EXIT_CODE}
+        # exit ${EXIT_CODE}
       fi
       echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
