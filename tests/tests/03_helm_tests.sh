@@ -85,7 +85,7 @@ for hr in $installed_helmreleases; do
       if [[ ${EXIT_CODE} -ne 0 ]]; then
         echo "❌ One or more tests failed for ${hr}"
         if [[ $helmtestcounter -lt 7 ]]; then
-          echo "Retrying in 15 seconds."
+          echo "⏳ Retrying in 15 seconds."
           sleep 15
         fi
         if  [[ $helmtestcounter -eq 7 ]]; then
