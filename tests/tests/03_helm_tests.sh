@@ -80,20 +80,30 @@ for hr in $installed_helmreleases; do
   test_suite=$(echo "$test_result" | yq eval '.["TEST SUITE"]' -)
   if [ ! $test_suite == "None" ]; then
     # Since logs are cluttery, only output when failed
-    if [[ ${EXIT_CODE} -ne 0 ]]; then
-      echo "❌ One or more tests failed for ${hr}"
-      ERRORS=$((ERRORS + 1))
-      for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
-        # Only output failed pod logs, not all test pods
-        if [[ $(kubectl get pod -n ${namespace} ${pod} -o jsonpath='{.status.phase}' 2>/dev/null | xargs) == "Failed" ]]; then
-          echo -e "---\nLogs for ${pod}:\n---"
-          kubectl logs --tail=-1 -n ${namespace} ${pod}
-        fi
-      done
-      echo "---"
-    else
-      echo "✅ All tests sucessful for ${hr}"
-    fi
+    cypresstestcounter=0
+    while [[ $cypresstestcounter -lt 3 ]]; do
+      if [[ ${EXIT_CODE} -ne 0 ]]; then
+        echo "❌ One or more tests failed for ${hr}"
+        echo "Waiting 10 seconds."
+        sleep 10
+          if  [[ $cypresstestcounter -eq 2 ]]
+            ERRORS=$((ERRORS + 1))
+            for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
+              # Only output failed pod logs, not all test pods
+              if [[ $(kubectl get pod -n ${namespace} ${pod} -o jsonpath='{.status.phase}' 2>/dev/null | xargs) == "Failed" ]]; then
+                echo -e "---\nLogs for ${pod}:\n---"
+                kubectl logs --tail=-1 -n ${namespace} ${pod}
+              fi
+            done
+          fi  
+        echo "---"
+        cypresstestcounter=$(($cypresstestcounter + 1))
+      else
+        echo "✅ All tests sucessful for ${hr}"
+        break
+      fi
+    done
+    cypresstestcounter=0
 
     # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
     for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
