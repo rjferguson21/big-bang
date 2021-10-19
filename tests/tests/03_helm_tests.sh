@@ -101,6 +101,7 @@ for hr in $installed_helmreleases; do
         echo "---"
       else
         echo "✅ All tests sucessful for ${hr}"
+        break
       fi
 
       # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
