@@ -86,7 +86,7 @@ for hr in $installed_helmreleases; do
         echo "❌ One or more tests failed for ${hr}"
         echo "Waiting 10 seconds."
         sleep 10
-          if  [[ $cypresstestcounter -eq 2 ]]
+          if  [[ $cypresstestcounter -eq 2 ]]; then
             ERRORS=$((ERRORS + 1))
             for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
               # Only output failed pod logs, not all test pods
