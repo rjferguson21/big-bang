@@ -112,9 +112,8 @@ pre vars:
       fi
       echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
-    if [[ ${EXIT_FLAG} -ne 0 ]]; then
-      echo -e "\e[31mWARNING: One or more BB tests failed but were allowed to continue. See output of scripts above for details.\e[0m"
-    fi
+    # if EXIT_CODE is defined, echo warning
+    [ -z "${EXIT_CODE}" ] && echo -e "\e[31mWARNING: One or more BB tests failed but were allowed to continue. See output of scripts above for details.\e[0m"
 
 clean install:
   stage: smoke tests
