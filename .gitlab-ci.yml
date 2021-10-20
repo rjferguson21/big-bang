@@ -112,7 +112,6 @@ pre vars:
       fi
       echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
-    # if EXIT_CODE is defined, echo warning
     [ -z "${EXIT_CODE}" ] && echo -e "\e[31mWARNING: One or more BB tests failed but were allowed to continue. See output of scripts above for details.\e[0m"
 
 clean install:
@@ -135,6 +134,7 @@ clean install:
     - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
     - echo -e "\e[0Ksection_end:`date +%s`:images_used\r\e[0K"
     - *test_bigbang
+    - [ -n "${EXIT_CODE}" ] && exit 123
   artifacts:
     paths:
       - images.txt
@@ -176,11 +176,7 @@ upgrade:
     - echo -e "\e[0Ksection_end:`date +%s`:git_upgrade\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
-    - |
-      if [[ ${EXIT_FLAG} -eq 1 ]]; then
-        # failures occurred but were allowed to continue
-        exit 123
-      fi
+    - [ -n "${EXIT_CODE}" ] && exit 123
   artifacts:
     paths:
       - "test-artifacts/"
