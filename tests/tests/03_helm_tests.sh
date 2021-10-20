@@ -103,40 +103,39 @@ for hr in $installed_helmreleases; do
         echo "✅ All tests sucessful for ${hr}"
         break
       fi
-
       # Grab script logs to save for the artifacts (don't get cypress because its not text friendly + we have the videos/screenshots)
       for pod in $(echo "$test_result" | grep "TEST SUITE" | grep "test" | awk -F: '{print $2}' | xargs); do
         if [[ ! "$pod" =~ "cypress" ]]; then
           if kubectl get pod -n ${namespace} ${pod} &>/dev/null; then
             mkdir -p test-artifacts/${hr}/scripts
+            echo "--- helm test attempt $helmtestcounter ---" >> test-artifacts/${hr}/scripts/pod-logs.txt
             kubectl logs --tail=-1 -n ${namespace} ${pod} >> test-artifacts/${hr}/scripts/pod-logs.txt
           fi
         fi
       done
-
-      # Always save off the artifacts if they exist
-      if kubectl get configmap -n ${namespace} cypress-screenshots &>/dev/null; then
-        mkdir -p test-artifacts/${hr}/cypress
-        kubectl get configmap -n ${namespace} cypress-screenshots -o jsonpath='{.data.cypress-screenshots\.tar\.gz\.b64}' > cypress-screenshots.tar.gz.b64
-        cat cypress-screenshots.tar.gz.b64 | base64 -d > cypress-screenshots.tar.gz
-        tar -zxf cypress-screenshots.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
-        rm -rf cypress-screenshots.tar.gz.b64 cypress-screenshots.tar.gz
-        kubectl delete configmap -n ${namespace} cypress-screenshots &>/dev/null
-      fi
-      if kubectl get configmap -n ${namespace} cypress-videos &>/dev/null; then
-        mkdir -p test-artifacts/${hr}/cypress
-        kubectl get configmap -n ${namespace} cypress-videos -o jsonpath='{.data.cypress-videos\.tar\.gz\.b64}' > cypress-videos.tar.gz.b64
-        cat cypress-videos.tar.gz.b64 | base64 -d > cypress-videos.tar.gz
-        tar -zxf cypress-videos.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
-        rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
-        kubectl delete configmap -n ${namespace} cypress-videos &>/dev/null
-      fi
       helmtestcounter=$(($helmtestcounter + 1))
     else
       echo "😞 No tests found for ${hr}"
       break
     fi
   done
+  # Always save off the artifacts if they exist
+  if kubectl get configmap -n ${namespace} cypress-screenshots &>/dev/null; then
+    mkdir -p test-artifacts/${hr}/cypress
+    kubectl get configmap -n ${namespace} cypress-screenshots -o jsonpath='{.data.cypress-screenshots\.tar\.gz\.b64}' > cypress-screenshots.tar.gz.b64
+    cat cypress-screenshots.tar.gz.b64 | base64 -d > cypress-screenshots.tar.gz
+    tar -zxf cypress-screenshots.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
+    rm -rf cypress-screenshots.tar.gz.b64 cypress-screenshots.tar.gz
+    kubectl delete configmap -n ${namespace} cypress-screenshots &>/dev/null
+  fi
+  if kubectl get configmap -n ${namespace} cypress-videos &>/dev/null; then
+    mkdir -p test-artifacts/${hr}/cypress
+    kubectl get configmap -n ${namespace} cypress-videos -o jsonpath='{.data.cypress-videos\.tar\.gz\.b64}' > cypress-videos.tar.gz.b64
+    cat cypress-videos.tar.gz.b64 | base64 -d > cypress-videos.tar.gz
+    tar -zxf cypress-videos.tar.gz --strip-components=2 -C test-artifacts/${hr}/cypress
+    rm -rf cypress-videos.tar.gz.b64 cypress-videos.tar.gz
+    kubectl delete configmap -n ${namespace} cypress-videos &>/dev/null
+  fi
 done
 
 echo "Finished running all helm tests."
