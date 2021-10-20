@@ -1,5 +1,5 @@
 #!/bin/bash
-bad_function() {
+function bad_function {
    set +e
    while true; do
       if true; then
