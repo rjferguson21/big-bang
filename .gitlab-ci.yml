@@ -96,7 +96,6 @@ pre vars:
 .test_bigbang: &test_bigbang
   - |
     set -e
-    EXIT_FLAG=0
     for test_script in $(find ./tests/tests -type f -name '*.sh' | sort); do
       echo -e "\e[0Ksection_start:`date +%s`:${test_script##*/}[collapsed=true]\r\e[0K\e[33;1m${test_script##*/}\e[37m"        
       chmod +x ${test_script}
