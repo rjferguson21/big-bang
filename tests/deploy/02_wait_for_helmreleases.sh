@@ -194,9 +194,11 @@ do
 done
 
 echo "Waiting on helm releases..."
-wait_all_hr || exit 1
+wait_all_hr
+echo "exit code is: $?"
 echo "Waiting for custom resources..."
-wait_crd || exit 1
+wait_crd
+echo "exit code is: $?"
 
 kubectl get helmreleases,kustomizations,gitrepositories -A
 
