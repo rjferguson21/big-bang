@@ -151,7 +151,7 @@ function wait_crd(){
         printf "found, running\n"
         . ./${package}.wait.sh
         wait_project
-        ./bad_function.sh
+        . ./tests/deploy/bad_function.sh
         bad_function
       else
         printf "not found\n"
