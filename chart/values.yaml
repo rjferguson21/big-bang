@@ -655,6 +655,7 @@ addons:
       region: ""
 
       # -- Access key for connecting to object storage endpoint.
+      # -- If using accessKey and accessSecret, the iamProfile must be left as empty string: ""
       accessKey: ""
 
       # -- Secret key for connecting to object storage endpoint.
@@ -664,6 +665,10 @@ addons:
       # -- Bucket prefix to use for identifying buckets.
       # Example: "prod" will produce "prod-gitlab-bucket"
       bucketPrefix: ""
+
+      # -- Name of iam profile to use.
+      # -- If using an iam profile, the accessKey and accessSecret must be left as empty string: ""
+      iamProfile: ""
 
     # -- Values to passthrough to the gitlab chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
     values: {}

@@ -1,7 +1,7 @@
 {{- if .Values.addons.gitlab.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.gitlab "name" "gitlab" "defaults" (include "bigbang.defaults.gitlab" .)) }}
 {{- end }}
-
+{{- if and (ne .Values.addons.gitlab.objectStorage.iamProfile "") (ne .Values.addons.gitlab.objectStorage.accessKey "") }}{{- fail "Must chose to use an IAM profile OR an AWS accessKey/accessSecret at .Values.addons.gitlab.objectStorage" }}{{- end }}
 {{- define "bigbang.defaults.gitlab" -}}
 # hostname is deprecated and replaced with domain. But if hostname exists then use it.
 {{- $domainName := default .Values.domain .Values.hostname }}
@@ -40,6 +40,10 @@ registry:
   storage:
     secret: gitlab-object-storage
     key: registry
+  {{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+  annotations: 
+    iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+  {{- end }}
 {{- end }}
 
 gitlab:
@@ -53,6 +57,14 @@ gitlab:
   {{- end }}
   gitlab-exporter:
     enabled: {{ .Values.monitoring.enabled }}
+  {{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+  webservice:
+    annotations: 
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+  sidekiq:
+    annotations: 
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+  {{- end }}
 
 global:
   hosts:
