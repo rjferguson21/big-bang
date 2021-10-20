@@ -477,7 +477,7 @@ addons:
             cypress_gitlab_first_name: "testrunner"
             cypress_gitlab_last_name: "userrunner"
             cypress_gitlab_email: "gitlab@bigbang.dev"
-            cypress_gitlab_user: "gitlabrunner_user"
+            cypress_gitlab_username: "gitlabrunner_user"
             cypress_gitlab_password: "gitlabrunner_pass"
             cypress_gitlab_project: "runner-hello-world"
           secretEnvs:
