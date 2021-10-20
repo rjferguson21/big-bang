@@ -192,9 +192,9 @@ do
 done
 
 echo "Waiting on helm releases..."
-wait_all_hr
+wait_all_hr || exit 1
 echo "Waiting for custom resources..."
-wait_crd
+wait_crd || exit 1
 
 kubectl get helmreleases,kustomizations,gitrepositories -A
 
