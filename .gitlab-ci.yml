@@ -35,13 +35,13 @@ stages:
   - 🔥 smoke tests
   - network up
   - cluster up
-  - 🌌⬆️ bigbang up
+  - bigbang up
   - test
-  - 🌌⬇️ bigbang down
+  - bigbang down
   - cluster down
   - network down
   - package
-  - 🚀 release
+  - release
 
 variables:
   RELEASE_BUCKET: umbrella-bigbang-releases
@@ -116,7 +116,7 @@ pre vars:
     done
 
 clean install:
-  stage: smoke tests
+  stage: 🔥 smoke tests
   extends:
     - .k3d-ci
   variables:
@@ -151,7 +151,7 @@ clean install:
       - runner_system_failure
 
 upgrade:
-  stage: smoke tests
+  stage: 🔥 smoke tests
   dependencies:
     - pre vars
   extends:
