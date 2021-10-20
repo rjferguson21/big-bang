@@ -470,7 +470,7 @@ addons:
         protected: false
       bbtests:
         # TODO: This test runs fine locally with the same values, but fails in CI
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
           secretEnvs:
