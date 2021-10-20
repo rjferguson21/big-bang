@@ -860,6 +860,8 @@ addons:
     enabled: false
     ingress:
       gateway: "public"
+    flux:
+      timeout: 20m
     values:
       replicas: 1
       resources:
