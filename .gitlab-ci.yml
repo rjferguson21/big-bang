@@ -115,7 +115,7 @@ pre vars:
       echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
 
-clean install:
+⭐ clean install:
   stage: 🔥 smoke tests
   extends:
     - .k3d-ci
@@ -150,7 +150,7 @@ clean install:
       - stuck_or_timeout_failure
       - runner_system_failure
 
-upgrade:
+♻️ upgrade:
   stage: 🔥 smoke tests
   dependencies:
     - pre vars
