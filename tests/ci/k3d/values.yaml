@@ -861,7 +861,7 @@ addons:
     ingress:
       gateway: "public"
     flux:
-      timeout: 20m
+      timeout: 30m
     values:
       replicas: 1
       resources:
