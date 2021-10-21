@@ -1,6 +1,6 @@
 include:
   # "Default" AWS Networking
-  - local: '/.gitlab-ci/jobs/networking/aws/.gitlab-ci.yml'
+  - local: '/.gitlab-ci/jobs/networking/.gitlab-ci.yml'
 
   # Clusters in CI
   - local: '/.gitlab-ci/jobs/ci-cluster/.gitlab-ci.yml'
