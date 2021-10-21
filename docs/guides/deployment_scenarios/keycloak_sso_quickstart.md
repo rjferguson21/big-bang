@@ -305,14 +305,121 @@ kubectl get po -n=flux-system
 ## Step 6: Install Big Bang on Workload Cluster
 ```shell
 # [admin@Laptop:~]
-cat << EOFinstall-keycloakEOF > ~/qs/install-keycloak.txt
+cat << EOFdeploy-workloadsEOF > ~/qs/deploy-workloads.txt
+export REGISTRY1_USERNAME=\$(cat ~/.bashrc  | grep REGISTRY1_USERNAME | cut -d \" -f 2)
+export REGISTRY1_PASSWORD=\$(cat ~/.bashrc  | grep REGISTRY1_PASSWORD | cut -d \" -f 2)
 
+cat << EOF > ~/ib_creds.yaml
+registryCredentials:
+  registry: registry1.dso.mil
+  username: "\$REGISTRY1_USERNAME"
+  password: "\$REGISTRY1_PASSWORD"
+EOF
+
+cat << EOF > ~/demo_values.yaml
+logging:
+  values:
+    kibana:
+      count: 1
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits:
+          cpu: null  # nonexistent cpu limit results in faster spin up
+          memory: null
+    elasticsearch:
+      master:
+        count: 1
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+          limits:
+            cpu: null
+            memory: null
+      data:
+        count: 1
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+          limits: 
+            cpu: null
+            memory: null
+
+clusterAuditor:
+  values:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 1Mi
+      limits:
+        cpu: null
+        memory: null
+
+gatekeeper:
+  enabled: true
+  values:
+    replicas: 1
+    controllerManager:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits:
+          cpu: null
+          memory: null
+    audit:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 1Mi
+        limits:
+          cpu: null
+          memory: null
+    violations:
+      allowedDockerRegistries:
+        enforcementAction: dryrun
+
+istio:
+  values:
+    values:
+      global:
+        proxy:
+          resources:
+            requests:
+              cpu: 0m
+              memory: 0Mi
+            limits:
+              cpu: 0m
+              memory: 0Mi
+
+twistlock:
+  enabled: false
+EOF
+
+helm upgrade --install bigbang \$HOME/bigbang/chart \
+  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
+  --values \$HOME/bigbang/chart/dev-k3d-values.yaml \
+  --values \$HOME/ib_creds.yaml \
+  --values \$HOME/demo_values.yaml \
+  --namespace=bigbang --create-namespace
+EOFdeploy-workloadsEOF
+
+ssh workload-cluster < ~/qs/deploy-workloads.txt
+
+# You can run these commands to check it out, 
+# but there's no need to wait for the deployment to finish before moving on.
+export KUBECONFIG=$HOME/.kube/workload-cluster
+kubectl get hr -A
 ```
+
 
 ## Step 7: Install Keycloak on Keycloak Cluster
 ```shell
 # [admin@Laptop:~]
-cat << EOFinstall-keycloakEOF > ~/qs/install-keycloak.txt
+cat << EOFdeploy-keycloakEOF > ~/qs/deploy-keycloak.txt
 export REGISTRY1_USERNAME=\$(cat ~/.bashrc  | grep REGISTRY1_USERNAME | cut -d \" -f 2)
 export REGISTRY1_PASSWORD=\$(cat ~/.bashrc  | grep REGISTRY1_PASSWORD | cut -d \" -f 2)
 
@@ -360,130 +467,61 @@ twistlock:
 EOF
 
 helm upgrade --install bigbang \$HOME/bigbang/chart \
+  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/keycloak-dev-values.yaml \
   --values \$HOME/ib_creds.yaml \
   --values \$HOME/keycloak_qs_demo_values.yaml \
-  --values \$HOME/bigbang/chart/keycloak-dev-values.yaml \
   --namespace=bigbang --create-namespace
-EOFinstall-keycloakEOF
+EOFdeploy-keycloakEOF
 
-ssh keycloak-cluster < ~/qs/install-keycloak.txt 
-
-export KUBECONFIG=$HOME/.kube/keycloak-cluster
-kubectl wait --for=condition=ready --timeout=10m pod/keycloak-0 -n=keycloak #takes about 5min
+ssh keycloak-cluster < ~/qs/deploy-keycloak.txt 
 ```
 
 
-
-
-## Step 11: Verify Big Bang has had enough time to finish installing
-
-* If you try to run the command in Step 12 too soon, you'll see an ignorable temporary error message
-
-    ```shell
-    # [ubuntu@Ubuntu_VM:~]
-    kubectl get virtualservices --all-namespaces
-    
-    # Note after running the above command, you may see an ignorable temporary error message
-    # The error message may be different based on your timing, but could look like this:
-    #     error: the server doesn't have a resource type "virtualservices"
-    #     or
-    #     No resources found
-    
-    # The above errors could be seen if you run the command too early 
-    # Give Big Bang some time to finish installing, then run the following command to check it's status
-    
-    k get po -A
-    ```
-
-* If after running `k get po -A` (which is the shorthand of `kubectl get pods --all-namespaces`) you see something like the following, then you need to wait longer
-
-    ```console
-    NAMESPACE           NAME                                                READY   STATUS              RESTARTS   AGE
-    kube-system         metrics-server-86cbb8457f-dqsl5                     1/1     Running             0          39m
-    kube-system         coredns-7448499f4d-ct895                            1/1     Running             0          39m
-    flux-system         notification-controller-65dffcb7-qpgj5              1/1     Running             0          32m
-    flux-system         kustomize-controller-d689c6688-6dd5n                1/1     Running             0          32m
-    flux-system         source-controller-5fdb69cc66-s9pvw                  1/1     Running             0          32m
-    kube-system         local-path-provisioner-5ff76fc89d-gnvp4             1/1     Running             1          39m
-    flux-system         helm-controller-6c67b58f78-6dzqw                    1/1     Running             0          32m
-    gatekeeper-system   gatekeeper-controller-manager-5cf7696bcf-xclc4      0/1     Running             0          4m6s
-    gatekeeper-system   gatekeeper-audit-79695c56b8-qgfbl                   0/1     Running             0          4m6s
-    istio-operator      istio-operator-5f6cfb6d5b-hx7bs                     1/1     Running             0          4m8s
-    eck-operator        elastic-operator-0                                  1/1     Running             1          4m10s
-    istio-system        istiod-65798dff85-9rx4z                             1/1     Running             0          87s
-    istio-system        public-ingressgateway-6cc4dbcd65-fp9hv              0/1     ContainerCreating   0          46s
-    logging             logging-fluent-bit-dbkxx                            0/2     Init:0/1            0          44s
-    monitoring          monitoring-monitoring-kube-admission-create-q5j2x   0/1     ContainerCreating   0          42s
-    logging             logging-ek-kb-564d7779d5-qjdxp                      0/2     Init:0/2            0          41s
-    logging             logging-ek-es-data-0                                0/2     Init:0/2            0          44s
-    istio-system        svclb-public-ingressgateway-ggkvx                   5/5     Running             0          39s
-    logging             logging-ek-es-master-0                              0/2     Init:0/2            0          37s
-    ```
-
-* Wait up to 10 minutes then re-run `k get po -A`, until all pods show STATUS Running
-
-* `helm list -n=bigbang` should also show STATUS deployed
-
-    ```console
-    NAME                         	NAMESPACE        	REVISION	UPDATED                                	STATUS  	CHART                             	APP VERSION
-    bigbang                      	bigbang          	1       	2021-10-07 19:16:13.990755769 +0000 UTC	deployed	bigbang-1.17.0
-    eck-operator-eck-operator    	eck-operator     	1       	2021-10-07 19:16:18.300583454 +0000 UTC	deployed	eck-operator-1.6.0-bb.2           	1.6.0
-    gatekeeper-system-gatekeeper 	gatekeeper-system	1       	2021-10-07 19:16:20.783813062 +0000 UTC	deployed	gatekeeper-3.5.2-bb.1             	v3.5.2
-    istio-operator-istio-operator	istio-operator   	1       	2021-10-07 19:16:20.564511742 +0000 UTC	deployed	istio-operator-1.10.4-bb.1
-    istio-system-istio           	istio-system     	1       	2021-10-07 19:17:18.267592579 +0000 UTC	deployed	istio-1.10.4-bb.3
-    jaeger-jaeger                	jaeger           	1       	2021-10-07 19:29:15.866513597 +0000 UTC	deployed	jaeger-operator-2.23.0-bb.2       	1.24.0
-    kiali-kiali                  	kiali            	1       	2021-10-07 19:29:14.362710144 +0000 UTC	deployed	kiali-operator-1.39.0-bb.2        	1.39.0
-    logging-cluster-auditor      	logging          	1       	2021-10-07 19:20:55.145508137 +0000 UTC	deployed	cluster-auditor-0.3.0-bb.7        	1.16.0
-    logging-ek                   	logging          	1       	2021-10-07 19:17:50.022767703 +0000 UTC	deployed	logging-0.1.21-bb.0               	7.13.4
-    logging-fluent-bit           	logging          	1       	2021-10-07 19:29:42.290601582 +0000 UTC	deployed	fluent-bit-0.16.6-bb.0            	1.8.6
-    monitoring-monitoring        	monitoring       	1       	2021-10-07 19:18:02.816162712 +0000 UTC	deployed	kube-prometheus-stack-14.0.0-bb.10	0.46.0
-    ```
-
-## Step 12: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Cluster
-
-Run the following command, which is the short hand equivalent of `kubectl get virtualservices --all-namespaces` to see a list of websites you'll need to add to your hosts file
-
-```shell
-k get vs -A
-```
-
-```console
-NAMESPACE    NAME                                      GATEWAYS                  HOSTS                          AGE
-logging      kibana                                    ["istio-system/public"]   ["kibana.bigbang.dev"]         38m
-monitoring   monitoring-monitoring-kube-grafana        ["istio-system/public"]   ["grafana.bigbang.dev"]        36m
-monitoring   monitoring-monitoring-kube-alertmanager   ["istio-system/public"]   ["alertmanager.bigbang.dev"]   36m
-monitoring   monitoring-monitoring-kube-prometheus     ["istio-system/public"]   ["prometheus.bigbang.dev"]     36m
-kiali        kiali                                     ["istio-system/public"]   ["kiali.bigbang.dev"]          35m
-jaeger       jaeger                                    ["istio-system/public"]   ["tracing.bigbang.dev"]        35m
-```
+## Step 8: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Clusters
 
 ### Linux/Mac Users
-
 ```shell
 # [admin@Laptop:~]
-sudo vi /etc/hosts
+export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
+export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
+
+echo "$KEYCLOAK_IP keycloak.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP alertmanager.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP grafana.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP prometheus.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP argocd.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP kiali.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP tracing.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP kibana.bigbang.dev" | sudo tee -a /etc/hosts
+
+cat /etc/hosts
 ```
 
 ### Windows Users
+* Edit similiarly using method mentioned in the generic quickstart
 
-1. Right click Notepad -> Run as Administrator
-1. Open C:\Windows\System32\drivers\etc\hosts
 
-### Linux/Mac/Windows Users
+## Step 9: Make sure the clusters had enough time to finish deployment
+```shell
+# [admin@Laptop:~]
+export KUBECONFIG=$HOME/.kube/keycloak-cluster
+kubectl get pods -A
+kubectl wait --for=condition=ready --timeout=10m pod/keycloak-0 -n=keycloak #takes about 5min
+kubectl get hr -A
+kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 
-Add the following entries to the Hosts file, where x.x.x.x = k3d virtual machine's IP.
-
-> Hint: find and replace is your friend
-
-```plaintext
-x.x.x.x  kibana.bigbang.dev
-x.x.x.x  grafana.bigbang.dev
-x.x.x.x  alertmanager.bigbang.dev
-x.x.x.x  prometheus.bigbang.dev
-x.x.x.x  kiali.bigbang.dev
-x.x.x.x  tracing.bigbang.dev
-x.x.x.x  argocd.bigbang.dev
+export KUBECONFIG=$HOME/.kube/workload-cluster
+kubectl get hr -A
+kubectl wait --for=condition=ready --timeout=10m hr/jaeger -n=bigbang #takes about 10-15mins
+kubectl get hr -A
+kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 ```
+
+## Step 10: Verify that you can access websites hosted in both clusters
+* In a Web Browser try to visit the following 2 webpages
+  * <keycloak.bigbang.dev>
+  * <grafana.bigbang.dev>
+
 
 ## Step 13: Visit a webpage
 
