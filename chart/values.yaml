@@ -128,6 +128,13 @@ istio:
     public-ingressgateway:
       type: "LoadBalancer" # or "NodePort"
       kubernetesResourceSpec: {} # https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#KubernetesResourcesSpec
+    {{- if .Values.addons.authservice.enabled }}
+    protected-ingressgateway:
+      type: "LoadBalancer" # or "NodePort"
+      kubernetesResourceSpec:
+        labels:
+          protect: keycloak
+    {{- end }}
 
     # private-ingressgateway:
     #   type: "LoadBalancer" # or "NodePort"
@@ -154,6 +161,21 @@ istio:
       tls:
         key: ""
         cert: ""
+    protected:
+      ingressGateway: "protected-ingressgateway"
+      hosts:
+      {{- if .Values.jaeger.sso.enabled }}
+      - tracing.{{ .Values.domain }}
+      {{- else }}
+      - 
+      {{- end }}
+      # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+      autoHttpRedirect:
+        enabled: true
+      tls:
+        key: ""
+        cert: ""
+ 
     # private:
     #   ingressGateway: "private-ingressgateway"
     #   hosts:
