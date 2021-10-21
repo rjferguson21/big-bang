@@ -5,7 +5,10 @@
 
 ## Overview
 This Keycloak SSO Quick Start Guide explains how to complete the following tasks in under 2 hours:
-1. Given 2 VMs (each with 8 cpu cores / 32 GB ram) that are each setup for ssh, turn the 2 VMs into 2 single node k3d clusters.
+1. Given 2 VMs (each with 8 cpu cores / 32 GB ram) that are each setup for ssh, turn the 2 VMs into 2 single node k3d clusters.      
+Why 2 VMs?, 2 reasons:     
+  1. It works around k3d only supporting 1 LB, but Keycloak needs it's own LB with TCP_PASSTHROUGH.
+  1. This mimicks the way the Big Bang team recommends Keycloak be deployed in production, giving it it's own dedicated cluster (Note: from a technical standpoint there's nothing stopping it from being hosted on the same cluster).
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Keycloak Cluster.
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Workload Cluster.
 1. In the KeyCloak Cluster:
@@ -89,24 +92,41 @@ echo "\n\n\n$KEYCLOAK_IP is the IP of the k3d node that will host Keycloak on Bi
 
 export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
 echo "$WORKLOAD_IP is the IP of the k3d node that will host Workloads on Big Bang"
-echo "Please manually verify that the IP of your keycloak and workload k3d VMs looks correct before moving on."
+echo "Please manually verify that the IPs of your keycloak and workload k3d VMs look correct before moving on."
 
 
 
 cat << EOFkeycloak-k3d-prepwork-commandsEOF > ~/qs/keycloak-k3d-prepwork-commands.txt
-echo 'export PS1="\[\033[01;32m\]\u@keycloak-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "'  >> ~/.bashrc
-echo 'export K3D_IP="$KEYCLOAK_IP"'  >> ~/.bashrc
-echo 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"'  >> ~/.bashrc
-echo 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"'  >> ~/.bashrc
-echo 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"'  >> ~/.bashrc
+# Idempotent logic:
+lines_in_file=()
+lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@keycloak-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
+lines_in_file+=( 'export CLUSTER_NAME="keycloak-cluster"' )
+lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
+lines_in_file+=( 'export K3D_IP="$KEYCLOAK_IP"' )
+lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
+lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
+
+for line in "\${lines_in_file[@]}"; do
+  grep -qF "\${line}" ~/.bashrc
+  if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
+done
 EOFkeycloak-k3d-prepwork-commandsEOF
 
+
 cat << EOFworkload-k3d-prepwork-commandsEOF > ~/qs/workload-k3d-prepwork-commands.txt
-echo 'export PS1="\[\033[01;32m\]\u@workload-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "'  >> ~/.bashrc
-echo 'export K3D_IP="$WORKLOAD_IP"'  >> ~/.bashrc
-echo 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"'  >> ~/.bashrc
-echo 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"'  >> ~/.bashrc
-echo 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"'  >> ~/.bashrc
+# Idempotent logic:
+lines_in_file=()
+lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@workload-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
+lines_in_file+=( 'export CLUSTER_NAME="workload-cluster"' )
+lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
+lines_in_file+=( 'export K3D_IP="$WORKLOAD_IP"' )
+lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
+lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
+
+for line in "\${lines_in_file[@]}"; do
+  grep -qF "\${line}" ~/.bashrc
+  if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
+done
 EOFworkload-k3d-prepwork-commandsEOF
 
 # run the above commands against the remote shell in parallel and wait for finish
@@ -121,25 +141,23 @@ wait
 # wait command waits for background processes to finish
 ```
 
-1. Take a look at each VM to understand what happened
+1. Take a look at one of the VMs to understand what happened
 ```shell
 # [admin@Laptop:~]
+# First a command to confirm ~/.bashrc was updated as expected
+ssh keycloak-cluster 'tail ~/.bashrc' 
+
+# Then ssh in to see the differences
 ssh keycloak-cluster
 
 # [ubuntu@keycloak-cluster:~$]
 echo "Notice the prompt makes it obvious which VM you ssh'ed into"
-echo $REGISTRY1_USERNAME
 echo "Notice the prompt has access to environment variables that are useful for automation"
-echo $K3D_IP
+env | grep -i name
+env | grep IP
 exit
 
 # [admin@Laptop:~]
-ssh workload-cluster
-
-# [ubuntu@workload-cluster:~$]
-echo $K3D_IP
-echo "Good the prompt is different so you can tell them apart, and IP variable was different"
-exit
 ```
 
 1. Configure host OS prerequisites and install prerequisite software on both VMs
@@ -214,10 +232,19 @@ ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
 ## Step 4: Create k3d cluster on both VMs and make sure you have access to both
 ```shell
 # [admin@Laptop:~]
+# Note: 
+# ssh keycloak-cluster 'env | grep K3D_IP'
+# shows that env vars defined in ~/.bashrc aren't populated when using non interactive shell method
+# The following workaround is used to grab their values for use in non interactive shell
+# export K3D_IP=\$(cat ~/.bashrc  | grep K3D_IP | cut -d \" -f 2)
+
 cat << EOFshared-k3d-install-commandsEOF > ~/qs/shared-k3d-install-commands.txt
+export K3D_IP=\$(cat ~/.bashrc  | grep K3D_IP | cut -d \" -f 2)
+export CLUSTER_NAME=\$(cat ~/.bashrc  | grep CLUSTER_NAME | cut -d \" -f 2)
+
 IMAGE_CACHE=\${HOME}/.k3d-container-image-cache
 mkdir -p \${IMAGE_CACHE}
-k3d cluster create \
+k3d cluster create \$CLUSTER_NAME \
     --k3s-server-arg "--tls-san=\$K3D_IP" \
     --volume /etc/machine-id:/etc/machine-id \
     --volume \${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content \
@@ -225,12 +252,13 @@ k3d cluster create \
     --port 80:80@loadbalancer \
     --port 443:443@loadbalancer \
     --api-port 6443
-sed -i 's/0.0.0.0/\$K3D_IP/' ~/.kube/config
+sed -i "s/0.0.0.0/\$K3D_IP/" ~/.kube/config
 # Explanation:
 # sed = stream editor 
 # -i 's/...   (i = inline), (s = substitution, basically cli find and replace)
 # / / / are delimiters the separate what to find and what to replace.
 # \$K3D_IP, is a variable with $ escaped, so the var will be processed by the remote VM.
+# This was done to allow kubectl access from a remote machine.
 EOFshared-k3d-install-commandsEOF
 
 ssh keycloak-cluster < ~/qs/shared-k3d-install-commands.txt &
@@ -238,10 +266,12 @@ ssh workload-cluster < ~/qs/shared-k3d-install-commands.txt &
 wait
 
 mkdir -p ~/.kube
-scp keycloak-cluster:~/.kube/config ~/.kube/kcc
-scp workload-cluster:~/.kube/config ~/.kube/wlc
+scp keycloak-cluster:~/.kube/config ~/.kube/keycloak-cluster
+scp workload-cluster:~/.kube/config ~/.kube/workload-cluster
 
-export KUBECONFIG=$HOME/.kube/kcc
+export KUBECONFIG=$HOME/.kube/keycloak-cluster
+k get node
+export KUBECONFIG=$HOME/.kube/workload-cluster
 k get node
 ```
 
