@@ -2,8 +2,8 @@ include:
   # Azure Networking
   - local: '/.gitlab-ci/jobs/networking/azure/.gitlab-ci.yml'
 
-  # Azure Networking
-  - local: '/.gitlab-ci/jobs/networking/azure/.gitlab-ci.yml'
+  # AWS Networking
+  - local: '/.gitlab-ci/jobs/networking/aws/.gitlab-ci.yml'
 
 .network:
   extends: .terraformer
