@@ -70,7 +70,7 @@ Differences between this an the previous Quick Start:
     ```
 
 
-## Step 3: Install k3d on both VMs
+## Step 3: Prep work - Install dependencies and configure both VMs
 1. Set some Variables and push them to each VM
 * We'll pass some environment variables into the VMs that will help with automation
 * We'll also update the PS1 var so we can tell the 2 machines apart when sshed in.
@@ -78,7 +78,7 @@ Differences between this an the previous Quick Start:
 
 ```shell
 # [admin@Laptop:~]
-mkdir ~/qs
+mkdir -p ~/qs
 BIG_BANG_VERSION="1.18.0"
 REGISTRY1_USERNAME="REPLACE_ME"
 REGISTRY1_PASSWORD="REPLACE_ME"
@@ -164,7 +164,10 @@ sudo swapoff -a
 sudo apt install git -y
 
 # Install docker (note we use escape some vars we want the remote linux to substitute)
-sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker \$USER
+sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/docker-archive-keyring.gpg 
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null 
+sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker \$USER
 
 # Install k3d
 wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
@@ -185,11 +188,8 @@ if [ \$? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv
 # Install helm
 wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
 echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
-if [ \$? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi    
+if [ \$? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi
 EOFshared-k3d-prepwork-commandsEOF
-
-
-
 
 # [admin@Laptop:~]
 # Run the above prereq script against both VMs
@@ -198,32 +198,51 @@ ssh workload-cluster < ~/qs/shared-k3d-prepwork-commands.txt &
 wait
 
 # Verify install was successful
-ssh workload-cluster 'helm version' #This confirms above install was successful
+cat << EOFshared-k3d-prepwork-verification-commandsEOF > ~/qs/shared-k3d-prepwork-verification-commands.txt
+docker ps >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: docker installed" || echo "ERROR: issue with docker install"
+k3d version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: k3d installed" || echo "ERROR: issue with k3d install"
+kubectl version --client >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kubectl installed" || echo "ERROR: issue with kubectl install"
+kustomize version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kustomize installed" || echo "ERROR: issue with kustomize install"
+helm version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: helm installed" || echo "ERROR: issue with helm install" 
+EOFshared-k3d-prepwork-verification-commandsEOF
+
+ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt 
+ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
 ```
 
-1. Create k3d cluster for both VMs
 
-## Step 4:
-
-
-
+## Step 4: Create k3d cluster on both VMs and make sure you have access to both
 ```shell
-# [ubuntu@Ubuntu_VM:~]
-SERVER_IP="10.10.16.11" #(Change this value, if you need remote kubectl access)
-
-# Create image cache directory
-IMAGE_CACHE=${HOME}/.k3d-container-image-cache
-
-mkdir -p ${IMAGE_CACHE}
-
+# [admin@Laptop:~]
+cat << EOFshared-k3d-install-commandsEOF > ~/qs/shared-k3d-install-commands.txt
+IMAGE_CACHE=\${HOME}/.k3d-container-image-cache
+mkdir -p \${IMAGE_CACHE}
 k3d cluster create \
-    --k3s-server-arg "--tls-san=$SERVER_IP" \
+    --k3s-server-arg "--tls-san=\$K3D_IP" \
     --volume /etc/machine-id:/etc/machine-id \
-    --volume ${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content \
+    --volume \${IMAGE_CACHE}:/var/lib/rancher/k3s/agent/containerd/io.containerd.content.v1.content \
     --k3s-server-arg "--disable=traefik" \
     --port 80:80@loadbalancer \
     --port 443:443@loadbalancer \
     --api-port 6443
+sed -i 's/0.0.0.0/\$K3D_IP/' ~/.kube/config
+# Explanation:
+# sed = stream editor 
+# -i 's/...   (i = inline), (s = substitution, basically cli find and replace)
+# / / / are delimiters the separate what to find and what to replace.
+# \$K3D_IP, is a variable with $ escaped, so the var will be processed by the remote VM.
+EOFshared-k3d-install-commandsEOF
+
+ssh keycloak-cluster < ~/qs/shared-k3d-install-commands.txt &
+ssh workload-cluster < ~/qs/shared-k3d-install-commands.txt &
+wait
+
+mkdir -p ~/.kube
+scp keycloak-cluster:~/.kube/config ~/.kube/kcc
+scp workload-cluster:~/.kube/config ~/.kube/wlc
+
+export KUBECONFIG=$HOME/.kube/kcc
+k get node
 ```
 
 ### k3d Cluster Verification Command
