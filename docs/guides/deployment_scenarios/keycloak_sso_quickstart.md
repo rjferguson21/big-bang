@@ -24,7 +24,7 @@ Differences between this an the previous Quick Start:
 * The previous quick start supported deploying k3d to either localhost or remote VM, this quick start only supports deployment to remote VMs.
 * The previous quick start supported multiple linux distributions, this one requires Ubuntu 20.04 configured for password less sudo (this guide has more automation of prerequisites, so we needed a standard to automate against.)
 * The automation also assumes Admin's Laptop has a Unix Shell. (Mac, Linux, or Windows Subsystem for Linux)
-
+* This quick start assumes you have kubectl installed on your Admin Laptop
 
 ## Step 1: Provision 2 Virtual Machines
 * 2 Virtual Machines each with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users), and 100GB of disk space should be sufficient.
@@ -275,216 +275,104 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 k get node
 ```
 
-### k3d Cluster Verification Command
 
+## Step 5: Clone Big Bang and Install Flux on both Clusters
 ```shell
-# [ubuntu@Ubuntu_VM:~]
-kubectl config use-context k3d-k3s-default
-kubectl get node
-```
+# [admin@Laptop:~]
+cat << EOFshared-flux-install-commandsEOF > ~/qs/shared-flux-install-commands.txt
+export REGISTRY1_USERNAME=\$(cat ~/.bashrc  | grep REGISTRY1_USERNAME | cut -d \" -f 2)
+export REGISTRY1_PASSWORD=\$(cat ~/.bashrc  | grep REGISTRY1_PASSWORD | cut -d \" -f 2)
+export BIG_BANG_VERSION=\$(cat ~/.bashrc  | grep BIG_BANG_VERSION | cut -d \" -f 2)
 
-```console
-Switched to context "k3d-k3s-default".
-NAME                       STATUS   ROLES                  AGE   VERSION
-k3d-k3s-default-server-0   Ready    control-plane,master   11m   v1.21.3+k3s1
-```
-
-## Step 6: Verify Your IronBank Image Pull Credentials
-
-1. Here we continue to follow the DevOps best practice of enabling early left-shifted feedback whenever possible; Before adding credentials to a configuration file and not finding out there is an issue until after we see an ImagePullBackOff error during deployment, we will do a quick left-shifted verification of the credentials.
-
-1. Look up your IronBank image pull credentials
-    1. In a web browser go to [https://registry1.dso.mil](https://registry1.dso.mil)
-    1. Login via OIDC provider
-    1. In the top right of the page, click your name, and then User Profile
-    1. Your image pull username is labeled "Username"
-    1. Your image pull password is labeled "CLI secret"
-      > Note: The image pull credentials are tied to the life cycle of an OIDC token which expires after ~3 days, so if 3 days have passed since your last login to IronBank, the credentials will stop working until you re-login to the [https://registry1.dso.mil](https://registry1.dso.mil) GUI
-
-1. Verify your credentials work
-
-    ```shell
-    # [ubuntu@Ubuntu_VM:~]
-    # Turn off bash history
-    set +o history
-
-    export REGISTRY1_USERNAME=<REPLACE_ME>
-    export REGISTRY1_PASSWORD=<REPLACE_ME>
-    echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
-    
-    # Turn on bash history
-    set -o history
-    ```
-
-## Step 7: Clone your desired version of the Big Bang Umbrella Helm Chart
-
-```shell
-# [ubuntu@Ubuntu_VM:~]
 cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
+git checkout tags/\$BIG_BANG_VERSION
+\$HOME/bigbang/scripts/install_flux.sh -u \$REGISTRY1_USERNAME -p \$REGISTRY1_PASSWORD
+EOFshared-flux-install-commandsEOF
 
-# Checkout version 1.17.0 of Big Bang
-# (Pinning to specific version to improve reproducibility)
-git checkout tags/1.17.0
-git status
+ssh keycloak-cluster < ~/qs/shared-flux-install-commands.txt &
+ssh workload-cluster < ~/qs/shared-flux-install-commands.txt &
+wait
+
+export KUBECONFIG=$HOME/.kube/keycloak-cluster
+kubectl get po -n=flux-system
+export KUBECONFIG=$HOME/.kube/workload-cluster
+kubectl get po -n=flux-system
 ```
 
-```console
-HEAD detached at 1.17.0
-```
 
-> HEAD is git speak for current context within a tree of commits
-
-## Step 8: Install Flux
-
-* The `echo $REGISTRY1_USERNAME` is there to verify the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
-
-    ```shell
-    # [ubuntu@Ubuntu_VM:~]
-    echo $REGISTRY1_USERNAME
-    cd ~/bigbang
-    $HOME/bigbang/scripts/install_flux.sh -u $REGISTRY1_USERNAME -p $REGISTRY1_PASSWORD
-    # NOTE: After running this command the terminal may appear to be stuck on
-    # "networkpolicy.networking.k8s.io/allow-webhooks created"
-    # It's not stuck, the end of the .sh script has a kubectl wait command, give it 5 min
-    # Also if you have slow internet/hardware you might see a false error message
-    # error: timed out waiting for the condition on deployments/helm-controller
-    
-    # As long as the following command shows STATUS Running you're good to move on
-    kubectl get pods --namespace=flux-system
-    ```
-    
-    ```console
-    NAME                                     READY   STATUS    RESTARTS   AGE
-    kustomize-controller-d689c6688-bnr96     1/1     Running   0          3m8s
-    notification-controller-65dffcb7-zk796   1/1     Running   0          3m8s
-    source-controller-5fdb69cc66-g5dlh       1/1     Running   0          3m8s
-    helm-controller-6c67b58f78-cvxmv         1/1     Running   0          3m8s
-    ```
-
-## Step 9: Create helm values .yaml files to act as input variables for the Big Bang Helm Chart
-
-> Note for those new to linux: The following are multi line copy pasteable commands to quickly generate config files from the CLI, make sure you copy from cat to EOF, if you get stuck in the terminal use ctrl + c
-
+## Step 6: Install Big Bang on Workload Cluster
 ```shell
-# [ubuntu@Ubuntu_VM:~]
+# [admin@Laptop:~]
+cat << EOFinstall-keycloakEOF > ~/qs/install-keycloak.txt
+
+```
+
+## Step 7: Install Keycloak on Keycloak Cluster
+```shell
+# [admin@Laptop:~]
+cat << EOFinstall-keycloakEOF > ~/qs/install-keycloak.txt
+export REGISTRY1_USERNAME=\$(cat ~/.bashrc  | grep REGISTRY1_USERNAME | cut -d \" -f 2)
+export REGISTRY1_PASSWORD=\$(cat ~/.bashrc  | grep REGISTRY1_PASSWORD | cut -d \" -f 2)
+
 cat << EOF > ~/ib_creds.yaml
 registryCredentials:
   registry: registry1.dso.mil
-  username: "$REGISTRY1_USERNAME"
-  password: "$REGISTRY1_PASSWORD"
+  username: "\$REGISTRY1_USERNAME"
+  password: "\$REGISTRY1_PASSWORD"
 EOF
 
-
-cat << EOF > ~/demo_values.yaml
+cat << EOF > ~/keycloak_qs_demo_values.yaml
+eckoperator:
+  enabled: false
 logging:
-  values:
-    kibana:
-      count: 1
-      resources:
-        requests:
-          cpu: 400m
-          memory: 1Gi
-        limits:
-          cpu: null  # nonexistent cpu limit results in faster spin up
-          memory: null
-    elasticsearch:
-      master:
-        count: 1
-        resources:
-          requests:
-            cpu: 400m
-            memory: 2Gi
-          limits:
-            cpu: null
-            memory: null
-      data:
-        count: 1
-        resources:
-          requests:
-            cpu: 400m
-            memory: 2Gi
-          limits: 
-            cpu: null
-            memory: null
-
+  enabled: false
+fluentbit:
+  enabled: false
+monitoring:
+  enabled: false
 clusterAuditor:
-  values:
-    resources:
-      requests:
-        cpu: 400m
-        memory: 2Gi
-      limits:
-        cpu: null
-        memory: null
-
+  enabled: false
 gatekeeper:
   enabled: false
-  values:
-    replicas: 1
-    controllerManager:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 512Mi
-        limits:
-          cpu: null
-          memory: null
-    audit:
-      resources:
-        requests:
-          cpu: 400m
-          memory: 768Mi
-        limits:
-          cpu: null
-          memory: null
-    violations:
-      allowedDockerRegistries:
-        enforcementAction: dryrun
-
+kiali:
+  enabled: false
+jaeger:
+  enabled: false
 istio:
+  ingressGateways:
+    public-ingressgateway:
+      type: "NodePort"
   values:
-    values: # possible values found here https://istio.io/v1.5/docs/reference/config/installation-options (ignore 1.5, latest docs point here)
-      global: # global istio operator values
-        proxy: # mutating webhook injected istio sidecar proxy's values
+    values: 
+      global: 
+        proxy: 
           resources:
             requests:
-              cpu: 0m # null get ignored if used here
+              cpu: 0m 
               memory: 0Mi
             limits:
               cpu: 0m
               memory: 0Mi
-
 twistlock:
-  enabled: false # twistlock requires a license to work, so we're disabling it
+  enabled: false
 EOF
-```
 
-## Step 10: Install Big Bang using the local development workflow
-
-```shell
-# [ubuntu@Ubuntu_VM:~]
-helm upgrade --install bigbang $HOME/bigbang/chart \
-  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
-  --values $HOME/ib_creds.yaml \
-  --values $HOME/demo_values.yaml \
+helm upgrade --install bigbang \$HOME/bigbang/chart \
+  --values \$HOME/ib_creds.yaml \
+  --values \$HOME/keycloak_qs_demo_values.yaml \
+  --values \$HOME/bigbang/chart/keycloak-dev-values.yaml \
   --namespace=bigbang --create-namespace
+EOFinstall-keycloakEOF
+
+ssh keycloak-cluster < ~/qs/install-keycloak.txt 
+
+export KUBECONFIG=$HOME/.kube/keycloak-cluster
+kubectl wait --for=condition=ready --timeout=10m pod/keycloak-0 -n=keycloak #takes about 5min
 ```
 
-Explanation of flags used in the imperative helm install command:
 
-`upgrade --install`
-: This makes the command more idempotent by allowing the exact same command to work for both the initial installation and upgrade use cases.
-
-`bigbang $HOME/bigbang/chart`
-: bigbang is the name of the helm release that you'd see if you run `helm list -n=bigbang`. `$HOME/bigbang/chart` is a reference to the helm chart being installed.
-
-`--values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml`
-: References demonstration HTTPS certificates embedded in the public repository. The *.bigbang.dev wildcard certificate is signed by Let's Encrypt, a free public internet Certificate Authority. Note the URL path to the copy of the cert on master branch is used instead of `$HOME/bigbang/chart/ingress-certs.yaml`, because the Let's Encrypt certs expire after 3 months, and if you deploy a tagged release of BigBang, like 1.15.0, the version of the cert stored in the tagged git commit / release of Big Bang could be expired. Referencing the master branches copy via URL ensures you receive the latest version of the cert, which won't be expired.
-
-`--namespace=bigbang --create-namespace`
-: Means it will install the bigbang helm chart in the bigbang namespace and create the namespace if it doesn't exist.
 
 
 ## Step 11: Verify Big Bang has had enough time to finish installing
