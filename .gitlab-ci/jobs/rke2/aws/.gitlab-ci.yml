@@ -4,7 +4,7 @@
     TF_ROOT: ".gitlab-ci/jobs/rke2/aws/dependencies/terraform/env/ci"
 
 .aws/rke2 up:
-  extends: .rke2 tf
+  extends: .aws/rke2 tf
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:rke2_up[collapsed=true]\r\e[0K\e[33;1mRKE2 Up\e[37m"
     # Fetch dependencies
@@ -31,7 +31,7 @@
 
 .aws/rke2 down:
   extends:
-    - .rke2 tf
+    - .aws/rke2 tf
     - .terraform destroy workspace
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:rke2_down[collapsed=true]\r\e[0K\e[33;1mRKE2 Down\e[37m"
