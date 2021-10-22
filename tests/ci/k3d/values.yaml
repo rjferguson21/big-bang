@@ -382,18 +382,17 @@ addons:
         gitaly:
           persistence:
             size: 256Mi
-            ##testvalues
           resources:
+            ## values raised to help pass CI after default values for gitaly are fixed then can revert to original request.
             requests:
               cpu: 400m
               memory: 600Mi
             limits:
               cpu: 400m
               memory: 600Mi
-#          resources:
-#            requests:
-#              cpu: 50m
-#            limits: {}
+            #requests:
+            #  cpu: 50m
+            #limits: {}
         shared-secrets:
           resources:
             requests:
