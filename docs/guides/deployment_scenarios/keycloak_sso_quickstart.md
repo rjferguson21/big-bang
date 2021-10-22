@@ -523,39 +523,18 @@ kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
   * <grafana.bigbang.dev>
 
 
-## Step 13: Visit a webpage
+## Step 11: Create a user in keycloak
+> Note: Keycloak's documentation can be found in it's package repo    
+> https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak
+1. Visit <keycloak.bigbang.dev>
+2. Follow the self registration link https://keycloak.bigbang.dev/register
+3. Create a demo account, the email you specify doesn't have to exist for demo purposes.
+4. Create an MFA device.
+5. It'll say "You need to verify your email address to activate your account"
+6. Visit <https://keycloak.bigbang.dev/auth/admin>
+7. Login as a keycloak admin, using the default creds of admin:password
 
-In a browser, visit one of the sites listed using the `k get vs -A` command
 
-## Step 14: Play
 
-Here's an example of post deployment customization of Big Bang.
-After looking at <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml>
-It should make sense that the following is a valid edit
 
-```shell
-# [ubuntu@Ubuntu_VM:~]
 
-cat << EOF > ~/tinkering.yaml
-addons:
-  argocd:
-    enabled: true
-EOF
-
-helm upgrade --install bigbang $HOME/bigbang/chart \
---values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
---values $HOME/ib_creds.yaml \
---values $HOME/demo_values.yaml \
---values $HOME/tinkering.yaml \
---namespace=bigbang --create-namespace
-
-# NOTE: There may be a ~1 minute delay for the change to apply
-
-k get vs -A
-# Now ArgoCD should show up, if it doesn't wait a minute and rerun the command
-
-k get po -n=argocd
-# Once these are all Running you can visit argocd's webpage
-```
-
-> Remember to un-edit your Hosts file when you are finished tinkering.
