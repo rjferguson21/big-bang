@@ -382,10 +382,18 @@ addons:
         gitaly:
           persistence:
             size: 256Mi
+            ##testvalues
           resources:
             requests:
-              cpu: 50m
-            limits: {}
+              cpu: 400m
+              memory: 600Mi
+            limits:
+              cpu: 400m
+              memory: 600Mi
+#          resources:
+#            requests:
+#              cpu: 50m
+#            limits: {}
         shared-secrets:
           resources:
             requests:
