@@ -384,15 +384,15 @@ addons:
             size: 256Mi
           resources:
             ## values raised to help pass CI after default values for gitaly are fixed then can revert to original request.
+            #requests:
+            #  cpu: 50m
+            #limits: {}
             requests:
               cpu: 400m
               memory: 600Mi
             limits:
               cpu: 400m
               memory: 600Mi
-            #requests:
-            #  cpu: 50m
-            #limits: {}
         shared-secrets:
           resources:
             requests:
