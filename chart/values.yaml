@@ -734,9 +734,12 @@ addons:
 
       # -- NXRM Role
       role:
+        # the id must match the Keycloak group name (case sensitive)
         id: ""
         name: ""
         description: ""
+        privileges: []
+        roles: []
 
     # -- Flux reconciliation overrides specifically for the Nexus Repository Manager Package
     flux: {}

@@ -27,6 +27,10 @@ networkPolicies:
 nexus:
   imagePullSecrets:
     - name: private-registry
+  properties:
+    override: true
+    data: 
+      nexus.licenseFile: /nexus-data/sonatype-license.lic
 
 license_key: "{{ .Values.addons.nexus.license_key }}"
 
@@ -48,12 +52,17 @@ sso:
     - "NexusAuthorizingRealm"
     - "SamlRealm"
   role:
-    id: "keycloak"
-    name: "keycloak"
-    description: "all keycloak users as admins"
+    id: {{ default "Nexus" .Values.addons.nexus.sso.role.id }}
+    name: {{ default "Keycloak Nexus Group" .Values.addons.nexus.sso.role.name }}
+    description: {{ default "Nexus unprivilaged users" .Values.addons.nexus.sso.role.description }}
+    {{- if .Values.addons.nexus.sso.role.privileges }}
     privileges:
-      - "nx-all"
+    {{- toYaml .Values.addons.nexus.sso.role.privileges | nindent 4 }}
+    {{- end }}
+    {{- if .Values.addons.nexus.sso.role.roles }}
     roles:
-      - "nx-admin"
+    {{- toYaml .Values.addons.nexus.sso.role.roles | nindent 4 }}
+    {{- end }}
+
 {{- end }}
 {{- end -}}
