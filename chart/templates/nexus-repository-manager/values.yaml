@@ -27,10 +27,12 @@ networkPolicies:
 nexus:
   imagePullSecrets:
     - name: private-registry
+  {{- if .Values.addons.nexus.license_key }}
   properties:
     override: true
     data: 
       nexus.licenseFile: /nexus-data/sonatype-license.lic
+  {{- end }}
 
 license_key: "{{ .Values.addons.nexus.license_key }}"
 
