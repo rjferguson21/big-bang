@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-trap 'echo exit at ${0}:${LINENO}, command was: ${BASH_COMMAND} 1>&2' ERR
+source ./scripts/traps.sh
 
 # Installs/Configures:
 #  - Docker Registy Container with self-signed cert
