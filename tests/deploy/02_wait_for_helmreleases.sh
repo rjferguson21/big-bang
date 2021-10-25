@@ -135,12 +135,12 @@ function wait_daemonset(){
 
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
-  yq e '(.,.addons) | .[] | ... comments="" | (path | join("."))' "${VALUES_FILE}" | while IFS= read -r package; do
-    if [[ "$(yq e ".${package}.enabled" "${VALUES_FILE}")" == "true" ]]; then
-      gitrepo=$(yq e ".${package}.git.repo" "${VALUES_FILE}")
-      version=$(yq e ".${package}.git.tag" "${VALUES_FILE}")
+  yq e '(.,.addons) | .[] | ... comments="" | (path | join("."))' "${CI_VALUES_FILE}" | while IFS= read -r package; do
+    if [[ "$(yq e ".${package}.enabled" "${CI_VALUES_FILE}")" == "true" ]]; then
+      gitrepo=$(yq e ".${package}.git.repo" "${CI_VALUES_FILE}")
+      version=$(yq e ".${package}.git.tag" "${CI_VALUES_FILE}")
       if [[ -z "$version" || "$version" == "null" ]]; then
-        version=$(yq e ".${package}.git.branch" "${VALUES_FILE}")
+        version=$(yq e ".${package}.git.branch" "${CI_VALUES_FILE}")
       fi
       if [[ -z "$version" || "$version" == "null" ]]; then
         continue
