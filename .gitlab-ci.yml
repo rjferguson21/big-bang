@@ -95,7 +95,7 @@ pre vars:
     set -e
     for deploy_script in $(find ./tests/deploy -type f -name '*.sh' | sort); do
       chmod +x ${deploy_script}
-      echo -e "\e[0Ksection_start:`date +%s`:${deploy_script##*/}[collapsed=true]\r\e[0K\e[33;1m➡️${deploy_script##*/}\e[37m"  
+      echo -e "\e[0Ksection_start:`date +%s`:${deploy_script##*/}[collapsed=true]\r\e[0K\e[33;1m🌌${deploy_script##*/}\e[37m"  
       ./${deploy_script}
       echo -e "\e[0Ksection_end:`date +%s`:${deploy_script##*/}\r\e[0K"
     done
@@ -104,7 +104,7 @@ pre vars:
   - |
     set -e
     for test_script in $(find ./tests/tests -type f -name '*.sh' | sort); do
-      echo -e "\e[0Ksection_start:`date +%s`:${test_script##*/}[collapsed=true]\r\e[0K\e[33;1m➡️${test_script##*/}\e[37m"        
+      echo -e "\e[0Ksection_start:`date +%s`:${test_script##*/}[collapsed=true]\r\e[0K\e[33;1m🤞${test_script##*/}\e[37m"        
       chmod +x ${test_script}
       echo "Executing ${test_script}..."
       ./${test_script} && export EXIT_CODE=$? || export EXIT_CODE=$?
