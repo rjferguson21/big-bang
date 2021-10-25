@@ -781,8 +781,8 @@ addons:
             value: "-Xms500M -Xmx500M -XX:MaxDirectMemorySize=500M -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
         resources:
           requests:
-            cpu: 100m
-            memory: 1500Mi
+            cpu: 200m
+            memory: 3000Mi
       bbtests:
         enabled: true
         cypress:
