@@ -712,6 +712,9 @@ addons:
 
       # -- NXRM SAML SSO Integration data
       idp_data:
+        # Nexus saml URL. example: "https://nexus.example.mil/service/rest/v1/security/saml/metadata"
+        entityId: ""
+
         # -- IdP Field Mappings
         # -- NXRM username attribute
         username: ""
