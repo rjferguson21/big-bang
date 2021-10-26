@@ -690,7 +690,7 @@ addons:
 
   nexus:
     # -- Toggle deployment of Nexus.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
