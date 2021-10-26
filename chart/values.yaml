@@ -602,7 +602,9 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "5.3.1-bb.2"
+      # tag: "5.3.1-bb.3"
+      tag: null
+      branch: 60-istio-sidecar-injection
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
