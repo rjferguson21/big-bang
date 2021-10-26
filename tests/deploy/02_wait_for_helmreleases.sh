@@ -135,12 +135,11 @@ function wait_daemonset(){
 
 # Check for and run the wait_project function within <repo>/tests/wait.sh to wait for custom resources
 function wait_crd(){
-  set +e
   yq e '. | keys | .[] | ... comments=""' "${VALUES_FILE}" | while IFS= read -r package; do
     if [[ "$(yq e ".${package}.enabled" "${VALUES_FILE}")" == "true" ]]; then
       gitrepo=$(yq e ".${package}.git.repo" "${VALUES_FILE}")
       version=$(yq e ".${package}.git.tag" "${VALUES_FILE}")
-      if [[ -z "$version" ]]; then
+      if [[ -z "$version" || "$version" == "null" ]]; then
         version=$(yq e ".${package}.git.branch" "${VALUES_FILE}")
       fi
       if [[ -z "$version" || "$version" == "null" ]]; then
@@ -156,14 +155,13 @@ function wait_crd(){
       fi
     fi
   done
-  set -e
 }
 
 
 ## Append all add-ons to hr list if "all-packages" or default branch/tag. Else, add specific ci labels to hr list.
 HELMRELEASES=(${CORE_HELMRELEASES[@]})
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
-    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]/"nexus-repository-manager"})
+    HELMRELEASES+=(${ADD_ON_HELMRELEASES[@]})
     echo "All helmreleases enabled: all-packages label enabled, or on default branch or tag."
 elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
     IFS=","
