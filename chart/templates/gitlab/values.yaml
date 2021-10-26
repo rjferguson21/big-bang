@@ -222,10 +222,4 @@ global:
     {{- end }}
   {{- end }}
 
-{{ if .Values.istio.enabled }}
-minio:
-  podAnnotations:
-    sidecar.istio.io/inject: "false"
-{{- end }}
-
 {{- end -}}
