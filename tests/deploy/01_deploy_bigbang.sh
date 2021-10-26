@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 trap 'echo ❌ exit at ${0}:${LINENO}, command was: ${BASH_COMMAND} 1>&2' ERR
+set -x
 
 if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]] || [[ ! -z "$CI_COMMIT_TAG" ]] || [[ $CI_MERGE_REQUEST_LABELS =~ "all-packages" ]]; then
   echo "🌌 all-packages label enabled, or on default branch or tag, enabling all addons"
