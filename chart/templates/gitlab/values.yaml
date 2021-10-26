@@ -54,6 +54,10 @@ gitlab:
         config:
           secret: gitlab-object-storage
           key: backups
+    {{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+    annotations: 
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+    {{- end }}
   {{- end }}
   gitlab-exporter:
     enabled: {{ .Values.monitoring.enabled }}
