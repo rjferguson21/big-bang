@@ -30,7 +30,7 @@ if [[ "$CI_PIPELINE_SOURCE" == "schedule" ]] && [[ "$CI_COMMIT_BRANCH" == "maste
 fi
 
 # deploy BigBang using dev sized scaling
-echo "🚀 Installing BigBang with the following configurations: "
+echo "🚀 Installing BigBang with the following configurations:"
 cat $CI_VALUES_FILE
 
 helm upgrade -i bigbang chart -n bigbang --create-namespace \
