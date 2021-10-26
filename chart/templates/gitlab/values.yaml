@@ -66,6 +66,11 @@ gitlab:
   {{- end }}
 
 global:
+
+  # added to help with Gitlab sub-chart configuration
+  istio:
+    enabled: {{ .Values.istio.enabled }}
+
   hosts:
     domain: {{ $domainName }}
 
