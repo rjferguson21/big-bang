@@ -486,6 +486,7 @@ export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostn
 export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
 
 echo "$KEYCLOAK_IP keycloak.bigbang.dev" | sudo tee -a /etc/hosts
+echo "$WORKLOAD_IP authdemo.bigbang.dev" | sudo tee -a /etc/hosts
 echo "$WORKLOAD_IP alertmanager.bigbang.dev" | sudo tee -a /etc/hosts
 echo "$WORKLOAD_IP grafana.bigbang.dev" | sudo tee -a /etc/hosts
 echo "$WORKLOAD_IP prometheus.bigbang.dev" | sudo tee -a /etc/hosts
@@ -524,17 +525,117 @@ kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 
 
 ## Step 11: Create a user in keycloak
-> Note: Keycloak's documentation can be found in it's package repo    
+> Note: Additional Keycloak documentation can be found in these locations:    
 > https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak
+> https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md
 1. Visit <keycloak.bigbang.dev>
 2. Follow the self registration link https://keycloak.bigbang.dev/register
-3. Create a demo account, the email you specify doesn't have to exist for demo purposes.
+3. Create a demo account, the email you specify doesn't have to exist for demo purposes, make sure you write down the demo username and password.
 4. Create an MFA device.
 5. It'll say "You need to verify your email address to activate your account"
 6. Visit <https://keycloak.bigbang.dev/auth/admin>
 7. Login as a keycloak admin, using the default creds of admin:password
+8. In the GUI Navigate to: Manage > Users > [View all users] > Edit your demo user     
+In the GUI Manually:     
+* Delete "Verify Email" from Required User Actions and click save.     
+* Toggle Email Verified from Off to True     
+
+## Step 12: Deploy a mock mission application to the workload cluster
+```shell
+# [admin@Laptop:~]
+cat << EOFdeploy-mock-mission-appEOF > ~/qs/deploy-mock-mission-app.txt
+
+#Creating demo namespace
+k create ns mock-mission-app 
+
+#Adding namespace to the service mesh
+k label ns mock-mission-app istio-injection=enabled 
+
+# Adding docker_cred to namespace so istio side car image pull will work.
+base64ed_dockercreds=\$(kubectl get secret private-registry -n=istio-system --output="jsonpath={.data.\.dockerconfigjson}")
+temp="""
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+metadata:
+  name: private-registry
+data:
+  .dockerconfigjson: \$base64ed_dockercreds
+"""
+echo "\$temp" | kubectl apply -f - -n=mock-mission-app
+
+# Deploying mock mission application
+kubectl apply -k github.com/stefanprodan/podinfo//kustomize -n=mock-mission-app
+
+# Exposing via Istio Ingress Gateway
+temp="""
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: mission
+spec:
+  gateways:
+  - istio-system/public
+  hosts:
+  - authdemo.bigbang.dev
+  http:
+  - route:
+    - destination:
+         host: podinfo
+         port:
+            number: 9898
+"""
+echo "\$temp" | kubectl apply -f - -n=mock-mission-app
+EOFdeploy-mock-mission-appEOF
+
+ssh workload-cluster < ~/qs/deploy-mock-mission-app.txt
+```
 
 
+## Step 13: Visit the newly added webpage
+* In a browser navigate to <authdemo.bigbang.dev>
 
+
+## Step 14: Deploy auth service to the workload cluster and use it to protect the mock mission app
+```shell
+# [admin@Laptop:~]
+cat << EOFdeploy-auth-service-demoEOF > ~/qs/deploy-auth-service-demo.txt
+
+cat << EOF > ~/pods-in-deployment-label-patch.yaml
+spec:
+  template:
+    metadata:
+      labels:
+        protect: keycloak
+EOF
+
+kubectl patch deployment podinfo --type merge --patch "\$(cat ~/pods-in-deployment-label-patch.yaml)" -n=mock-mission-app
+
+cat << EOF > ~/auth_service_demo_values.yaml
+addons:
+  authservice:
+    enabled: true
+    values:
+      chains:
+        full:
+          callback_uri:
+          match:
+            prefix: ""
+EOF
+
+helm upgrade --install bigbang \$HOME/bigbang/chart \
+  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/ingress-certs.yaml \
+  --values \$HOME/bigbang/chart/dev-k3d-values.yaml \
+  --values \$HOME/ib_creds.yaml \
+  --values \$HOME/demo_values.yaml \
+  --values \$HOME/auth_service_demo_values.yaml \
+  --namespace=bigbang --create-namespace
+EOFdeploy-auth-service-demoEOF
+
+ssh workload-cluster < ~/qs/deploy-auth-service-demo.txt
+
+export KUBECONFIG=$HOME/.kube/workload-cluster
+
+```
 
 
