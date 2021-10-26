@@ -866,8 +866,8 @@ addons:
       replicas: 1
       resources:
         requests:
-          cpu: 10m
-          memory: 16Mi
+          cpu: 100m
+          memory: 200Mi
         limits: {}
       bbtests:
         enabled: true
