@@ -6,6 +6,8 @@ metadata:
     app.kubernetes.io/name: gitlab
     app.kubernetes.io/component: "developer-tools"
     {{- include "commonLabels" . | nindent 4}}
+    {{- if .Values.istio.enabled }}
     istio-injection: enabled
+    {{- end }}
   name: gitlab
 {{- end }}
