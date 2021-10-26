@@ -872,11 +872,12 @@ addons:
       timeout: 30m
     values:
       replicas: 1
-      resources:
-        requests:
-          cpu: 100m
-          memory: 200Mi
-        limits: {}
+      requests:
+        cpu: "500m"
+        memory: "1024Mi"
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"
       bbtests:
         enabled: true
         cypress:
