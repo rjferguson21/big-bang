@@ -65,7 +65,7 @@ fluentbit:
     securityContext:
       privileged: true
     bbtests:
-      enabled:true
+      enabled: true
       scripts:
         image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
