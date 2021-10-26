@@ -6,9 +6,9 @@ trap 'echo exit at ${0}:${LINENO}, command was: ${BASH_COMMAND} 1>&2' ERR
 #
 # global defaults
 #
-
+FLUX_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
+FLUX_KUSTOMIZATION="$(find "${FLUX_DIR}/../" -type d -name 'flux')"
 REGISTRY_URL=registry1.dso.mil
-FLUX_KUSTOMIZATION=base/flux
 FLUX_SECRET=private-registry
 WAIT_TIMEOUT=300
 
