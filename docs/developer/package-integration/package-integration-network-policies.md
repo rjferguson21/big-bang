@@ -2,23 +2,23 @@
 To help harden the Big Bang, network policies are put in place to only allow ingress and egress from package namespaces to other needed services.  A deny by default policy is put in place to deny all traffic that is not explicitly allowed.  The following is how to implement the network policies per Big Bang standards.
 
 ## Table of Contents
-1. [Prerequisites](#Prerequisites)
-2. [Integration](#Integration)
-    - [Default Deny](#Default-Deny)
-    - [Was Something Important Blocked?](#Was-Something-Important-Blocked?)
-    - [Allowing Exceptions](#Allowing-Exceptions)
-    - [Additional Configuration](#Additional-Configuration)
-3. [Validation](#Validation)
+1. [Prerequisites](#prerequisites)
+2. [Integration](#integration)
+    - [Default Deny](#default-deny)
+    - [Was Something Important Blocked?](#something-important-blocked)
+    - [Allowing Exceptions](#allowing-exceptions)
+    - [Additional Configuration](#additional-configuration)
+3. [Validation](#validation)
 
 
-## Prerequisites
+## Prerequisites <a name="prerequisites"></a>
 - Understanding of ports and communications of applications and other components within BigBang
 - `chart/templates/bigbang` and `chart/templates/bigbang/networkpolicies` folders within package for comitting bigbang specific templates
 
-## Integration
+## Integration <a name="integration"></a>
 All examples in this documentation will center on [podinfo](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/podinfo).
 
-### Default Deny
+### Default Deny <a name="default-deny"></a>
 In order to keep Big Bang secure, a default deny policy must be put into place for each package. Create `default-deny-all.yaml` inside `chart/templates/bigbang/networkpolicies` with the following details:
 ```
 {{ if .Values.networkPolicies.enabled }}
@@ -38,12 +38,12 @@ spec:
 {{- end }}
 
 ```
-### Was Something Important Blocked?
+### Was Something Important Blocked? <a name="something-important-blocked"></a>
 Add notes here about how to look in K8s to find out if something was blocked.
 
 Here is how you whitelist something:
 
-### Allowing Exceptions
+### Allowing Exceptions <a name="allowing-exceptions"></a>
 - Once you have determined an exception needs to be made, create a template in `chart/templates/bigbang/networkpolicies`. 
 - NetworkPolicy templates follow the naming convention of `direction-destination.yaml` (eg: egress-dns.yaml). 
 - Each networkPolicy template in the package will have an if statement checking for `networkPolicies.enabled` and will only be present when `enabled: true`
@@ -100,7 +100,7 @@ spec:
 {{- end }}
 ```
 
-### Additional Configuration
+### Additional Configuration <a name="additional-configruation"></a>
 Sample `chart/values.yaml` code:
 ```
 # BigBang specific Network Policy Configuration
@@ -145,5 +145,5 @@ spec:
 ```
 - The networkPolicy template for kube-api egress will look like the above, so that communication to the AWS API can be limited unless required by the package.
 
-## Validation
+## Validation <a name="validation"></a>
 - Package functions as expected and is able to communicate with all BigBang touchpoints.
