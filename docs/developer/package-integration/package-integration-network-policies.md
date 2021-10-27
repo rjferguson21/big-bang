@@ -4,10 +4,10 @@ To help harden the Big Bang, network policies are put in place to only allow ing
 ## Table of Contents
 1. [Prerequisites](#Prerequisites)
 2. [Integration](#Integration)
-  1. [Default Deny](#Default-Deny)
-  2. [Was Something Important Blocked?](#Was-Something-Important-Blocked?)
-  3. [Allowing Exceptions](#Allowing-Exceptions)
-  4. [Additional Configuration](#Additional-Configuration)
+    - [Default Deny](#Default-Deny)
+    - [Was Something Important Blocked?](#Was-Something-Important-Blocked?)
+    - [Allowing Exceptions](#Allowing-Exceptions)
+    - [Additional Configuration](#Additional-Configuration)
 3. [Validation](#Validation)
 
 
