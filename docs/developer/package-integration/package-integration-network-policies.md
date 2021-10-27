@@ -1,18 +1,17 @@
-# Table of Contents
-1. [Prerequisites](#Prerequisites)
-2. [Integration](#Integration)
-  - [Default Deny](#Default-Deny)
-  - [Was Something Important Blocked?](#Was-Something-Important-Blocked?)
-  - [Allowing Exceptions](#Allowing-Exceptions)
-  - [Additional Configuration](#Additional-Configuration)
-3. [Validation](#Validation)
-
 # Big Bang Package: Network Policies
-
 To help harden the Big Bang, network policies are put in place to only allow ingress and egress from package namespaces to other needed services.  A deny by default policy is put in place to deny all traffic that is not explicitly allowed.  The following is how to implement the network policies per Big Bang standards.
 
-## Prerequisites
+## Table of Contents
+1. [Prerequisites](#Prerequisites)
+2. [Integration](#Integration)
+  1. [Default Deny](#Default-Deny)
+  2. [Was Something Important Blocked?](#Was-Something-Important-Blocked?)
+  3. [Allowing Exceptions](#Allowing-Exceptions)
+  4. [Additional Configuration](#Additional-Configuration)
+3. [Validation](#Validation)
 
+
+## Prerequisites
 - Understanding of ports and communications of applications and other components within BigBang
 - `chart/templates/bigbang` and `chart/templates/bigbang/networkpolicies` folders within package for comitting bigbang specific templates
 
