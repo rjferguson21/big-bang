@@ -869,13 +869,16 @@ addons:
     ingress:
       gateway: "public"
     flux:
-      timeout: 60m
+      timeout: 45m
     values:
       replicas: 1
-      requests:
-        cpu: "500m"
-        memory: "1024Mi"
-      limits: {}
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1024Mi"
+        limits:
+          cpu: "500m"
+          memory: "1024Mi"
       bbtests:
         enabled: true
         cypress:
