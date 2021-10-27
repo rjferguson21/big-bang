@@ -599,6 +599,12 @@ ssh workload-cluster < ~/qs/deploy-mock-mission-app.txt
 ## Step 14: Deploy auth service to the workload cluster and use it to protect the mock mission app
 ```shell
 # [admin@Laptop:~]
+# JWKS: JSON Web Key Set is a public key used to verify JWT's issued by the IDP.
+# Every Instance of Keycloak will have a unique JWKS, auth service needs to verify JWTs issued by Keycloak
+# You find it by curling https://keycloak.bigbang.dev/auth/realms/baby-yoda/protocol/openid-connect/certs
+# then escaping double quotes and wrapping the value in single quotes. 
+export KEYCLOAK_IDP_JWKS=$(curl https://keycloak.bigbang.dev/auth/realms/baby-yoda/protocol/openid-connect/certs | sed 's@"@\\"@g')
+
 cat << EOFdeploy-auth-service-demoEOF > ~/qs/deploy-auth-service-demo.txt
 
 cat << EOF > ~/pods-in-deployment-label-patch.yaml
@@ -611,12 +617,23 @@ EOF
 
 kubectl patch deployment podinfo --type merge --patch "\$(cat ~/pods-in-deployment-label-patch.yaml)" -n=mock-mission-app
 
+
 cat << EOF > ~/auth_service_demo_values.yaml
+sso:
+  jwks: '$KEYCLOAK_IDP_JWKS'
+  certificate_authority: '\$(curl https://keycloak.bigbang.dev/auth/realms/baby-yoda/protocol/openid-connect/certs | sed 's@"@\\"@g')'
+
 addons:
   authservice:
     enabled: true
     values:
       chains:
+        authdemo:
+          match:
+            header: ":authority"
+            prefix: "authdemo"
+          client_id: "" //from GUI, but also importable, need to make an app for auth service
+          client_secret: "" //dynamically generated from GUI
         full:
           callback_uri:
           match:
@@ -631,6 +648,8 @@ helm upgrade --install bigbang \$HOME/bigbang/chart \
   --values \$HOME/auth_service_demo_values.yaml \
   --namespace=bigbang --create-namespace
 EOFdeploy-auth-service-demoEOF
+
+head ~/qs/deploy-auth-service-demo.txt
 
 ssh workload-cluster < ~/qs/deploy-auth-service-demo.txt
 
