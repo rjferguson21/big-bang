@@ -48,13 +48,13 @@ Here is how you whitelist something:
 - NetworkPolicy templates follow the naming convention of `direction-destination.yaml` (eg: egress-dns.yaml). 
 - Each networkPolicy template in the package will have an if statement checking for `networkPolicies.enabled` and will only be present when `enabled: true`
 
-For example, if the podinfo package needs to send information to istiod, add the following content to a file named egress-istio-d.yaml:
+For example, if the podinfo package needs to send information to istiod, add the following content to a file named `egress-istio-d.yaml`:
 ```
 {{- if and .Values.networkPolicies.enabled .Values.istio.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-istiod-egress
+  name: egress-istiod
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector: {}
@@ -73,13 +73,13 @@ spec:
 {{- end }}
 ```
 
-Similarly, if monitoring needs access to podinfo, create an ingress-monitoring.yaml file with the following contents:
+Similarly, if prometheus needs access to podinfo, create an ingress-monitoring-prometheus.yaml file with the following contents:
 ```
 {{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-monitoring
+  name: ingress-monitoring-prometheus
   namespace: {{ .Release.Namespace }}
 spec:
   policyTypes:
@@ -93,10 +93,10 @@ spec:
         matchLabels:
           app: prometheus
     ports:
-    - port: 4321
+    - port: 9168  ##TODO: MY ISTIOD shows 8080/TCP, 15010/TCP, 15017/TCP... what should I put here??
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: elastic-operator
+      app.kubernetes.io/name: podinfo  ##TODO: CHECK IF THIS IS CORRECT
 {{- end }}
 ```
 
@@ -126,7 +126,7 @@ Sample `chart/templates/bigbang/networkpolicies/egress-kube-api.yaml`:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: egress-api
+  name: egress-kube-api
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector: {}
