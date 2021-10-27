@@ -4,11 +4,148 @@ To help harden the Big Bang, network policies are put in place to only allow ing
 
 ## Prerequisites
 
-- Understanding of ports and communications of application and other components within BigBang
+- Understanding of ports and communications of applications and other components within BigBang
 - `chart/templates/bigbang` and `chart/templates/bigbang/networkpolicies` folders within package for comitting bigbang specific templates
 
 ## Integration
+All examples in this documentation will center on [podinfo](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/podinfo).
 
+### Default Deny
+In order to keep Big Bang secure, a default deny policy must be put into place for each package. Create `default-deny-all.yaml` inside `chart/templates/bigbang/networkpolicies` with the following details:
+```
+{{ if .Values.networkPolicies.enabled }}
+# Default deny everything to/from this namespace
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny-all
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  egress: []
+  ingress: []
+{{- end }}
+
+```
+### Was Something Important Blocked?
+Add notes here about how to look in K8s to find out if something was blocked.
+
+Here is how you whitelist something:
+
+### Allowing Exceptions
+- Once you have determined an exception needs to be made, create a template in `chart/templates/bigbang/networkpolicies`. 
+- NetworkPolicy templates follow the naming convention of `direction-destination.yaml` (eg: egress-dns.yaml). 
+- Each networkPolicy template in the package will have an if statement checking for `networkPolicies.enabled` and will only be present when `enabled: true`
+
+For example, if the podinfo package needs to send information to istiod, add the following content to a file named egress-istio-d.yaml:
+```
+{{- if and .Values.networkPolicies.enabled .Values.istio.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istiod-egress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          app.kubernetes.io/name: istio-controlplane
+      podSelector:
+        matchLabels:
+          app: istiod
+    ports:
+    - port: 15012
+{{- end }}
+```
+
+Similarly, if monitoring needs access to podinfo, create an ingress-monitoring.yaml file with the following contents:
+```
+{{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-monitoring
+  namespace: {{ .Release.Namespace }}
+spec:
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app.kubernetes.io/name: monitoring
+      podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - port: 4321
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: elastic-operator
+{{- end }}
+```
+
+### Additional Configuration
+Sample `chart/values.yaml` code:
+```
+# BigBang specific Network Policy Configuration
+networkPolicies:
+  enabled: false
+
+  # See `kubectl cluster-info` and then resolve to IP
+  controlPlaneCidr: 0.0.0.0/0
+
+  ingressLabels: 
+    app: istio-ingressgateway
+    istio: ingressgateway
+```
+
+- The networkPolicy template is enabled by default because it will inherit the `networkPolicies.enabled` value from BigBang. Use the code `enabled: false` code above in order to disable networkPolicy templates for the package. 
+- The ingressLabels portion support packages that have an externally accessible UI. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
+- If the package needs to talk to the kube-api service (eg: operators) then the `controlPlaneCidr` value will be required.
+  - The `controlPlaneCidr` will control egress to the kube-api and be wide open by default, but will inherit the `networkPolicies.controlPlaneCidr` value from BigBang so the range can be locked down.
+
+Sample `chart/templates/bigbang/networkpolicies/egress-kube-api.yaml`:
+```
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-api
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  egress:
+  - to:
+    - ipBlock:
+        cidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+        {{- if eq .Values.networkPolicies.controlPlaneCidr "0.0.0.0/0" }}
+        # ONLY Block requests to cloud metadata IP
+        except:
+        - 169.254.169.254/32
+        {{- end }}
+  policyTypes:
+  - Egress
+{{- end }}
+```
+- The networkPolicy template for kube-api egress will look like the above, so that communication to the AWS API can be limited unless required by the package.
+
+## Validation
+- Package functions as expected and is able to communicate with all BigBang touchpoints.
+
+
+
+
+
+# OLD CONTENT BELOW HERE
+## TO BE REMOVED
 - Network Policy templates follow the naming convention of direction-destination.yaml eg: egress-dns.yaml
 - Package will have the following values block:
 ```
@@ -45,6 +182,3 @@ egress:
 policyTypes:
 - Egress
 ```
-
-## Validation
-- Package functions as expected and is able to communicate with all BigBang touchpoints.
