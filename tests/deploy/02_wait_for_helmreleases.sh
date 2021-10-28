@@ -86,7 +86,7 @@ function wait_all_hr() {
         fi
         sleep 5
         timeElapsed=$(($timeElapsed+5))
-        if [[ $timeElapsed -ge 3600 ]]; then
+        if [[ $timeElapsed -ge 1800 ]]; then
             echo "❌ Timed out while waiting for hr's to be ready."
             exit 1
         fi
@@ -106,7 +106,7 @@ function wait_sts() {
       fi
       sleep 5
       timeElapsed=$(($timeElapsed+5))
-      if [[ $timeElapsed -ge 1200 ]]; then
+      if [[ $timeElapsed -ge 600 ]]; then
          echo "❌ Timed out while waiting for stateful sets to be ready."
          exit 1
       fi
@@ -126,7 +126,7 @@ function wait_daemonset(){
       fi
       sleep 5
       timeElapsed=$(($timeElapsed+5))
-      if [[ $timeElapsed -ge 1200 ]]; then
+      if [[ $timeElapsed -ge 600 ]]; then
          echo "❌ Timed out while waiting for daemon sets to be ready."
          exit 1
       fi
@@ -182,7 +182,7 @@ elif [[ ! -z "$CI_MERGE_REQUEST_LABELS" ]]; then
 fi
 
 echo "⏳ Waiting on GitRepositories"
-kubectl wait --for=condition=Ready --timeout 300s gitrepositories -n bigbang --all
+kubectl wait --for=condition=Ready --timeout 180s gitrepositories -n bigbang --all
 
 for package in "${HELMRELEASES[@]}";
 do
@@ -197,7 +197,7 @@ wait_crd
 kubectl get helmreleases,kustomizations,gitrepositories -A
 
 echo "⏳ Waiting on Secrets Kustomization"
-kubectl wait --for=condition=Ready --timeout 600s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
+kubectl wait --for=condition=Ready --timeout 300s kustomizations.kustomize.toolkit.fluxcd.io -n bigbang secrets
 
 # In case some helm releases are marked as ready before all objects are live...
 echo "⏳ Waiting on all jobs, deployments, statefulsets, and daemonsets"
@@ -205,5 +205,5 @@ kubectl wait --for=condition=available --timeout 600s -A deployment --all > /dev
 wait_sts
 wait_daemonset
 if kubectl get job -A -o jsonpath='{.items[].metadata.name}' &> /dev/null; then
-  kubectl wait --for=condition=complete --timeout 600s -A job --all > /dev/null
+  kubectl wait --for=condition=complete --timeout 300s -A job --all > /dev/null
 fi
