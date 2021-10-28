@@ -885,7 +885,6 @@ addons:
             cypress_url: "https://keycloak.bigbang.dev"
             cypress_username: "admin"
             cypress_password: "password"
-      # Custom dev secret configuration
       secrets:
         env:
           stringData:
@@ -923,14 +922,4 @@ addons:
         - name: realm
           mountPath: /opt/jboss/keycloak/realm.json
           subPath: realm.json
-          readOnly: true
-      
-      extraVolumeMountsBigBang:
-        - name: tlscert
-          mountPath: /etc/x509/https/tls.crt
-          subPath: tls.crt
-          readOnly: true
-        - name: tlskey
-          mountPath: /etc/x509/https/tls.key
-          subPath: tls.key
           readOnly: true
