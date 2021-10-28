@@ -1,6 +1,7 @@
 hostname: bigbang.dev
 
 flux:
+  timeout: 30m
   interval: 1m
   rollback:
     cleanupOnFail: false
@@ -867,6 +868,11 @@ addons:
     ingress:
       gateway: "public"
     values:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits: {}
       bbtests:
         enabled: true
         cypress:
@@ -875,12 +881,6 @@ addons:
             cypress_url: "https://keycloak.bigbang.dev"
             cypress_username: "admin"
             cypress_password: "password"
-      replicas: 1
-      resources:
-        requests:
-          cpu: 10m
-          memory: 16Mi
-        limits: {}
       secrets:
         env:
           stringData:
@@ -896,7 +896,7 @@ addons:
         realm:
           stringData:
             realm.json: '{{ .Files.Get "resources/dev/baby-yoda.json" }}'
-      extraVolumes: |-              
+      extraVolumes: |-
         - name: certauthority
           secret:
             secretName: {{ include "keycloak.fullname" . }}-certauthority
@@ -906,12 +906,6 @@ addons:
         - name: realm
           secret:
             secretName: {{ include "keycloak.fullname" . }}-realm
-        - name: tlscert
-          secret:
-            secretName: keycloak-tlscert
-        - name: tlskey
-          secret:
-            secretName: keycloak-tlskey
       extraVolumeMounts: |-
         - name: certauthority
           mountPath: /etc/x509/https/cas.pem
@@ -925,12 +919,3 @@ addons:
           mountPath: /opt/jboss/keycloak/realm.json
           subPath: realm.json
           readOnly: true
-        - name: tlscert
-          mountPath: /etc/x509/https/tls.crt
-          subPath: tls.crt
-          readOnly: true
-        - name: tlskey
-          mountPath: /etc/x509/https/tls.key
-          subPath: tls.key
-          readOnly: true
-
