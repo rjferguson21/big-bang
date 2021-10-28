@@ -1,0 +1,64 @@
+{
+    "baseBranches": ["main"],
+    "configWarningReuseIssue": false,
+    "dependencyDashboard": "true",
+    "dependencyDashboardAutoclose": "true",
+    "dependencyDashboardHeader": "- [ ] Updated dependencies.",
+    "dependencyDashboardTitle": "Renovate: Upgrade Dependencies",
+    "draftPR": true,
+    "enabledManagers": ["helm-values", "regex"],
+    "labels": ["bigbang","kind::chore","renovate"],
+    "packageRules": [
+      {
+          "matchDatasources": ["docker"],
+          "groupName": "Ironbank"
+      }
+  ],
+  "regexManagers": [
+      {
+          "fileMatch": ["^\\.gitlab-ci\\.yml$"],
+          "matchStrings": [
+              "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+          ],
+          "datasourceTemplate": "docker"
+      },
+      {
+        "fileMatch": ["^\\.gitlab-ci/templates\\.yml$"],
+        "matchStrings": [
+          "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+        ],
+        "datasourceTemplate": "docker"
+    },              
+      {
+        "fileMatch": ["^\\.gitab-ci/jobs/ci-cluster/\\.gitlab-ci\\.yml$"],
+        "matchStrings": [
+          "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+        ],
+        "datasourceTemplate": "docker"
+    },      
+      {
+          "fileMatch": ["^chart/values\\.yaml$"],
+          "matchStrings": [
+              "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+          ],
+          "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^tests/ci/k3d/metallb/metallb\\.yaml$"],
+      "matchStrings": [
+          "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+      ],
+      "datasourceTemplate": "docker"
+    },    
+    {
+      "fileMatch": ["^tests/ci/k3d/values\\.yaml$"],
+      "matchStrings": [
+          "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "separateMajorMinor": false
+}
+
+
