@@ -65,11 +65,9 @@ fluentbit:
     securityContext:
       privileged: true
     bbtests:
-      # TODO: Connection refused on the test currently
-      # https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit/-/issues/18
+      enabled: true
       scripts:
-        # Image commented out to disable the test since the BB Test Lib version being used doesn't have the enabled flag
-        # image: registry1.dso.mil/ironbank/stedolan/jq:1.6
+        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
           fluent_host: "http://{{ include \"fluent-bit.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
           desired_version: "{{ .Values.image.tag }}"
@@ -383,9 +381,16 @@ addons:
           persistence:
             size: 256Mi
           resources:
+            ## values raised to help pass CI after default values for gitaly are fixed then can revert to original request.
+            #requests:
+            #  cpu: 50m
+            #limits: {}
             requests:
-              cpu: 50m
-            limits: {}
+              cpu: 400m
+              memory: 600Mi
+            limits:
+              cpu: 400m
+              memory: 600Mi
         shared-secrets:
           resources:
             requests:
@@ -469,22 +474,23 @@ addons:
       runners:
         protected: false
       bbtests:
-        # TODO: This test runs fine locally with the same values, but fails in CI
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
+          envs:
+            cypress_baseUrl: "https://gitlab.bigbang.dev"
+            cypress_gitlab_first_name: "testrunner"
+            cypress_gitlab_last_name: "userrunner"
+            cypress_gitlab_email: "gitlab@bigbang.dev"
+            cypress_gitlab_username: "gitlabrunner_user"
+            cypress_gitlab_password: "gitlabrunner_pass"
+            cypress_gitlab_project: "runner-hello-world"
           secretEnvs:
             - name: cypress_adminpassword
               valueFrom:
                 secretKeyRef:
                   name: gitlab-gitlab-initial-root-password
                   key: password
-          envs:
-            cypress_baseUrl: "https://gitlab.bigbang.dev"
-            cypress_gitlab_email: "gitlab@bigbang.dev"
-            cypress_gitlab_user: "gitlab_user"
-            cypress_gitlab_password: "gitlab_pass"
-            cypress_gitlab_project: "hello-world"
 
   anchore:
     enabled: false
