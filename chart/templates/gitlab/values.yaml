@@ -23,7 +23,11 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
-  enabled: {{ .Values.networkPolicies.enabled }}
+  {{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+  enabled: false
+  {{- else }}
+  enabled: true
+  {{- end }}
   ingressLabels:
     {{- $gateway := default "public" .Values.addons.gitlab.ingress.gateway }}
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}

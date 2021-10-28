@@ -666,6 +666,7 @@ addons:
       # Example: "prod" will produce "prod-gitlab-bucket"
       bucketPrefix: ""
 
+      # -- NOTE: Current bug with AWS IAM Profiles and Object Storage where only artifacts are stored. Fixed in Gitlab 14.5
       # -- Name of AWS IAM profile to use.
       # -- If using an AWS IAM profile, the accessKey and accessSecret values must be left as empty strings eg: ""
       iamProfile: ""
