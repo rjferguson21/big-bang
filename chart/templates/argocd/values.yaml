@@ -32,7 +32,6 @@ istio:
   argocd:
     gateways:
     - istio-system/{{ default "public" .Values.addons.argocd.ingress.gateway }}
-  injection: {{ dig "istio" "injection" "enabled" .Values.addons.mattermost }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
