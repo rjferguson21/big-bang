@@ -49,16 +49,28 @@
           "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
       ],
       "datasourceTemplate": "docker"
-    },    
+    },       
     {
       "fileMatch": ["^tests/ci/k3d/values\\.yaml$"],
+      "matchStrings": [
+          "(image:|curlContainerImage:)\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)",
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^chart/templates/velero/values\\.yaml$"],
       "matchStrings": [
           "image:\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
       ],
       "datasourceTemplate": "docker"
-    }
+    },
+    {
+      "fileMatch": ["^base/flux/kustomization\\.yaml$"],
+      "matchStrings": [
+        "newName\\S*:\\s*(?<depName>\\S+).*\n\\s+newTag:\\s*(?<currentValue>.+)"
+      ],
+      "datasourceTemplate": "docker"
+    }                    
   ],
   "separateMajorMinor": false
 }
-
-
