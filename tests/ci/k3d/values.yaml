@@ -889,13 +889,13 @@ addons:
             X509_CA_BUNDLE: /etc/x509/https/cas.pem
         certauthority:
           stringData:
-            cas.pem: '{{ .Files.Get "resources/dev/dod_cas.pem" }}'
+            cas.pem: '{{ .Files.Get "keycloak-dev/dod_cas.pem" }}'
         customreg:
           stringData:
-            customreg.yaml: '{{ .Files.Get "resources/dev/baby-yoda.yaml" }}'
+            customreg.yaml: '{{ .Files.Get "keycloak-dev/baby-yoda.yaml" }}'
         realm:
           stringData:
-            realm.json: '{{ .Files.Get "resources/dev/baby-yoda.json" }}'
+            realm.json: '{{ .Files.Get "keycloak-dev/baby-yoda.json" }}'
       extraVolumes: |-
         - name: certauthority
           secret:
