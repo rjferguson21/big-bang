@@ -165,7 +165,7 @@ stringData:
 
 ## Validation
 
-For validating connection to the external database in your environment or testing in CI you will need to add the database specific values to your overrides file or `tests/ci/k3d/values.yaml` respectively.
+For validating connection to the external database in your environment or testing in CI pipeline you will need to add the database specific values to your overrides file or `tests/ci/k3d/values.yaml` respectively.
 
 mattermost example:
 
