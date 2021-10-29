@@ -2,7 +2,6 @@ addons:
   keycloak:
     ingress:
       # *.bigbang.dev
-      gateway: "passthrough"
       key: |
         -----BEGIN PRIVATE KEY-----
         MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDbaLWaC86eG74Z
