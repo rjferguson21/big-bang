@@ -19,6 +19,7 @@ fi
 
 # if keycloak enabled add ingress passthrough cert to addons.keycloak.ingress
 if [ "$(yq e ".addons.keycloak.enabled" "${CI_VALUES_FILE}")" == "true" ]; then
+  yq eval-all 'select(fileIndex == 0) * select(filename == "tests/ci/keycloak-certs/keycloak-passthrough-values.yaml")' $CI_VALUES_FILE tests/ci/keycloak-certs/keycloak-passthrough-values.yaml > tmpfile && mv tmpfile $CI_VALUES_FILE
 #if keycloak is enabled add passthrough ingress gateway and gateway to istio.
   yq eval-all 'select(filename == "tests/ci/k3d/values.yaml") * select(filename == "tests/ci/passthrough-gateway.yaml")' $CI_VALUES_FILE tests/ci/passthrough-gateway.yaml > tmpfile && mv tmpfile $CI_VALUES_FILE
 fi

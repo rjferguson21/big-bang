@@ -868,7 +868,6 @@ addons:
     ingress:
       gateway: "passthrough"
     values:
-      replicas: 1
       resources:
         requests:
           cpu: 10m
@@ -907,12 +906,6 @@ addons:
         - name: realm
           secret:
             secretName: {{ include "keycloak.fullname" . }}-realm
-        - name: tlscert
-          secret:
-            secretName: passthrough-cert
-        - name: tlskey
-          secret:
-            secretName: passthrough-cert
       extraVolumeMounts: |-
         - name: certauthority
           mountPath: /etc/x509/https/cas.pem
@@ -925,12 +918,4 @@ addons:
         - name: realm
           mountPath: /opt/jboss/keycloak/realm.json
           subPath: realm.json
-          readOnly: true
-        - name: tlscert
-          mountPath: /etc/x509/https/tls.crt
-          subPath: tls.crt
-          readOnly: true
-        - name: tlskey
-          mountPath: /etc/x509/https/tls.key
-          subPath: tls.key
           readOnly: true
