@@ -14,15 +14,15 @@ This Quick Start Guide deploys a demo environment with insecure defaults; theref
 
 * IDEALLY you'd run this automation against VMs with private IP addresses that are not accessible over the public internet.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
-  Prevent Compromise:
-  * Implement security groups that only allow the 2 VMs to talk to you and each other.
-  Limit Blast Radius of Potential Compromise:
-  * Only deploy to an isolated VPC, not a shared VPC.
-  * Only deploy to VMs with no IAM roles/rights attached.
+  * Prevent Compromise:
+    * Implement security groups that only allow the 2 VMs to talk to you and each other.
+  * Limit Blast Radius of Potential Compromise:
+    * Only deploy to an isolated VPC, not a shared VPC.
+    * Only deploy to VMs with no IAM roles/rights attached.
 
 ## Overview
 
-This SSO Quick Start Guide explains how to set up an SSO demo environment, from scratch within 2 hours, that will allow you to demo Auth Service's functionality. You'll gain hands-on configuration experience with Auth Service, Keycloak, and a Mock Mission Application.
+This SSO Quick Start Guide explains how to set up an SSO demo environment, from scratch within two hours, that will allow you to demo Auth Service's functionality. You'll gain hands-on configuration experience with Auth Service, Keycloak, and a Mock Mission Application.
 
 Steps:
 
@@ -108,10 +108,9 @@ Differences between this and the previous Quick Start:
 ## Step 3: Prep work - Install dependencies and configure both VMs
 
 1. Set some Variables and push them to each VM
-
-* We'll pass some environment variables into the VMs that will help with automation
-* We'll also update the PS1 var so we can tell the 2 machines apart when ssh'd in.
-* All of the commands in the following section are run from the Admin Laptop
+   * We'll pass some environment variables into the VMs that will help with automation
+   * We'll also update the PS1 var so we can tell the 2 machines apart when ssh'd in.
+   * All of the commands in the following section are run from the Admin Laptop
 
 ```shell
 # [admin@Laptop:~]
