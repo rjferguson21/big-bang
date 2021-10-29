@@ -868,6 +868,7 @@ addons:
     ingress:
       gateway: "passthrough"
     values:
+      replicas: 1
       resources:
         requests:
           cpu: 10m
