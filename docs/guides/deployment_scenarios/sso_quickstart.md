@@ -11,6 +11,7 @@ Imagine <https://authdemo.bigbang.dev> represents a mock-up of a custom-built mi
 This Quick Start Guide deploys a demo environment with insecure defaults; therefore, it's important to be extra vigilant about following security best practices. This demo environment should be treated as if it could easily become compromised if hosted on VMs with public IPs.
 
 *, DO NOT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment.
+
 * IDEALLY you'd run this automation against VMs with private IP addresses that are not accessible over the public internet.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
   Prevent Compromise:
@@ -654,7 +655,7 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Edit] demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo
    1. Under "Access Type": Change Public to Confidential
-   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/log in/generic_oauth"
+   1. Under "Valid Redirect URIs": Add "<https://authdemo.bigbang.dev/log> in/generic_oauth"
       Note: /log in/generic_oauth comes from auth service
    1. Save
    1. Scroll up to the top of the page and you'll see a newly added [Credentials] tab, click it.
