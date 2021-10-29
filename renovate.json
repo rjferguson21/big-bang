@@ -53,7 +53,7 @@
     {
       "fileMatch": ["^tests/ci/k3d/values\\.yaml$"],
       "matchStrings": [
-          "(image:|curlContainerImage:)\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)",
+          "(image:|curlContainerImage:)\\s*(?<depName>.+):(?<currentValue>[\\d\\.]+)"
       ],
       "datasourceTemplate": "docker"
     },
