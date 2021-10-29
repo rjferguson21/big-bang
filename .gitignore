@@ -5,7 +5,6 @@ certs/
 
 .terraform
 *.pem
-!chart/keycloak-dev/dod_cas.pem
 *rke2.yaml
 
 *tfstate*
