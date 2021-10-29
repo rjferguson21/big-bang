@@ -2,17 +2,23 @@
 
 If the package you are integrating connects to a database or cache server, you will need to follow the instructions below to integrate this feature into Big Bang
 
-Note: Names of key/values may change based on the application being integrated. Please refer to application documentation for additional information on connecting to an external database.
-
 ## Prerequisites
 
 - Existing database or cache server
 
 ## Integration
 
-To have the package connect to a database or cache server, you will need to do the following:
+There are currently 2 typical ways in bigbang that packages connect to a database.
 
-- add database values to package in chart/values.yaml
+1. Package chart accepts database values (hostname, user, password, etc)
+
+2. Package chart accepts a secret name where all the DB connection information is defined
+
+Both ways will first require the following:
+
+- add database values for the package in bigbang/chart/values.yaml
+
+  Note: Names of key/values may differ based on the application being integrated. Please refer to package chart values to ensure key/values coincide and application documentation for additional information on connecting to a database.
 
 ```
 <package>
@@ -28,7 +34,35 @@ To have the package connect to a database or cache server, you will need to do t
     # -- Database password for the username used to connect to the existing database.
     password: ""
 ```
-- add the following template to bigbang/chart/templates/`<package>`/values:
+[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L882):
+```
+    database:
+      # -- Hostname of a pre-existing PostgreSQL database to use for Anchore.
+      # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
+      host: ""
+      # -- Port of a pre-existing PostgreSQL database to use for Anchore.
+      port: ""
+      # -- Username to connect as to external database, the user must have all privileges on the database.
+      username: ""
+      # -- Database password for the username used to connect to the existing database.
+      password: ""
+      # -- Database name to connect to on host (Note: database name CANNOT contain hyphens).
+      database: ""
+      # -- Feeds database name to connect to on host (Note: feeds database name CANNOT contain hyphens).
+      # Only required for enterprise edition of anchore.
+      # By default, feeds database will be configured with the same username and password as the main database. For formatting examples on how to use a separate username and password for the feeds database see https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/-/blob/main/docs/CHART.md#handling-dependencies
+      feeds_database: ""
+
+```
+Next details the first way packages connect to a pre-existing database.
+
+1. Package charts accept values for hostname, username, password, database, etc and the chart makes the necessary secret.
+
+- add a conditional statement to `bigbang/chart/templates/<package>/values` that will check if database values exist and creates the necessary postgresql values.
+
+If database values are present, then the internal database is disabled by setting `enabled: false` and the server, database, username, and port values are set.
+
+If database values are NOT present then the internal database is enabled and default values declared in the package are used.
 
 ```
 # External Postgres config
@@ -40,7 +74,6 @@ postgresql:
   postgresqlServer: {{ .host }}
   postgresqlDatabase: {{ .database }}
   postgresqlUsername: {{ .username }}
-  existingSecret: <package>-db-secret
   service:
     port: {{ .port }}
   {{- else }}
@@ -49,60 +82,100 @@ postgresql:
   {{- end }}
 {{- end }}
 ```
-If database values are present for the package then the internal database is disabled by setting `enabled: false` and the server, database, username, and port values are set.
-
-If database values are NOT present then the internal database is enabled and default values declared in the package are used.
-
-Example:
-
-This example will detail how to integrate [PodInfo](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/podinfo) application into bigbang which uses a cache server.
-
-1) Add database values to package in chart/values.yaml
-
+[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/anchore/values.yaml#L49):
 ```
-addons:
-  podinfo:
-    database:
-      # -- Hostname of a pre-existing database or cache server to use.
-      host: ""
-      # -- Port of a pre-existing database or cache server to use.
-      port: ""
-      # -- Database name to connect to on host.
-      database: ""
-      # -- Username to connect as to external database, the user must have all privileges on the database.
-      username: ""
-      # -- Database password for the username used to connect to the existing database.
-      password: ""
-```
-
-2) Add the following template to bigbang/chart/templates/podinfo/values:
-
-```
-{{- with .Values.podinfo.database }}
-  # Use external database
-  {{- if and .host .port }}
-cache: {{ .host }}:{{ .port }}
-redis:
+postgresql:
+  imagePullSecrets: private-registry
+  {{- if and .Values.addons.anchore.database.host .Values.addons.anchore.database.port .Values.addons.anchore.database.username .Values.addons.anchore.database.password .Values.addons.anchore.database.database }}
   enabled: false
-  {{- else }}
-  # Use internal database, defaults are fine
-redis
-  enabled: true
+  postgresUser: {{ .Values.addons.anchore.database.username }}
+  postgresPassword: {{ .Values.addons.anchore.database.password }}
+  postgresDatabase: {{ .Values.addons.anchore.database.database }}
+  externalEndpoint: "{{ .Values.addons.anchore.database.host }}:{{ .Values.addons.anchore.database.port }}"
   {{- end }}
+```
+The alternative way packages connect to a pre-existing database is detailed below.
+
+2. Package chart accepts a secret name where all the DB connection information is defined.
+
+- add conditional statement in `chart/templates/<package>/values.yaml` to add values for database secret, if database values exist. Otherwise the internal database is deployed.
+
+{{- with .Values.addons.<package>.database }}
+{{- if and .username .password .host .port .database }}
+database:
+  secret: "<package>-database-secret"
+{{- else }}
+postgresql:
+  image:
+    pullSecrets:
+      - private-registry
+  install: true
+{{- end }}
+{{- end }}
+
+[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/mattermost/mattermost/values.yaml#L49)
+
+
+- create manifest that uses database values to create the database secret referenced above
+
+```
+{{- if .Values.addons.<package>.enabled }}
+{{- with .Values.addons.<package>.database }}
+{{- if and .username .password .host .port .database }}
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: <package>-database-secret
+  namespace: <package>
+  labels:
+    {{- include "commonLabels" $ | nindent 4}}
+stringData:
+  DB_CONNECTION_CHECK_URL: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
+  DB_CONNECTION_STRING: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
+{{- end }}
+{{- end }}
+{{- end }}
+```
+
+[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/mattermost/mattermost/secret-database.yaml):
+
+```
+{{- if .Values.addons.mattermost.enabled }}
+{{- with .Values.addons.mattermost.database }}
+{{- if and .username .password .host .port .database }}
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: mattermost-database-secret
+  namespace: mattermost
+  labels:
+    app.kubernetes.io/name: mattermost
+    app.kubernetes.io/component: "collaboration-tools"
+    {{- include "commonLabels" $ | nindent 4}}
+stringData:
+  DB_CONNECTION_CHECK_URL: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
+  DB_CONNECTION_STRING: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
+{{- end }}
+{{- end }}
 {{- end }}
 ```
 
 ## Validation
 
-For validating connection to the external database in your environment or testing in CI you will need to add the specific values to your overrides file or `tests/ci/k3d/values.yaml`.
+For validating connection to the external database in your environment or testing in CI you will need to add the database specific values to your overrides file or `tests/ci/k3d/values.yaml` respectively.
 
-podinfo example:
+mattermost example:
 
 ```
 addons:
-  podinfo:
+  mattermost:
     enabled: true
     database:
-      host: "redis.podinfo.com"
-      port: "6379"
+      host: "mm-postgres.bigbang.dev"
+      port: "5432"
+      username: "admin"
+      password: "Pa55w0rd"
+      database: "db1
 ```
