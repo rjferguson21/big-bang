@@ -8,16 +8,16 @@ In BigBang MinIO is  a consistent, performant and scalable object store for the 
 
 Addon Minio is enabled at the BigBang, alternatively you have an existing Minio Instance \
 AWS S3 AccessKey and SecretKey \
-Existing S3 bucket  for the deployment \
+Existing S3 bucket  for the deployment 
 
 ## Integration
 
-Minio object storage can be integrated in bigbang with the  entries in  bigbang value.yaml at the package level. \
+Minio object storage can be integrated in bigbang with the  entries in  bigbang value.yaml at the package level. 
 
 NOTE: Some packages may have in-built object storage and the implementation may vary.
 
 ```yaml
- {{- if or .Values.addons.minio.enabled}}
+{{- if or .Values.addons.minio.enabled}}
 minio:
   enabled: {{ .Values.<chartname>.minio.enabled }}
     disableSSL: false
