@@ -4,13 +4,13 @@
 
 ## Blue Team Knowledge Drop
 
-Imagine <https://authdemo.bigbang.dev> represents a mock-up of a custom-built mission application that doesn't have SSO, Authentication, or Authorization built-in. Auth Service can add those to it which creates layers of defense/defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self-registration of users without hurting security. Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD, and others have baked in support for OIDC/SSO and authn/authz functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that a frontend service was reachable from the public internet and it had some zero-day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network-level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero-day vulnerabilities since it'd be behind an authn/authz proxy layer of defense which would prevent them from even touching the frontend. Bonus: Istio, AuthService, and Keycloak are all FOSS (free open source software) solutions and they work in internet disconnect environments, we'll even Demo it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
+Imagine <https://authdemo.bigbang.dev> represents a mock-up of a custom-built mission application that doesn't have SSO, Authentication, or Authorization built-in. Auth Service can add those to it which creates layers of defense/defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self-registration of users without hurting security. Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD, and others have baked in support for OIDC/SSO and AuthN/AuthZ functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that a frontend service was reachable from the public internet and it had some zero-day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network-level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero-day vulnerabilities since it'd be behind an AuthN/AuthZ proxy layer of defense which would prevent them from even touching the frontend. Bonus: Istio, AuthService, and Keycloak are all Free Open Source Software (FOSS) solutions and they work in internet disconnect environments, we'll even demonstrate it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
 
 ## Important Security Notice
 
 This Quick Start Guide deploys a demo environment with insecure defaults; therefore, it's important to be extra vigilant about following security best practices. This demo environment should be treated as if it could easily become compromised if hosted on VMs with public IPs.
 
-*, DO NOT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment.
+* DO NOT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment.
 
 * IDEALLY you'd run this automation against VMs with private IP addresses that are not accessible over the public internet.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
@@ -49,7 +49,7 @@ Differences between this and the previous Quick Start:
 * The previous quick start supported deploying k3d to either localhost or remote VM, this quick start only supports deployment to remote VMs.
 * The previous quick start supported multiple Linux distributions, this one requires Ubuntu 20.04, and it must be configured for passwordless sudo (this guide has more automation of prerequisites, so we needed a standard to automate against.)
 * The automation also assumes Admin's Laptop has a Unix Shell. (Mac, Linux, or Windows Subsystem for Linux)
-* This quick start assumes you have kubectl installed on your Admin Workstation
+* This quick start assumes you have kubectl installed on your Administrator Workstation
 
 > `Note: Additional AuthService and Keycloak documentation can be found in these locations:`
 >
@@ -620,7 +620,7 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
 ## Step 12: Visit the newly added webpage
 
 * In a browser navigate to <authdemo.bigbang.dev>
-* Note: authdemo currently isn't protected by the authservice authn/authz proxy, the next steps configure that protection.
+* Note: authdemo currently isn't protected by the authservice AuthN/AuthZ proxy, the next steps configure that protection.
 
 ## Step 13: Create a Human User Account in Keycloak
 
@@ -783,7 +783,7 @@ kubectl exec -it test -- ping keycloak.bigbang.dev -c 1 | head -n 1
 # Notice it mentions resolution as 127.0.0.1, this is incorrect and comes from public internet DNS
 
 
-# We will override it by updating coredns, which works at the Inner Cluster Network level and has higher precidence.
+# We will override it by updating coredns, which works at the Inner Cluster Network level and has higher precedence.
 export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
 export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
 cat << EOF > ~/qs/k3d-dns-patch.yaml
@@ -806,7 +806,7 @@ kubectl delete pods -l=k8s-app=kube-dns -n=kube-system
 # Retest DNS resolution from the perspective of a pod running in the cluster
 kubectl exec -it test -- ping keycloak.bigbang.dev -c 1 | head -n 1
 kubectl exec -it test -- ping authdemo.bigbang.dev -c 1 | head -n 1
-# Now the k3d clusters can resolve the DNS to IP mappings, similiar to our workstation's /etc/hosts file
+# Now the k3d clusters can resolve the DNS to IP mappings, similar to our workstation's /etc/hosts file
 ```
 
 ## Step 19: Revisit authdemo.bigbang.dev
