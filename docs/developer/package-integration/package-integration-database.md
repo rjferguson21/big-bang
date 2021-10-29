@@ -10,13 +10,13 @@ If the package you are integrating connects to a database or cache server, you w
 
 There are currently 2 typical ways in bigbang that packages connect to a database.
 
-1. Package chart accepts database values (hostname, user, password, etc)
+1. Package charts accept values for host, user, pass, etc and the chart makes the necessary secret, configmap etc.
 
-2. Package chart accepts a secret name where all the DB connection information is defined
+2. Package chart accepts a secret name where all the DB connection info is defined. In these cases we make the secret in the BB chart.
 
-Both ways will first require the following:
+Both ways will first require the following step:
 
-- add database values for the package in bigbang/chart/values.yaml
+Add database values for the package in bigbang/chart/values.yaml
 
   Note: Names of key/values may differ based on the application being integrated. Please refer to package chart values to ensure key/values coincide and application documentation for additional information on connecting to a database.
 
@@ -54,15 +54,15 @@ Both ways will first require the following:
       feeds_database: ""
 
 ```
-Next details the first way packages connect to a pre-existing database.
+**Next details the first way packages connect to a pre-existing database.**
 
-1. Package charts accept values for hostname, username, password, database, etc and the chart makes the necessary secret.
+1. Package charts accept values for host, user, pass, etc and the chart makes the necessary secret, configmap etc...
 
-- add a conditional statement to `bigbang/chart/templates/<package>/values` that will check if database values exist and creates the necessary postgresql values.
+- add a conditional statement to `bigbang/chart/templates/<package>/values` that will check if the database values exist and creates the necessary postgresql values.
 
-If database values are present, then the internal database is disabled by setting `enabled: false` and the server, database, username, and port values are set.
+  If database values are present, then the internal database is disabled by setting `enabled: false` and the server, database, username, and port values are set.
 
-If database values are NOT present then the internal database is enabled and default values declared in the package are used.
+  If database values are NOT present then the internal database is enabled and default values declared in the package are used.
 
 ```
 # External Postgres config
@@ -94,12 +94,12 @@ postgresql:
   externalEndpoint: "{{ .Values.addons.anchore.database.host }}:{{ .Values.addons.anchore.database.port }}"
   {{- end }}
 ```
-The alternative way packages connect to a pre-existing database is detailed below.
+**The alternative way packages connect to a pre-existing database is detailed below.**
 
-2. Package chart accepts a secret name where all the DB connection information is defined.
+2. Package chart accepts a secret name where all the DB connection info is defined. In these cases we make the secret in the BB chart..
 
 - add conditional statement in `chart/templates/<package>/values.yaml` to add values for database secret, if database values exist. Otherwise the internal database is deployed.
-
+```
 {{- with .Values.addons.<package>.database }}
 {{- if and .username .password .host .port .database }}
 database:
@@ -112,6 +112,7 @@ postgresql:
   install: true
 {{- end }}
 {{- end }}
+```
 
 [Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/mattermost/mattermost/values.yaml#L49)
 
