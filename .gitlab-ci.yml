@@ -32,16 +32,16 @@ include:
 #  - Smoke tests are executed for all pipelines except scheduled nightly runs.
 #  -
 stages:
-  - smoke tests
-  - network up
-  - cluster up
-  - bigbang up
-  - test
-  - bigbang down
-  - cluster down
-  - network down
-  - package
-  - release
+  - 🔥 smoke tests
+  - 🔌 network up
+  - ⚓ cluster up
+  - 🌌 bigbang up
+  - 🤞 test
+  - 💣 bigbang down
+  - 💣 cluster down
+  - 💣 network down
+  - 📦 package
+  - 🚀 release
 
 variables:
   RELEASE_BUCKET: umbrella-bigbang-releases
@@ -64,9 +64,16 @@ pre vars:
     reports:
       dotenv: variables.env
   script:
-  # Create the TF_VAR_env variable
-  - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
-  - cat variables.env
+    # Create the TF_VAR_env variable
+    - echo "TF_VAR_env=$(echo $CI_COMMIT_REF_SLUG | cut -c 1-7)-$(echo $CI_COMMIT_SHA | cut -c 1-7)" >> variables.env
+    - cat variables.env
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -102,14 +109,21 @@ pre vars:
       echo "Executing ${test_script}..."
       ./${test_script} && export EXIT_CODE=$? || export EXIT_CODE=$?
       if [[ ${EXIT_CODE} -ne 0 ]]; then
-        echo "${test_script} failed, see log output above and cluster debug."
-        exit ${EXIT_CODE}
+        if [[ ${EXIT_CODE} -ne 123 ]]; then
+          echo -e "\e[31m❌ ${test_script} failed, see log output above and cluster debug.\e[0m"
+          exit ${EXIT_CODE}
+        fi
+        # 123 error codes are allowed to continue
+        echo -e "\e[31m⚠️ ${test_script} failed but was allowed to continue, see log output above and cluster debug.\e[0m"
+        EXIT_FLAG=1
       fi
       echo -e "\e[0Ksection_end:`date +%s`:${test_script##*/}\r\e[0K"
     done
-
+    if [[ -n "$EXIT_FLAG" ]]; then
+      echo -e "\e[31m⚠️ WARNING: One or more BB tests failed but were allowed to continue. See output of scripts above for details.\e[0m"
+    fi
 clean install:
-  stage: smoke tests
+  stage: 🔥 smoke tests
   extends:
     - .k3d-ci
   variables:
@@ -128,6 +142,10 @@ clean install:
     - echo $images | jq -r '.images[].repoTags[0] | select(. != null)' | tee images.txt
     - echo -e "\e[0Ksection_end:`date +%s`:images_used\r\e[0K"
     - *test_bigbang
+    - |
+      if [[ $EXIT_FLAG -eq 1 ]]; then
+        exit 123
+      fi
   artifacts:
     paths:
       - images.txt
@@ -136,9 +154,15 @@ clean install:
     when: always
   allow_failure:
     exit_codes: 123
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 upgrade:
-  stage: smoke tests
+  stage: 🔥 smoke tests
   dependencies:
     - pre vars
   extends:
@@ -156,19 +180,23 @@ upgrade:
   variables:
     CLUSTER_NAME: "upgrade-${CI_COMMIT_SHORT_SHA}"
   script:
-    - echo "Install Big Bang from ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
+    - echo "🌌 Install Big Bang from ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
     - echo -e "\e[0Ksection_start:`date +%s`:git_master[collapsed=true]\r\e[0K\e[33;1mGit Fetch Master\e[37m"  
     - git fetch && git checkout ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
     - echo -e "\e[0Ksection_end:`date +%s`:git_master\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
-    - echo "Upgrade Big Bang from ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
+    - echo "🌌 Upgrade Big Bang from ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
     - echo -e "\e[0Ksection_start:`date +%s`:git_upgrade[collapsed=true]\r\e[0K\e[33;1mGit Upgrade\e[37m"    
     - git reset --hard && git clean -fd
     - git checkout ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
     - echo -e "\e[0Ksection_end:`date +%s`:git_upgrade\r\e[0K"
     - *deploy_bigbang
     - *test_bigbang
+    - |
+      if [[ $EXIT_FLAG -eq 1 ]]; then
+        exit 123
+      fi
   artifacts:
     paths:
       - "test-artifacts/"
@@ -176,6 +204,12 @@ upgrade:
     when: always
   allow_failure:
     exit_codes: 123
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Rules for execution of AWS based K3S cluster deployment:  Infrastructure jobs
@@ -183,7 +217,7 @@ upgrade:
 
 # Abstract for job manually triggering infrastructure builds
 .infra fork:
-  stage: network up
+  stage: 🔌 network up
   rules:
     # Run on scheduled jobs OR when `test-ci` label is assigned
     - if: '($CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "master") || $CI_MERGE_REQUEST_LABELS =~ /(^|,)test-ci::infra(,|$)/'
@@ -230,7 +264,7 @@ aws/network down:
     - .bigbang-gitlab-runner-tags
     - .infra cleanup
     - .network down
-  stage: network down
+  stage: 💣 network down
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
     action: stop
@@ -249,7 +283,7 @@ aws/network down:
 
 # Create RKE2 cluster on AWS
 aws/rke2/cluster up:
-  stage: cluster up
+  stage: ⚓ cluster up
   extends:
     - .bigbang-gitlab-runner-tags
     - .infra create
@@ -269,7 +303,7 @@ aws/rke2/cluster up:
 
 # Install BigBang on RKE2 cluster on AWS
 aws/rke2/bigbang up:
-  stage: bigbang up
+  stage: 🌌 bigbang up
   extends:
     - .bigbang-gitlab-runner-tags
     - .infra create
@@ -282,7 +316,6 @@ aws/rke2/bigbang up:
     - cp ${CI_PROJECT_DIR}/rke2.yaml ~/.kube/config
     # Deploy a default storage class for aws
     - kubectl apply -f ${CI_PROJECT_DIR}/.gitlab-ci/jobs/rke2/dependencies/k8s-resources/aws/default-ebs-sc.yaml
-
   script:
     - *deploy_bigbang
   environment:
@@ -296,7 +329,7 @@ aws/rke2/bigbang up:
 
 # Run tests on BigBang on RKE2 cluster on AWS
 aws/rke2/bigbang test:
-  stage: test
+  stage: 🤞 test
   extends:
     - .bigbang-gitlab-runner-tags
     - .infra create
@@ -313,9 +346,12 @@ aws/rke2/bigbang test:
     ## putting it here now for a quick way to install dig
     - echo -e "\e[0Ksection_start:`date +%s`:host_setup[collapsed=true]\r\e[0K\e[33;1mHost Setup\e[37m"
     - yum install bind-utils -y
-    - ./scripts/hosts.sh
     - echo -e "\e[0Ksection_end:`date +%s`:host_setup\r\e[0K"
     - *test_bigbang
+    - |
+      if [[ $EXIT_FLAG -eq 1 ]]; then
+        exit 123
+      fi
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   allow_failure:
@@ -334,7 +370,7 @@ aws/rke2/bigbang test:
 
 # Uninstall BigBang on RKE2 cluster on AWS
 aws/rke2/bigbang down:
-  stage: bigbang down
+  stage: 💣 bigbang down
   extends:
     - .bigbang-gitlab-runner-tags
     - .infra cleanup
@@ -352,10 +388,16 @@ aws/rke2/bigbang down:
     - sleep 180
   environment:
     name: review/aws-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 # Destroy RKE2 cluster on AWS
 aws/rke2/cluster down:
-  stage: cluster down
+  stage: 💣 cluster down
   extends:
     - .bigbang-gitlab-runner-tags
     - .infra cleanup
@@ -380,7 +422,7 @@ aws/rke2/cluster down:
 #
 
 package:
-  stage: package
+  stage: 📦 package
   image: registry.dso.mil/platform-one/big-bang/bigbang/synker:0.0.3
   extends:
     - .bigbang-gitlab-runner-tags
@@ -391,10 +433,11 @@ package:
     # Set up auth
     - mkdir -p /root/.docker
     - |
-      jq -n '{"auths": {"registry.dso.mil": {"auth": $bb_registry_auth}, "registry1.dso.mil": {"auth": $registry1_auth}, "registry.il2.dso.mil": {"auth": $il2_registry_auth} } }' \
+      jq -n '{"auths": {"registry.dso.mil": {"auth": $bb_registry_auth}, "registry1.dso.mil": {"auth": $registry1_auth}, "registry.il2.dso.mil": {"auth": $il2_registry_auth}, "docker.io": {"auth": $bb_docker_auth} } }' \
         --arg bb_registry_auth ${BB_REGISTRY_AUTH} \
         --arg registry1_auth ${REGISTRY1_AUTH} \
-        --arg il2_registry_auth ${IL2_REGISTRY_AUTH} > /root/.docker/config.json
+        --arg il2_registry_auth ${IL2_REGISTRY_AUTH} \
+        --arg bb_docker_auth ${DOCKER_AUTH} > /root/.docker/config.json
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:synker_pull[collapsed=true]\r\e[0K\e[33;1mSynker Pull\e[37m"
     - cp ./scripts/package/synker.yaml ./synker.yaml
@@ -413,11 +456,8 @@ package:
     - crane pull registry:2 registry.tar
     - mv registry.tar /var/lib/registry/
     - echo -e "\e[0Ksection_start:`date +%s`:package_synker[collapsed=true]\r\e[0K\e[33;1mPackage Images\e[37m"
-    - tar -C /var/lib/registry -czvf $IMAGE_PKG .
-    - echo -e "\e[0Ksection_end:`date +%s`:package_synker\r\e[0K"
-    - echo -e "\e[0Ksection_start:`date +%s`:unpack_images[collapsed=true]\r\e[0K\e[33;1mUnpack Images\e[37m"
     - tar -czvf $IMAGE_PKG /var/lib/registry
-    - echo -e "\e[0Ksection_end:`date +%s`:unpack_images\r\e[0K"
+    - echo -e "\e[0Ksection_end:`date +%s`:package_synker\r\e[0K"
     # Package dependent repos
     - echo -e "\e[0Ksection_start:`date +%s`:package_repos[collapsed=true]\r\e[0K\e[33;1mPackage Repos\e[37m"
     - ./scripts/package/gits.sh
@@ -434,9 +474,15 @@ package:
         aws s3 sync --quiet release/ s3://umbrella-bigbang-releases/umbrella/${CI_COMMIT_TAG}
       fi
   after_script: []
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 release:
-  stage: release
+  stage: 🚀 release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   extends:
     - .bigbang-gitlab-runner-tags
@@ -463,5 +509,11 @@ release:
           --assets-link "{\"name\":\"${IMAGE_PKG}\",\"url\":\"${RELEASE_ENDPOINT}/${IMAGE_PKG}\"}" \
           --assets-link "{\"name\":\"${REPOS_PKG}\",\"url\":\"${RELEASE_ENDPOINT}/${REPOS_PKG}\"}"
       fi
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
 
 #-----------------------------------------------------------------------------------------------------------------------
