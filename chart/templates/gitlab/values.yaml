@@ -23,11 +23,7 @@ monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
-  {{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
-  enabled: false
-  {{- else }}
-  enabled: true
-  {{- end }}
+  enabled: {{ .Values.networkPolicies.enabled }}
   ingressLabels:
     {{- $gateway := default "public" .Values.addons.gitlab.ingress.gateway }}
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
@@ -230,5 +226,9 @@ global:
       tmpBucket: gitlab-backup-tmp
     {{- end }}
   {{- end }}
+
+{{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+use_iam_profile: true
+{{- end }}
 
 {{- end -}}
