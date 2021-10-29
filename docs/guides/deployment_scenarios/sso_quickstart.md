@@ -24,8 +24,9 @@ This Quick Start Guide deploys a demo environment with insecure defaults; theref
 
 This SSO Quick Start Guide explains how to set up an SSO demo environment, from scratch within two hours, that will allow you to demo Auth Service's functionality. You'll gain hands-on configuration experience with Auth Service, Keycloak, and a Mock Mission Application.
 
-Steps:
+**Steps:**
 
+1. This document assumes you have already gone through and are familiar with the generic quick start guide.
 1. Given 2 VMs (each with 8 CPU cores / 32 GB ram) that are each set up for ssh, turn the 2 VMs into 2 single node k3d clusters.
 Why 2 VMs? 2 reasons:
 1. It works around k3d only supporting 1 LB, but Keycloak needs its LB with TCP_PASSTHROUGH.
@@ -33,30 +34,24 @@ Why 2 VMs? 2 reasons:
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Keycloak Cluster.
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Workload Cluster.
 1. In the Keycloak Cluster:
-
-* Deploy Keycloak
-* Create a Human User and Service Account for the authdemo service.
-
+   * Deploy Keycloak
+   * Create a Human User and Service Account for the authdemo service.
 1. In the Workload Cluster:
+   * Deploy a mock mission application
+   * Protect the mock mission application, by deploying and configuring auth service to interface with Keycloak and require users to log in to Keycloak and be in the correct authorization group before being able to access the mock mission application.
 
-* Deploy a mock mission application
-* Protect the mock mission application, by deploying and configuring auth service to interface with Keycloak and require users to log in to Keycloak and be in the correct authorization group before being able to access the mock mission application.
-
-> Note: This document assumes familiarity with the generic Big Bang quick start guide.
-Differences between this and the previous Quick Start:
-
+### Differences between this and the generic quick start
 * Topics explained in previous quick start guides won't have notes or they will be less detailed.
 * The previous quick start supported deploying k3d to either localhost or remote VM, this quick start only supports deployment to remote VMs.
 * The previous quick start supported multiple Linux distributions, this one requires Ubuntu 20.04, and it must be configured for passwordless sudo (this guide has more automation of prerequisites, so we needed a standard to automate against.)
 * The automation also assumes Admin's Laptop has a Unix Shell. (Mac, Linux, or Windows Subsystem for Linux)
 * This quick start assumes you have kubectl installed on your Administrator Workstation
 
-> `Note: Additional AuthService and Keycloak documentation can be found in these locations:`
->
-> * <https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice>
-> * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/authservice/Architecture.md>
-> * <https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak>
-> * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md>
+### Additional Auth Service and Keycloak documentation can be found in these locations
+* <https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice>
+* <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/authservice/Architecture.md>
+* <https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak>
+* <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md>
 
 ## Step 1: Provision 2 Virtual Machines
 
@@ -74,12 +69,12 @@ Differences between this and the previous Quick Start:
     chmod 600 ~/.ssh/config
     temp="""##########################
     Host keycloak-cluster
-      Hostname x.x.x.x  #IP Address of k3d node
+      Hostname x.x.x.x  #IP Address of VM1 (future k3d cluster)
       IdentityFile ~/.ssh/bb-onboarding-attendees.ssh.privatekey
       User ubuntu
       StrictHostKeyChecking no
     Host workload-cluster
-      Hostname x.x.x.x  #IP Address of k3d node
+      Hostname x.x.x.x  #IP Address of VM2 (future k3d cluster)
       IdentityFile ~/.ssh/bb-onboarding-attendees.ssh.privatekey
       User ubuntu
       StrictHostKeyChecking no
@@ -109,159 +104,159 @@ Differences between this and the previous Quick Start:
 
 1. Set some Variables and push them to each VM
    * We'll pass some environment variables into the VMs that will help with automation
-   * We'll also update the PS1 var so we can tell the 2 machines apart when ssh'd in.
+   * We'll also update the PS1 var so we can tell the 2 machines apart when ssh'd into.
    * All of the commands in the following section are run from the Admin Laptop
 
-```shell
-# [admin@Laptop:~]
-mkdir -p ~/qs
-BIG_BANG_VERSION="1.18.0"
-REGISTRY1_USERNAME="REPLACE_ME"
-REGISTRY1_PASSWORD="REPLACE_ME"
-echo $REGISTRY1_PASSWORD | docker log in https://registry1.dso.mil --username=$REGISTRY1_USERNAME --password-stdin | grep "log in Succeeded" ; echo $? | grep 0 && echo "This validation check shows your registry1 credentials are valid, please continue." || for i in {1..10}; do echo "Validation check shows error, fix your registry1 credentials before moving on."; done
-
-export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
-echo "\n\n\n$KEYCLOAK_IP is the IP of the k3d node that will host Keycloak on Big Bang"
-
-export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
-echo "$WORKLOAD_IP is the IP of the k3d node that will host Workloads on Big Bang"
-echo "Please manually verify that the IPs of your keycloak and workload k3d VMs look correct before moving on."
-
-
-
-cat << EOFkeycloak-k3d-prepwork-commandsEOF > ~/qs/keycloak-k3d-prepwork-commands.txt
-# Idempotent logic:
-lines_in_file=()
-lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@keycloak-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
-lines_in_file+=( 'export CLUSTER_NAME="keycloak-cluster"' )
-lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
-lines_in_file+=( 'export K3D_IP="$KEYCLOAK_IP"' )
-lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
-lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
-
-for line in "\${lines_in_file[@]}"; do
-  grep -qF "\${line}" ~/.bashrc
-  if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
-done
-EOFkeycloak-k3d-prepwork-commandsEOF
-
-
-cat << EOFworkload-k3d-prepwork-commandsEOF > ~/qs/workload-k3d-prepwork-commands.txt
-# Idempotent logic:
-lines_in_file=()
-lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@workload-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
-lines_in_file+=( 'export CLUSTER_NAME="workload-cluster"' )
-lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
-lines_in_file+=( 'export K3D_IP="$WORKLOAD_IP"' )
-lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
-lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
-
-for line in "\${lines_in_file[@]}"; do
-  grep -qF "\${line}" ~/.bashrc
-  if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
-done
-EOFworkload-k3d-prepwork-commandsEOF
-
-# run the above commands against the remote shell in parallel and wait for finish
-ssh keycloak-cluster < ~/qs/keycloak-k3d-prepwork-commands.txt &
-ssh workload-cluster < ~/qs/workload-k3d-prepwork-commands.txt &
-wait
-# Explanation: (We're basically doing Ansible w/o Ansible's dependencies)
-# ssh keycloak-cluster < ~/qs/keycloak-k3d-prepwork-commands.txt
-# ^-- runs script against remote VM 
-# & at the end of the command means to let it run in the background
-# using it allows us to run the script against both machines in parallel.
-# wait command waits for background processes to finish
-```
+    ```shell
+    # [admin@Laptop:~]
+    mkdir -p ~/qs
+    BIG_BANG_VERSION="1.18.0"
+    REGISTRY1_USERNAME="REPLACE_ME"
+    REGISTRY1_PASSWORD="REPLACE_ME"
+    echo $REGISTRY1_PASSWORD | docker log in https://registry1.dso.mil --username=$REGISTRY1_USERNAME --password-stdin | grep "log in Succeeded" ; echo $? | grep 0 && echo "This validation check shows your registry1 credentials are valid, please continue." || for i in {1..10}; do echo "Validation check shows error, fix your registry1 credentials before moving on."; done
+    
+    export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
+    echo "\n\n\n$KEYCLOAK_IP is the IP of the k3d node that will host Keycloak on Big Bang"
+    
+    export WORKLOAD_IP=$(cat ~/.ssh/config | grep workload-cluster -A 1 | grep Hostname | awk '{print $2}')
+    echo "$WORKLOAD_IP is the IP of the k3d node that will host Workloads on Big Bang"
+    echo "Please manually verify that the IPs of your keycloak and workload k3d VMs look correct before moving on."
+    
+    
+    
+    cat << EOFkeycloak-k3d-prepwork-commandsEOF > ~/qs/keycloak-k3d-prepwork-commands.txt
+    # Idempotent logic:
+    lines_in_file=()
+    lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@keycloak-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
+    lines_in_file+=( 'export CLUSTER_NAME="keycloak-cluster"' )
+    lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
+    lines_in_file+=( 'export K3D_IP="$KEYCLOAK_IP"' )
+    lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
+    lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
+    
+    for line in "\${lines_in_file[@]}"; do
+      grep -qF "\${line}" ~/.bashrc
+      if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
+    done
+    EOFkeycloak-k3d-prepwork-commandsEOF
+    
+    
+    cat << EOFworkload-k3d-prepwork-commandsEOF > ~/qs/workload-k3d-prepwork-commands.txt
+    # Idempotent logic:
+    lines_in_file=()
+    lines_in_file+=( 'export PS1="\[\033[01;32m\]\u@workload-cluster\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' )
+    lines_in_file+=( 'export CLUSTER_NAME="workload-cluster"' )
+    lines_in_file+=( 'export BIG_BANG_VERSION="$BIG_BANG_VERSION"' )
+    lines_in_file+=( 'export K3D_IP="$WORKLOAD_IP"' )
+    lines_in_file+=( 'export REGISTRY1_USERNAME="$REGISTRY1_USERNAME"' )
+    lines_in_file+=( 'export REGISTRY1_PASSWORD="$REGISTRY1_PASSWORD"' )
+    
+    for line in "\${lines_in_file[@]}"; do
+      grep -qF "\${line}" ~/.bashrc
+      if [ \$? -ne 0 ]; then echo "\${line}" >> ~/.bashrc ; fi
+    done
+    EOFworkload-k3d-prepwork-commandsEOF
+    
+    # run the above commands against the remote shell in parallel and wait for finish
+    ssh keycloak-cluster < ~/qs/keycloak-k3d-prepwork-commands.txt &
+    ssh workload-cluster < ~/qs/workload-k3d-prepwork-commands.txt &
+    wait
+    # Explanation: (We're basically doing Ansible w/o Ansible's dependencies)
+    # ssh keycloak-cluster < ~/qs/keycloak-k3d-prepwork-commands.txt
+    # ^-- runs script against remote VM 
+    # & at the end of the command means to let it run in the background
+    # using it allows us to run the script against both machines in parallel.
+    # wait command waits for background processes to finish
+    ```
 
 1. Take a look at one of the VMs to understand what happened
 
-```shell
-# [admin@Laptop:~]
-# First a command to confirm ~/.bashrc was updated as expected
-ssh keycloak-cluster 'tail ~/.bashrc' 
-
-# Then ssh in to see the differences
-ssh keycloak-cluster
-
-# [ubuntu@keycloak-cluster:~$]
-echo "Notice the prompt makes it obvious which VM you ssh'ed into"
-echo "Notice the prompt has access to environment variables that are useful for automation"
-env | grep -i name
-env | grep IP
-exit
-
-# [admin@Laptop:~]
-```
+    ```shell
+    # [admin@Laptop:~]
+    # First a command to confirm ~/.bashrc was updated as expected
+    ssh keycloak-cluster 'tail ~/.bashrc' 
+    
+    # Then ssh in to see the differences
+    ssh keycloak-cluster
+    
+    # [ubuntu@keycloak-cluster:~$]
+    echo "Notice the prompt makes it obvious which VM you ssh'ed into"
+    echo "Notice the prompt has access to environment variables that are useful for automation"
+    env | grep -i name
+    env | grep IP
+    exit
+    
+    # [admin@Laptop:~]
+    ```
 
 1. Configure host OS prerequisites and install prerequisite software on both VMs
 
-```shell
-# [admin@Laptop:~]
-# Note ? is escaped in some places in the form of \?, this prevents substitution
-# by the local machine, which allows the remote VM to do the substituting. 
-cat << EOFshared-k3d-prepwork-commandsEOF > ~/qs/shared-k3d-prepwork-commands.txt
-# Configure OS
-sudo sysctl -w vm.max_map_count=524288
-sudo sysctl -w fs.file-max=131072
-ulimit -n 131072
-ulimit -u 8192
-sudo sysctl --load
-sudo modprobe xt_REDIRECT
-sudo modprobe xt_owner
-sudo modprobe xt_statistic
-printf "xt_REDIRECT\nxt_owner\nxt_statistic\n" | sudo tee -a /etc/modules
-sudo swapoff -a
-
-# Install git
-sudo apt install git -y
-
-# Install docker (note we use escape some vars we want the remote linux to substitute)
-sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/docker-archive-keyring.gpg 
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null 
-sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker \$USER
-
-# Install k3d
-wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
-echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 k3d | sha256sum -c | grep OK
-if [ \$? == 0 ]; then chmod +x k3d && sudo mv k3d /usr/local/bin/k3d ; fi
-
-# Install kubectl
-wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
-echo 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 kubectl | sha256sum -c | grep OK
-if [ \$? == 0 ]; then chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl; fi
-sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k || true
-
-# Install kustomize
-wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
-echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
-if [ \$? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv kustomize /usr/local/bin/kustomize && rm kustomize.tar.gz ; fi    
-
-# Install helm
-wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
-echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
-if [ \$? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi
-EOFshared-k3d-prepwork-commandsEOF
-
-# [admin@Laptop:~]
-# Run the above prereq script against both VMs
-ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-commands.txt &
-ssh workload-cluster < ~/qs/shared-k3d-prepwork-commands.txt &
-wait
-
-# Verify install was successful
-cat << EOFshared-k3d-prepwork-verification-commandsEOF > ~/qs/shared-k3d-prepwork-verification-commands.txt
-docker ps >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: docker installed" || echo "ERROR: issue with docker install"
-k3d version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: k3d installed" || echo "ERROR: issue with k3d install"
-kubectl version --client >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kubectl installed" || echo "ERROR: issue with kubectl install"
-kustomize version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kustomize installed" || echo "ERROR: issue with kustomize install"
-helm version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: helm installed" || echo "ERROR: issue with helm install" 
-EOFshared-k3d-prepwork-verification-commandsEOF
-
-ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt 
-ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
-```
+    ```shell
+    # [admin@Laptop:~]
+    # Note ? is escaped in some places in the form of \?, this prevents substitution
+    # by the local machine, which allows the remote VM to do the substituting. 
+    cat << EOFshared-k3d-prepwork-commandsEOF > ~/qs/shared-k3d-prepwork-commands.txt
+    # Configure OS
+    sudo sysctl -w vm.max_map_count=524288
+    sudo sysctl -w fs.file-max=131072
+    ulimit -n 131072
+    ulimit -u 8192
+    sudo sysctl --load
+    sudo modprobe xt_REDIRECT
+    sudo modprobe xt_owner
+    sudo modprobe xt_statistic
+    printf "xt_REDIRECT\nxt_owner\nxt_statistic\n" | sudo tee -a /etc/modules
+    sudo swapoff -a
+    
+    # Install git
+    sudo apt install git -y
+    
+    # Install docker (note we use escape some vars we want the remote linux to substitute)
+    sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y 
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/docker-archive-keyring.gpg 
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null 
+    sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker \$USER
+    
+    # Install k3d
+    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
+    echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 k3d | sha256sum -c | grep OK
+    if [ \$? == 0 ]; then chmod +x k3d && sudo mv k3d /usr/local/bin/k3d ; fi
+    
+    # Install kubectl
+    wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
+    echo 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 kubectl | sha256sum -c | grep OK
+    if [ \$? == 0 ]; then chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl; fi
+    sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k || true
+    
+    # Install kustomize
+    wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
+    echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
+    if [ \$? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv kustomize /usr/local/bin/kustomize && rm kustomize.tar.gz ; fi    
+    
+    # Install helm
+    wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
+    echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
+    if [ \$? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi
+    EOFshared-k3d-prepwork-commandsEOF
+    
+    # [admin@Laptop:~]
+    # Run the above prereq script against both VMs
+    ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-commands.txt &
+    ssh workload-cluster < ~/qs/shared-k3d-prepwork-commands.txt &
+    wait
+    
+    # Verify install was successful
+    cat << EOFshared-k3d-prepwork-verification-commandsEOF > ~/qs/shared-k3d-prepwork-verification-commands.txt
+    docker ps >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: docker installed" || echo "ERROR: issue with docker install"
+    k3d version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: k3d installed" || echo "ERROR: issue with k3d install"
+    kubectl version --client >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kubectl installed" || echo "ERROR: issue with kubectl install"
+    kustomize version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: kustomize installed" || echo "ERROR: issue with kustomize install"
+    helm version >> /dev/null ; echo \$? | grep 0 >> /dev/null && echo "SUCCESS: helm installed" || echo "ERROR: issue with helm install" 
+    EOFshared-k3d-prepwork-verification-commandsEOF
+    
+    ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt 
+    ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
+    ```
 
 ## Step 4: Create k3d cluster on both VMs and make sure you have access to both
 
@@ -503,7 +498,7 @@ twistlock:
 EOF
 
 helm upgrade --install bigbang \$HOME/bigbang/chart \
-  --values https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/keycloak-dev-values.yaml \
+  --values \$HOME/bigbang/chart/keycloak-dev-values.yaml \
   --values \$HOME/ib_creds.yaml \
   --values \$HOME/keycloak_qs_demo_values.yaml \
   --namespace=bigbang --create-namespace
@@ -573,18 +568,8 @@ k create ns mock-mission-app
 #Adding namespace to the service mesh
 k label ns mock-mission-app istio-injection=enabled 
 
-# Adding docker_cred to namespace so istio side car image pull will work.
-base64ed_dockercreds=\$(kubectl get secret private-registry -n=istio-system --output="jsonpath={.data.\.dockerconfigjson}")
-temp="""
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/dockerconfigjson
-metadata:
-  name: private-registry
-data:
-  .dockerconfigjson: \$base64ed_dockercreds
-"""
-echo "\$temp" | kubectl apply -f - -n=mock-mission-app
+# Adding dockercred to namespace so istio side car image pull will work.
+kubectl get secret private-registry -n=istio-system -o yaml | sed 's/namespace: .*/namespace: mock-mission-app/' | kubectl apply -f -
 
 # Deploying mock mission application
 kubectl apply -k github.com/stefanprodan/podinfo//kustomize -n=mock-mission-app
