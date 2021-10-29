@@ -690,13 +690,11 @@ addons:
 
   nexus:
     # -- Toggle deployment of Nexus.
-    enabled: true
+    enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      #tag: "34.1.0-bb.3"
-      tag: ""
-      branch: "9-update-nexus-cypress-test-to-work-in-bb-ci"
+      tag: "34.1.0-bb.4"
 
     # -- Base64 encoded license file.
     license_key: ""
