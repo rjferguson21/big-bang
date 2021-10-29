@@ -2,66 +2,69 @@
 
 [[_TOC_]]
 
-
 ## Blue Team Knowledge Drop
-Imagine https://authdemo.bigbang.dev represents a mock up of custom built mission application that doesn't have SSO, Authentication, or Authorization built in. Auth Service can add those to it which creates layers of defense / defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self registration of users without hurting security.    
-Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD and others have baked in support for OIDC/SSO and authn/authz functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that  a frontend service was reachable from the public internet and it had some zero day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero day vulnerabilities, since it'd be behind an authn/authz proxy layer of defense which would prevent them from even touching the frontend.    
-Added bonus: Istio, AuthService, and Keycloak are all FOSS(free open source software) solutions and they work in internet disconnect environments, we'll even Demo it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
 
+Imagine <https://authdemo.bigbang.dev> represents a mock up of custom built mission application that doesn't have SSO, Authentication, or Authorization built in. Auth Service can add those to it which creates layers of defense / defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self registration of users without hurting security.
+Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD and others have baked in support for OIDC/SSO and authn/authz functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that  a frontend service was reachable from the public internet and it had some zero day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero day vulnerabilities, since it'd be behind an authn/authz proxy layer of defense which would prevent them from even touching the frontend.
+Added bonus: Istio, AuthService, and Keycloak are all FOSS (free open source software) solutions and they work in internet disconnect environments, we'll even Demo it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
 
-## Important Security Notice:
+## Important Security Notice
+
 This Quick Start Guide deploys a demo environment with insecure defaults; therefore, it's important to be extra vigilant about following security best practices. This demo environment should be treated as if it could easily become compromised if hosted on VMs with public IPs.
-* DONT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment. 
+
+* DO NOT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment.
 * IDEALLY you'd run this automation against VMs with private IP addresses that are not accessible over the public internet.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
-  Prevent Compromise:     
+  Prevent Compromise:
   * Implement security groups that only allow the 2 VMs to talk you you and each other.
-  Limit Blast Radius of Potential Compromise:    
+  Limit Blast Radius of Potential Compromise:
   * Only deploy to an isolated VPC, not a shared VPC.
   * Only deploy to VMs with no IAM roles / rights attached.
 
-
 ## Overview
+
 This SSO Quick Start Guide explains how to setup an SSO demo environment, from scratch within 2 hours, that will allow you to demo Auth Service's functionality. You'll gain hands on configuration experience with Auth Service, Keycloak, and a Mock Mission Application.
 
-Steps:    
-1. Given 2 VMs (each with 8 cpu cores / 32 GB ram) that are each setup for ssh, turn the 2 VMs into 2 single node k3d clusters.      
-Why 2 VMs?, 2 reasons:     
-  1. It works around k3d only supporting 1 LB, but Keycloak needs it's own LB with TCP_PASSTHROUGH.
-  1. This mimicks the way the Big Bang team recommends Keycloak be deployed in production, giving it it's own dedicated cluster (Note: from a technical standpoint there's nothing stopping it from being hosted on the same cluster).
+Steps:
+
+1. Given 2 VMs (each with 8 cpu cores / 32 GB ram) that are each setup for ssh, turn the 2 VMs into 2 single node k3d clusters.
+Why 2 VMs?, 2 reasons:
+1. It works around k3d only supporting 1 LB, but Keycloak needs it's own LB with TCP_PASSTHROUGH.
+1. This mimics the way the Big Bang team recommends Keycloak be deployed in production, giving it it's own dedicated cluster (Note: from a technical standpoint there's nothing stopping it from being hosted on the same cluster).
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Keycloak Cluster.
 1. Use Big Bang demo workflow to turn 1 k3d cluster into a Workload Cluster.
 1. In the Keycloak Cluster:
-  * Deploy Keycloak 
-  * Create a Human User and Service Account for the authdemo service.
-1. In the Workload Cluster: 
-  * Deploy a mock mission application
-  * Protect the mock mission application, by deploying and configuring auth service to interface with Keycloak and require users to login to Keycloak and be in the correct authorization group before being able to access the mock mission application.
 
+* Deploy Keycloak
+* Create a Human User and Service Account for the authdemo service.
 
-> Note: This document assumes familiarity with the generic Big Bang quick start guide.     
-Differences between this and the previous Quick Start:      
+1. In the Workload Cluster:
+
+* Deploy a mock mission application
+* Protect the mock mission application, by deploying and configuring auth service to interface with Keycloak and require users to login to Keycloak and be in the correct authorization group before being able to access the mock mission application.
+
+> Note: This document assumes familiarity with the generic Big Bang quick start guide.
+Differences between this and the previous Quick Start:
+
 * Topics explained in previous quick start guides won't have notes or they will be less detailed.
 * The previous quick start supported deploying k3d to either localhost or remote VM, this quick start only supports deployment to remote VMs.
 * The previous quick start supported multiple linux distributions, this one requires Ubuntu 20.04, and it must be configured for password less sudo (this guide has more automation of prerequisites, so we needed a standard to automate against.)
 * The automation also assumes Admin's Laptop has a Unix Shell. (Mac, Linux, or Windows Subsystem for Linux)
 * This quick start assumes you have kubectl installed on your Admin Workstation
 
-
-
-
-> `Note: Additional AuthService and Keycloak documentation can be found in these locations:`    
-> * https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice
-> * https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/authservice/Architecture.md
-> * https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak
-> * https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md
-
+> `Note: Additional AuthService and Keycloak documentation can be found in these locations:`
+>
+> * <https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice>
+> * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/authservice/Architecture.md>
+> * <https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak>
+> * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md>
 
 ## Step 1: Provision 2 Virtual Machines
+
 * 2 Virtual Machines each with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users), and 100GB of disk space should be sufficient.
 
-
 ## Step 2: Setup SSH to both VMs
+
 1. Setup SSH to both VMs
 
     ```shell
@@ -103,11 +106,12 @@ Differences between this and the previous Quick Start:
     # [admin@Laptop:~]
     ```
 
-
 ## Step 3: Prep work - Install dependencies and configure both VMs
+
 1. Set some Variables and push them to each VM
+
 * We'll pass some environment variables into the VMs that will help with automation
-* We'll also update the PS1 var so we can tell the 2 machines apart when sshed in.
+* We'll also update the PS1 var so we can tell the 2 machines apart when ssh'd in.
 * All of the commands in the following section are run from the Admin Laptop
 
 ```shell
@@ -173,6 +177,7 @@ wait
 ```
 
 1. Take a look at one of the VMs to understand what happened
+
 ```shell
 # [admin@Laptop:~]
 # First a command to confirm ~/.bashrc was updated as expected
@@ -192,6 +197,7 @@ exit
 ```
 
 1. Configure host OS prerequisites and install prerequisite software on both VMs
+
 ```shell
 # [admin@Laptop:~]
 # Note ? is escaped in some places in the form of \?, this prevents substitution
@@ -259,8 +265,8 @@ ssh keycloak-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
 ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
 ```
 
-
 ## Step 4: Create k3d cluster on both VMs and make sure you have access to both
+
 ```shell
 # [admin@Laptop:~]
 # Note: 
@@ -306,8 +312,8 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 k get node
 ```
 
-
 ## Step 5: Clone Big Bang and Install Flux on both Clusters
+
 ```shell
 # [admin@Laptop:~]
 cat << EOFshared-flux-install-commandsEOF > ~/qs/shared-flux-install-commands.txt
@@ -332,8 +338,8 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 kubectl get po -n=flux-system
 ```
 
-
 ## Step 6: Install Big Bang on Workload Cluster
+
 ```shell
 # [admin@Laptop:~]
 cat << EOFdeploy-workloadsEOF > ~/qs/deploy-workloads.txt
@@ -447,8 +453,8 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 kubectl get hr -A
 ```
 
-
 ## Step 7: Install Keycloak on Keycloak Cluster
+
 ```shell
 # [admin@Laptop:~]
 cat << EOFdeploy-keycloakEOF > ~/qs/deploy-keycloak.txt
@@ -508,10 +514,10 @@ EOFdeploy-keycloakEOF
 ssh keycloak-cluster < ~/qs/deploy-keycloak.txt 
 ```
 
-
 ## Step 8: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Clusters
 
 ### Linux/Mac Users
+
 ```shell
 # [admin@Laptop:~]
 export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
@@ -531,10 +537,11 @@ cat /etc/hosts
 ```
 
 ### Windows Users
-* Edit similiarly using method mentioned in the generic quickstart
 
+* Edit similarly using method mentioned in the generic quickstart
 
 ## Step 9: Make sure the clusters had enough time to finish deployment
+
 ```shell
 # [admin@Laptop:~]
 export KUBECONFIG=$HOME/.kube/keycloak-cluster
@@ -550,14 +557,14 @@ kubectl get hr -A
 kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 ```
 
-
 ## Step 10: Verify that you can access websites hosted in both clusters
+
 * In a Web Browser try to visit the following 2 webpages
   * <keycloak.bigbang.dev>
   * <grafana.bigbang.dev>
 
-
 ## Step 11: Deploy a mock mission application to the workload cluster
+
 ```shell
 # [admin@Laptop:~]
 cat << EOFdeploy-mock-mission-appEOF > ~/qs/deploy-mock-mission-app.txt
@@ -611,20 +618,20 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-mission-app
 ```
 
-
 ## Step 12: Visit the newly added webpage
+
 * In a browser navigate to <authdemo.bigbang.dev>
 * Note: authdemo currently isn't protected by the authservice authn/authz proxy, the next steps configure that protection.
 
-
 ## Step 13: Create a Human User Account in Keycloak
+
 1. Visit <keycloak.bigbang.dev>
-  1. Follow the self registration link or visit it directly <keycloak.bigbang.dev/register>
-  1. Create a demo account, the email you specify doesn't have to exist for demo purposes, make sure you write down the demo username and password.
-  1. Create an MFA device.
-  1. It'll say "You need to verify your email address to activate your account" (You can ignore that and close the page.)
+1. Follow the self registration link or visit it directly <keycloak.bigbang.dev/register>
+1. Create a demo account, the email you specify doesn't have to exist for demo purposes, make sure you write down the demo username and password.
+1. Create an MFA device.
+1. It'll say "You need to verify your email address to activate your account" (You can ignore that and close the page.)
 1. Visit <keycloak.bigbang.dev/auth/admin>
-1. Login as a keycloak admin, using the default creds of admin:password     
+1. Login as a keycloak admin, using the default creds of admin:password
   (Note: The admin's initial default credentials can be specified in code, by updating helm values.)
 1. In the GUI:
    1. Navigate to: Manage/Users > [View all users] > [Edit] (your demo user)
@@ -632,36 +639,36 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
    1. Under "Email Verified": Toggle Off to On
    1. Click Save
 
-
 ## Step 14: Create an Application Identity / Service Account / Non-Person Entity in Keycloak for the authdemo webpage
+
 1. Visit <keycloak.bigbang.dev/auth/admin>
-1. Login as a keycloak admin, using the default creds of admin:password     
+1. Login as a keycloak admin, using the default creds of admin:password
 1. In the GUI:
-   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)    
+   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)
       Notice the group UUID in the URL: 00eb8904-5b88-4c68-ad67-cec0d2e07aa6
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Create]
-   1. Set:     
-      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"     
+   1. Set:
+      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"
       Client Protocol = openid-connect
       Root URL = (blank)
    1. Save
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Edit] demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo
    1. Under "Access Type": Change Public to Confidential
-   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/login/generic_oauth"    
+   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/login/generic_oauth"
       Note: /login/generic_oauth comes from auth service
    1. Save
-   1. Scroll up to the top of the page and you'll see a newly added [Credentials] tab, click it. 
+   1. Scroll up to the top of the page and you'll see a newly added [Credentials] tab, click it.
    1. Copy the secret for the authdemo Client Application Identity, you'll paste it into the next step
 
-
 ## Step 15: Deploy auth service to the workload cluster and use it to protect the mock mission app
+
 ```shell
 # [admin@Laptop:~]
 
 export AUTHDEMO_APP_ID_CLIENT_SECRET="pasted_value"
-# It should look similiar to the following dynamically generated demo value
+# It should look similar to the following dynamically generated demo value
 # export AUTHDEMO_APP_ID_CLIENT_SECRET="cada6b1f-a0ca-4d79-93b8-facbd52c4d9b" 
 
 echo $AUTHDEMO_APP_ID_CLIENT_SECRET | grep "pasted_value" ; echo $? | grep 1 && echo "This validation check shows you remembered to update the pasted value." || ( for i in {1..10}; do echo "Validation check shows error, update the variable by pasting in the dynamically generated secret before moving on." ; done ; sleep 3 )
@@ -735,15 +742,16 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 ssh workload-cluster 'helm get values bigbang -n=bigbang' # You can eyeball this to verify values were plugged in as expected
 ```
 
-
 ## Step 16: Revisit authdemo.bigbang.dev
+
 * Go to <authdemo.bigbang.dev>
 * Before we were taken straight to the mock mission app webpage
-* Now this URL immediately redirects to a KeyCloak Login Prompt and if you login with your demo user, you'll see the following message 
+* Now this URL immediately redirects to a KeyCloak Login Prompt and if you login with your demo user, you'll see the following message
+
 > Your account has not been granted access to this application group yet.
 
+## Step 17: Update the group membership of the user
 
-## Step 17: Update the group membership of the user 
 1. Go to keycloak.bigbang.dev/auth/admin
 1. Login with admin:password
 1. In the GUI:
@@ -757,8 +765,8 @@ ssh workload-cluster 'helm get values bigbang -n=bigbang' # You can eyeball this
 > AuthService pods on the Workload Cluster need to be able to resolve the DNS name of keycloak.bigbang.dev
 > Keycloak on the Keycloak Cluster needs to be able to resolve the DNS name of authdemo.bigbang.dev
 
-
 ## Step 18: Update Inner Cluster DNS on the Workload Cluster
+
 ```shell
 # [admin@Laptop:~]
 
@@ -802,8 +810,8 @@ kubectl exec -it test -- ping authdemo.bigbang.dev -c 1 | head -n 1
 # Now the k3d clusters can resolve the DNS to IP mappings, similiar to our workstation's /etc/hosts file
 ```
 
-
 ## Step 19: Revisit authdemo.bigbang.dev
+
 1. Visit authdemo.bigbang.dev
 1. You'll get redirected to keycloak.bigbang.dev
 1. Login to keycloak, and afterwords you'll get redirected to authdemo.bigbang.dev
