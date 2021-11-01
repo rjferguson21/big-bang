@@ -24,7 +24,7 @@ When deploying a dev / demo environment there is a high chance of deploying Big 
 * DO NOT deploy publicly routable dev / demo clusters into shared VPCs (like a shared dev environment VPCs) or on VMs with IAM Roles attached. If the demo cluster were compromised, an adversary might be able to use it as a stepping stone to move deeper into an environment.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
   * Prevent Compromise:
-    * Implement security groups that only allow the 2 VMs to talk to you and each other.
+    * Use firewalls that only allow the 2 VMs to talk to each other and your whitelisted IP.
   * Limit Blast Radius of Potential Compromise:
     * Only deploy to an isolated VPC, not a shared VPC.
     * Only deploy to VMs with no IAM roles/rights attached.
