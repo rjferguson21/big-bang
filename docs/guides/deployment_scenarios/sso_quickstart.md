@@ -6,19 +6,6 @@
 
 Imagine <https://authdemo.bigbang.dev> represents a mock-up of a custom-built mission application that doesn't have SSO, Authentication, or Authorization built-in. Auth Service can add those to it which creates layers of defense/defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self-registration of users without hurting security. Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD, and others have baked in support for OIDC/SSO and AuthN/AuthZ functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that a frontend service was reachable from the public internet and it had some zero-day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network-level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero-day vulnerabilities since it'd be behind an AuthN/AuthZ proxy layer of defense which would prevent them from even touching the frontend. Bonus: Istio, AuthService, and Keycloak are all Free Open Source Software (FOSS) solutions and they work in internet disconnect environments, we'll even demonstrate it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
 
-## Important Security Notice
-
-This Quick Start Guide deploys a demo environment with insecure defaults; therefore, it's important to be extra vigilant about following security best practices. This demo environment should be treated as if it could easily become compromised if hosted on VMs with public IPs.
-
-* DO NOT deploy this to publicly accessible VMs in a shared VPC (like a shared dev environment VPC) or VMs with IAM Roles attached, if the demo environment were compromised as a result of misconfiguration, an adversary might be able to use it as a stepping stone to move deeper into an environment.
-
-* IDEALLY you'd run this automation against VMs with private IP addresses that are not accessible over the public internet.
-* If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
-  * Prevent Compromise:
-    * Implement security groups that only allow the 2 VMs to talk to you and each other.
-  * Limit Blast Radius of Potential Compromise:
-    * Only deploy to an isolated VPC, not a shared VPC.
-    * Only deploy to VMs with no IAM roles/rights attached.
 
 ## Overview
 
