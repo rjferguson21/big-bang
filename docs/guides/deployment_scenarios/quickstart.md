@@ -57,7 +57,7 @@ The following requirements are recommended for Demonstration Purposes:
 
 * 1 Virtual Machine with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users), and 100GB of disk space should be sufficient.
 * Ubuntu Server 20.04 LTS (Ubuntu comes up slightly faster than CentOS, in reality any Linux distribution with Docker installed should work)
-* Most Cloud Service Provider provisioned VMs default to passwordless sudo being preconfigured, but if you're doing local development or a bare metal deployment then it's recommended that you configure passwordless sudo. 
+* Most Cloud Service Provider provisioned VMs default to passwordless sudo being preconfigured, but if you're doing local development or a bare metal deployment then it's recommended that you configure passwordless sudo.
   * Steps for configuring passwordless sudo: [(source)](https://unix.stackexchange.com/questions/468416/setting-up-passwordless-sudo-on-linux-distributions)
     1. `sudo visudo`
     1. Change:
@@ -150,13 +150,13 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     Hello from Docker!
     ```
 
-1. Install k3d 
+1. Install k3d
 
     > Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # The following downloads the 64 bit linux version of k3d v4.4.7, checks it 
+    # The following downloads the 64 bit linux version of k3d v4.4.7, checks it
     # against a copy of the sha256 checksum, if they match k3d gets installed
     wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
 
@@ -187,7 +187,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # The following downloads the 64 bit linux version of kubectl v1.22.1, checks it 
+    # The following downloads the 64 bit linux version of kubectl v1.22.1, checks it
     # against a copy of the sha256 checksum, if they match kubectl gets installed
     wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
 
@@ -216,7 +216,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it 
+    # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it
     # against a copy of the sha256 checksum, if they match kustomize gets installed
     wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
 
@@ -248,7 +248,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
-    # The following downloads the 64 bit linux version of helm v3.6.3, checks it 
+    # The following downloads the 64 bit linux version of helm v3.6.3, checks it
     # against a copy of the sha256 checksum, if they match helm gets installed
     wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
 
@@ -282,7 +282,7 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
     # [ubuntu@Ubuntu_VM:~]
     # Needed for ECK to run correctly without OOM errors
     sudo sysctl -w vm.max_map_count=524288
-    # Alternatively can use: 
+    # Alternatively can use:
     # echo 'vm.max_map_count=524288' | sudo tee -a /etc/sysctl.d/vm-max_map_count.conf
 
     # Needed by Sonarqube
@@ -333,9 +333,9 @@ After reading the notes on the purpose of k3d's command flags, you will be able 
 
   * Method 1: If your k3d server is a remote box, then run the following command from your workstation.    
     `cat ~/.ssh/config | grep k3d -A 6`
-  * Method 2: If the remote server was provisioned with a Public IP, hen run the following command from the server hosting k3d.    
+  * Method 2: If the remote server was provisioned with a Public IP, then run the following command from the server hosting k3d.    
     `curl ifconfig.me --ipv4`
-  * Method 3: If the server hosting k3d only has a Private IP,then run the following command from the server hosting k3d    
+  * Method 3: If the server hosting k3d only has a Private IP, then run the following command from the server hosting k3d    
     `ip address`    
     (You will see more than one address, use the one in the same subnet as your workstation)    
 
@@ -408,7 +408,7 @@ k3d-k3s-default-server-0   Ready    control-plane,master   11m   v1.21.3+k3s1
     export REGISTRY1_USERNAME=<REPLACE_ME>
     export REGISTRY1_PASSWORD=<REPLACE_ME>
     echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
-    
+
     # Turn on bash history
     set -o history
     ```
@@ -435,7 +435,7 @@ HEAD detached at 1.17.0
 
 ## Step 8: Install Flux
 
-* The `echo $REGISTRY1_USERNAME` is there to verify the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
+* The `echo $REGISTRY1_USERNAME` is there to verify that the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
 
     ```shell
     # [ubuntu@Ubuntu_VM:~]
@@ -447,11 +447,11 @@ HEAD detached at 1.17.0
     # It's not stuck, the end of the .sh script has a kubectl wait command, give it 5 min
     # Also if you have slow internet/hardware you might see a false error message
     # error: timed out waiting for the condition on deployments/helm-controller
-    
+
     # As long as the following command shows STATUS Running you're good to move on
     kubectl get pods --namespace=flux-system
     ```
-    
+
     ```console
     NAME                                     READY   STATUS    RESTARTS   AGE
     kustomize-controller-d689c6688-bnr96     1/1     Running   0          3m8s
@@ -502,7 +502,7 @@ logging:
           requests:
             cpu: 400m
             memory: 2Gi
-          limits: 
+          limits:
             cpu: null
             memory: null
 
@@ -591,16 +591,16 @@ Explanation of flags used in the imperative helm install command:
     ```shell
     # [ubuntu@Ubuntu_VM:~]
     kubectl get virtualservices --all-namespaces
-    
+
     # Note after running the above command, you may see an ignorable temporary error message
     # The error message may be different based on your timing, but could look like this:
     #     error: the server doesn't have a resource type "virtualservices"
     #     or
     #     No resources found
-    
-    # The above errors could be seen if you run the command too early 
+
+    # The above errors could be seen if you run the command too early
     # Give Big Bang some time to finish installing, then run the following command to check it's status
-    
+
     k get po -A
     ```
 
