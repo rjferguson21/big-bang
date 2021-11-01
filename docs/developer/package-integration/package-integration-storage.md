@@ -1,4 +1,4 @@
-# Big Bang Package: Object Storage
+# Big Bang Package: Object Storage (Minio)
 
 If the package supports object storage (e.g. S3 buckets), it must be integrated with Big Bang's storage configuration.  This document will detail how to do this.
 
