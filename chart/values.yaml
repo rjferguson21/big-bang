@@ -323,7 +323,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.21-bb.2"
+    tag: "0.1.21-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -377,7 +377,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.16.6-bb.0"
+    tag: "0.16.6-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -569,7 +569,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.2.3-bb.5"
+      tag: "4.2.3-bb.6"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
@@ -712,6 +712,9 @@ addons:
 
       # -- NXRM SAML SSO Integration data
       idp_data:
+        # Nexus saml URL. example: "https://nexus.example.mil/service/rest/v1/security/saml/metadata"
+        entityId: ""
+
         # -- IdP Field Mappings
         # -- NXRM username attribute
         username: ""
@@ -734,9 +737,12 @@ addons:
 
       # -- NXRM Role
       role:
-        id: ""
-        name: ""
-        description: ""
+        # the id must match the Keycloak group name (case sensitive)
+        - id: ""
+          name: ""
+          description: ""
+          privileges: []
+          roles: []
 
     # -- Flux reconciliation overrides specifically for the Nexus Repository Manager Package
     flux: {}
@@ -753,7 +759,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.8"
+      tag: "9.6.3-bb.9"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -941,7 +947,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.2.2-bb.0"
+      tag: "0.2.3-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
@@ -1068,7 +1074,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
       path: "./chart"
-      tag: "11.0.1-bb.8"
+      tag: "11.0.1-bb.9"
 
     database:
       # -- Hostname of a pre-existing database to use for Keycloak.
