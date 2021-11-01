@@ -153,7 +153,7 @@ spec:
   - Egress
 {{- end }}
 ```
-- The networkPolicy template for kube-api egress will look like the above, so that communication to the AWS API can be limited unless required by the package.
+- The networkPolicy template for kube-api egress will look like the above, so that communication to the [AWS Instance Metadata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html) and [Azure Instance Metadata](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service) can be limited unless required by the package.
 
 ## Validation <a name="validation"></a>
 - Package functions as expected and is able to communicate with all BigBang touchpoints.
