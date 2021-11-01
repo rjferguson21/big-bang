@@ -355,7 +355,7 @@ addons:
     sso:
       enabled: false
     flux:
-      timeout: 20m
+      timeout: 30m
     values:
       global:
         rails:
