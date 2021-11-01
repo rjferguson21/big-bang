@@ -20,7 +20,7 @@ Add database values for the package in bigbang/chart/values.yaml
 
   Note: Names of key/values may differ based on the application being integrated. Please refer to package chart values to ensure key/values coincide and application documentation for additional information on connecting to a database.
 
-```
+```yml
 <package>
   database:
     # -- Hostname of a pre-existing PostgreSQL database to use.
@@ -34,8 +34,8 @@ Add database values for the package in bigbang/chart/values.yaml
     # -- Database password for the username used to connect to the existing database.
     password: ""
 ```
-[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L882):
-```
+[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/values.yaml#L882):
+```yml
     database:
       # -- Hostname of a pre-existing PostgreSQL database to use for Anchore.
       # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
@@ -64,7 +64,7 @@ Add database values for the package in bigbang/chart/values.yaml
 
   If database values are NOT present then the internal database is enabled and default values declared in the package are used.
 
-```
+```yml
 # External Postgres config
 {{- with .Values.<package>.database }}
 postgresql:
@@ -82,8 +82,8 @@ postgresql:
   {{- end }}
 {{- end }}
 ```
-[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/anchore/values.yaml#L49):
-```
+[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/anchore/values.yaml#L49):
+```yml
 postgresql:
   imagePullSecrets: private-registry
   {{- if and .Values.addons.anchore.database.host .Values.addons.anchore.database.port .Values.addons.anchore.database.username .Values.addons.anchore.database.password .Values.addons.anchore.database.database }}
@@ -99,7 +99,7 @@ postgresql:
 2. Package chart accepts a secret name where all the DB connection info is defined. In these cases we make the secret in the BB chart..
 
 - add conditional statement in `chart/templates/<package>/values.yaml` to add values for database secret, if database values exist. Otherwise the internal database is deployed.
-```
+```yml
 {{- with .Values.addons.<package>.database }}
 {{- if and .username .password .host .port .database }}
 database:
@@ -114,12 +114,12 @@ postgresql:
 {{- end }}
 ```
 
-[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/mattermost/mattermost/values.yaml#L49)
+[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/values.yaml#L49)
 
 
 - create manifest that uses database values to create the database secret referenced above
 
-```
+```yml
 {{- if .Values.addons.<package>.enabled }}
 {{- with .Values.addons.<package>.database }}
 {{- if and .username .password .host .port .database }}
@@ -139,9 +139,9 @@ stringData:
 {{- end }}
 ```
 
-[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/mattermost/mattermost/secret-database.yaml):
+[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/secret-database.yaml):
 
-```
+```yml
 {{- if .Values.addons.mattermost.enabled }}
 {{- with .Values.addons.mattermost.database }}
 {{- if and .username .password .host .port .database }}
@@ -169,7 +169,7 @@ For validating connection to the external database in your environment or testin
 
 mattermost example:
 
-```
+```yml
 addons:
   mattermost:
     enabled: true
