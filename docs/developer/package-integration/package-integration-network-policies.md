@@ -13,7 +13,7 @@ To increase the overall security posture of Big Bang, network policies are put i
 
 ## Prerequisites <a name="prerequisites"></a>
 - Understanding of ports and communications of applications and other components within BigBang
-- `chart/templates/bigbang` and `chart/templates/bigbang/networkpolicies` folders within package for comitting bigbang specific templates
+- `chart/templates/bigbang` and `chart/templates/bigbang/networkpolicies` folders within package for committing bigbang specific templates
 
 ## Integration <a name="integration"></a>
 All examples in this documentation will center on [podinfo](https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/podinfo).
