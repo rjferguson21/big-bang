@@ -42,16 +42,22 @@ spec:
 There are a few ways to determine if a network policy is blocking egress or ingress to or from a pod.
 - Test things from the pod's perspective using ssh/exec. See [this portion](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/keycloak_quickstart/docs/guides/deployment_scenarios/sso_quickstart.md#step-18-update-inner-cluster-dns-on-the-workload-cluster) of the keycloak quickstart for an example of how do to that.
 - Curl a pod's IP from another pod to see if network polices are blocking that traffic. Use `kubectl pod -o wide -n <podNamespace>` to see pod IP addresses.
-- Check the pod logs (or curl from one container to the service) for a `context deadline exceeded` message.
+- Check the pod logs (or curl from one container to the service) for a `context deadline exceeded` or `connection refused` message.
 
 ### Allowing Exceptions <a name="allowing-exceptions"></a>
 - Egress exceptions to consider:
   - pod to pod
   - SSO
+    - When available, use a value from the helm values for the port
+    - Otherwise, use the SSO default and allow egress to all IPs, except metadata. The default port should be 443.
   - storage database
+    - When available, use a value from the helm values for the port
+    - Otherwise, use the database default and allow egress to all IPs, except metadata.
+  - Istiod for sidecars
 - Ingress exceptions to consider:
   - Kube-api
   - Prometheus
+  - Istio for virtual service
   - web endpoints
 - Once you have determined an exception needs to be made, create a template in `chart/templates/bigbang/networkpolicies`. 
 - NetworkPolicy templates follow the naming convention of `direction-destination.yaml` (eg: egress-dns.yaml). 
@@ -127,6 +133,19 @@ networkPolicies:
 
 - The networkPolicy template is enabled by default because it will inherit the `networkPolicies.enabled` value from BigBang. Use the `enabled: false` code above in order to disable networkPolicy templates for the package. 
 - The ingressLabels portion supports packages that have an externally accessible UIs. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
+
+Example of a BigBang value configuration, `chart/templates/podinfo/values.yaml`, when adding a packing into BigBang with networkPolicies: 
+```
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.addons.podinfo.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+
+```
+
 - If the package needs to talk to the kube-api service (eg: operators) then the `controlPlaneCidr` value will be required.
   - The `controlPlaneCidr` will control egress to the kube-api and be wide open by default, but will inherit the `networkPolicies.controlPlaneCidr` value from BigBang so the range can be locked down.
 
