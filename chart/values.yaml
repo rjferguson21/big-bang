@@ -459,9 +459,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    # tag: "0.0.10-bb.0"
-    tag: null
-    branch: "renovate/ironbank"
+    tag: "0.0.10-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
