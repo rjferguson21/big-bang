@@ -1,6 +1,6 @@
 # Big Bang Package: Database Integration
 
-If the package you are integrating connects to a database, you will need to follow the instructions below to integrate this feature into Big Bang
+If the package you are integrating connects to a database, you will need to follow the instructions below to integrate this feature into Big Bang.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ Add database values for the package in bigbang/chart/values.yaml
     # -- Database password for the username used to connect to the existing database.
     password: ""
 ```
-Example:[Anchore](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/values.yaml#L882)
+Example: [Anchore](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/values.yaml#L882)
 
 **Next details the first way packages connect to a pre-existing database.**
 
@@ -86,7 +86,7 @@ postgresql:
 {{- end }}
 ```
 
-Example:[Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/values.yaml#L49)
+Example: [Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/values.yaml#L49)
 
 
 - create manifest that uses database values to create the database secret referenced above
@@ -111,13 +111,13 @@ stringData:
 {{- end }}
 ```
 
-Example:[Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/secret-database.yaml):
+Example: [Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/secret-database.yaml)
 
 ## Validation
 
 For validating connection to the external database in your environment or testing in CI pipeline you will need to add the database specific values to your overrides file or `tests/ci/k3d/values.yaml` respectively.
 
-mattermost example:
+Mattermost Example:
 
 ```yml
 addons:
