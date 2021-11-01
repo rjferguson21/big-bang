@@ -34,26 +34,8 @@ Add database values for the package in bigbang/chart/values.yaml
     # -- Database password for the username used to connect to the existing database.
     password: ""
 ```
-[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/values.yaml#L882):
-```yml
-    database:
-      # -- Hostname of a pre-existing PostgreSQL database to use for Anchore.
-      # Entering connection info will disable the deployment of an internal database and will auto-create any required secrets.
-      host: ""
-      # -- Port of a pre-existing PostgreSQL database to use for Anchore.
-      port: ""
-      # -- Username to connect as to external database, the user must have all privileges on the database.
-      username: ""
-      # -- Database password for the username used to connect to the existing database.
-      password: ""
-      # -- Database name to connect to on host (Note: database name CANNOT contain hyphens).
-      database: ""
-      # -- Feeds database name to connect to on host (Note: feeds database name CANNOT contain hyphens).
-      # Only required for enterprise edition of anchore.
-      # By default, feeds database will be configured with the same username and password as the main database. For formatting examples on how to use a separate username and password for the feeds database see https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/-/blob/main/docs/CHART.md#handling-dependencies
-      feeds_database: ""
+Example:[Anchore](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/values.yaml#L882)
 
-```
 **Next details the first way packages connect to a pre-existing database.**
 
 1. Package charts accept values for host, user, pass, etc and the chart makes the necessary secret, configmap etc...
@@ -82,18 +64,8 @@ postgresql:
   {{- end }}
 {{- end }}
 ```
-[Anchore Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/anchore/values.yaml#L49):
-```yml
-postgresql:
-  imagePullSecrets: private-registry
-  {{- if and .Values.addons.anchore.database.host .Values.addons.anchore.database.port .Values.addons.anchore.database.username .Values.addons.anchore.database.password .Values.addons.anchore.database.database }}
-  enabled: false
-  postgresUser: {{ .Values.addons.anchore.database.username }}
-  postgresPassword: {{ .Values.addons.anchore.database.password }}
-  postgresDatabase: {{ .Values.addons.anchore.database.database }}
-  externalEndpoint: "{{ .Values.addons.anchore.database.host }}:{{ .Values.addons.anchore.database.port }}"
-  {{- end }}
-```
+Example: [Anchore](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/anchore/values.yaml#L49)
+
 **The alternative way packages connect to a pre-existing database is detailed below.**
 
 2. Package chart accepts a secret name where all the DB connection info is defined. In these cases we make the secret in the BB chart..
@@ -114,7 +86,7 @@ postgresql:
 {{- end }}
 ```
 
-[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/values.yaml#L49)
+Example:[Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/values.yaml#L49)
 
 
 - create manifest that uses database values to create the database secret referenced above
@@ -139,29 +111,7 @@ stringData:
 {{- end }}
 ```
 
-[Mattermost Example](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/secret-database.yaml):
-
-```yml
-{{- if .Values.addons.mattermost.enabled }}
-{{- with .Values.addons.mattermost.database }}
-{{- if and .username .password .host .port .database }}
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: mattermost-database-secret
-  namespace: mattermost
-  labels:
-    app.kubernetes.io/name: mattermost
-    app.kubernetes.io/component: "collaboration-tools"
-    {{- include "commonLabels" $ | nindent 4}}
-stringData:
-  DB_CONNECTION_CHECK_URL: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
-  DB_CONNECTION_STRING: "postgres://{{ .username }}:{{ .password }}@{{ .host }}:{{ .port }}/{{ .database }}?connect_timeout=10&sslmode={{ .ssl_mode | default "disable" }}"
-{{- end }}
-{{- end }}
-{{- end }}
-```
+Example:[Mattermost](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/10d43bea9351b91dfc6f14d3b0c2b2a60fe60c6a/chart/templates/mattermost/mattermost/secret-database.yaml):
 
 ## Validation
 
