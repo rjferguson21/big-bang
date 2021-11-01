@@ -41,7 +41,7 @@ spec:
 ### Was Something Important Blocked? <a name="something-important-blocked"></a>
 There are a few ways to determine if a network policy is blocking egress or ingress to or from a pod.
 - Test things from the pod's perspective using ssh/exec. See [this portion](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/keycloak_quickstart/docs/guides/deployment_scenarios/sso_quickstart.md#step-18-update-inner-cluster-dns-on-the-workload-cluster) of the keycloak quickstart for an example of how do to that.
-- Curl a pod's IP from another pod to see if network polices are blocking that traffic. Use `kubectl pod -o wide -n <podNamespace` to see pod IP addresses.
+- Curl a pod's IP from another pod to see if network polices are blocking that traffic. Use `kubectl pod -o wide -n <podNamespace>` to see pod IP addresses.
 - Check the pod logs (or curl from one container to the service) for a `context deadline exceeded` message.
 
 ### Allowing Exceptions <a name="allowing-exceptions"></a>
@@ -82,7 +82,7 @@ spec:
 {{- end }}
 ```
 
-Similarly, if prometheus needs access to podinfo, create an ingress-monitoring-prometheus.yaml file with the following contents:
+Similarly, if prometheus needs access to podinfo, create an `ingress-monitoring-prometheus.yaml` file with the following contents:
 ```
 {{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
 apiVersion: networking.k8s.io/v1
@@ -106,7 +106,7 @@ spec:
     - port: 9797  
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: podinfo  ##TODO: CHECK IF THIS IS CORRECT
+      app.kubernetes.io/name: podinfo
 {{- end }}
 ```
 
@@ -125,8 +125,8 @@ networkPolicies:
     istio: ingressgateway
 ```
 
-- The networkPolicy template is enabled by default because it will inherit the `networkPolicies.enabled` value from BigBang. Use the code `enabled: false` code above in order to disable networkPolicy templates for the package. 
-- The ingressLabels portion support packages that have an externally accessible UI. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
+- The networkPolicy template is enabled by default because it will inherit the `networkPolicies.enabled` value from BigBang. Use the `enabled: false` code above in order to disable networkPolicy templates for the package. 
+- The ingressLabels portion supports packages that have an externally accessible UIs. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
 - If the package needs to talk to the kube-api service (eg: operators) then the `controlPlaneCidr` value will be required.
   - The `controlPlaneCidr` will control egress to the kube-api and be wide open by default, but will inherit the `networkPolicies.controlPlaneCidr` value from BigBang so the range can be locked down.
 
