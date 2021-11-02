@@ -47,6 +47,8 @@ To minimize maintenance, it is preferable to reuse existing Helm charts availabl
    kpt pkg get $GITREPO/$GITDIR@$GITTAG chart
    ```
 
+   > Always use an release tag for `GITTAG` so your chart is immutable.  Never use a branch or `latest`.
+
 1. Add `-bb.0` suffix on `chart/Chart.yaml`, `version`.  For example:
 
    ```yaml
@@ -97,7 +99,7 @@ To minimize maintenance, it is preferable to reuse existing Helm charts availabl
       * [Semantic Versioning](https://semver.org/)
       * [Keep a Changelog](https://keepachangelog.com/)
       * [Conventional Commits](https://www.conventionalcommits.org/)
-      * [Cypress](https://www.cypress.io) or [Conftest](https://conftest.dev) for testing
+      * [Cypress](https://www.cypress.io) or a shell script for testing
 
       Development requires the following tools
 
@@ -112,7 +114,7 @@ To minimize maintenance, it is preferable to reuse existing Helm charts availabl
       1. Label the issue with `status::doing`
       1. Create a branch in the repository using your issue number as a prefix
       1. Make changes in code and push to your branch
-      1. Write tests using [cypress](https://www.cypress.io) and/or [Conftest](https://conftest.dev) to cover your changes.
+      1. Write tests using [cypress](https://www.cypress.io) and/or shell scripts.
       1. Make commits using the [Conventional Commits](https://www.conventionalcommits.org/) format
       1. Update `CHANGELOG.md` using the [Keep a Changelog](https://keepachangelog.com) format
       1. Open a merge request into the `main` branch
@@ -134,45 +136,66 @@ To minimize maintenance, it is preferable to reuse existing Helm charts availabl
 
       The readme contains high-level information about the package.  This document covers the following topics:
 
-      - Overview: What is in the Git repository
-      - Prerequisites: What tools do I need to install and use this?
-      - Install / Upgrade: How do I install / upgrade this?
-      - Usage: Once it is installed, how do I use this?
-      - Troubleshooting: What are some common problems and solutions I may run across?
-      - References: What other documentation exists that I can use to read about this?
+      - Upstream References: Links to external documentation
+      - Documents: Links to /docs in repository
+      - Prerequisites: Tools needed to install and use
+      - Deployment: How to install / upgrade
+      - Values: How to configure Helm chart values
+      - Contributing: Link to contributing guide
+
+      There is a standard Big Bang template used for all packages.  This can be created by following the [templating instructions](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-package-readme.md)
+
+      > This process produces a `README.md`, `README.md.gotpl`, and `.helmdocsignore`.  The `gotpl` file is used as values to update the `README.md`.
+
+      > To avoid having the `flux` helm chart also added to the `README.md`, run `echo 'flux/*' >> .helmdocsignore`
 
       Example:
 
       ```markdown
-      # MyPackage
+      # podinfo
 
-      MyPackage does awesome things.  This repo contains an enhanced version of the [Helm charts for MyPackage](https://github.com/helm/charts) that is fully compatible with [Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang).
+      ![Version: 6.0.0-bb.0](https://img.shields.io/badge/Version-6.0.0--bb.0-informational?style=flat-square) ![AppVersion: 6.0.0](https://img.shields.io/badge/AppVersion-6.0.0-informational?style=flat-square)
 
-      ## Prerequisites
+      Podinfo Helm chart for Kubernetes
 
-      The following tools are required to install and use MyPackage:
+      ## Upstream References
+      * <https://github.com/stefanprodan/podinfo>
 
-      - [Helm](https://helm.sh/docs/intro/install/)
-      - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
-      - A running Kubernetes cluster with Big Bang installed using default settings
+      ## Learn More
+      * [Application Overview](docs/overview.md)
+      * [Other Documentation](docs/)
 
-      ## Installation
+      ## Pre-Requisites
 
-      Flux should already be installed on the cluster since it is used by Big Bang.  MyPackage can be installed or upgraded with Flux by running `helm upgrade -i -n bigbang ./flux`.
+      * Kubernetes Cluster deployed
+      * Kubernetes config installed in `~/.kube/config`
+      * Helm installed
 
-      ## Usage
+      Kubernetes: `>=1.19.0-0`
 
-      Once installed, you can connect to `https://mypackage.bigbang.dev` to login to MyPackage.
+      Install Helm
 
-      ## Troubleshooting
+      https://helm.sh/docs/intro/install/
 
-      ### Timeout connecting to URL
+      ## Deployment
 
-      If your browser times out connecting the URL, make sure you have a valid TLS certificate installed in Big Bang.
+      * Clone down the repository
+      * cd into directory
+      * helm install podinfo chart/
 
-      ## References
+      ## Values
 
-      - [MyPackage Documentation](https://tools.usps.com/)
+      | Key | Type | Default | Description |
+      |-----|------|---------|-------------|
+      | replicaCount | int | `1` |  |
+      | logLevel | string | `"info"` |  |
+      | host | string | `nil` |  |
+      | backend | string | `nil` |  |
+      ...
+
+      ## Contributing
+
+      Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
       ```
 
 1. Commit changes
@@ -190,29 +213,34 @@ If a new version of the upstream Helm chart is released, this is how to sync it 
 ```shell
 export GITTAG=6.0.0
 
-# Sync with original Helm chart to identify changes
-kpt pkg update chart --strategy force-delete-replace
-
-# Save modifications for reference
-git diff > bb-mods.txt
-
-# Undo sync
-git restore .
+# Before upgrading, identify changes made to upstream chart
+kpt pkg diff chart > bb-mods-pre.txt
 
 # Sync with new Helm chart release
-kpt pkg update chart@$GITTAG --strategy force-delete-replace
+kpt pkg update chart@$GITTAG --strategy alpha-git-patch
 
-# Using bb-mods.txt created above, add Big Bang changes back into chart as needed
+# Resolve merge conflicts, if any, by
+# - Manually merging conflicts identified
+# - Add changes to git using `git add`
+# - Continuing the patch with `git am --continue`
+
+# After upgrading, identify deltas to upstream chart
+kpt pkg diff chart > bb-mods-post.txt
+
+# Look at the differences between the pre and post changes to make sure nothing was missed.  Add any missing items back into the chart
+diff bb-mods-pre.txt bb-mods-post.txt
 
 # Commit and push changes
-rm bb-mods.txt
+rm bb-mods-*.txt
 git add -A
 git commit -m "chore: update helm chart to $GITTAG"
 git push
 ```
 
+> In Kpt 1.0, `alpha-git-patch` was renamed to `resource-merge`.
+
 ## Validation
 
 If you are not already familiar with the package, deploy the package using the upstream helm chart onto a Kubernetes cluster and explore the functionality before continuing.  The Helm chart can be deployed according to the upstream package's documentation.
 
- > It is recommended that you follow the instructions in [development environment](./development-environment.md) to get a Kubernetes cluster running.
+ > It is recommended that you follow the instructions in [development environment](../development-environment.md) to get a Kubernetes cluster running.
