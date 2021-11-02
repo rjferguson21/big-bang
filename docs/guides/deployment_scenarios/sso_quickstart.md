@@ -100,7 +100,7 @@ Why 2 VMs? 2 reasons:
     BIG_BANG_VERSION="1.18.0"
     REGISTRY1_USERNAME="REPLACE_ME"
     REGISTRY1_PASSWORD="REPLACE_ME"
-    echo $REGISTRY1_PASSWORD | docker log in https://registry1.dso.mil --username=$REGISTRY1_USERNAME --password-stdin | grep "log in Succeeded" ; echo $? | grep 0 && echo "This validation check shows your registry1 credentials are valid, please continue." || for i in {1..10}; do echo "Validation check shows error, fix your registry1 credentials before moving on."; done
+    echo $REGISTRY1_PASSWORD | docker login https://registry1.dso.mil --username=$REGISTRY1_USERNAME --password-stdin | grep "log in Succeeded" ; echo $? | grep 0 && echo "This validation check shows your registry1 credentials are valid, please continue." || for i in {1..10}; do echo "Validation check shows error, fix your registry1 credentials before moving on."; done
     
     export KEYCLOAK_IP=$(cat ~/.ssh/config | grep keycloak-cluster -A 1 | grep Hostname | awk '{print $2}')
     echo "\n\n\n$KEYCLOAK_IP is the IP of the k3d node that will host Keycloak on Big Bang"
@@ -539,9 +539,9 @@ kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 
 ## Step 10: Verify that you can access websites hosted in both clusters
 
-* In a Web Browser try to visit the following 2 webpages
-  * <keycloak.bigbang.dev>
-  * <grafana.bigbang.dev>
+* In a Web Browser visit the following 2 webpages
+  * https://keycloak.bigbang.dev
+  * https://grafana.bigbang.dev
 
 ## Step 11: Deploy a mock mission application to the workload cluster
 
@@ -590,17 +590,17 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
 
 ## Step 12: Visit the newly added webpage
 
-* In a browser navigate to <authdemo.bigbang.dev>
+* In a browser navigate to https://authdemo.bigbang.dev
 * Note: authdemo currently isn't protected by the authservice AuthN/AuthZ proxy, the next steps configure that protection.
 
 ## Step 13: Create a Human User Account in Keycloak
 
-1. Visit <keycloak.bigbang.dev>
-1. Follow the self-registration link or visit it directly <keycloak.bigbang.dev/register>
+1. Visit https://keycloak.bigbang.dev
+1. Follow the self-registration link or visit it directly https://keycloak.bigbang.dev/register
 1. Create a demo account, the email you specify doesn't have to exist for demo purposes, make sure you write down the demo username and password.
 1. Create an MFA device.
 1. It'll say "You need to verify your email address to activate your account" (You can ignore that and close the page.)
-1. Visit <keycloak.bigbang.dev/auth/admin>
+1. Visit https://keycloak.bigbang.dev/auth/admin
 1. Log in as a keycloak admin, using the default creds of admin:password
   (Note: The admin's initial default credentials can be specified in code, by updating helm values.)
 1. In the GUI:
@@ -611,23 +611,23 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
 
 ## Step 14: Create an Application Identity / Service Account / Non-Person Entity in Keycloak for the authdemo webpage
 
-1. Visit <keycloak.bigbang.dev/auth/admin>
+1. Visit https://keycloak.bigbang.dev/auth/admin
 1. log in as a keycloak admin, using the default creds of admin:password
 1. In the GUI:
-   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)
+   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)     
       Notice the group UUID in the URL: 00eb8904-5b88-4c68-ad67-cec0d2e07aa6
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Create]
-   1. Set:
-      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"
-      Client Protocol = openid-connect
+   1. Set:    
+      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"    
+      Client Protocol = openid-connect    
       Root URL = (blank)
    1. Save
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Edit] demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo
    1. Under "Access Type": Change Public to Confidential
-   1. Under "Valid Redirect URIs": Add "<https://authdemo.bigbang.dev/log> in/generic_oauth"
-      Note: /log in/generic_oauth comes from auth service
+   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/login/generic_oauth"      
+      Note: /login/generic_oauth comes from auth service
    1. Save
    1. Scroll up to the top of the page and you'll see a newly added [Credentials] tab, click it.
    1. Copy the secret for the authdemo Client Application Identity, you'll paste it into the next step
@@ -692,7 +692,7 @@ addons:
           match:
             header: ":authority"
             prefix: "authdemo"
-          callback_uri: https://authdemo.bigbang.dev/log in/generic_oauth
+          callback_uri: https://authdemo.bigbang.dev/login/generic_oauth
           client_id: "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"
           client_secret: "$AUTHDEMO_APP_ID_CLIENT_SECRET"
 EOF
@@ -714,7 +714,7 @@ ssh workload-cluster 'helm get values bigbang -n=bigbang' # You can eyeball this
 
 ## Step 16: Revisit authdemo.bigbang.dev
 
-* Go to <authdemo.bigbang.dev>
+* Go to https://authdemo.bigbang.dev
 * Before we were taken straight to the mock mission app webpage
 * Now this URL immediately redirects to a KeyCloak Log in Prompt and if you log in with your demo user, you'll see the following message
 
@@ -722,7 +722,7 @@ ssh workload-cluster 'helm get values bigbang -n=bigbang' # You can eyeball this
 
 ## Step 17: Update the group membership of the user
 
-1. Go to keycloak.bigbang.dev/auth/admin
+1. Go to https://keycloak.bigbang.dev/auth/admin
 1. Login with admin:password
 1. In the GUI:
    1. Navigate to: Manage/Users > [View all users] > [Edit] (your Demo user)
@@ -782,6 +782,6 @@ kubectl exec -it test -- ping authdemo.bigbang.dev -c 1 | head -n 1
 
 ## Step 19: Revisit authdemo.bigbang.dev
 
-1. Visit authdemo.bigbang.dev
+1. Visit https://authdemo.bigbang.dev
 1. You'll get redirected to keycloak.bigbang.dev
 1. Log in to keycloak, and afterwords you'll get redirected to authdemo.bigbang.dev
