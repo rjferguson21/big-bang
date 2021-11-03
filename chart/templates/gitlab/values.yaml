@@ -12,6 +12,7 @@ openshift: {{ .Values.openshift }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  injection: {{ dig "istio" "injection" "enabled" .Values.monitoring }}
   gitlab:
     gateways:
     - istio-system/{{ default "public" .Values.addons.gitlab.ingress.gateway }}
