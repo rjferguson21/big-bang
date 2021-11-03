@@ -481,11 +481,12 @@ twistlock:
 addons:
   argocd:
     # -- Toggle deployment of ArgoCD.
-    enabled: false
+    enabled: true
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.10"
+      tag: ""
+      branch: "blloyd_cypress_fix"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}

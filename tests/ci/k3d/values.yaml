@@ -327,6 +327,8 @@ addons:
             cypress_url: "https://argocd.bigbang.dev"
             cypress_user: "admin"
             cypress_password: "Password123"
+      networkPolicies:
+        enabled: true
 
   authservice:
     enabled: false
