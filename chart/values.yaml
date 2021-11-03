@@ -323,7 +323,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.21-bb.2"
+    tag: "0.1.21-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -459,7 +459,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.0.9-bb.1"
+    tag: "0.0.10-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
@@ -592,7 +592,7 @@ addons:
     postRenderers: []
 
   gitlab:
-    # -- Toggle deployment of Gitlab
+    # -- Toggle deployment of Gitlab 
     enabled: false
 
     hostnames:
@@ -603,7 +603,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "5.3.1-bb.2"
+      tag: "5.3.1-bb.5"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -656,6 +656,7 @@ addons:
       region: ""
 
       # -- Access key for connecting to object storage endpoint.
+      # -- If using accessKey and accessSecret, the iamProfile must be left as an empty string: ""
       accessKey: ""
 
       # -- Secret key for connecting to object storage endpoint.
@@ -665,6 +666,11 @@ addons:
       # -- Bucket prefix to use for identifying buckets.
       # Example: "prod" will produce "prod-gitlab-bucket"
       bucketPrefix: ""
+
+      # -- NOTE: Current bug with AWS IAM Profiles and Object Storage where only artifacts are stored. Fixed in Gitlab 14.5
+      # -- Name of AWS IAM profile to use.
+      # -- If using an AWS IAM profile, the accessKey and accessSecret values must be left as empty strings eg: ""
+      iamProfile: ""
 
     # -- Values to passthrough to the gitlab chart: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
     values: {}
@@ -678,7 +684,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
       path: "./chart"
-      tag: "0.33.1-bb.3"
+      tag: "0.33.1-bb.4"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Runner Package
     flux: {}
@@ -695,7 +701,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "34.1.0-bb.3"
+      tag: "34.1.0-bb.4"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -931,7 +937,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
       path: "./chart"
-      tag: "1.15.0-bb.0"
+      tag: "1.16.0-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Operator Package
     flux: {}
