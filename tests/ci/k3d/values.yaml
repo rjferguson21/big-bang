@@ -105,7 +105,7 @@ kiali:
           cypress_url: 'https://kiali.bigbang.dev'
 
 clusterAuditor:
-  enabled: false
+  enabled: true
   values:
     resources:
       requests:
@@ -174,7 +174,7 @@ monitoring:
           cypress_alertmanager_url: 'https://alertmanager.bigbang.dev'
 
 gatekeeper:
-  enabled: false
+  enabled: true
   values:
     replicas: 1
     resources:
@@ -193,6 +193,8 @@ gatekeeper:
           excludedResources:
           # Allows k3d load balancer containers to pull from public repos
           - istio-system/lb-port-.*
+          # Argocd needs to download an example "guestbook" app
+          - argocd/*
       allowedSecCompProfiles:
         parameters:
           excludedResources:
