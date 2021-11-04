@@ -30,6 +30,7 @@ usage: $(basename "$0") <arguments>
 EOF
 }
 
+# script check for existing pull secret
 function check_secrets {
     if kubectl get secrets/"$FLUX_SECRET" -n flux-system > /dev/null 2>&1;
     then
@@ -40,7 +41,6 @@ function check_secrets {
         FLUX_SECRET_EXISTS=1
     fi
 }
-
 
 #
 # cli parsing
@@ -121,24 +121,19 @@ while (( "$#" )); do
   esac
 done
 
+# check if secret exists
 if [ -z "$FLUX_SECRET_EXISTS" ] || [ "$FLUX_SECRET_EXISTS" -eq 1 ]; then
 
     # check required arguments
     if [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; then
-    help; exit 1
+      help; exit 1
     fi
 
     # debug print cli args
     echo "REGISTRY_URL: $REGISTRY_URL"
     echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
 
-
-    #
-    # install flux
-    #
-
     kubectl create namespace flux-system || true
-
 
     echo "Creating secret $FLUX_SECRET in namespace flux-system"
     kubectl create secret docker-registry "$FLUX_SECRET" -n flux-system \
@@ -147,9 +142,11 @@ if [ -z "$FLUX_SECRET_EXISTS" ] || [ "$FLUX_SECRET_EXISTS" -eq 1 ]; then
     --docker-password="$REGISTRY_PASSWORD" \
     --docker-email="$REGISTRY_EMAIL" \
     --dry-run=client -o yaml | kubectl apply -n flux-system -f -
-
-
 fi
+
+#
+# install flux
+#
 
 echo "Installing flux from kustomization"
 kustomize build "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
