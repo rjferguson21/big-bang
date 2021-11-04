@@ -32,14 +32,14 @@ EOF
 
 # script check for existing pull secret
 function check_secrets {
-    if kubectl get secrets/"$FLUX_SECRET" -n flux-system > /dev/null 2>&1;
-    then
-        #the secret exists
-        FLUX_SECRET_EXISTS=0
-    else
-        #the secret does not exist
-        FLUX_SECRET_EXISTS=1
-    fi
+  if kubectl get secrets/"$FLUX_SECRET" -n flux-system > /dev/null 2>&1;
+  then
+    #the secret exists
+    FLUX_SECRET_EXISTS=0
+  else
+    #the secret does not exist
+    FLUX_SECRET_EXISTS=1
+  fi
 }
 
 #
@@ -124,19 +124,19 @@ done
 # check if secret exists
 if [ -z "$FLUX_SECRET_EXISTS" ] || [ "$FLUX_SECRET_EXISTS" -eq 1 ]; then
 
-    # check required arguments
-    if [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; then
-      help; exit 1
-    fi
+  # check required arguments
+  if [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; then
+    help; exit 1
+  fi
 
-    # debug print cli args
-    echo "REGISTRY_URL: $REGISTRY_URL"
-    echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
+  # debug print cli args
+  echo "REGISTRY_URL: $REGISTRY_URL"
+  echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
 
-    kubectl create namespace flux-system || true
+  kubectl create namespace flux-system || true
 
-    echo "Creating secret $FLUX_SECRET in namespace flux-system"
-    kubectl create secret docker-registry "$FLUX_SECRET" -n flux-system \
+  echo "Creating secret $FLUX_SECRET in namespace flux-system"
+  kubectl create secret docker-registry "$FLUX_SECRET" -n flux-system \
     --docker-server="$REGISTRY_URL" \
     --docker-username="$REGISTRY_USERNAME" \
     --docker-password="$REGISTRY_PASSWORD" \
