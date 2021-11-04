@@ -184,12 +184,6 @@ gatekeeper:
         memory: 256Mi
       limits: {}
       violations:
-        allowedAppArmorProfiles:
-          enabled: false
-          enforcementAction: dryrun
-        allowedCapabilities:
-          enabled: false
-          enforcementAction: dryrun
         allowedDockerRegistries:
           enabled: false
           enforcementAction: deny
@@ -205,74 +199,35 @@ gatekeeper:
         allowedProcMount:
           enabled: false
           enforcementAction: deny
-        allowedSecCompProfiles:
-          enabled: false
-          enforcementAction: dryrun
-        allowedUsers:
-          enabled: false
-          enforcementAction: dryrun
         bannedImageTags:
           enabled: false
           enforcementAction: deny
-        blockNodePort:
-          enabled: false
-          enforcementAction: dryrun
-        containerRatio:
-          enabled: false
-          enforcementAction: dryrun
         hostNetworking:
           enabled: false
           enforcementAction: deny
         httpsOnly:
-          enabled: false
+          enabled: true
           enforcementAction: deny
-        imageDigest:
-          enabled: false
-          enforcementAction: dryrun
-        namespacesHaveIstio:
-          enabled: false
-          enforcementAction: dryrun
-        noBigContainers:
-          enabled: false
-          enforcementAction: dryrun
         noHostNamespace:
-          enabled: false
+          enabled: true
           enforcementAction: deny
         noPrivilegedContainers:
-          enabled: false
+          enabled: true
           enforcementAction: deny
-        noDefaultServiceAccount:
-          enabled: false
-          enforcementAction: dryrun
-        noPrivilegedEscalation:
-          enabled: false
-          enforcementAction: dryrun
         noSysctls:
-          enabled: false
+          enabled: true
           enforcementAction: deny
-        podsHaveIstio:
-          enabled: false
-          enforcementAction: dryrun
-        readOnlyRoot:
-          enabled: false
-          enforcementAction: dryrun
-        requiredLabels:
-          enabled: false
-          enforcementAction: dryrun
-        requiredProbes:
-          enabled: false
-          enforcementAction: dryrun
         restrictedTaint:
-          enabled: false
+          enabled: true
           enforcementAction: deny
         selinuxPolicy:
-          enabled: false
+          enabled: true
           enforcementAction: deny
         uniqueIngressHost:
-          enabled: false
+          enabled: true
           enforcementAction: deny
         volumeTypes:
-          enabled: false
+          enabled: true
           enforcementAction: deny
     bbtests:
       # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
