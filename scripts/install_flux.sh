@@ -21,12 +21,12 @@ WAIT_TIMEOUT=300
 function help {
   cat << EOF
 usage: $(basename "$0") <arguments>
--h|--help              - print this help message and exit
--r|--registry-url      - (optional, default: registry1.dso.mil) registry url to use for flux installation
+-h|--help                - print this help message and exit
+-r|--registry-url        - (optional, default: registry1.dso.mil) registry url to use for flux installation
 -s|--use-existing-secret - (optional) check if private-registry secret exists 
--u|--registry-username - (required) registry username to use for flux installation
--p|--registry-password - (required) registry password to use for flux installation
--w|--wait-timeout      - (optional, default: 120) how long to wait; in seconds, for each key flux resource component
+-u|--registry-username   - (required) registry username to use for flux installation
+-p|--registry-password   - (required) registry password to use for flux installation
+-w|--wait-timeout        - (optional, default: 120) how long to wait; in seconds, for each key flux resource component
 EOF
 }
 
