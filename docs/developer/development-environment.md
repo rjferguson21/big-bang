@@ -20,6 +20,9 @@ This page contains the manual steps to create your k3d dev environment. There is
 
 - [Helm](https://helm.sh/docs/intro/install/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+
+> For additional installtion details, see [Software Installation and Verification Commands to run from Bash](https://repo1.dso.mil/platform-one/onboarding/big-bang/engineering-cohort/-/blob/master/lab_guides/01-Preflight-Access-Checks/A-software-check.md)
 
 ## Manual Creation of a Development Environment
 
@@ -98,7 +101,8 @@ logout
 - Install K3D on the EC2 instance
 
 ```shell
-wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+# Note: The current version of K3D uses a broken version of K3s. The 2020-08 workaround is to install K3D 4.4.7
+wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash
 # check version
 k3d version
 ```

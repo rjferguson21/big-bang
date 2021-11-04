@@ -16,7 +16,7 @@ imagePullSecrets:
 openshift: {{ .Values.openshift }}
 
 authservice:
-  enabled: {{ .Values.addons.authservice.enabled }}
+  enabled: {{ or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
@@ -47,6 +47,8 @@ gateways:
   {{ $name | nindent 2 }}:
     selector:
       app: {{ $values.ingressGateway }}
+    autoHttpRedirect:
+      enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
     - hosts:
       {{ tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
