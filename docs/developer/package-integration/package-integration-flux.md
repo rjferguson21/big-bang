@@ -321,7 +321,46 @@ To validate that the Helm chart is working, perform the following steps to deplo
 
 1. Troubleshoot any errors
 
-> If you are using a private Git repository or pulling images from a private image repository, you will need to add credentials into the `git.credentials.username`/`git.credentials.password` and/or `registryCredentials.username`/`registryCredentials.password` using the `--set` option for Helm.
+   ```shell
+   kubectl get events -A
+   ```
+
+   > If you are using a private Git repository or pulling images from a private image repository, you will need to add credentials into the `git.credentials.username`/`git.credentials.password` and/or `registryCredentials.username`/`registryCredentials.password` using the `--set` option for Helm.
+
+1. Cleanup cluster
+
+   ```shell
+   helm delete -n bigbang bigbang-podinfo
+   ```
+
+1. Add the following to `bigbang/README.md` to document this Helm charts usage:
+
+   ```markdown
+   # Big Bang compatible Helm chart
+
+   This helm chart deploys the application using the same methods and values as Big Bang.
+
+   ## Prerequisites
+
+   - Kubernetes cluster matching [Big Bang's Prerequisites](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tree/master/docs/guides/prerequisites)
+   - [FluxCD](https://fluxcd.io/) running in the cluster
+   - The [Big Bang git repository](https://repo1.dso.mil/platform-one/big-bang/bigbang) cloned into `~/bigbang`
+   - [Helm](https://helm.sh/docs/intro/install/)
+
+   ## Usage
+
+   ### Installation
+
+   1. Install Big Bang
+   `helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f bigbang/values.yaml bigbang ~/bigbang/chart`
+   1. Install this chart
+   `helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f bigbang/values.yaml bigbang-podinfo bigbang`
+
+   ### Removal
+
+   `helm delete -n bigbang bigbang-podinfo`
+
+   ```
 
 1. Commit your changes
 
@@ -329,10 +368,4 @@ To validate that the Helm chart is working, perform the following steps to deplo
    git add -A
    git commit -m "feat: added bigbang helm chart"
    git push
-   ```
-
-1. Cleanup cluster
-
-   ```shell
-   helm delete -n bigbang bigbang-podinfo
    ```
