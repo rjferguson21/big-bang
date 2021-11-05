@@ -136,9 +136,7 @@ gatekeeper:
           # Allows k3d load balancer containers to pull from public repos
           - istio-system/lb-port-.*
           # Allow argocd to deploy a test app in its cypress test
-          {{- if .Values.addons.argocd.bbtests.enabled }}
           - default/guestbook.*
-          {{- end }}
       allowedSecCompProfiles:
         parameters:
           excludedResources:
