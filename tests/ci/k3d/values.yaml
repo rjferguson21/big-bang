@@ -206,16 +206,16 @@ gatekeeper:
           enabled: false
           enforcementAction: deny
         httpsOnly:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         noHostNamespace:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         noPrivilegedContainers:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         noSysctls:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         restrictedTaint:
           enabled: true
