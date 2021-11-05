@@ -221,7 +221,7 @@ gatekeeper:
           enabled: true
           enforcementAction: deny
         selinuxPolicy:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         uniqueIngressHost:
           enabled: false
