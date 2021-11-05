@@ -12,9 +12,9 @@ Big Bang uses a continuous deployment tool, [Flux](https://fluxcd.io/) to deploy
 
 > Throughout this document, we will be setting up an application called `podinfo` as a demonstration
 
-## Flux Helm Chart
+## Big Bang Helm Chart
 
-The purpose of the Flux Helm chart is to create a Big Bang compatible, easy-to-use spec for deploying the package. Reasonable and safe defaults are provided and any needed secrets are auto-created. We accept the trade-off of easy deployment for complicated template code. Details are in the following steps.
+The purpose of the Big Bang Helm chart is to create a Big Bang compatible, easy-to-use spec for deploying the package. Reasonable and safe defaults are provided and any needed secrets are auto-created. We accept the trade-off of easy deployment for complicated template code. Details are in the following steps.
 
    ```shell
    gitrepository.yaml    # Flux GitRepository, configured by Big Bang chart values.
@@ -24,7 +24,7 @@ The purpose of the Flux Helm chart is to create a Big Bang compatible, easy-to-u
    values.yaml           # Big Bang customization of the package and passthrough values.
    ```
 
-Create a new Helm chart for Flux resources in the root of your Git repository:
+Create a new Helm chart for Big Bang resources in the root of your Git repository:
 
 ```shell
 # short name of the package
@@ -34,19 +34,19 @@ export PKGNAME=podinfo
 export PKGVER=6.0.0
 
 # Make directory structure
-mkdir -p flux/templates/$PKGNAME
+mkdir -p bigbang/templates/$PKGNAME
 
 # Create values file
-touch flux/values.yaml
+touch bigbang/values.yaml
 
 # Copy helpers from Big Bang
-curl -sL -o flux/templates/_helpers.tpl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/templates/_helpers.tpl
+curl -sL -o bigbang/templates/_helpers.tpl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/templates/_helpers.tpl
 
 # Create chart file
-cat << EOF >> flux/Chart.yaml
+cat << EOF >> bigbang/Chart.yaml
 apiVersion: v2
-name: flux-$PKGNAME
-description: Flux compatible Helm chart for $PKGNAME
+name: bigbang-$PKGNAME
+description: BigBang compatible Helm chart for $PKGNAME
 type: application
 version: 0.1.0
 appVersion: "$PKGVER"
@@ -55,11 +55,10 @@ EOF
 
 ### Namespace
 
-The package will be deployed in its own namespace.  BigBang pre-creates this namespace so that labels and annotations can be controlled.  Setup `flux/templates/$PKGNAME/namespace.yaml` with the following:
+The package will be deployed in its own namespace.  BigBang pre-creates this namespace so that labels and annotations can be controlled.  Setup `bigbang/templates/$PKGNAME/namespace.yaml` with the following:
 
 ```yaml
 {{- $pkg := "podinfo" }}
-{{- $component := "sandbox" }}
 {{- if (get .Values $pkg).enabled }}
 apiVersion: v1
 kind: Namespace
@@ -67,15 +66,11 @@ metadata:
   name: {{ $pkg }}
   labels:
     app.kubernetes.io/name: {{ $pkg }}
-    app.kubernetes.io/component: {{ $component | quote }}
     {{- include "commonLabels" . | nindent 4}}
-    {{- if .Values.istio.enabled }}
-    istio-injection: "enabled"
-    {{- end }}
 {{- end }}
 ```
 
-In order for the namespace Helm template to be properly created, the following values need to be added to `flux/values.yaml`:
+In order for the namespace Helm template to be properly created, the following values need to be added to `bigbang/values.yaml`:
 
 ```yaml
 # Identifies if our package should be deployed or ignored
@@ -87,11 +82,10 @@ podinfo:
 
 #### GitRepository
 
-Flux's source controller uses the [GitRepository](https://fluxcd.io/docs/components/source/gitrepositories/) resource to pull Helm chart changes from Git.  Use the [GitRepository API Specification](https://fluxcd.io/docs/components/source/gitrepositories/#specification) to create a `GitRepository` resource named `flux/templates/$PKGNAME/gitrepository.yaml` with the following content:
+Flux's source controller uses the [GitRepository](https://fluxcd.io/docs/components/source/gitrepositories/) resource to pull Helm chart changes from Git.  Use the [GitRepository API Specification](https://fluxcd.io/docs/components/source/gitrepositories/#specification) to create a `GitRepository` resource named `bigbang/templates/$PKGNAME/gitrepository.yaml` with the following content:
 
 ```yaml
 {{- $pkg := "podinfo" }}
-{{- $component := "sandbox" }}
 {{- if (get .Values $pkg).enabled }}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
@@ -100,7 +94,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ $pkg }}
-    app.kubernetes.io/component: {{ $component | quote }}
     {{- include "commonLabels" . | nindent 4}}
 spec:
   interval: {{ .Values.flux.interval }}
@@ -126,11 +119,10 @@ podinfo:
 
 #### HelmRelease
 
-Big Bang exclusively uses Helm charts for deployment through Flux.  Using the [HelmRelease API Specification](https://fluxcd.io/docs/components/helm/helmreleases/#specification), create a `HelmRelease` resource named `flux/templates/$PKGNAME/helmrelease.yaml` with the following content:
+Big Bang exclusively uses Helm charts for deployment through Flux.  Using the [HelmRelease API Specification](https://fluxcd.io/docs/components/helm/helmreleases/#specification), create a `HelmRelease` resource named `bigbang/templates/$PKGNAME/helmrelease.yaml` with the following content:
 
 ```yaml
 {{- $pkg := "podinfo" }}
-{{- $component := "sandbox" }}
 {{- $fluxSettings := merge (get .Values $pkg).flux .Values.flux -}}
 {{- if (get .Values $pkg).enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -140,7 +132,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ $pkg }}
-    app.kubernetes.io/component: {{ $component | quote }}
     {{- include "commonLabels" . | nindent 4}}
 spec:
   targetNamespace: {{ $pkg }}
@@ -169,18 +160,10 @@ spec:
     - name: {{ .Release.Name }}-{{ $pkg }}-values
       kind: Secret
       valuesKey: "overlays"
-
-  {{- if .Values.gatekeeper.enabled }}
-  dependsOn:
-    {{- if .Values.gatekeeper.enabled }}
-    - name: gatekeeper
-      namespace: {{ .Release.Namespace }}
-    {{- end }}
-  {{- end }}
 {{- end }}
 ```
 
-The following values need to be added into `flux/values.yaml` for `HelmRelease`:
+The following values need to be added into `bigbang/values.yaml` for `HelmRelease`:
 
 ```yaml
 podinfo:
@@ -193,11 +176,10 @@ podinfo:
 
 ### ImagePullSecret
 
-Big Bang images are pulled from Iron Bank.  In order to provide credentials for Iron Bank, Big Bang will create a secret for each package called `private-registry`.  In `flux/templates/$PKGNAME/imagepullsecret.yaml`, add the following content:
+Big Bang images are pulled from Iron Bank.  In order to provide credentials for Iron Bank, Big Bang will create a secret for each package called `private-registry`.  In `bigbang/templates/$PKGNAME/imagepullsecret.yaml`, add the following content:
 
 ```yaml
 {{- $pkg := "podinfo" }}
-{{- $component := "sandbox" }}
 {{- if (get .Values $pkg).enabled }}
 {{- if ( include "imagePullSecret" . ) }}
 apiVersion: v1
@@ -207,7 +189,6 @@ metadata:
   namespace: {{ $pkg }}
   labels:
     app.kubernetes.io/name: {{ $pkg }}
-    app.kubernetes.io/component: {{ $component | quote }}
     {{- include "commonLabels" . | nindent 4}}
 type: kubernetes.io/dockerconfigjson
 data:
@@ -216,7 +197,7 @@ data:
 {{- end }}
 ```
 
-> Other secrets can be added for credentials, certificates, etc. by creating a file names `secret-<name>.yaml`.  Big Bang is responsible for creating these secrets using values from the user.  More details are included in the integration documentation for databases, object stores, sso, etc.
+> Other secrets can be added for credentials, certificates, etc. by creating a file named `bigbang/templates/$PKGNAME/secret-<name>.yaml`.  Big Bang is responsible for creating these secrets using values from the user.  More details are included in the integration documentation for databases, object stores, sso, etc.
 
 ### Package Values
 
@@ -235,18 +216,17 @@ Big Bang has a few options for overwriting values in packages.  The package's `H
 
 |Name|Description|Source|Priority|
 |--|--|--|--|
-| `overlay` | Values provided by user when deploying Big Bang | `flux/values.yaml`:`$PKGNAME.values.*` | Highest 1 |
-| `default` | Values created by Big Bang | `flux/templates/$PKGNAME/values.yaml`:`*` | 2 |
+| `overlay` | Values provided by user when deploying Big Bang | `bigbang/values.yaml`:`$PKGNAME.values.*` | Highest 1 |
+| `default` | Values created by Big Bang | `bigbang/templates/$PKGNAME/values.yaml`:`*` | 2 |
 | `common` | Big Bang values common to all packages | Not currently used | 3 |
 | `package` | Package defaults | `chart/values.yaml`:`*` | Lowest 4 |
 
 This means that if a user provides a value for the package, that overwrites the value Big Bang or the package would create.
 
-For the package to implement this hierarchy, `flux/templates/$PKGNAME/values.yaml` must be created with the following:
+For the package to implement this hierarchy, `bigbang/templates/$PKGNAME/values.yaml` must be created with the following:
 
 ```yaml
 {{- $pkg := "podinfo" }}
-{{- $component := "sandbox" }}
 {{- define "bigbang.defaults.podinfo" -}}
 
 {{- end }}
@@ -259,7 +239,7 @@ For the package to implement this hierarchy, `flux/templates/$PKGNAME/values.yam
 
 ### Check Syntax
 
-At this point, you should have a minimum viable set of values in `flux/values.yaml` that looks like this:
+At this point, you should have a minimum viable set of values in `bigbang/values.yaml` that looks like this:
 
 ```yaml
 podinfo:
@@ -278,14 +258,15 @@ Use the Big Bang default values to make sure our Helm templates don't have any s
    git clone https://repo1.dso.mil/platform-one/big-bang/bigbang ~/bigbang
 
    # Check that our chart generates without errors
-   helm template -n bigbang bigbang -f ~/bigbang/chart/values.yaml -f flux/values.yaml flux
+   # We want our local values to override the big bang defaults, so we need to specify both
+   helm template -n bigbang -f ~/bigbang/chart/values.yaml -f bigbang/values.yaml bigbang-podinfo bigbang
    ```
 
 ### Validation
 
-To validate that the Helm chart is working for Flux, perform the following steps to deploy your package.  This assumes you already have a Kubernetes cluster running.
+To validate that the Helm chart is working, perform the following steps to deploy your package.  This assumes you already have a Kubernetes cluster running.
 
-1. Disable all default packages in Big Bang by adding the following to `flux/values.yaml`
+1. Disable all default packages in Big Bang by adding the following to `bigbang/values.yaml`
 
    ```yaml
    # Network Policies
@@ -325,11 +306,11 @@ To validate that the Helm chart is working for Flux, perform the following steps
      enabled: false
    ```
 
-1. Install flux using the [instructions from Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/1.17.0/docs/guides/deployment_scenarios/quickstart.md#step-8-install-flux).
-1. Install the package using the flux Helm chart
+1. Install flux using the [instructions from Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/1.19.0/docs/guides/deployment_scenarios/quickstart.md#step-8-install-flux).
+1. Install the package using the bigbang Helm chart
 
    ```shell
-   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f flux/values.yaml podinfo flux
+   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f bigbang/values.yaml bigbang-podinfo bigbang
    ```
 
 1. Watch the `GitRepository`, `HelmRelease`, and `Pods`:
@@ -346,12 +327,12 @@ To validate that the Helm chart is working for Flux, perform the following steps
 
    ```shell
    git add -A
-   git commit -m "feat: added flux helm chart"
+   git commit -m "feat: added bigbang helm chart"
    git push
    ```
 
 1. Cleanup cluster
 
    ```shell
-   helm delete -n bigbang podinfo
+   helm delete -n bigbang bigbang-podinfo
    ```
