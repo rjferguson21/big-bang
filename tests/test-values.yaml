@@ -135,6 +135,10 @@ gatekeeper:
           excludedResources:
           # Allows k3d load balancer containers to pull from public repos
           - istio-system/lb-port-.*
+          # Allow argocd to deploy a test app in its cypress test
+          {{- if .Values.addons.argocd.bbtests.enabled }}
+          - default/guestbook.*
+          {{- end }}
       allowedSecCompProfiles:
         parameters:
           excludedResources:
@@ -361,6 +365,7 @@ twistlock:
 # Addons are toggled based on labels in CI
 addons:
   argocd:
+<<<<<<< HEAD:tests/test-values.yaml
     enabled: false
     sso:
       enabled: false
@@ -369,6 +374,9 @@ addons:
       provider_name: "P1 SSO"
       groups: |
         g, Impact Level 2 Authorized, role:admin
+=======
+    enabled: true
+>>>>>>> 0a040d8e... Enable the argocd cypress test:tests/ci/k3d/values.yaml
     values:
       controller:
         resources:
@@ -411,9 +419,7 @@ addons:
         secret:
           argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
       bbtests:
-        # TODO: Disabled pending resolution of some "timing?" issues
-        # https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/issues/17
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
           envs:
