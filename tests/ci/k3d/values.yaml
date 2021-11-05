@@ -218,7 +218,7 @@ gatekeeper:
           enabled: false
           enforcementAction: deny
         restrictedTaint:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         selinuxPolicy:
           enabled: false
