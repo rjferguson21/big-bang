@@ -17,7 +17,17 @@
 
 The [Istio sidecar](https://istio.io/latest/docs/reference/config/networking/sidecar/) is a container that can be automatically injected into all package pods to provide encrypted traffic using [mutual TLS](https://istio.io/latest/docs/tasks/security/authentication/authn-policy/#auto-mutual-tls).  It also enables detailed [packet tracing](https://istio.io/latest/docs/tasks/observability/distributed-tracing/jaeger/) and [network traffic metrics](https://istio.io/latest/docs/ops/configuration/telemetry/envoy-stats/).
 
-When Istio is enabled in the values, automatic Istio sidecar injection is added to the namespace by adding the label `istio-injection: "enabled"`.  Most packages are compatible with Istio's sidecar, but if you need to disable this, change the label to `istio-injection: "disabled"`in `flux/templates/$PKGNAME/namespace.yaml`.
+When Istio is enabled in the values, we want the sidecar to automatically be injected.  This can be achieved by adding the following to `bigbang/templates/podinfo/namespace.yaml`:
+
+```yaml
+metadata:
+  labels:
+    {{- if .Values.istio.enabled }}
+    istio-injection: "enabled"
+    {{- end }}
+```
+
+> Most packages are compatible with Istio's sidecar, but if you need to disable this, change the label to `istio-injection: "disabled"` in `bigbang/templates/podinfo/namespace.yaml`.
 
 ## Virtual Service
 
@@ -129,7 +139,7 @@ Some notes on the defaults:
 
 #### Big Bang Defaults
 
-Set the following in `flux/values.yaml` to enable Istio for integration testing.  These values will be used in the next section:
+Set the following in `bigbang/values.yaml` to enable Istio for integration testing.  These values will be used in the next section:
 
 ```yaml
 # Update existing values
@@ -146,7 +156,7 @@ podinfo:
 
 ### Big Bang Passdowns
 
-Big Bang must override the default values for the package to passdown configuration.  It uses `flux/templates/$PKGNAME/values.yaml` to do this.  Add the following content to the `bigbang.defaults.podinfo` definition:
+Big Bang must override the default values for the package to passdown configuration.  It uses `bigbang/templates/podinfo/values.yaml` to do this.  Add the following content to the `bigbang.defaults.podinfo` definition:
 
 ```yaml
 {{- define "bigbang.defaults.podinfo" -}}
@@ -160,6 +170,23 @@ istio:
 {{- end }}
 ```
 
+### Dependencies
+
+If we have enabled sidecar injection or created a virtual service, we will need to make sure Istio is deployed before our package.  This is done in the `HelmRelease` resource using `dependsOn`.  Add the following to `bigbang/templates/podinfo/helmrelease.yaml`:
+
+```yaml
+spec:
+  {{- if .Values.istio.enabled }}
+  dependsOn:
+    {{- if .Values.istio.enabled }}
+    - name: istio
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+  {{- end }}
+```
+
+> There are two conditionals on purpose.  As we add more dependencies, the outer conditional will be used to determine if any dependencies are enabled.  The inner conditional(s) will be used to print each dependency.
+
 ## Validation
 
 Test the following items to ensure Istio is working properly with your application:
@@ -167,7 +194,7 @@ Test the following items to ensure Istio is working properly with your applicati
 1. Verify syntax and resolve errors:
 
    ```shell
-   helm template -n bigbang -f ~/bigbang/chart/values.yaml -f flux/values.yaml bigbang-test flux
+   helm template -n bigbang -f ~/bigbang/chart/values.yaml -f bigbang/values.yaml bigbang-podinfo bigbang
    ```
 
 1. Commit changes
@@ -182,14 +209,14 @@ Test the following items to ensure Istio is working properly with your applicati
 
    ```shell
    # Iron Bank credentials are required since you are pulling Big Bang images from Iron Bank
-   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f ~/bigbang/chart/ingress-certs.yaml -f flux/values.yaml --set registryCredentials.username=<your Iron Bank username> --set registryCredentials.password=<your Iron Bank PAT> bigbang ~/bigbang/chart
+   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f ~/bigbang/chart/ingress-certs.yaml -f bigbang/values.yaml --set registryCredentials.username=<your Iron Bank username> --set registryCredentials.password=<your Iron Bank PAT> bigbang ~/bigbang/chart
    ```
 
 1. Install the package
 
    ```shell
    # Iron Bank credentials are optional until we migrate the package to an Iron Bank image
-   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f ~/bigbang/chart/ingress-certs.yaml -f flux/values.yaml --set registryCredentials.username=<your Iron Bank username> --set registryCredentials.password=<your Iron Bank PAT> podinfo flux
+   helm upgrade -i -n bigbang --create-namespace -f ~/bigbang/chart/values.yaml -f ~/bigbang/chart/ingress-certs.yaml -f bigbang/values.yaml --set registryCredentials.username=<your Iron Bank username> --set registryCredentials.password=<your Iron Bank PAT> bigbang-podinfo bigbang
    ```
 
 1. Watch the `GitRepository`, `HelmRelease`, and `Pods` by running `watch kubectl get gitrepo,hr,po -A`.  Istio operator, Istio control plane, and the package should all be installed.
