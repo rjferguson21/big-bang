@@ -224,10 +224,10 @@ gatekeeper:
           enabled: true
           enforcementAction: deny
         uniqueIngressHost:
-          enabled: true
+          enabled: false
           enforcementAction: deny
         volumeTypes:
-          enabled: true
+          enabled: false
           enforcementAction: deny
     bbtests:
       # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
