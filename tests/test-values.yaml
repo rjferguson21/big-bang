@@ -157,6 +157,8 @@ gatekeeper:
           excludedResources:
           # Allows k3d load balancer containers to mount host ports
           - istio-system/lb-port-.*
+          # Allow argocd to deploy a test app in its cypress test
+          - default/guestbook.*
       noBigContainers:
         parameters:
           excludedResources:
