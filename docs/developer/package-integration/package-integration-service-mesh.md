@@ -21,11 +21,13 @@ When Istio is enabled in the values, automatic Istio sidecar injection is added 
 
 ## Virtual Service
 
-If your package has an externally facing service (e.g. URL, port port), you will need to setup a `VirtualService` in Istio to access it from outside the cluster.
+If your package has an externally facing service (e.g. URL, port), you will need to setup a `VirtualService` in Istio to access it from outside the cluster.
 
-> Connections from inside the cluster can use the `Service` and do not require a `VirutalService`
+> Connections from inside the cluster can use the `Service` and do not require a `VirtualService`
 
-Istio will provide end-to-end encryption for https connections using TLS termination and mutual TLS to the sidecar.  Therefore, the http connection on the package can be used for the virtual service.
+For `https` connections, Istio will provide end-to-end encryption using TLS termination and mutual TLS to the sidecar.  Therefore, the `http` connection on the pod can be used for the virtual service.
+
+> In some cases, you may have multiple services that need to be exposed.  A separate `VirtualService` should be created for each one.  See [this example](https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/-/blob/1.14.7-bb.2/chart/templates/bigbang/anchore-vs.yaml)
 
 ### virtualservice.yaml
 
@@ -122,7 +124,7 @@ istio:
 Some notes on the defaults:
 
 - Always add a comment to modifications made to the upstream chart to assist with upgrading in the future
-- `istio-system/main` is the default gateway created by the Istio Helm chart
+- `istio-system/main` is the default gateway created by the Istio Helm chart.  Big Bang will override this with `istio-system/public`, which it uses as the default gateway.
 - The default FQDN is `podinfo.bigbang.dev`, which can be overridden if desired
 
 #### Big Bang Defaults
@@ -160,7 +162,7 @@ istio:
 
 ## Validation
 
-Test the following items to insure Istio is working properly with your application:
+Test the following items to ensure Istio is working properly with your application:
 
 1. Verify syntax and resolve errors:
 
