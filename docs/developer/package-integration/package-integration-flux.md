@@ -364,6 +364,8 @@ To validate that the Helm chart is working, perform the following steps to deplo
 
 1. Commit your changes
 
+   > If you are developing something different than `podinfo`, run `grep -ir podinfo` to make sure your replaced all of the instances with your application name.
+
    ```shell
    git add -A
    git commit -m "feat: added bigbang helm chart"
