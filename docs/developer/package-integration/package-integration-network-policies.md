@@ -49,7 +49,7 @@ There are a few ways to determine if a network policy is blocking egress or ingr
   - pod to pod
   - SSO
     - When available, use a value from the helm values for the port
-    - Otherwise, use the SSO default and allow egress to all IPs, except metadata. The default port should be 443.
+    - Otherwise, use the SSO default and allow egress to all IPs, except the cloud metadata IP. The default port should be 443.
   - storage database
     - When available, use a value from the helm values for the port
     - Otherwise, use the database default and allow egress to all IPs, except the cloud metadata IP.
