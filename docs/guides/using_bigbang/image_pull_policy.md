@@ -18,7 +18,7 @@ In the meantime we have begun to document the package overrides required in prep
 | ECK Operator | IfNotPresent | <pre lang="yaml">eckoperator:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
 | Fluentbit | Always | <pre lang="yaml">fluentbit:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
 | Monitoring | Varies | To be documented |
-| Twistlock | IfNotPresent | <pre lang="yaml">twistlock:<br>  values:<br>    image:<br>      imagePullPolicy: IfNotPresent</pre>  |
+| Twistlock | IfNotPresent | <pre lang="yaml">twistlock:<br>  values:<br>    console:<br>      image:<br>        imagePullPolicy: IfNotPresent</pre>  |
 | ArgoCD | IfNotPresent | To be documented |
 | Authservice | IfNotPresent | <pre lang="yaml">addons:<br>  authservice:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> |
 | MinIO Operator | To be documented | To be documented |
