@@ -117,7 +117,7 @@ spec:
 ```
 
 ### Additional Configuration <a name="additional-configruation"></a>
-Sample `chart/values.yaml` code:
+Sample `chart/values.yaml` code at the package level:
 ```
 # BigBang specific Network Policy Configuration
 networkPolicies:
