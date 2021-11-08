@@ -369,8 +369,7 @@ twistlock:
 # Addons are toggled based on labels in CI
 addons:
   argocd:
-<<<<<<< HEAD:tests/test-values.yaml
-    enabled: false
+    enabled: true
     sso:
       enabled: false
       client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
@@ -378,9 +377,6 @@ addons:
       provider_name: "P1 SSO"
       groups: |
         g, Impact Level 2 Authorized, role:admin
-=======
-    enabled: true
->>>>>>> 0a040d8e... Enable the argocd cypress test:tests/ci/k3d/values.yaml
     values:
       controller:
         resources:
