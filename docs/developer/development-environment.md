@@ -20,6 +20,9 @@ This page contains the manual steps to create your k3d dev environment. There is
 
 - [Helm](https://helm.sh/docs/intro/install/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+
+> For additional installtion details, see [Software Installation and Verification Commands to run from Bash](https://repo1.dso.mil/platform-one/onboarding/big-bang/engineering-cohort/-/blob/master/lab_guides/01-Preflight-Access-Checks/A-software-check.md)
 
 ## Manual Creation of a Development Environment
 
@@ -205,7 +208,7 @@ cd ./bigbang
 ./scripts/install_flux.sh -u your-user-name -p your-pull-secret
 ```
 
-**Note1:** When deploying to k3d, the load balancer must be added to `excludedResources` under several violations for gatekeeper. This can be done by modifying `chart/values.yaml` file or passing an override file (e.g. `chart/k3d-dev-values.yaml`) with the values set below.  This is for development purposes only.
+**Note1:** When deploying to k3d, the load balancer must be added to `excludedResources` under several violations for gatekeeper. This can be done by modifying `chart/values.yaml` file or passing an override file (e.g. `docs/example_configs/opa-overrides-k3d.yaml`) with the values set below.  This is for development purposes only.
 
 ```yaml
 gatekeeper:
