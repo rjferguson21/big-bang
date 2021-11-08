@@ -116,7 +116,7 @@ spec:
 {{- end }}
 ```
 
-### Additional Configuration <a name="additional-configruation"></a>
+### Additional Configuration <a name="additional-configuration"></a>
 Sample `chart/values.yaml` code at the package level:
 ```
 # BigBang specific Network Policy Configuration
