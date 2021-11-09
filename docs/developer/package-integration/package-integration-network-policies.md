@@ -21,7 +21,7 @@ All examples in this documentation will center on [podinfo](https://repo1.dso.mi
 
 ### Default Deny <a name="default-deny"></a>
 In order to keep Big Bang secure, a default deny policy must be put into place for each package. Create `default-deny-all.yaml` inside `chart/templates/bigbang/networkpolicies` with the following details:
-```
+```yaml
 {{ if .Values.networkPolicies.enabled }}
 # Default deny everything to/from this namespace
 kind: NetworkPolicy
@@ -37,11 +37,10 @@ spec:
   egress: []
   ingress: []
 {{- end }}
-
 ```
 ### Default Allow <a name="default-allow"></a>
 For packages with more than one pod/deployment and those pods/deployments need to talk to each other, add a policy that allows all ingress/egress between pods in the namespace. Create `default-allow-ns.yaml` inside `chart/templates/bigbang/networkpolicies` with the following details:
-```
+```yaml
 {{- if .Values.networkPolicies.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -88,7 +87,7 @@ There are a few ways to determine if a network policy is blocking egress or ingr
 - Each networkPolicy template in the package will have an if statement checking for `networkPolicies.enabled` and will only be present when `enabled: true`
 
 For example, if the podinfo package needs to send information to istiod, add the following content to a file named `egress-istio-d.yaml`:
-```
+```yaml
 {{- if and .Values.networkPolicies.enabled .Values.istio.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -113,7 +112,7 @@ spec:
 ```
 
 Similarly, if prometheus needs access to podinfo, create an `ingress-monitoring-prometheus.yaml` file with the following contents:
-```
+```yaml
 {{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -142,7 +141,7 @@ spec:
 
 ### Additional Configuration <a name="additional-configuration"></a>
 Sample `chart/values.yaml` code at the package level:
-```
+```yaml
 # BigBang specific Network Policy Configuration
 networkPolicies:
   enabled: false
@@ -159,7 +158,7 @@ networkPolicies:
 - The ingressLabels portion supports packages that have an externally accessible UIs. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
 
 Example of a BigBang value configuration, `chart/templates/podinfo/values.yaml`, when adding a packing into BigBang with networkPolicies: 
-```
+```yaml
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   ingressLabels:
@@ -167,14 +166,13 @@ networkPolicies:
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
     {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
-
 ```
 
 - If the package needs to talk to the kube-api service (eg: operators) then the `controlPlaneCidr` value will be required.
   - The `controlPlaneCidr` will control egress to the kube-api and be wide open by default, but will inherit the `networkPolicies.controlPlaneCidr` value from BigBang so the range can be locked down.
 
 Sample `chart/templates/bigbang/networkpolicies/egress-kube-api.yaml`:
-```
+```yaml
 {{- if .Values.networkPolicies.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
