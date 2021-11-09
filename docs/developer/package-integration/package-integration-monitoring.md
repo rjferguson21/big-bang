@@ -102,6 +102,7 @@ git push
 ```
 
 Unfortunately, unless you add your dashboard to the [Monitoring Helm chart](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring), you must manually deploy it into Grafana.  We'll do this in when validating everything.
+
 ## Validation
 
 ### Setup
