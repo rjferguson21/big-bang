@@ -52,7 +52,7 @@ Changes to values can be tested in each environment using the named folders to o
 
 ## Monitor
 
-The following commands will help you monitor the progress of the Big Bang deployment.  Review the [flowchart](./1_overview.md#Diagram), if needed, to understand the progression.  Use the [Troubleshooting Guide](./b_troubleshooting.md) if you have failures.
+The following commands will help you monitor the progress of the Big Bang deployment.  Review the [flowchart](./overview.md#Diagram), if needed, to understand the progression.  Use the [Troubleshooting Guide](./troubleshooting.md) if you have failures.
 
 1. Verify Flux is running
 
