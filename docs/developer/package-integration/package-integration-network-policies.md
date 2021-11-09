@@ -5,6 +5,7 @@ To increase the overall security posture of Big Bang, network policies are put i
 1. [Prerequisites](#prerequisites)
 2. [Integration](#integration)
     - [Default Deny](#default-deny)
+    - [Default Allow](#default-allow)
     - [Was Something Important Blocked?](#something-important-blocked)
     - [Allowing Exceptions](#allowing-exceptions)
     - [Additional Configuration](#additional-configuration)
@@ -38,6 +39,29 @@ spec:
 {{- end }}
 
 ```
+### Default Allow <a name="default-allow"></a>
+For packages with more than one pod/deployment and those pods/deployments need to talk to each other, add a policy that allows all ingress/egress between pods in the namespace. Create `default-allow-ns.yaml` inside `chart/templates/bigbang/networkpolicies` with the following details:
+```
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-allow-ns
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+  egress:
+    - to:
+        - podSelector: {}
+{{- end }}
+```
+
 ### Was Something Important Blocked? <a name="something-important-blocked"></a>
 There are a few ways to determine if a network policy is blocking egress or ingress to or from a pod.
 - Test things from the pod's perspective using ssh/exec. See [this portion](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/keycloak_quickstart/docs/guides/deployment_scenarios/sso_quickstart.md#step-18-update-inner-cluster-dns-on-the-workload-cluster) of the keycloak quickstart for an example of how do to that.
