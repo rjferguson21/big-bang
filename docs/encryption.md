@@ -44,14 +44,14 @@ To setup Big Bang with SOPS, a key pair must be created.  The private key is use
 If you plan to utilize Big Bang provided samples, either in the template or in this repository, setup the following:
 
 1. Install [gpg](https://gnupg.org/download/)
-1. Import the [Big Bang development key](../hack/bigbang-dev.asc)
+2. Import the [Big Bang development key](../hack/bigbang-dev.asc)
    > Do **NOT** use this key for any deployment.  It is only for demonstration purposes.
 
    ```bash
    gpg --import <private key>
    ```
 
-1. Validate by decrypting and opening a sample file for editing
+3. Validate by decrypting and opening a sample file for editing
 
    ```bash
    sops <filename.enc.yaml>

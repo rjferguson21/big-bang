@@ -53,14 +53,14 @@ Configure `myvalues.yaml` to suit your needs.
 # Deploy the latest fluxv2 with Iron Bank images
 # For development, you can use flux from the internet using 'flux install`
 # Be aware, the internet version is likely newer than the Iron Bank version
-./hack/flux-install.sh
+./scripts/install_flux.sh
 
 # Apply a local version of the Big Bang chart
 # NOTE: This is the alternative to deploying a HelmRelease and having flux manage it, we use a local copy to avoid having to commit every change
 helm upgrade -i bigbang chart -n bigbang --create-namespace -f myvalues.yaml
 
-# It may take Big Bang up to 10 minutes to recognize your changes and start to deploy them.  This is based on the flux `interval` value set for polling.  You can force Big Bang to immediately check for changes by running the ./hack/sync.sh script.
-./hack/sync.sh
+# It may take Big Bang up to 10 minutes to recognize your changes and start to deploy them.  This is based on the flux `interval` value set for polling.  You can force Big Bang to immediately check for changes by running the ./scripts/sync.sh script.
+./scripts/sync.sh
 ```
 
 For more extensive development, use the [Development Guide](docs/c_development.md).
