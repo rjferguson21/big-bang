@@ -189,7 +189,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.11.3-bb.1"
+    tag: "1.11.3-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
