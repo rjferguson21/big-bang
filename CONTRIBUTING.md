@@ -63,7 +63,7 @@ helm upgrade -i bigbang chart -n bigbang --create-namespace -f myvalues.yaml
 ./scripts/sync.sh
 ```
 
-For more extensive development, use the [Development Guide](docs/c_development.md).
+For more extensive development, use the [Development Guide](./docs/developer).
 
 ## Testing Big Bang Development Changes
 
@@ -81,15 +81,11 @@ All routable endpoints BigBang deploys will use the TLD of `bigbang.dev` by defa
 
 ## Secrets & Certificates
 
-A __development only__ gpg key is provided at `bigbang-dev.asc` that is used to encrypt and decrypt the secrets in this Git repository (e.g. [hack/secrets](hack/secrets/).
-
-We cannot stress enough, __do not use this key to encrypt real secret data__.  It is a shared key meant to demonstrate the workflow of secrets management within Big Bang.
-
-Follow instructions in the [Big Bang encryption guide](docs/3_encryption.md) for how to encrypt and decrypt secrets.
+Follow instructions in the [Big Bang encryption guide](./docs/encryption.md) for how to encrypt and decrypt secrets.
 
 ## Merge requests process
 
 The merge request process is provided as an overview of the pipeline stages required to get a commit merged.
 
-Follow instruction in [CI-Workflow](docs/developer/ci-workflow.md) for specific details on the pipeline stages.
+Follow instruction in [CI-Workflow](./docs/developer/ci-workflow.md) for specific details on the pipeline stages.
 
