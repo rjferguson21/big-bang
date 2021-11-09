@@ -126,6 +126,26 @@ PLATFORM ONE LOGGING WARNING:
   {{- end }}
 {{- end }}
 
+{{- if and $.Values.promtail.enabled (eq .Values.logging.engine "plg") }}
+  {{- if not $.Values.loki.enabled }}
+PLATFORM ONE LOGGING ERROR:
+  You have enabled promtail but have not enabled loki.
+  {{- end }}
+  {{- if or $.Values.eckoperator.enabled $.Values.clusterAuditor.enabled}}  
+PLATFORM ONE LOGGING ERROR:
+  You have enabled promtail with eckoperator or clusterAuditor enabled.
+  Check that eckoperator and clusterAuditor are both disabled if promtail is enabled.
+  {{- end }}
+{{- end }}  
+
+{{- if and $.Values.loki.enabled (eq .Values.logging.engine "plg") }}
+  {{- if or $.Values.eckoperator.enabled $.Values.clusterAuditor.enabled}}  
+PLATFORM ONE LOGGING ERROR:
+  You have enabled loki with eckoperator or clusterAuditor enabled.
+  Check that eckoperator and clusterAuditor are both disabled if loki is enabled.
+  {{- end }}
+{{- end }}  
+
 {{- if $.Values.addons.mattermost.enabled }}
 Mattermost is enabled.
 {{- with .Values.addons.mattermost.database }}
