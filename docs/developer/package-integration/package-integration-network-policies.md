@@ -76,7 +76,7 @@ There are a few ways to determine if a network policy is blocking egress or ingr
   - storage database
     - When available, use a value from the helm values for the port
     - Otherwise, use the database default and allow egress to all IPs, except the cloud metadata IP.
-  - Istiod for sidecars
+  - Istiod for istio-proxy sidecars
 - Ingress exceptions to consider:
   - Kube-api
   - Prometheus
@@ -111,7 +111,7 @@ spec:
 {{- end }}
 ```
 
-Similarly, if prometheus needs access to podinfo, create an `ingress-monitoring-prometheus.yaml` file with the following contents:
+Similarly, if prometheus needs access to podinfo to scrape metrics, create an `ingress-monitoring-prometheus.yaml` file with the following contents:
 ```yaml
 {{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
 apiVersion: networking.k8s.io/v1
