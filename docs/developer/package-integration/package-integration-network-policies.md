@@ -157,7 +157,7 @@ networkPolicies:
 - Use the `enabled: false` code above in order to disable networkPolicy templates for the package. The networkPolicy templates will be enabled by default when deployed from BigBang because it will inherit the `networkPolicies.enabled` [value](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L102). 
 - The ingressLabels portion supports packages that have an externally accessible UIs. Values from BigBang will also be inherited in this portion to ensure traffic from the correct istio ingressgateway is whitelisted. 
 
-Example of a BigBang value configuration, `chart/templates/podinfo/values.yaml`, when adding a packing into BigBang with networkPolicies: 
+Example of a BigBang value configuration, `bigbang/templates/podinfo/values.yaml`, when adding a package into BigBang with networkPolicies: 
 ```yaml
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
