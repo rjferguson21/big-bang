@@ -144,4 +144,4 @@ In Prometheus, navigate to `Alerts`.  Verify that the `PrometheusRule` alerting 
 
 Open `https://grafana.bigbang.dev` and select `Create > Import` on the left toolbar.  Upload the `.json` file(s) located in the `dashboards` directory of your repo.  Validate that they are successfully showing data for your package.
 
-> If you do not have a dashboard, you can create your own using `Create > Dashboard`, adding a panel, and querying data from your package.
+> If you do not have a dashboard, you can create your own using `Create > Dashboard`, adding a panel, and querying custom data from your package or general data about your pods (e.g. container_processes).
