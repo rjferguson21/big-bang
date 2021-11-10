@@ -1,4 +1,6 @@
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
-    ref: master
+    ref: evan.rush-master-patch-40185
     file: '/pipelines/bigbang.yaml'
+variables:
+  PIPELINE_BRANCH_NAME: evan.rush-master-patch-40185
