@@ -1041,4 +1041,3 @@ addons:
             cypress_url: "https://keycloak.bigbang.dev"
             cypress_username: "admin"
             cypress_password: "password"
-
