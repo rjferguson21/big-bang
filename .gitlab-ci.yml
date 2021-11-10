@@ -5,3 +5,4 @@ include:
 variables:
   PIPELINE_REPO_BRANCH: evan.rush-master-patch-40185
   FOO: bar
+  BAR: foo
