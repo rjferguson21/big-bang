@@ -50,10 +50,15 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
-      {{- tpl ($values.servers | default (list) | toYaml) $ | nindent 8 }}
-          tls:
-            credentialName: {{ $name }}-cert
-            mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+      {{- range $k, $v := $values.servers }}
+      - hosts:
+        {{ tpl ( $v.hosts | default (list) | toYaml) $ }}
+        port: 
+        {{- tpl ( $v.port | default (list) | toYaml) $ | nindent 10 }}
+        tls:
+          credentialName: {{ $name }}-cert
+          mode: {{ dig "tls" "mode" "SIMPLE" $values }} 
+      {{- end }}     
 {{- end }}
 {{- end }}
 
