@@ -146,21 +146,36 @@ istio:
   gateways:
     public:
       ingressGateway: "public-ingressgateway"
-      hosts:
-      - "*.{{ .Values.domain }}"
       # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
       autoHttpRedirect:
         enabled: true
+      servers:
+      - hosts:
+        - "*.{{ .Values.domain }}"
+      #   port:
+      #     name: redis
+      #     number: 6379
+      #     protocol: TCP
+      # - hosts:
+      #   - "*.{{ .Values.domain }}"
+      #   port:
+      #     name: redis
+      #     number: 6380
+      #     protocol: TCP
       tls:
         key: ""
         cert: ""
     # private:
     #   ingressGateway: "private-ingressgateway"
     #   hosts:
-    #   - "*.{{ .Values.domain }}"
+    #   - "redis.bigbang.dev"
+    #   - port:
+    #       name: redis
+    #       number: 6379
+    #       protocol: TCP
     #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
     #   autoHttpRedirect:
-    #     enabled: true
+    #     enabled: false
     #   tls:
     #     key: ""
     #     cert: ""

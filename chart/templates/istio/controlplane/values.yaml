@@ -50,26 +50,10 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
-    - hosts:
-      {{- tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
-      {{- if ($values.port) }}
-        {{- range $name, $values := $values }}
-          {{- if eq $name "port"}}
-            {{- range $values }}
-      port:
-      {{- tpl ( . | default (dict) | toYaml) $ | nindent 8 }}
-            {{- end }}
-          {{- end }}
-        {{-  end }}
-      {{ else }}  
-      port:
-        name: https
-        number: 8443
-        protocol: HTTPS
-      {{- end }}  
-      tls:
-        credentialName: {{ $name }}-cert
-        mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+      {{- tpl ($values.servers | default (list) | toYaml) $ | nindent 8 }}
+          tls:
+            credentialName: {{ $name }}-cert
+            mode: {{ dig "tls" "mode" "SIMPLE" $values }}
 {{- end }}
 {{- end }}
 
