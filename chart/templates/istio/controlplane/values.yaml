@@ -52,12 +52,23 @@ gateways:
     servers:
       {{- range $k, $v := $values.servers }}
       - hosts:
+        {{- if $v.port }}
         {{ tpl ( $v.hosts | default (list) | toYaml) $ }}
         port: 
         {{- tpl ( $v.port | default (list) | toYaml) $ | nindent 10 }}
         tls:
           credentialName: {{ $name }}-cert
-          mode: {{ dig "tls" "mode" "SIMPLE" $values }} 
+          mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+        {{ else }}
+        {{- tpl ( $v.hosts | default (list) | toYaml) $ | nindent 8 }}
+        port:
+          name: https
+          number: 8443
+          protocol: HTTPS
+        tls:
+          credentialName: {{ $name }}-cert
+          mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+        {{- end }}
       {{- end }}     
 {{- end }}
 {{- end }}
