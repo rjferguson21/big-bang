@@ -393,15 +393,15 @@ addons:
       redis-bb:
         master:
           persistence:
-            size: 256Mi
+            size: 512Mi
         replica:
           persistence:
-            size: 256Mi
+            size: 512Mi
       redis:
         resources:
           requests:
             cpu: 50m
-            memory: 64Mi
+            memory: 256Mi
           limits: {}
       server:
         resources:
