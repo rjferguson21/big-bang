@@ -152,40 +152,30 @@ istio:
       servers:
       - hosts:
         - "*.{{ .Values.domain }}"
-      #   port:
-      #     name: redis
-      #     number: 6379
-      #     protocol: TCP
-      # - hosts:
-      #   - "redis2.bigbang.dev"
-      #   port:
-      #     name: redis
-      #     number: 6380
-      #     protocol: TCP
       tls:
         key: ""
         cert: ""
-    private:
-      ingressGateway: "private-ingressgateway"
-      # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-      autoHttpRedirect:
-        enabled: false
-      servers:
-      - hosts:
-        - "redis.bigbang.dev"
-        port:
-          name: redis
-          number: 6379
-          protocol: TCP
-      - hosts:
-        - "redis2.bigbang.dev"
-        port:
-          name: redis
-          number: 6380
-          protocol: TCP
-      tls:
-        key: ""
-        cert: ""
+    # private:
+    #   ingressGateway: "private-ingressgateway"
+    #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+    #   autoHttpRedirect:
+    #     enabled: false
+    #   servers:
+    #   - hosts:
+    #     - "example.bigbang.dev"
+    #     port:
+    #       name: example
+    #       number: 1234
+    #       protocol: TCP
+    #   - hosts:
+    #     - "example2.bigbang.dev"
+    #     port:
+    #       name: example2
+    #       number: 5678
+    #       protocol: TCP
+    #   tls:
+    #     key: ""
+        # cert: ""
     # passthrough:
     #   ingressGateway: "passthrough-ingressgateway"
     #   hosts:
