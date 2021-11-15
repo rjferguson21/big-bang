@@ -13,8 +13,8 @@
     Or [review password value within helm chart](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring/-/blob/main/chart/values.yaml#L708)
 
 2.  Once logged in and directed to the home page, click  the menu Dashboard and then select  Manage. \
-     ![Manage Dashboard Screenshot](grafana-dashboard-manage.webarchive)
+     ![Manage Dashboard Screenshot](docs/guides/prerequisites/grafana-dashboard-manage.webarchive)
 3.  From the Dashboard  select Kubernetes/Compute Resource / Pod . \
      This creates a dashboard to monitor the pod resource CPU Usage, CPU Throttling, CPU quota, Memory Usage, Memory Quota, etc. \
-     ![Pod Resource Grafana Screenshot](grafana-dashboard.webarchive)
+     ![Pod Resource Grafana Screenshot](docs/guides/prerequisites/grafana-dashboard.webarchive)
 
