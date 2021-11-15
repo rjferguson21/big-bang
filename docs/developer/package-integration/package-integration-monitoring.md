@@ -56,7 +56,7 @@ spec:
 
 If the upstream Helm chart provides you with a `ServiceMonitor` and `Service` for scraping metrics, verify that there is a conditional around each one to only deploy them if monitoring is enabled (e.g. `{{- if .Values.serviceMonitor.enabled }}`)
 
-If the upstream chart does **not** provide a `ServiceMonitor` and `Service` for scraping metrics, you will need to create one yourself using the [Prometheus instructions for running an exporter](https://github.com/prometheus-operator/prometheus-operator/blob/v0.52.0/Documentation/user-guides/running-exporters.md).
+If the upstream chart does **not** provide a `ServiceMonitor` and `Service` for scraping metrics, you will need to create one yourself using the [Prometheus instructions for running an exporter](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/running-exporters.md).
 
 > Any new resources should be placed in the `chart/templates/bigbang` folder.
 
@@ -89,7 +89,7 @@ Some examples of rules can be found in the [Big Bang monitoring chart](https://r
 
 ### Dashboards
 
-Dashboards are important for admins of your package to understand what is happening.  If there is already a ready-made Grafana dashboard for your package, you should use [Kpt](https://googlecontainertools.github.io/kpt/installation/) to sync it into the Git repository:
+Dashboards are important for admins of your package to understand what is happening. Some packages or maintainers provide grafana dashboards upstream, otherwise you can search [Grafana's Dashboard Repository](https://grafana.com/grafana/dashboards/) for a relevant Dashboard. If there is already a ready-made Grafana dashboard for your package provided upstream, you should use [Kpt](https://googlecontainertools.github.io/kpt/installation/) to sync it into the Git repository:
 
 ```shell
 # There isn't a dashboard for podinfo, so we use flux as an example here
