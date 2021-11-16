@@ -1,5 +1,6 @@
 domain: bigbang.dev
 
+# empty line commit to push ci
 sso:
   # LetsEncrypt certificate authority
   certificate_authority: |
