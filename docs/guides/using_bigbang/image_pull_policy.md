@@ -17,7 +17,7 @@ In the meantime we have begun to document the package overrides required in prep
 | Elasticsearch / Kibana | `IfNotPresent` | <pre lang="yaml"> logging:<br>  values:<br>    imagePullPolicy: IfNotPresent</pre> |
 | ECK Operator | `IfNotPresent` | <pre lang="yaml">eckoperator:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
 | Fluentbit | `Always` | <pre lang="yaml">fluentbit:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
-| Monitoring | 'Overrides'  | <pre lang="yaml">kube-state-metrics:<br>  image:<br>    pullPolicy:Override :<br>    </pre> |
+| Monitoring | 'Overrides'  | <pre lang="yaml">kube-state-metrics:<br>  image:<br>    pullPolicy:Override <br>    </pre>  <pre lang="yaml">kube-state-metrics </pre>|
 | Twistlock | `IfNotPresent` | <pre lang="yaml">twistlock:<br>  values:<br>    console:<br>      image:<br>        imagePullPolicy: IfNotPresent</pre>  |
 | ArgoCD | Varies | <pre lang="yaml">addons:<br>  argocd:<br>    values:<br>      global:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      controller:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      dex:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      redis-bb:<br>        image:<br>          pullPolicy: IfNotPresent<br>      server:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      repoServer:<br>        image:<br>          imagePullPolicy: IfNotPresent</pre> |
 | Authservice | `IfNotPresent` | <pre lang="yaml">addons:<br>  authservice:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> |
