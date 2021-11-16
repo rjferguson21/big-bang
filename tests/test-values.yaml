@@ -123,52 +123,63 @@ gatekeeper:
         cpu: 100m
         memory: 256Mi
       limits: {}
-      violations:
-        allowedDockerRegistries:
-          enabled: false
-          enforcementAction: deny
-        allowedFlexVolumes:
-          enabled: false
-          enforcementAction: deny
-        allowedHostFilesystem:
-          enabled: false
-          enforcementAction: deny
-        allowedIPs:
-          enabled: false
-          enforcementAction: deny
-        allowedProcMount:
-          enabled: false
-          enforcementAction: deny
-        bannedImageTags:
-          enabled: false
-          enforcementAction: deny
-        hostNetworking:
-          enabled: false
-          enforcementAction: deny
-        httpsOnly:
-          enabled: false
-          enforcementAction: deny
-        noHostNamespace:
-          enabled: false
-          enforcementAction: deny
-        noPrivilegedContainers:
-          enabled: false
-          enforcementAction: deny
-        noSysctls:
-          enabled: false
-          enforcementAction: deny
-        restrictedTaint:
-          enabled: false
-          enforcementAction: deny
-        selinuxPolicy:
-          enabled: false
-          enforcementAction: deny
-        uniqueIngressHost:
-          enabled: false
-          enforcementAction: deny
-        volumeTypes:
-          enabled: false
-          enforcementAction: deny
+
+    violations:
+      allowedCapabilities:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to not drop capabilities
+          - istio-system/lb-port-.*
+      allowedDockerRegistries:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to pull from public repos
+          - istio-system/lb-port-.*
+      allowedSecCompProfiles:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have an undefined defined seccomp
+          - istio-system/lb-port-.*
+      allowedUsers:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to run as any user/group
+          - istio-system/lb-port-.*
+      containerRatio:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined limits/requests
+          - istio-system/lb-port-.*
+      hostNetworking:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to mount host ports
+          - istio-system/lb-port-.*
+      noBigContainers:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined limits/requests
+          - istio-system/lb-port-.*
+      noPrivilegedEscalation:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined security context
+          - istio-system/lb-port-.*
+      readOnlyRoot:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to mount filesystems read/write
+          - istio-system/lb-port-.*
+      requiredLabels:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer pods to not have required labels
+          - istio-system/svclb-.*
+      requiredProbes:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to not have readiness/liveness probes
+          - istio-system/lb-port-.*
     bbtests:
       # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
       # https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/issues/133
@@ -435,7 +446,7 @@ addons:
       enabled: false
       client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-gitlab
     flux:
-      timeout: 30m
+      timeout: 20m
     values:
       global:
         rails:
