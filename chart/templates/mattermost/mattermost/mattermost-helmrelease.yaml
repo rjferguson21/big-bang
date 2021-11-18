@@ -49,7 +49,7 @@ spec:
     {{- end }}
     {{- end }}
 
-    {{- if and .Values.addons.mattermost.elasticsearch.enabled .Values.logging.enabled .Values.logging.engine "efk" }}
+    {{- if and .Values.addons.mattermost.elasticsearch.enabled .Values.logging.enabled }}
     - name: ek
       namespace: {{ $.Release.Namespace }}
     {{- end }}

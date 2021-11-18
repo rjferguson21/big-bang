@@ -1,4 +1,4 @@
-{{- if and (not .Values.offline) (and .Values.logging.enabled .Values.loki.enabled (eq .Values.logging.engine "plg")) }}
+{{- if and (not .Values.offline) .Values.loki.enabled }}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:

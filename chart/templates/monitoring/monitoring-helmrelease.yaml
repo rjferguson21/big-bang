@@ -52,5 +52,9 @@ spec:
     - name: authservice
       namespace: {{ .Release.Namespace }}
   {{- end }}
+  {{- if .Values.loki.enabled }}
+    - name: loki
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
   {{- end }}
 {{- end }}

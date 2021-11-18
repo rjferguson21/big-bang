@@ -1,4 +1,4 @@
-{{- if and (or .Values.eckoperator.enabled .Values.logging.enabled .Values.clusterAuditor.enabled) (eq .Values.logging.engine "efk") }}
+{{- if .Values.eckoperator.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.eckoperator "name" "eck-operator" "defaults" (include "bigbang.defaults.eck-operator" .)) }}
 {{- end }}
 

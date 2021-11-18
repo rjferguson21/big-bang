@@ -1,4 +1,4 @@
-{{- if and (not .Values.offline) .Values.clusterAuditor.enabled .Values.logging.enabled (eq .Values.logging.engine "efk") }}
+{{- if and (not .Values.offline) .Values.clusterAuditor.enabled }}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:

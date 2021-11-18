@@ -1,5 +1,5 @@
 {{- $fluxSettingsClusterAuditor := merge .Values.clusterAuditor.flux .Values.flux -}}
-{{- if and .Values.clusterAuditor.enabled .Values.logging.enabled (eq .Values.logging.engine "efk") }}
+{{- if .Values.clusterAuditor.enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:

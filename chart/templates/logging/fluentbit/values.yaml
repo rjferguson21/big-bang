@@ -3,12 +3,10 @@
 {{- end }}
 
 {{- define "bigbang.defaults.fluentbit" -}}
-{{- if and (.Values.logging.enabled) (eq .Values.logging.engine "efk") }}
 elasticsearch:
   host: "logging-ek-es-http"
   password:
     secret: "logging-ek-es-elastic-user"
-{{- end }}
 
 imagePullSecrets:
   - name: private-registry

@@ -126,7 +126,7 @@ PLATFORM ONE LOGGING WARNING:
   {{- end }}
 {{- end }}
 
-{{- if and $.Values.promtail.enabled (eq .Values.logging.engine "plg") }}
+{{- if $.Values.promtail.enabled }}
   {{- if not $.Values.loki.enabled }}
 PLATFORM ONE LOGGING ERROR:
   You have enabled promtail but have not enabled loki.
@@ -138,7 +138,7 @@ PLATFORM ONE LOGGING ERROR:
   {{- end }}
 {{- end }}  
 
-{{- if and $.Values.loki.enabled (eq .Values.logging.engine "plg") }}
+{{- if $.Values.loki.enabled }}
   {{- if or $.Values.eckoperator.enabled $.Values.clusterAuditor.enabled}}  
 PLATFORM ONE LOGGING ERROR:
   You have enabled loki with eckoperator or clusterAuditor enabled.

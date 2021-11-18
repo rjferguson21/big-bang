@@ -198,12 +198,8 @@ gatekeeper:
           - name: "{{ .Chart.Name }}-kube-cache"
             emptyDir: {}
 
-eckoperator:
-  enabled: true
-
 logging:
   enabled: true
-  engine: efk
   sso:
     enabled: false
     client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-kibana
@@ -271,12 +267,6 @@ fluentbit:
         envs:
           fluent_host: "http://{{ include \"fluent-bit.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
           desired_version: "{{ .Values.image.tag }}"
-          
-promtail:
-  enabled: false
-
-loki:
-  enabled: false
 
 monitoring:
   enabled: true

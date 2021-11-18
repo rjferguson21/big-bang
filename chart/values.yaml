@@ -317,20 +317,15 @@ gatekeeper:
 # ----------------------------------------------------------------------------------------------------------------------
 # Logging
 #
-# efk stack depends on ek, eckoperator, and fluentbit packages
-# plg stack depends on promtail, loki, and monitoring packages
 logging:
+  # -- Toggle deployment of Logging (EFK).
   enabled: true
-  # -- Logging engine of choice. Supported values are 'efk' or 'plg'. Elasticsearch Fluentbit Kibana or Promtail Loki Grafana respectively.
-  # -- Setting to 'plg' will auto disable EFK packages and settings.
-  engine: efk
-
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
     tag: "0.1.23-bb.0"
 
-  # -- Flux reconciliation overrides specifically for the elasticsearch-kibana Package
+  # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
     timeout: 20m
 
@@ -393,6 +388,10 @@ fluentbit:
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
 
+# -- BETA support of promtail/loki logging stack
+# -- To run with promtail and loki, you need to:
+# --   disable: logging/eckoperator/fluentbit/clusterauditor
+# --   enable: promtail/loki
 promtail:
   # -- Toggle deployment of Promtail.
   enabled: false
@@ -437,7 +436,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.17"
+    tag: "14.0.0-bb.18"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:

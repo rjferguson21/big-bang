@@ -71,6 +71,9 @@ anchore:
 kiali:
   enabled: {{ .Values.kiali.enabled }}
 
+loki:
+  enabled: {{ .Values.loki.enabled }}
+
 global:
   imagePullSecrets:
   - name: private-registry
@@ -84,7 +87,7 @@ grafana:
     - private-registry
 
   additionalDataSources:
-  {{- if and (.Values.logging.enabled) (eq .Values.logging.engine "plg") }}
+  {{- if .Values.loki.enabled }}
   - name: Loki
     type: loki
     url: http://logging-loki.logging.svc.cluster.local:3100
@@ -118,7 +121,7 @@ grafana:
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
     
-  {{- if and (.Values.logging.enabled) (eq .Values.logging.engine "plg") }}    
+  {{- if and .Values.loki.enabled .Values.promtail.enabled }}
   plugins:
     - grafana-piechart-panel
   {{- end }}

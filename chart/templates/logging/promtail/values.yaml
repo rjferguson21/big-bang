@@ -1,4 +1,4 @@
-{{- if and .Values.logging.enabled .Values.promtail.enabled (eq .Values.logging.engine "plg") }}
+{{- if .Values.promtail.enabled }}
 {{- if eq .Values.loki.enabled false }}{{- fail "loki must be enabled if promtail is enabled" }}{{- end }}
 {{- include "values-secret" (dict "root" $ "package" .Values.promtail "name" "promtail" "defaults" (include "bigbang.defaults.promtail" .)) }}
 {{- end }}
