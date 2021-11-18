@@ -1,22 +1,18 @@
-# Package Owner Merge Request
+# Package Merge Request
 
 ## Package Changes
 
-What package changes are included with this merge request? The more detail here the better! 
+<Describe Package changes here>
 
-**Links to all MRs that are associated with this change are required**.
+### Package MR
 
-If the package is set up for releases, also link the package release page for the new tag here.
+<Link to Package MR here>
 
-## Additional Details
+### For Issue
 
-If possible, provide additional details that will help with the merge request.
+Closes <link to issue here>
 
-Known issues or expected conflicts?
 
-Also, include any issues closed with "Closes #ISSUE_NUMBER". See example:
-
-Closes #ISSUE_NUMBER
 
 Add any labels for affected packages so that they are deployed in CI. See example:
 
