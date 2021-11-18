@@ -27,4 +27,4 @@ Once it is ready for review switch the status and assign reviewers:
 
 /label ~status::review
 
-/reviewer @micah.nagel @ryan.j.garcia @BrandenCobb 
+/reviewer @reviewer1 @reviewer2
