@@ -157,10 +157,17 @@ istio:
     # private:
     #   ingressGateway: "private-ingressgateway"
     #   hosts:
-    #   - "*.{{ .Values.domain }}"
+    #   - "example.bigbang.dev"
+    #   ports:
+    #     - name: tls-2
+    #       number: 1234
+    #       protocol: TCP
+    #     - name: tls
+    #       number: 5678
+    #       protocol: TCP
     #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
     #   autoHttpRedirect:
-    #     enabled: true
+    #     enabled: false
     #   tls:
     #     key: ""
     #     cert: ""
@@ -323,7 +330,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.1.22-bb.0"
+    tag: "0.1.23-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -377,7 +384,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.16.6-bb.1"
+    tag: "0.19.3-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -485,7 +492,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.6.8-bb.10"
+      tag: "3.6.8-bb.11"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -529,7 +536,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.17"
+      tag: "0.4.0-bb.18"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -700,7 +707,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "34.1.0-bb.4"
+      tag: "34.1.0-bb.5"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -765,7 +772,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.9"
+      tag: "9.6.3-bb.10"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
