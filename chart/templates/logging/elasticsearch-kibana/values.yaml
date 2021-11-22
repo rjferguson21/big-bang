@@ -1,4 +1,4 @@
-{{- if .Values.logging.enabled }}
+{{- if or .Values.logging.enabled .Values.clusterAuditor.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.logging "name" "ek" "defaults" (include "bigbang.defaults.logging" .)) }}
 {{- end }}
 

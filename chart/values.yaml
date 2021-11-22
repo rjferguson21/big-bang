@@ -396,9 +396,6 @@ fluentbit:
   postRenderers: []
 
 # -- BETA support of promtail/loki logging stack
-# -- To run with promtail and loki, you need to:
-# --   disable: logging/eckoperator/fluentbit/clusterauditor
-# --   enable: promtail/loki
 promtail:
   # -- Toggle deployment of Promtail.
   enabled: false
@@ -422,7 +419,7 @@ loki:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/loki.git
     path: "./chart"
-    tag: "2.5.1-bb.1"
+    tag: "2.5.1-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Loki Package
   flux: {}
