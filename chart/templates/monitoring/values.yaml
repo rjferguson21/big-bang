@@ -121,7 +121,7 @@ grafana:
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
     
-  {{- if and .Values.loki.enabled .Values.promtail.enabled }}
+  {{- if .Values.loki.enabled }}
   plugins:
     - grafana-piechart-panel
   {{- end }}
