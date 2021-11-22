@@ -4,7 +4,7 @@ We have to do it this way because ownership of "istio.enabled" is owned by the c
   we get to simplify the api space of BigBang just a little bit more.
 */ -}}
 {{- $istio := .Values.loki.values.istio | default dict }}
-{{- $istioInjection := "disabled" }}
+{{- $istioInjection := "enabled" }}
 {{- if and (hasKey $istio "enabled") (not $istio.enabled) }}
 {{- $istioInjection = "disabled" }}
 {{- end }}
