@@ -1,5 +1,6 @@
 {{- $fluxSettingsPromtail := merge .Values.promtail.flux .Values.flux -}}
 {{- if .Values.promtail.enabled }}
+{{- if eq .Values.loki.enabled false }}{{- fail "loki must be enabled if promtail is enabled" }}{{- end }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
