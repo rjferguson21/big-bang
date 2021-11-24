@@ -441,7 +441,7 @@ sudo wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh 
 # exit ssh and then reconnect so you can use docker as non-root
 ```
 
-### Setting imagePullSecrets on the cluster with k3d
+### Setting an imagePullSecret on the cluster with k3d
 
 
 **_This methodology is not recommended_**
