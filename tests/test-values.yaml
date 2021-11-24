@@ -414,7 +414,7 @@ addons:
       bbtests:
         # TODO: Disabled pending resolution of some "timing?" issues
         # https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/issues/17
-        enabled: true
+        enabled: false
         cypress:
           artifacts: true
           envs:
