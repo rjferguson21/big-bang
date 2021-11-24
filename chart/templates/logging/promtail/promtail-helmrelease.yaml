@@ -42,11 +42,6 @@ spec:
     - name: loki
       namespace: {{ .Release.Namespace }}
 
-    {{- if  .Values.monitoring.enabled }}
-    - name: monitoring
-      namespace: {{ .Release.Namespace }}
-    {{- end }}
-
     {{- if  .Values.gatekeeper.enabled }}
     - name: gatekeeper
       namespace: {{ .Release.Namespace }}
