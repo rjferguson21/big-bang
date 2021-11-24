@@ -1,5 +1,4 @@
 {{- if and (not .Values.offline) .Values.promtail.enabled }}
-{{- if eq .Values.loki.enabled false }}{{- fail "loki must be enabled if promtail is enabled" }}{{- end }}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:
