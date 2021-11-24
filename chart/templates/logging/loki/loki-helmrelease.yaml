@@ -52,4 +52,3 @@ spec:
       namespace: {{ .Release.Namespace }}
     {{- end }}
   {{- end }}
-{{- end }}
