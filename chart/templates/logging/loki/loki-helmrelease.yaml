@@ -37,13 +37,10 @@ spec:
       kind: Secret
       valuesKey: "overlays"
 
-  {{- if or .Values.gatekeeper.enabled .Values.istio.enabled .Values.monitoring.enabled }}
+  {{/* loki _always_ depend on .Values.monitoring being enabled, so can assume they exist here */}}
   dependsOn:
-
-    {{- if  .Values.monitoring.enabled }}
     - name: monitoring
       namespace: {{ .Release.Namespace }}
-    {{- end }}
 
     {{- if  .Values.gatekeeper.enabled }}
     - name: gatekeeper
