@@ -177,7 +177,7 @@ example:    1.2.3-bb.0
 First is to add the secret manually using the shell:
 
    ```shell
-   kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
+   kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> --namespace=<your-namespace>
    ```
 The second is to create a yaml file containing the secret and apply it during a helm install.  In this example the file name is "reg-creds.yaml"
 
