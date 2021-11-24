@@ -86,8 +86,8 @@ grafana:
     pullSecrets:
     - private-registry
 
-  additionalDataSources:
   {{- if .Values.loki.enabled }}
+  additionalDataSources:
   - name: Loki
     type: loki
     url: http://logging-loki.logging.svc.cluster.local:3100
