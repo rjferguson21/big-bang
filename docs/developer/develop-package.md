@@ -58,6 +58,29 @@ Package is the term we use for an application that has been prepared to be deplo
        - name: private-registry
    ```
 
+1. In some instances you may wish to manually create a private-registry secret in the namespace or during a helm deployment.  There are a couple of ways to do this:
+
+First is to add the secret manually using the shell:
+
+   ```shell
+   kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
+   ```
+The second is to create a yaml file containing the secret and apply it during a helm install.  In this example the file name is "reg-creds.yaml"
+
+create the file with the secret contents:
+   ```yaml
+   registryCredentials:
+     registry: registry1.dso.mil
+     username: ""
+     password: ""
+     email: ""
+   ```
+
+and then include a reference to your file during your helm install command by adding
+   ```shell
+   -f reg-creds.yaml
+   ```
+
 1. Add a VirtualService if your application has a back-end API or a front-end GUI. Create the VirtualService in the sub-directory  "chart/templates/bigbang/VirtualService.yaml". You will need to manually create the "bigbang" directory. It is convenient to copy VirtualService code from one of the other Packages and then modify it. You should be able to load the application in your browser if all the configuration is correct.
 
 1. Add NetworkPolices templates in the sub-directory "chart/templates/bigbang/networkpolicies/*.yaml". The intent is to lock down all ingress and egress traffic except for what is required for the application to function properly. Start with a deny-all policy and then add additional policies to open traffic as needed. Refer to the other Packages code for examples. The [Gitlab package](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/tree/main/chart/templates/bigbang/networkpolicies) is a good/complete example.
