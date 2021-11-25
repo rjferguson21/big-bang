@@ -363,9 +363,7 @@ twistlock:
 # Addons are toggled based on labels in CI
 addons:
   argocd:
-    flux:
-      timeout: 20m
-    enabled: true
+    enabled: false
     sso:
       enabled: false
       client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
