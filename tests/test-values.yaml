@@ -70,8 +70,6 @@ istio:
         key: "" # Gets added via chart/ingress-certs.yaml
         cert: "" # Gets added via chart/ingress-certs.yaml
   values:
-    bbtests:
-      enabled: false
     kiali:
       dashboard:
         auth:
