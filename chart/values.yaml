@@ -322,6 +322,33 @@ gatekeeper:
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
+# Kyverno
+#
+kyverno:
+  # -- Toggle deployment of Kyverno.
+  enabled: true
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno
+    path: "./chart"
+    # tag: ""
+    branch: "828-bb-package"
+
+  # -- Flux reconciliation overrides specifically for the Kyverno Package
+  flux:
+    install:
+      crds: CreateReplace
+    upgrade:
+      crds: CreateReplace
+
+  # -- Values to passthrough to the gatekeeper chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno.git
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 # Logging
 #
 logging:

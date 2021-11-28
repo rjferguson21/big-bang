@@ -1,0 +1,18 @@
+{{- if .Values.kyverno.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.kyverno "name" "kyverno" "defaults" (include "bigbang.defaults.kyverno" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.kyverno" -}}
+image:
+  pullSecrets:
+  - name: private-registry
+
+serviceMonitor:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicy:
+  enabled: {{ .Values.networkPolicies.enabled }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+{{- end -}}
