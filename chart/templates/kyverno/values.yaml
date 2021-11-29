@@ -8,10 +8,10 @@ image:
   - name: private-registry
 
 serviceMonitor:
-  enabled: {{ .Values.monitoring.enabled }}
+  enabled: false
 
 networkPolicy:
-  enabled: {{ .Values.networkPolicies.enabled }}
+  enabled: false
 
 istio:
   enabled: {{ .Values.istio.enabled }}
