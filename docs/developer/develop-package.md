@@ -172,16 +172,16 @@ example:    1.2.3-bb.0
 
 
 ### Private registry secret creation
-1. In some instances you may wish to manually create a private-registry secret in the namespace or during a helm deployment.  There are a couple of ways to do this:
+In some instances you may wish to manually create a private-registry secret in the namespace or during a helm deployment.  There are a couple of ways to do this:
 
-First is to add the secret manually using the shell:
+1. The first way is to add the secret manually using kubectl. This method is useful for standalone package testing/development.
 
    ```shell
    kubectl create secret docker-registry private-registry --docker-server="https://registry1.dso.mil" --docker-username='Username' --docker-password="CLI secret" --docker-email=<your-email> --namespace=<package-namespace>
    ```
-The second is to create a yaml file containing the secret and apply it during a helm install.  In this example the file name is "reg-creds.yaml"
+2. The second is to create a yaml file containing the secret and apply it during a helm install. This method is applicable when installing your new package as part of the Big Bang chart. In this example the file name is "reg-creds.yaml"
 
-create the file with the secret contents:
+Create the file with the secret contents:
    ```yaml
    registryCredentials:
      registry: registry1.dso.mil
@@ -190,7 +190,7 @@ create the file with the secret contents:
      email: ""
    ```
 
-and then include a reference to your file during your helm install command by adding
+Then include a reference to your file during your helm install command by adding the below `-f` to your Big Bang install command:
    ```shell
    -f reg-creds.yaml
    ```
