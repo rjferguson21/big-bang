@@ -559,8 +559,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
-      tag: ""
-      branch: "minio-communications-update"
+      tag: "4.2.3-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Minio Operator Package
     flux: {}
@@ -577,7 +576,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.2.3-bb.7"
+      tag: "minio-communications-update"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
