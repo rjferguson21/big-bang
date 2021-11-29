@@ -50,7 +50,7 @@ flux:
     cleanupOnFail: false
 
 networkPolicies:
-  enabled: true
+  enabled: false
   controlPlaneCidr: 172.16.0.0/12
 
 istio:
