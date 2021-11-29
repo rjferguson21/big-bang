@@ -197,15 +197,13 @@ gatekeeper:
               name: "{{ .Chart.Name }}-test-config"
           - name: "{{ .Chart.Name }}-kube-cache"
             emptyDir: {}
+
 kyverno:
   enabled: true
   values:
     replicas: 1
-    image:
-      pullSecrets:
-      - name: private-registry
     bbtests:
-      enabled: false
+      enabled: true
       scripts:
         image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
         additionalVolumeMounts:
@@ -215,8 +213,8 @@ kyverno:
           - name: "{{ .Chart.Name }}-test-config"
             configMap:
               name: "{{ .Chart.Name }}-test-config"
-    networkPolicy:
-      enabled: false
+    networkPolicies:
+      enabled: true
 
 logging:
   enabled: true
