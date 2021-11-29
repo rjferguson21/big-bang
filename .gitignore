@@ -6,7 +6,6 @@ certs/
 .terraform
 *.pem
 *rke2.yaml
-thisfiledoesntexist.nope
 
 *tfstate*
 *terraform.lock*
