@@ -326,7 +326,7 @@ gatekeeper:
 #
 kyverno:
   # -- Toggle deployment of Kyverno.
-  enabled: true
+  enabled: false
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno
     path: "./chart"
