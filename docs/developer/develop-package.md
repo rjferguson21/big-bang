@@ -178,7 +178,7 @@ In some instances you may wish to manually create a private-registry secret in t
    ```shell
    kubectl create secret docker-registry private-registry --docker-server="https://registry1.dso.mil" --docker-username='Username' --docker-password="CLI secret" --docker-email=<your-email> --namespace=<package-namespace>
    ```
-2. The second is to create a yaml file containing the secret and apply it during a helm install. This method is applicable when installing your new package as part of the Big Bang chart. In this example the file name is "reg-creds.yaml"
+2. The second is to create a yaml file containing the secret and apply it during a helm install. This method is applicable when installing your new package as part of the Big Bang chart. In this example the file name is "reg-creds.yaml":
 
 Create the file with the secret contents:
    ```yaml
