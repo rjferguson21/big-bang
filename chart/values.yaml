@@ -340,7 +340,7 @@ kyverno:
     upgrade:
       crds: CreateReplace
 
-  # -- Values to passthrough to the gatekeeper chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno.git
+  # -- Values to passthrough to the kyverno chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno.git
   values: {}
 
   # -- Post Renderers.  See docs/postrenders.md
