@@ -170,7 +170,6 @@ Under Settings → Repository → Default Branch, ensure that main is selected.
 1. After the merge create a git tag following the charter convention of {UpstreamChartVersion}-bb.{BigBangVersion}. The tag should exactly match the chart version in the Chart.yaml.
 example:    1.2.3-bb.0
 
-
 ### Private registry secret creation
 In some instances you may wish to manually create a private-registry secret in the namespace or during a helm deployment.  There are a couple of ways to do this:
 
