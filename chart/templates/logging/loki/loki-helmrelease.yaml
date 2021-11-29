@@ -1,5 +1,5 @@
 {{- $fluxSettingsLoki := merge .Values.loki.flux .Values.flux -}}
-{{- if .Values.loki.enabled }}
+{{- if or .Values.loki.enabled .Values.promtail.enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -36,11 +36,12 @@ spec:
     - name: {{ .Release.Name }}-loki-values
       kind: Secret
       valuesKey: "overlays"
-
-  {{/* loki _always_ depend on .Values.monitoring being enabled, so can assume they exist here */}}
+  {{- if or .Values.monitoring.enabled .Values.gatekeeper.enabled .Values.istio.enabled }}
   dependsOn:
+    {{- if  .Values.monitoring.enabled }}
     - name: monitoring
       namespace: {{ .Release.Namespace }}
+    {{- end }}
 
     {{- if  .Values.gatekeeper.enabled }}
     - name: gatekeeper
@@ -52,3 +53,4 @@ spec:
       namespace: {{ .Release.Namespace }}
     {{- end }}
   {{- end }}
+{{- end }}

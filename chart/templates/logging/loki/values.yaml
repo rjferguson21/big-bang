@@ -1,4 +1,4 @@
-{{- if .Values.loki.enabled }}
+{{- if or .Values.loki.enabled .Values.promtail.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.loki "name" "loki" "defaults" (include "bigbang.defaults.loki" .)) }}
 {{- end }}
 
