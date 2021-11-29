@@ -50,7 +50,7 @@ flux:
     cleanupOnFail: false
 
 networkPolicies:
-  enabled: false
+  enabled: true
   controlPlaneCidr: 172.16.0.0/12
 
 istio:
@@ -808,7 +808,7 @@ addons:
         cypress:
           artifacts: true
           envs:
-            cypress_url: 'http://minio.bigbang.dev/login'
+            cypress_url: 'https://minio.bigbang.dev/login'
           secretEnvs:
             - name: cypress_secretkey
               valueFrom:
