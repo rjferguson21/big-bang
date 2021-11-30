@@ -11,23 +11,38 @@ Before integrating with Prometheus, you must identify the following:
    > Searching the Helm chart for `monitoring.coreos.com` will usually find any resources that support Prometheus
 - What path and port are used to scrape metrics on the application or exporter?
 - What services and/or pods are deployed that should be monitored?
+- Is there a pre-existing Grafana dashboard that can be leveraged?  If not, we will need to create one.
 
 ## Integration
 
+### Placeholder values
+
+The package requires placeholder values for whether the monitoring stack (e.g. Prometheus / Grafana) is enabled and what label to use for dashboards.  In `chart/values.yaml`, add placeholders for these:
+
+```yaml
+serviceMonitor:
+  enabled: false
+  ## Added by Big Bang
+  namespace: monitoring
+  dashboards:
+    label: grafana_dashboard
+```
+
+> In this case, we put the values under `serviceMonitor:` since it already exists in the upstream Helm chart. Otherwise, we would create `monitoring:` for the values
+
 ### Pass down values
 
-Big Bang passes down the `monitoring.enabled` value to packages to notify them if the Prometheus/Grafana stack is enabled.  Typically, the upstream chart will already have a value to enable the monitor.  If, the Helm chart does not have a value, create a new one called `monitoring.enabled` in the upstream Helm chart's `values.yaml`
+Big Bang needs to set the placeholders above to the appropriate values.  In addition, upstream charts may already have values related to monitoring that need to be set.
 
-> Remember to add a comment in `values.yaml` that this was added for Big Bang
-
-In `bigbang/templates/podinfo/values.yaml`, add the following to pass down the value from Big Bang to PodInfo.
+In `bigbang/templates/podinfo/values.yaml`, add the following to pass down the values from Big Bang to PodInfo.
 
 ```yaml
 serviceMonitor:
   enabled: {{ .Values.monitoring.enabled }}
+  namespace: monitoring
+  dashboards:
+    label: {{ dig "values" "grafana" "sidecar" "dashboards" "label" "grafana_dashboard" .Values.monitoring }}
 ```
-
-> The key used to turn on metrics varies by application.  Use `monitoring.enabled` if there is no key available.
 
 ### Dependency
 
@@ -46,15 +61,13 @@ spec:
       namespace: {{ .Release.Namespace }}
     {{- end }}
   {{- end }}
-
-
 ```
 
 > We previously had a dependency on Istio, which we leave in place in this example.
 
 ### Service Monitor
 
-If the upstream Helm chart provides you with a `ServiceMonitor` and `Service` for scraping metrics, verify that there is a conditional around each one to only deploy them if monitoring is enabled (e.g. `{{- if .Values.serviceMonitor.enabled }}`)
+If the upstream Helm chart provides you with a `ServiceMonitor` and `Service` for scraping metrics, verify that there is a conditional around each one to only deploy them if monitoring is enabled (e.g. `{{- if .Values.serviceMonitor.enabled }}` or `{{- if .Values.monitoring.enabled }}`)
 
 If the upstream chart does **not** provide a `ServiceMonitor` and `Service` for scraping metrics, you will need to create one yourself using the [Prometheus instructions for running an exporter](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/running-exporters.md).
 
@@ -89,19 +102,56 @@ Some examples of rules can be found in the [Big Bang monitoring chart](https://r
 
 ### Dashboards
 
-Dashboards are important for admins of your package to understand what is happening. Some packages or maintainers provide grafana dashboards upstream, otherwise you can search [Grafana's Dashboard Repository](https://grafana.com/grafana/dashboards/) for a relevant Dashboard. If there is already a ready-made Grafana dashboard for your package provided upstream, you should use [Kpt](https://googlecontainertools.github.io/kpt/installation/) to sync it into the Git repository:
+Dashboards are important for administrators to understand what is happening in your package and when action needs to be taken.
+
+1. Create a dashboard
+
+   Some packages or maintainers provide Grafana dashboards upstream, otherwise you can search [Grafana's Dashboard Repository](https://grafana.com/grafana/dashboards/) for a relevant Dashboard. If there is already a ready-made Grafana dashboard for your package provided upstream, you should use [Kpt](https://googlecontainertools.github.io/kpt/installation/) to sync it into the Git repository:
+
+   ```shell
+   # There isn't a dashboard for podinfo, so we use flux as an example here
+   kpt pkg get https://github.com/fluxcd/flux2.git//manifests/monitoring/grafana/dashboards@v0.9.1 chart/dashboards
+   ```
+
+   If you need to create your own dashboard, open Grafana and use `Create > Dashboard`.  Add a panel and setup the query to pull custom data from your package or general data about your pods (e.g. container_processes).  After you have saved your dashboard in Grafana, use `Share (icon) > Export` to save the dashboard to a .json file in `chart/dashboards`.  You can leave the `Export for sharing externally` slider off.
+
+1. We will store dashboards in a ConfigMap for Grafana's sidecar to parse.  Create a ConfigMapList in `chart/templates/bigbang/dashboards.yaml` to store all of the dashboards:
+
+   ```yaml
+   {{- $pkg := "podinfo" }}
+   {{- $files := .Files.Glob "dashboards/*.json" }}
+   {{- if and .Values.serviceMonitor.enabled $files }}
+   apiVersion: v1
+   kind: ConfigMapList
+   items:
+   {{- range $path, $fileContents := $files }}
+   {{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+   - apiVersion: v1
+     kind: ConfigMap
+     metadata:
+       name: {{ printf "%s-%s" $pkg $dashboardName | trunc 63 | trimSuffix "-" }}
+       namespace: {{ $.Values.serviceMonitor.namespace }}
+       labels:
+         {{- if $.Values.serviceMonitor.dashboards.label }}
+         {{ $.Values.serviceMonitor.dashboards.label }}: "1"
+         {{- end }}
+         app: {{ $pkg }}-grafana
+         {{- include (printf "%s.labels" $pkg) $ | nindent 6 }}
+     data:
+       {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+   {{- end }}
+   {{- end }}
+   ```
+
+   > Podinfo's Helm chart already had a key for monitoring named `serviceMonitor`.  You may need to use a different key or create one named `monitoring`.
+
+1. Commit your dashboard files:
 
 ```shell
-# There isn't a dashboard for podinfo, so we use flux as an example here
-kpt pkg get https://github.com/fluxcd/flux2.git//manifests/monitoring/grafana/dashboards@v0.9.1 dashboards
-
-# Commit
 git add -A
-git commit -m "feat: Grafana dashboard"
+git commit -m "feat: Grafana dashboards"
 git push
 ```
-
-Unfortunately, unless you add your dashboard to the [Monitoring Helm chart](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring), you must manually deploy it into Grafana.  We'll do this in when validating everything.
 
 ## Validation
 
@@ -142,6 +192,4 @@ In Prometheus, navigate to `Alerts`.  Verify that the `PrometheusRule` alerting 
 
 ### Dashboards
 
-Open `https://grafana.bigbang.dev` and select `Create > Import` on the left toolbar.  Upload the `.json` file(s) located in the `dashboards` directory of your repo.  Validate that they are successfully showing data for your package.
-
-> If you do not have a dashboard, you can create your own using `Create > Dashboard`, adding a panel, and querying custom data from your package or general data about your pods (e.g. container_processes).
+Open `https://grafana.bigbang.dev` and navigate to `Dashboards > Manage`.  Make sure your dashboards are listed.  Select each one and verify that it is working correctly.
