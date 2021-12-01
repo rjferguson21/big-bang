@@ -115,11 +115,41 @@ Dashboards are important for administrators to understand what is happening in y
    Otherwise create a new folder for your app [within the monitoring package at](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring/-/tree/main/chart/dashboards) `chart/dashboards/APP_NAME/` and upload the JSON file(s) from Grafana's Repository.
    If you need to create your own dashboard, open Grafana and use `Create > Dashboard`.  Add a panel and setup the query to pull custom data from your package or general data about your pods (e.g. container_processes).  After you have saved your dashboard in Grafana, use `Share (icon) > Export` to save the dashboard to a .json file in `chart/dashboards`.  You can leave the `Export for sharing externally` slider off.
 
-1. Commit your dashboard files to the Monitoring package:
+1. We will store dashboards in a ConfigMap for Grafana's sidecar to parse.  Create a ConfigMapList in `chart/templates/bigbang/dashboards.yaml` to store all of the dashboards:
+
+   ```yaml
+   {{- $pkg := "podinfo" }}
+   {{- $files := .Files.Glob "dashboards/*.json" }}
+   {{- if and .Values.serviceMonitor.enabled $files }}
+   apiVersion: v1
+   kind: ConfigMapList
+   items:
+   {{- range $path, $fileContents := $files }}
+   {{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+   - apiVersion: v1
+     kind: ConfigMap
+     metadata:
+       name: {{ printf "%s-%s" $pkg $dashboardName | trunc 63 | trimSuffix "-" }}
+       namespace: {{ $.Values.serviceMonitor.namespace }}
+       labels:
+         {{- if $.Values.serviceMonitor.dashboards.label }}
+         {{ $.Values.serviceMonitor.dashboards.label }}: "1"
+         {{- end }}
+         app: {{ $pkg }}-grafana
+         {{- include (printf "%s.labels" $pkg) $ | nindent 6 }}
+     data:
+       {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+   {{- end }}
+   {{- end }}
+   ```
+
+   > Podinfo's Helm chart already had a key for monitoring named `serviceMonitor`.  You may need to use a different key or create one named `monitoring`.
+
+1. Commit your dashboard files:
 
 ```shell
 git add -A
-git commit -m "feat: APP_NAME Grafana dashboards"
+git commit -m "feat: Grafana dashboards"
 git push
 ```
 
