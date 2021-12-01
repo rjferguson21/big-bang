@@ -110,7 +110,7 @@ Dashboards are important for administrators to understand what is happening in y
 
    ```shell
    # There isn't a dashboard for podinfo, so we use flux as an example here
-   kpt pkg get https://github.com/fluxcd/flux2.git//manifests/monitoring/grafana/dashboards@v0.9.1 chart/dashboards/flux
+   kpt pkg get https://github.com/fluxcd/flux2.git//manifests/monitoring/grafana/dashboards@v0.9.1 chart/dashboards/
    ```
    Otherwise create a new folder for your app [within the monitoring package at](https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring/-/tree/main/chart/dashboards) `chart/dashboards/APP_NAME/` and upload the JSON file(s) from Grafana's Repository.
    If you need to create your own dashboard, open Grafana and use `Create > Dashboard`.  Add a panel and setup the query to pull custom data from your package or general data about your pods (e.g. container_processes).  After you have saved your dashboard in Grafana, use `Share (icon) > Export` to save the dashboard to a .json file in `chart/dashboards`.  You can leave the `Export for sharing externally` slider off.
