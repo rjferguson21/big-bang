@@ -9,7 +9,7 @@ In the meantime we have begun to document the package overrides required in prep
 | Package | Default | Value Override |
 |---|---|---|
 | Istio Controlplane | None | <pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
-| Istio Operator | `IfNotPresent` | <<pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
+| Istio Operator | `IfNotPresent` | <pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
 | Jaeger | `Always` | <pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
 | Kiali | `IfNotPresent` | <pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
 | Cluster Auditor | `Always` | <pre lang="yaml">imagePullPolicy: IfNotPresent</pre> |
