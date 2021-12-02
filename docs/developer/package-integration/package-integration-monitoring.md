@@ -112,6 +112,7 @@ Dashboards are important for administrators to understand what is happening in y
    # There isn't a dashboard for podinfo, so we use flux as an example here
    kpt pkg get https://github.com/fluxcd/flux2.git//manifests/monitoring/grafana/dashboards@v0.9.1 chart/dashboards/
    ```
+
    If you need to create your own dashboard, open Grafana and use `Create > Dashboard`.  Add a panel and setup the query to pull custom data from your package or general data about your pods (e.g. container_processes).  After you have saved your dashboard in Grafana, use `Share (icon) > Export` to save the dashboard to a .json file in `chart/dashboards`.  You can leave the `Export for sharing externally` slider off.
 
 1. We will store dashboards in a ConfigMap for Grafana's sidecar to parse.  Create a ConfigMapList in `chart/templates/bigbang/dashboards.yaml` to store all of the dashboards:
@@ -146,17 +147,18 @@ Dashboards are important for administrators to understand what is happening in y
 
 1. Commit your dashboard files:
 
-```shell
-git add -A
-git commit -m "feat: Grafana dashboards"
-git push
-```
+   ```shell
+   git add -A
+   git commit -m "feat: Grafana dashboards"
+   git push
+   ```
 
-1. If your package has Graduated status within BigBang you can instead add your Dashboards to the core monitoring package.
+1. If your package is being integrated as a supported application in BigBang, you can add your Dashboards to the core monitoring package.
 
    Create a new folder within `chart/dashboards/APP_NAME` and sync your JSON files for your dashboard(s) there, whether using KPT from a Github repo or individual files from Grafana's Dashboard Repository.
 
    Commit your dashboard files:
+
    ```shell
    git add -A
    git commit -m "feat: Adding APP_NAME Grafana Dashboards"
