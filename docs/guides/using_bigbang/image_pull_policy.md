@@ -1,6 +1,7 @@
 # ImagePullPolicy at Big Bang Level
 
-Big Bang is currently working to standardize the adoption of a global image pull policy so that customers can set a single value and have it passed to all packages. 
+Big Bang is currently working to standardize the adoption of a global image pull policy so that customers can set a single value and have it passed to all packages.
+
 The global image pull policy has been adopted in Big Bang for the core packages currently. In the Big Bang values.yaml file, a global parameter has been created to set the global image pull policy (`imagePullPolicy` in values) and it gets passed down to all core packages spec. The default value for this global policy is `IfNotPresent`.
 
 This work is not yet complete for addons, but should allow customers easier control over their global pull policy.
