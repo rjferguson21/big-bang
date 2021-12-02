@@ -113,6 +113,10 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
       # Twistlock Defenders need selinux option type spc_t
       - twistlock/twistlock-defender
       {{- end }}
+      {{- if .Values.promtail.enabled }}
+      # Promtail needs selinux option type spc_t
+      - logging/promtail
+      {{- end }}
   {{- end }}
 
   {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled .Values.monitoring.enabled .Values.promtail.enabled }}
