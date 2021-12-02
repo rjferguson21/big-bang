@@ -111,7 +111,7 @@ networkPolicies:
 
 # -- Global ImagePullPolicy value for all packages
 # Permitted values are: None, Always, IfNotPresent 
-ImagePullPolicy: {}
+ImagePullPolicy: IfNotPresent
 
 
 # ----------------------------------------------------------------------------------------------------------------------
