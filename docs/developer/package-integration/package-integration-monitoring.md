@@ -23,8 +23,10 @@ The package requires placeholder values for whether the monitoring stack (e.g. P
 serviceMonitor:
   enabled: false
   ## Added by Big Bang
-  namespace: monitoring
   dashboards:
+    # Namespace to put .json ConfigMap so Grafana sidecar will find it
+    namespace: ""
+    # Label to apply to dashboard so Grafana sidecar will find it
     label: grafana_dashboard
 ```
 
@@ -39,8 +41,8 @@ In `bigbang/templates/podinfo/values.yaml`, add the following to pass down the v
 ```yaml
 serviceMonitor:
   enabled: {{ .Values.monitoring.enabled }}
-  namespace: monitoring
   dashboards:
+    namespace: monitoring
     label: {{ dig "values" "grafana" "sidecar" "dashboards" "label" "grafana_dashboard" .Values.monitoring }}
 ```
 
@@ -130,7 +132,7 @@ Dashboards are important for administrators to understand what is happening in y
      kind: ConfigMap
      metadata:
        name: {{ printf "%s-%s" $pkg $dashboardName | trunc 63 | trimSuffix "-" }}
-       namespace: {{ $.Values.serviceMonitor.namespace }}
+       namespace: {{ default $.Release.Namespace $.Values.serviceMonitor.dashboards.namespace }}
        labels:
          {{- if $.Values.serviceMonitor.dashboards.label }}
          {{ $.Values.serviceMonitor.dashboards.label }}: "1"
