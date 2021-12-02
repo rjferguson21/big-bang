@@ -5,7 +5,7 @@ The global image pull policy has been adopted in Big Bang for the core packages 
 
 This work is not yet complete for addons, but should allow customers easier control over their global pull policy.
 
-We have also documented the package overrides required in preparation for this change in the table below.
+We have also documented the package overrides required if you want to set a single package/pod with a different pull policy than the global.
 
 # ImagePullPolicy per Package
 
