@@ -101,7 +101,7 @@ violations:  # Try to keep this in alpha order to make it easier to find keys
       {{- end }}
   {{- end }}
 
-  {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled }}
+  {{- if or .Values.fluentbit.enabled .Values.twistlock.enabled .Values.promtail.enabled }}
   selinuxPolicy:
     parameters:
       excludedResources:
