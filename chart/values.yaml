@@ -218,7 +218,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.26.0-bb.0"
+    tag: "2.27.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
@@ -772,7 +772,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "34.1.0-bb.5"
+      tag: "36.0.0-bb.0"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -837,7 +837,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.10"
+      tag: "9.6.3-bb.11"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
