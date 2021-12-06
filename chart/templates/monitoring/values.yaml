@@ -51,7 +51,7 @@ istio:
 alertmanager:
   alertmanagerSpec:
     # The operator performs a strategic merge to add our imagePullPolicy definition to the default containers
-    # NOTE: This functionality is not actively maintained upstream and may break without notice
+    # NOTE: This functionality is not actively maintained upstream and may not work in a future monitoring upgrade
     containers:
       - name: "alertmanager"
         imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -67,7 +67,7 @@ alertmanager:
 prometheus:
   prometheusSpec:
     # The operator performs a strategic merge to add our imagePullPolicy definition to the default containers
-    # NOTE: This functionality is not actively maintained upstream and may break without notice
+    # NOTE: This functionality is not actively maintained upstream and may not work in a future monitoring upgrade
     containers:
       - name: "prometheus"
         imagePullPolicy: {{ .Values.imagePullPolicy }}
