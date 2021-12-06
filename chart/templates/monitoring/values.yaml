@@ -86,6 +86,8 @@ grafana:
     pullPolicy: {{ .Values.imagePullPolicy }}
     pullSecrets:
     - private-registry
+  sidecar:
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
 
   {{- if .Values.loki.enabled }}
   additionalDataSources:
