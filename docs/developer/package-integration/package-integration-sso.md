@@ -12,7 +12,9 @@ The development environment can be set up in one of two ways:
 
 ### SSO Integration
 
-#### OIDC Example (GitLab)
+Based on the authentication protocol implemented by the package being integrated, either Security Access Markup Language (SAML) or OpenID (OIDC), follow the appropriate example below.
+
+#### OIDC
 For SSO integration using OIDC, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Once implemented, enabling SSO will auto-create any required secrets.
 
 ```yml
@@ -68,7 +70,48 @@ stringData:
 ```
 Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/gitlab/secret-sso.yaml)
 
-#### SAML Example (Sonarqube)
+#### SAML
+For SSO integration using SAML, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Once implemented, enabling SSO will auto-create any required secrets.
+
+```yml
+sonarqube:
+    sso:
+      enabled: true
+      client_id: "" ## want to add dummy data
+
+      # -- SSO login button label
+      provider_name: ""
+
+      # -- plaintext SAML sso certificate.
+      certificate: "MITCAYCBFyIEUjNBkqhkiG9w0BA"
+      login: jane.example
+      name: Jane Example
+      email: jane.example@myco.com
+
+      # -- (optional) group sso attribute.
+      group: group
+```
+In order to auto-generate secrets, additions must be made to `bigbang/chart/templates/<package>/values.yaml`. The yaml should include the following (be sure to replace `<package>` with the package name):
+
+```yml
+{{- if .Values.addons.<package>.sso.enabled }}
+<package>Properties:
+  <package>.auth.saml.enabled: {{ .Values.addons.<package>.sso.enabled }}
+  <package>.core.serverBaseURL: https://<package>.{{ $domainName }}
+  <package>.auth.saml.applicationId: {{ .Values.addons.<package>.sso.client_id }}
+  <package>.auth.saml.providerName: {{ .Values.addons.<package>.sso.provider_name | default .Values.addons.<package>.sso.label }}
+  <package>.auth.saml.providerId: https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}
+  <package>.auth.saml.loginUrl: https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/saml
+  <package>.auth.saml.certificate.secured: {{ .Values.addons.<package>.sso.certificate }}
+  <package>.auth.saml.user.login: {{ .Values.addons.<package>.sso.login | default "login" }}
+  <package>.auth.saml.user.name: {{ .Values.addons.<package>.sso.name | default "name" }}
+  <package>.auth.saml.user.email: {{ .Values.addons.<package>.sso.email | default "email" }}
+  {{- if .Values.addons.<package>.sso.group }}
+  <package>.auth.saml.user.group: {{ .Values.addons.<package>.sso.group }}
+  {{- end }}
+{{- end }}
+```
+Example: [Sonarqube](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/sonarqube/values.yaml#L32-47)
 
 ### AuthService Integration
 
