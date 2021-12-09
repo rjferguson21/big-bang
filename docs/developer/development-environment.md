@@ -422,14 +422,10 @@ sudo vim /etc/hosts
       ```
       kubectl edit configmap/coredns -n kube-system
       ```
-    - add hosts entry for Keycloak using one of the IPs for the agents (worker node)
+    - add NodeHosts entry for Keycloak using using the passthrough-ingressgateway service EXTERNAL-IP
       ```
       data:
         NodeHosts: |
-          172.20.0.2 k3d-k3s-default-server-0
-          172.20.0.3 k3d-k3s-default-agent-0
-          172.20.0.4 k3d-k3s-default-agent-1
-          172.20.0.5 k3d-k3s-default-agent-2
           172.18.0.2 k3d-k3s-default-server-0
           172.18.0.3 k3d-k3s-default-agent-0
           172.18.0.4 k3d-k3s-default-agent-1
@@ -442,6 +438,7 @@ sudo vim /etc/hosts
       ```
     - You might also need to restart the Package app pods before they can detect the new coredns config
     - Deploy Keycloak using the example dev config values ```docs/developer/example_configs/keycloak-dev-values.yaml```
+
 ### Amazon Linux 2
 
 Here are the configuration steps if you want to use a Fedora based instance. All other steps are similar to Ubuntu.
