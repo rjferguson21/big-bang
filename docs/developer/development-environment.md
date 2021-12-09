@@ -416,6 +416,27 @@ sudo vim /etc/hosts
           and select SOCKS v5
       1. Select ```Proxy DNS when using SOCKS v5```
 
+7. To be able to test SSO between BigBang Package apps and your own Keycloak instance deployed in the same cluster you will need to take some extra steps. For SSO OIDC to work the app pod from within the cluster must be able to reach ```keycloak.bigbang.dev```. When using a development k3d environment with the develompent TLS cert the public DNS for keycloak.bigbang.dev points to localhost IP (127.0.0.1). This means that from within pod containers your keycloak.bigbang.dev can't be found. Therefore the SSO will fail. The development hack to fix this is to edit the cluster coredns configmap and add a NodeHosts entry for Keycloak. 
+    - Edit the coredns configmap
+
+      ```
+      kubectl edit configmap/coredns -n kube-system
+      ```
+    - add hosts entry for Keycloak using one of the IPs for the agents (worker node)
+      ```
+      data:
+        NodeHosts: |
+          172.20.0.2 k3d-k3s-default-server-0
+          172.20.0.3 k3d-k3s-default-agent-0
+          172.20.0.4 k3d-k3s-default-agent-1
+          172.20.0.5 k3d-k3s-default-agent-2
+          172.20.0.3 keycloak.bigbang.dev
+      ```
+    - Restart the coredns pod so it can pick up the new config
+      ```
+      kubectl rollout restart deployment coredns -n kube-system
+      ```
+    - You might need to restart the Package app pods before they can detect the new coredns config
 ### Amazon Linux 2
 
 Here are the configuration steps if you want to use a Fedora based instance. All other steps are similar to Ubuntu.
