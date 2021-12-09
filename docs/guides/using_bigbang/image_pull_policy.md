@@ -1,8 +1,10 @@
 # ImagePullPolicy at Big Bang Level
 
-Big Bang is currently working to standardize the adoption of a global image pull policy so that customers can set a single value and have it passed to all packages. This work is not yet complete, but should allow customers easier control over their global pull policy.
+Big Bang is currently working to standardize the adoption of a global image pull policy so that customers can set a single value and have it passed to all packages.
 
-In the meantime we have begun to document the package overrides required in preparation for this change.
+The global image pull policy has been adopted in Big Bang for the core packages and for addons. In the Big Bang values.yaml file, a global parameter has been created to set the global image pull policy (`imagePullPolicy` in values) and it gets passed down to all core packages and addons spec. The default value for this global policy is `IfNotPresent`.
+
+We have also documented the package overrides required if you want to set a single package/pod with a different pull policy than the global.
 
 # ImagePullPolicy per Package
 
@@ -17,7 +19,7 @@ In the meantime we have begun to document the package overrides required in prep
 | Elasticsearch / Kibana | `IfNotPresent` | <pre lang="yaml">logging:<br>  values:<br>    imagePullPolicy: IfNotPresent</pre> |
 | ECK Operator | `IfNotPresent` | <pre lang="yaml">eckoperator:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
 | Fluentbit | `Always` | <pre lang="yaml">fluentbit:<br>  values:<br>    image:<br>      pullPolicy: IfNotPresent</pre> |
-| Monitoring | Varies | <pre lang="yaml">monitoring:<br>  values: <br>    kube-state-metrics:<br>      image:<br>        pullPolicy: IfNotPresent<br>    grafana:<br>      image:<br>        pullPolicy: IfNotPresent<br>    prometheus-node-exporter:<br>      image:<br>        pullPolicy: IfNotPresent<br>    prometheusOperator:<br>      image:<br>        pullPolicy: IfNotPresent<br>      admissionWebhooks:<br>        cleanupProxy:<br>          image:<br>            pullPolicy: IfNotPresent<br>        patch: <br>          image:<br>            pullPolicy: IfNotPresent</pre> |
+| Monitoring | Varies | <pre lang="yaml">monitoring:<br>  values: <br>    kube-state-metrics:<br>      image:<br>        pullPolicy: IfNotPresent<br>    grafana:<br>      image:<br>        pullPolicy: IfNotPresent<br>      sidecar:<br>        imagePullPolicy: IfNotPresent<br>    prometheus-node-exporter:<br>      image:<br>        pullPolicy: IfNotPresent<br>    prometheusOperator:<br>      image:<br>        pullPolicy: IfNotPresent<br>      admissionWebhooks:<br>        cleanupProxy:<br>          image:<br>            pullPolicy: IfNotPresent<br>        patch: <br>          image:<br>            pullPolicy: IfNotPresent<br>    prometheus:<br>      prometheusSpec:<br>        containers:<br>          - name: "prometheus"<br>            imagePullPolicy: IfNotPresent<br>          - name: "config-reloader"<br>            imagePullPolicy: IfNotPresent<br>    alertmanager:<br>      alertmanagerSpec:<br>        containers:<br>          - name: "alertmanager"<br>            imagePullPolicy: IfNotPresent<br>          - name: "config-reloader"<br>            imagePullPolicy: IfNotPresent</pre> |
 | Twistlock | `IfNotPresent` | <pre lang="yaml">twistlock:<br>  values:<br>    console:<br>      image:<br>        imagePullPolicy: IfNotPresent</pre>  |
 | ArgoCD | Varies | <pre lang="yaml">addons:<br>  argocd:<br>    values:<br>      global:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      controller:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      dex:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      redis-bb:<br>        image:<br>          pullPolicy: IfNotPresent<br>      server:<br>        image:<br>          imagePullPolicy: IfNotPresent<br>      repoServer:<br>        image:<br>          imagePullPolicy: IfNotPresent</pre> |
 | Authservice | `IfNotPresent` | <pre lang="yaml">addons:<br>  authservice:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> |
