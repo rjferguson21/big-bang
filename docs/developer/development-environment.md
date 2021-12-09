@@ -430,7 +430,11 @@ sudo vim /etc/hosts
           172.20.0.3 k3d-k3s-default-agent-0
           172.20.0.4 k3d-k3s-default-agent-1
           172.20.0.5 k3d-k3s-default-agent-2
-          172.20.0.3 keycloak.bigbang.dev
+          172.18.0.2 k3d-k3s-default-server-0
+          172.18.0.3 k3d-k3s-default-agent-0
+          172.18.0.4 k3d-k3s-default-agent-1
+          172.18.0.5 k3d-k3s-default-agent-2
+          172.18.1.242 keycloak.bigbang.dev
       ```
     - Restart the coredns pod so it can pick up the new config
       ```
