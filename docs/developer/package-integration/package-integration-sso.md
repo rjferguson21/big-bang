@@ -74,7 +74,7 @@ Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/mas
 For SSO integration using SAML, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Once implemented, enabling SSO will auto-create any required secrets.
 
 ```yml
-sonarqube:
+<package>:
     sso:
       enabled: true
       client_id: "" ## want to add dummy data
@@ -91,6 +91,8 @@ sonarqube:
       # -- (optional) group sso attribute.
       group: group
 ```
+Example: [Sonarqube](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L849-874)
+
 In order to auto-generate secrets, additions must be made to `bigbang/chart/templates/<package>/values.yaml`. The yaml should include the following (be sure to replace `<package>` with the package name):
 
 ```yml
@@ -114,7 +116,35 @@ In order to auto-generate secrets, additions must be made to `bigbang/chart/temp
 Example: [Sonarqube](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/sonarqube/values.yaml#L32-47)
 
 ### AuthService Integration
+If SSO is not availble on the package to be integrated, Istio AuthService can be used for authentication. For AuthService integration, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`.
 
-#### Example (Jaeger)
+```yml
+<package>:
+  sso:
+    enabled: true
+    client_id: "" ## want to add dummy data here
+    client_secret: ""
+```
+Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L234-248)
 
+In order to use Istio injection to route all package traffic through the Istio side car proxy, additions must be made to `bigbang/chart/templates/<package>/values.yaml`. The yaml should include the following (be sure to replace `<package>` with the package name):
+
+```yml
+sso:
+  enabled: {{ .Values.<package>.sso.enabled }}
+
+{{- if .Values.<package>.sso.enabled }}
+<package>:
+  spec:
+    {{- $<package>AuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+    {{- $<package>AuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+    allInOne:
+      labels:
+        {{ $<package>AuthserviceKey }}: {{ $<package>AuthserviceValue }}
+    query:
+      labels:
+        {{ $<package>AuthserviceKey }}: {{ $<package>AuthserviceValue }}
+{{- end }}
+```
+Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/jaeger/values.yaml#L28-42)
 ## Validation
