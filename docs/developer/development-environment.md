@@ -437,7 +437,7 @@ sudo vim /etc/hosts
       kubectl rollout restart deployment coredns -n kube-system
       ```
     - You might also need to restart the Package app pods before they can detect the new coredns config
-    - Deploy Keycloak using the example dev config values [docs/developer/example_configs/keycloak-dev-values.yaml](docs/developer/example_configs/keycloak-dev-values.yaml)
+    - Deploy Keycloak using the example dev config values ```docs/developer/example_configs/keycloak-dev-values.yaml```
 ### Amazon Linux 2
 
 Here are the configuration steps if you want to use a Fedora based instance. All other steps are similar to Ubuntu.
