@@ -471,7 +471,8 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "14.0.0-bb.18"
+    # tag: "23.1.6-bb.0"
+    branch: "renovate/ironbank"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
