@@ -122,15 +122,38 @@ If SSO is not availble on the package to be integrated, Istio AuthService can be
 ```
 Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L234-248)
 
-Global values need to be set within AuthService. Specifically, `certificate_authority` information must be passed to the package within `bigbang/chart/templates/authservice/values.yaml`, as shown below:
+Global values need to be set within AuthService, including `chains` and `certificate_authority` information that must be passed to the package. Values should be set in `bigbang/chart/templates/authservice/values.yaml`, as shown below:
 
 ```yml
 global:
   {{- if .Values.sso.certificate_authority }}
   certificate_authority: {{ .Values.sso.certificate_authority | quote }}
   {{- end }}
+
+chains:
+  {{- if .Values.addons.authservice.chains }}
+  {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
+  {{- end }}
+
+  {{- if .Values.<package>.sso.enabled }}
+  <package>:
+    match:
+      header: ":authority"
+    {{- $<package>Values := .Values.<package>.values | default dict }}
+    {{- $<package>IstioValues := $<package>Values.istio | default dict }}
+    {{- $<package>HostValues := $<package>IstioValues.jaeger | default dict}}
+    {{- if hasKey $<package>HostValues "hosts" }}
+      prefix: {{ range .Values.<package>.values.istio.<package>.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.<package>.values.istio.<package>.hosts }}{{ tpl . $}}{{ end }}/login
+    {{- else }}
+      prefix: "tracing"
+    callback_uri: https://tracing.{{ $domainName }}/login
+    {{- end }}
+    client_id: "{{ .Values.<package>.sso.client_id }}"
+    client_secret: "{{ .Values.<package>.sso.client_secret }}"
+  {{- end }}
 ```
-Example: [AuthService](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/authservice/values.yaml#L41-43)
+Example: [AuthService](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/authservice/values.yaml#L41-74)
 
 In order to use Istio injection to route all package traffic through the Istio side car proxy, additions must be made to `bigbang/chart/templates/<package>/values.yaml`. The yaml should include the following (be sure to replace `<package>` with the package name):
 
