@@ -21,11 +21,8 @@ For SSO integration using OIDC, add sso.client_id and sso.client_secret under th
 <package>:
     sso:
       enabled: true
-      client_id: "" ## want to add dummy values to these 
-      client_secret: ""
-
-      # -- I think I will remove this from the in text example, since we are pointing so
-      label: ""
+      client_id: "XXXXXX-XXXXXX-XXXXXX-APP" 
+      client_secret: "XXXXXXXXXXXX"
 ```
 Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L686-698)
 
@@ -77,10 +74,8 @@ For SSO integration using SAML, add sso.client_id and sso.client_secret under th
 <package>:
     sso:
       enabled: true
-      client_id: "" ## want to add dummy data
-
-      # -- SSO login button label
-      provider_name: ""
+      client_id: "XXXXXX-XXXXXX-XXXXXX-APP"
+      provider_name: "P1 SSO"
 
       # -- plaintext SAML sso certificate.
       certificate: "MITCAYCBFyIEUjNBkqhkiG9w0BA"
@@ -116,16 +111,26 @@ In order to auto-generate secrets, additions must be made to `bigbang/chart/temp
 Example: [Sonarqube](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/sonarqube/values.yaml#L32-47)
 
 ### AuthService Integration
-If SSO is not availble on the package to be integrated, Istio AuthService can be used for authentication. For AuthService integration, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`.
+If SSO is not availble on the package to be integrated, Istio AuthService can be used for authentication. For AuthService integration, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Any values not explicitly set in this file will be inherited from the global values.
 
 ```yml
 <package>:
   sso:
     enabled: true
-    client_id: "" ## want to add dummy data here
-    client_secret: ""
+    client_id: "XXXXXX-XXXXXX-XXXXXX-APP"
+    client_secret: "XXXXXXXXXXXX"
 ```
 Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L234-248)
+
+Global values need to be set within AuthService. Specifically, `certificate_authority` information must be passed to the package within `bigbang/chart/templates/authservice/values.yaml`, as shown below:
+
+```yml
+global:
+  {{- if .Values.sso.certificate_authority }}
+  certificate_authority: {{ .Values.sso.certificate_authority | quote }}
+  {{- end }}
+```
+Example: [AuthService](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/authservice/values.yaml#L41-43)
 
 In order to use Istio injection to route all package traffic through the Istio side car proxy, additions must be made to `bigbang/chart/templates/<package>/values.yaml`. The yaml should include the following (be sure to replace `<package>` with the package name):
 
@@ -147,4 +152,14 @@ sso:
 {{- end }}
 ```
 Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/jaeger/values.yaml#L28-42)
+
 ## Validation
+For validating package integration with Single Sign On (SSO), carry out the following basic steps:
+1. Enable the package and SSO within Big Bang through the values added in the sections above.
+2. Using an internet browser, browse to your application (e.g. sonarqube.bigbang.dev)
+3. Confirm a redirect to the SSO happens, prompting user sign in.
+4. Sign in as a valid user
+5. Successful sign in should return you to the application page
+6. Confirm you are in the expected account within the application and that you are able to use the application
+
+Note: An unsuccessful sign in may result in an `x509` cert issues, `invalid client ID/group/user` error, `JWKS` error, or other issues. 
