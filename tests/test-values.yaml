@@ -1066,22 +1066,22 @@ addons:
       server:
         dataStorage:
           enabled: true
+      injector:
+        affinity: |
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: {{ template "vault.name" . }}-agent-injector
+                      app.kubernetes.io/instance: "{{ .Release.Name }}"
+                      component: webhook
+                  topologyKey: kubernetes.io/hostname
+ 
       bbtests:
         enabled: true
         cypress:
           artifacts: true
           envs:
             cypress_vault_url: "https://vault.bigbang.dev"
-
-injector:
-  affinity: |
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: {{ template "vault.name" . }}-agent-injector
-                app.kubernetes.io/instance: "{{ .Release.Name }}"
-                component: webhook
-            topologyKey: kubernetes.io/hostname
