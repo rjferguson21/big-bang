@@ -180,7 +180,7 @@ Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/mas
 For validating package integration with Single Sign On (SSO), carry out the following basic steps:
 1. Enable the package and SSO within Big Bang through the values added in the sections above.
 2. Using an internet browser, browse to your application (e.g. sonarqube.bigbang.dev)
-3. Confirm a redirect to the SSO happens, prompting user sign in.
+3. If using AuthService, confirm a redirect to the SSO happens, prompting user sign in. If using SAML/OIDC, click the login button.
 4. Sign in as a valid user
 5. Successful sign in should return you to the application page
 6. Confirm you are in the expected account within the application and that you are able to use the application
