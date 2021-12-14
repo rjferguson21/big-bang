@@ -118,7 +118,7 @@ If SSO is not availble on the package to be integrated, Istio AuthService can be
   sso:
     enabled: true
     client_id: "XXXXXX-XXXXXX-XXXXXX-APP"
-    client_secret: "XXXXXXXXXXXX"
+    client_secret: "XXXXXXXXXXXXX"
 ```
 Example: [Jaeger](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L234-248)
 
