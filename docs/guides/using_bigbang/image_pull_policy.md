@@ -34,4 +34,4 @@ We have also documented the package overrides required if you want to set a sing
 | Mattermost | `IfNotPresent` | <pre lang="yaml">addons:<br>  mattermost:<br>    values:<br>      image:<br>        imagePullPolicy: IfNotPresent</pre> |
 | Velero | `IfNotPresent` | <pre lang="yaml">addons:<br>  velero:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> |
 | Keycloak | `IfNotPresent` | <pre lang="yaml">addons:<br>  keycloak:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent<br>      pgchecker:<br>        image:<br>          pullPolicy: IfNotPresent</pre> |
-| Vault | `Always` | <pre lang="yaml">addons:<br>  vault:<br>   values:<br>    injector:<br>      image:<br>      pullPolicy: IfNotPresent<br>    server:<br>      image:<br>        pullPolicy: IfNotPresent<br>      csi:<br>        imagePullPolicy: IfNotPresent<br> </pre> |
+| Vault | `Always` | <pre lang="yaml">addons:<br>  vault:<br>    values:<br>     injector:<br>       image:<br>       pullPolicy: IfNotPresent<br>     server:<br>       image:<br>       pullPolicy: IfNotPresent<br>     csi:<br>       image:<br>       pullPolicy: IfNotPresent</pre> |
