@@ -4,10 +4,10 @@
 
 {{- define "bigbang.defaults.kyverno" -}}
 image:
- 
+  pullPolicy: {{ .Values.imagePullPolicy }}
   pullSecrets:
   - name: private-registry
-
+ 
 openshift: {{ .Values.openshift }}
 
 networkPolicies:
