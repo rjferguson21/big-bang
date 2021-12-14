@@ -30,15 +30,19 @@ istio:
   console:
     gateways:
     - istio-system/{{ default "public" .Values.twistlock.ingress.gateway }}
+
+{{- if .Values.istio.enabled }}
+annotations:
   {{- if .Values.istio.git.semver }}
-  {{- $istioVersionSuffix := .Values.istio.git.semver | regexFind "-bb.*" }}
-  version: {{ .Values.istio.git.semver | trimSuffix $istioVersionSuffix }}
+  {{- $istioVersionSuffix := .Values.istio.git.semver | regexFind "-bb.*" -}}
+  bigbang.dev/istioVersion: {{ .Values.istio.git.semver | trimSuffix $istioVersionSuffix }}
   {{- else if .Values.istio.git.tag }}
-  {{- $istioVersionSuffix := .Values.istio.git.tag | regexFind "-bb.*" }}
-  version: {{ .Values.istio.git.tag | trimSuffix $istioVersionSuffix }}
+  {{- $istioVersionSuffix := .Values.istio.git.tag | regexFind "-bb.*" -}}
+  bigbang.dev/istioVersion: {{ .Values.istio.git.tag | trimSuffix $istioVersionSuffix }}
   {{- else if .Values.istio.git.branch }}
-  version: {{ .Values.istio.git.branch }}
+  bigbang.dev/istioVersion: {{ .Values.istio.git.branch }}
   {{- end }}
+{{- end }}
 
 console:
   image:
