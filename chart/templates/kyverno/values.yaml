@@ -4,6 +4,7 @@
 
 {{- define "bigbang.defaults.kyverno" -}}
 image:
+ 
   pullSecrets:
   - name: private-registry
 
