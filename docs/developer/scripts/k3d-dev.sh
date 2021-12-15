@@ -25,6 +25,13 @@ if [[ "${missingtool}" == 1 ]]; then
   exit 1
 fi
 
+# place folder structure
+dirs=("~/.kube" "~/.ssh" "~/aws")
+for dir in "${dirs[@]}"
+  do
+    mkdir -p $dir
+  done
+
 # getting AWs user name
 AWSUSERNAME=$( aws sts get-caller-identity --query Arn --output text | cut -f 2 -d '/' )
 
@@ -185,7 +192,6 @@ ImageId=ami-84556de5
 
 # Create the launch spec
 echo -n Creating launch_spec.json ...
-mkdir -p ~/aws
 ##notworking line.  "InstanceInitiatedShutdownBehavior":"Terminate",
 cat << EOF > ~/aws/launch_spec.json
 {
