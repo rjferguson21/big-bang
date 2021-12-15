@@ -33,7 +33,7 @@ istio:
 
 {{- if .Values.istio.enabled }}
 annotations:
-  {{- include "istioAnnotation" . }}
+  {{ include "istioAnnotation" . }}
 {{- end }}
 
 console:
