@@ -37,4 +37,9 @@ spec:
     - name: {{ .Release.Name }}-kyverno-values
       kind: Secret
       valuesKey: "overlays"
+  {{- if .Values.gatekeeper.enabled }}
+  dependsOn:
+    - name: gatekeeper
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
 {{- end }}
