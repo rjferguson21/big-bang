@@ -184,6 +184,7 @@ ImageId=ami-84556de5
 
 # Create the launch spec
 echo -n Creating launch_spec.json ...
+mkdir -p ~/aws
 ##notworking line.  "InstanceInitiatedShutdownBehavior":"Terminate",
 cat << EOF > ~/aws/launch_spec.json
 {
