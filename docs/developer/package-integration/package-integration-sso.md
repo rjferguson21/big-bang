@@ -12,10 +12,17 @@ The development environment can be set up in one of two ways:
 
 ### SSO Integration
 
+All package SSO Integrations within BigBang require a `<package>.sso` block within the BigBang [chart values](../../chart/values.yaml) for your package along with an enabled flag:
+
+```yml
+<package>:
+    sso:
+      enabled: true
+```
 Based on the authentication protocol implemented by the package being integrated, either Security Access Markup Language (SAML) or OpenID (OIDC), follow the appropriate example below.
 
 #### OIDC
-For SSO integration using OIDC, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Once implemented, enabling SSO will auto-create any required secrets.
+For SSO integration using OIDC, at a minimum this usually requires `sso.client_id` and `sso.client_secret` values under the same block above. We can then reference these values further down in either the template values for your package ([eg: Gitlab](../../chart/templates/gitlab/values.yaml)) or [Authservice template values](../../chart/templates/authservice/values.yaml) if there is no built-in support for OIDC or SAML in the package.
 
 ```yml
 <package>:
@@ -24,7 +31,6 @@ For SSO integration using OIDC, add sso.client_id and sso.client_secret under th
       client_id: "XXXXXX-XXXXXX-XXXXXX-APP" 
       client_secret: "XXXXXXXXXXXX"
 ```
-Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/values.yaml#L686-698)
 
 A `bigbang/chart/templates/<package>/secret-sso.yaml` will need to be created in order to auto-generate secrets. The yaml should include the following (be sure to replace `<package>` with the package name):
 
