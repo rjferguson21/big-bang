@@ -22,7 +22,7 @@ All package SSO Integrations within BigBang require a `<package>.sso` block with
 Based on the authentication protocol implemented by the package being integrated, either Security Access Markup Language (SAML) or OpenID (OIDC), follow the appropriate example below.
 
 #### OIDC
-For SSO integration using OIDC, at a minimum this usually requires `sso.client_id` and `sso.client_secret` values under the same block above. We can then reference these values further down in either the template values for your package ([eg: Gitlab](../../chart/templates/gitlab/values.yaml)) or [Authservice template values](../../chart/templates/authservice/values.yaml) if there is no built-in support for OIDC or SAML in the package.
+For SSO integration using OIDC, at a minimum this usually requires `sso.client_id` and `sso.client_secret` values under the same block above. We can then reference these values further down in either the template values for your package ([eg: Gitlab](../../chart/templates/gitlab/values.yaml)) or [Authservice template values](../../chart/templates/authservice/values.yaml) if there is no built-in support for OIDC or SAML in the package. Authservice will be discussed in more detail further down.
 
 ```yml
 <package>:
@@ -32,9 +32,13 @@ For SSO integration using OIDC, at a minimum this usually requires `sso.client_i
       client_secret: "XXXXXXXXXXXX"
 ```
 
-A `bigbang/chart/templates/<package>/secret-sso.yaml` will need to be created in order to auto-generate secrets if required by the upstream documentation. We can see in the Gitlab documentation for SSO the configuration is handled [via JSON configuration](https://docs.gitlab.com/ee/administration/auth/oidc.html) [within a secret](https://docs.gitlab.com/charts/charts/globals.html#providers). This `secret-sso.yaml` can conditionally be created when `<package>.sso.enabled=true`. The yaml should include the following (be sure to replace `<package>` with the package name):
+A `bigbang/chart/templates/<package>/secret-sso.yaml` may need to be created in order to auto-generate secrets if required by the upstream documentation. We can see in the Gitlab documentation for SSO the configuration is handled [via JSON configuration](https://docs.gitlab.com/ee/administration/auth/oidc.html) [within a secret](https://docs.gitlab.com/charts/charts/globals.html#providers). This `secret-sso.yaml` can conditionally be created when `<package>.sso.enabled=true` within the BigBang values.
 
-Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/gitlab/secret-sso.yaml)
+Example: [GitLab SSO Secret template](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/gitlab/secret-sso.yaml)
+
+If configuration isn't destined for a secret and the package supports SSO options directly via helm values we can create and reference the necessary options from the `<package>.sso` values block. For example, elasticsearch documentation specifies a few [values required to enable and configure OIDC](https://www.elastic.co/guide/en/elasticsearch/reference/master/oidc-guide.html#oidc-enable-token) that we can configure and set to be conditional on `<package>.sso.enabled`.
+
+Example: [ECK template values](../../chart/templates/logging/elasticsearch-kibana/values.yaml)
 
 #### SAML
 For SSO integration using SAML, add sso.client_id and sso.client_secret under the package within the `bigbang/chart/values.yaml`. Once implemented, enabling SSO will auto-create any required secrets.
