@@ -32,45 +32,8 @@ For SSO integration using OIDC, at a minimum this usually requires `sso.client_i
       client_secret: "XXXXXXXXXXXX"
 ```
 
-A `bigbang/chart/templates/<package>/secret-sso.yaml` will need to be created in order to auto-generate secrets. The yaml should include the following (be sure to replace `<package>` with the package name):
+A `bigbang/chart/templates/<package>/secret-sso.yaml` will need to be created in order to auto-generate secrets if required by the upstream documentation. We can see in the Gitlab documentation for SSO the configuration is handled [via JSON configuration](https://docs.gitlab.com/ee/administration/auth/oidc.html) [within a secret](https://docs.gitlab.com/charts/charts/globals.html#providers). This `secret-sso.yaml` can conditionally be created when `<package>.sso.enabled=true`. The yaml should include the following (be sure to replace `<package>` with the package name):
 
-```yml
-{{- if or .Values.addons.<package>.enabled }}
-{{- if .Values.addons.<package>.sso.enabled }}
-# hostname is deprecated and replaced with domain. But if hostname exists then use it.
-{{- $domainName := default .Values.domain .Values.hostname }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: <package>-sso-provider
-  namespace: <package>
-type: kubernetes.io/opaque
-stringData:
-  <package>-sso.json: |-
-    {
-      "name": "openid_connect",
-      "label": "{{ .Values.addons.<package>.sso.label }}",
-      "args": {
-        "name": "openid_connect",
-        "scope": [
-          "<package>"
-        ],
-        "response_type": "code",
-        "issuer": "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}",
-        "client_auth_method": "query",
-        "discovery": true,
-        "uid_field": "preferred_username",
-        "client_options": {
-          "identifier": "{{ .Values.addons.<package>.sso.client_id | default .Values.sso.client_id }}",
-          "secret": "{{ .Values.addons.<package>.sso.client_secret | default .Values.sso.client_secret }}",
-          "redirect_uri": "https://{{ .Values.addons.<package>.hostnames.gitlab }}.{{ $domainName }}/users/auth/openid_connect/callback",
-          "end_session_endpoint": "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/logout"
-        }
-      }
-    }
-{{- end }}
-{{- end}}
-```
 Example: [GitLab](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/chart/templates/gitlab/secret-sso.yaml)
 
 #### SAML
