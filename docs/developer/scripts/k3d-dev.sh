@@ -2,18 +2,17 @@
 
 #### Preflight Checks
 # check for tools
-tooldependencies=(jq sed aws ssh ssh-keygen scp)
+tooldependencies=(jq sed aws ssh ssh-keygen scp kubectl)
 for tooldependency in "${tooldependencies[@]}"
   do
     command -v $tooldependency >/dev/null 2>&1 || { echo >&2 " $tooldependency is not installed.";  missingtool=1; }
   done
-sed_gsed="sed"  
+sed_gsed="sed"
 # verify sed version if mac
-uname="$(uname -s)"    
+uname="$(uname -s)"
 if [[ "${uname}" == "Darwin" ]]; then
   if [[ $(command -v gsed) ]]; then
     sed_gsed="gsed"
-    gsed   
   else
     missingtool=1
     echo ' gnu-sed is not installed. "brew install gnu-sed"'
@@ -24,13 +23,6 @@ if [[ "${missingtool}" == 1 ]]; then
   echo " Please install required tools. Aborting."
   exit 1
 fi
-
-# place folder structure
-dirs=("~/.kube" "~/.ssh" "~/aws")
-for dir in "${dirs[@]}"
-  do
-    mkdir -p $dir
-  done
 
 # getting AWs user name
 AWSUSERNAME=$( aws sts get-caller-identity --query Arn --output text | cut -f 2 -d '/' )
