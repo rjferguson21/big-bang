@@ -239,6 +239,7 @@ logging:
         artifacts: true
         envs:
           cypress_kibana_url: "https://kibana.bigbang.dev"
+          cypress_expect_logs: "true"
         secretEnvs:
           - name: cypress_elastic_password
             valueFrom:
