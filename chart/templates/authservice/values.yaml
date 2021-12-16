@@ -12,6 +12,11 @@ image:
 imagePullSecrets:
   - name: private-registry
 
+podAnnotations:
+  {{- if .Values.istio.enabled }}
+    {{ include "istioAnnotation" . }}
+  {{- end }}
+
 openshift: {{ .Values.openshift }}
 
 networkPolicies:
