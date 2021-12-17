@@ -3,8 +3,7 @@
 {{- end }}
 
 {{- define "bigbang.defaults.kyverno" -}}
-image:
-  pullPolicy: {{ .Values.imagePullPolicy }}
+image: 
   pullSecrets:
   - name: private-registry
  
