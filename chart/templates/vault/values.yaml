@@ -20,15 +20,15 @@ global:
 
 injector:
   image:
-   pullPolicy: {{ .Values.imagePullPolicy }}
+    pullPolicy: {{ .Values.imagePullPolicy }}
 
 server:
   image:
-   pullPolicy: {{ .Values.imagePullPolicy }}
+    pullPolicy: {{ .Values.imagePullPolicy }}
 
 csi:
   image:
-   pullPolicy: {{ .Values.imagePullPolicy }}
+    pullPolicy: {{ .Values.imagePullPolicy }}
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
