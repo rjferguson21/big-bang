@@ -8,7 +8,8 @@ replicaCount: 3
 image:
   pullSecrets:
   - name: private-registry
- 
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
 openshift: {{ .Values.openshift }}
 
 networkPolicies:
