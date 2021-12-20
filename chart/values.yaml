@@ -833,7 +833,8 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.11"
+      branch: "11-rename-hostname-to-domain"
+      #tag: "9.6.3-bb.11"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
