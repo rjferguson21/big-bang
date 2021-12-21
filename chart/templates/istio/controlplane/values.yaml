@@ -7,6 +7,7 @@
 {{- $domainName := default .Values.domain .Values.hostname }}
 domain: {{ $domainName }}
 
+enterpise: {{ .Values.istio.enterprise }}
 tracing:
   enabled:  {{ .Values.jaeger.enabled }}
 

@@ -120,6 +120,7 @@ imagePullPolicy: IfNotPresent
 istio:
   # -- Toggle deployment of Istio.
   enabled: true
+  enterpise: false
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
