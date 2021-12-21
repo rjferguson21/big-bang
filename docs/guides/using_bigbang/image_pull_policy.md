@@ -36,4 +36,4 @@ We have also documented the package overrides required if you want to set a sing
 | Velero | `IfNotPresent` | <pre lang="yaml">addons:<br>  velero:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> |
 | Keycloak | `IfNotPresent` | <pre lang="yaml">addons:<br>  keycloak:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent<br>      pgchecker:<br>        image:<br>          pullPolicy: IfNotPresent</pre> |
 | Vault    | `IfNotPresent` | <pre lang="yaml">addons:<br>  vault:<br>    values:<br>      injector:<br>        image:<br>          pullPolicy: IfNotPresent<br>      server:<br>        image:<br>          pullPolicy: IfNotPresent<br>      csi:<br>        image:<br>          pullPolicy: IfNotPresent</pre> |
-| Kyverno  | `IfNotPresent` | <pre lang="yaml">addons:<br>  kyverno:<br>    values:<br>      image:<br>        pullPolicy: IfNotPresent</pre> | 
+| Kyverno  | `IfNotPresent` | <pre lang="yaml">addons:<br>  kyverno:<br>    values:<br>      initImage:<br>        pullPolicy: IfNotPresent</pre> | 
