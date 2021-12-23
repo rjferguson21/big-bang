@@ -38,9 +38,6 @@ dashboards:
 {{- end }}
 
 {{- if .Values.istio.enabled }}
-podLabels:
-  traffic.sidecar.istio.io/excludeOutboundPorts: "443"
-
 podAnnotations:
   {{ include "istioAnnotation" . }}
 {{- end }}
