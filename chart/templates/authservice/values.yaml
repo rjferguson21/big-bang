@@ -125,10 +125,10 @@ chains:
 {{- end -}}
 
 {{- define "bigbang.overlays.authservice" }}
-  {{- $authserviceDefaults := fromYaml (include "bigbang.defaults.authservice" .) }}
+  {{- $authserviceRedisBBDefaults := fromYaml (include "bigbang.defaults.authservice.redis-bb" .) }}
   {{- $authserviceOverlays := dig "values" dict .Values.addons.authservice }}
   {{- $redisBBOverlay := (dig "redis-bb" dict $authserviceOverlays) }}
-  {{- $redisBBAuthservice := merge $redisBBOverlay $authserviceDefaults.redis-bb }}
+  {{- $redisBBAuthservice := merge $redisBBOverlay $authserviceRedisBBDefaults }}
 redis-bb: 
   {{- toYaml $redisBBAuthservice | nindent 2 }}
 {{- end }}
