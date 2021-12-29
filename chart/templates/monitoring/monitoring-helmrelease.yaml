@@ -48,9 +48,5 @@ spec:
     - name: gatekeeper
       namespace: {{ .Release.Namespace }}
   {{- end }}
-  {{- if .Values.monitoring.sso.enabled }}
-    - name: authservice
-      namespace: {{ .Release.Namespace }}
-  {{- end }}
   {{- end }}
 {{- end }}

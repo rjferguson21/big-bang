@@ -24,6 +24,21 @@ networkPolicies:
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
     {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
 
+{{- if (dig "redis" "enabled" false .Values.addons.authservice.values) }}
+redis-bb:
+  metrics:
+    enabled: true 
+    image:
+      pullSecrets:
+        - private-registry
+    serviceMonitor:
+      enabled: true
+      namespace: authservice
+      selector: 
+        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/instance: authservice-authservice
+{{- end }}
+
 global:
   oidc:
     host: {{ .Values.sso.oidc.host }}
@@ -108,3 +123,12 @@ chains:
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
   {{- end }}
 {{- end -}}
+
+{{- define "bigbang.overlays.authservice" }}
+  {{- $authserviceDefaults := fromYaml (include "bigbang.defaults.authservice" .) }}
+  {{- $authserviceOverlays := dig "values" dict .Values.addons.authservice }}
+  {{- $redisBBOverlay := (dig "redis-bb" dict $authserviceOverlays) }}
+  {{- $redisBBAuthservice := merge $redisBBOverlay $authserviceDefaults.redis-bb }}
+redis-bb: 
+  {{- toYaml $redisBBAuthservice | nindent 2 }}
+{{- end }}
