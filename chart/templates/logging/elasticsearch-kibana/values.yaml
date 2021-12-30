@@ -56,6 +56,28 @@ sso:
 {{- end }}
 {{- end }}
 
+{{- if .Values.istio.enabled }}
+kibana:
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+elasticsearch:
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  data:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  ingest:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  ml:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  coord:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+{{- end }}
+
 kibana:
   imagePullSecrets:
     - name: private-registry
