@@ -17,6 +17,9 @@ podAnnotations:
 
 openshift: {{ .Values.openshift }}
 
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   ingressLabels:
