@@ -126,12 +126,3 @@ chains:
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
   {{- end }}
 {{- end -}}
-
-{{- define "bigbang.overlays.authservice" }}
-  {{- $authserviceRedisBBDefaults := fromYaml (include "bigbang.defaults.authservice.redis-bb" .) }}
-  {{- $authserviceOverlays := dig "values" dict .Values.addons.authservice }}
-  {{- $redisBBOverlay := (dig "redis-bb" dict $authserviceOverlays) }}
-  {{- $redisBBAuthservice := merge $redisBBOverlay $authserviceRedisBBDefaults }}
-redis-bb: 
-  {{- toYaml $redisBBAuthservice | nindent 2 }}
-{{- end }}
