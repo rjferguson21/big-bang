@@ -218,7 +218,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.27.0-bb.0"
+    tag: "2.27.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
@@ -398,7 +398,7 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.7.1-bb.0"
+    tag: "1.9.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
@@ -598,7 +598,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.18"
+      tag: "0.4.0-bb.19"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
