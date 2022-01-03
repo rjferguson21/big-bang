@@ -335,7 +335,7 @@ kyverno:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno
     path: "./chart"
-    tag: "2.1.3-bb.2"
+    tag: "2.1.3-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Kyverno Package
   flux: {}
@@ -357,7 +357,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.3.0-bb.0"
+    tag: "0.4.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -597,7 +597,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.18"
+      tag: "0.4.0-bb.19"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -670,7 +670,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "5.3.1-bb.9"
+      tag: "5.3.1-bb.10"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -768,7 +768,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "36.0.0-bb.0"
+      tag: "34.1.0-bb.6"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -833,7 +833,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.11"
+      tag: "9.6.3-bb.12"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -918,7 +918,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.14.7-bb.1"
+      tag: "1.15.0-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
