@@ -38,6 +38,7 @@ networkPolicies:
     {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
   nodeCidr: {{ .Values.networkPolicies.nodeCidr }}
+  vpcCidr: {{ .Values.networkPolicies.vpcCidr }}  
 
 istio:
   enabled: {{ .Values.istio.enabled }}
