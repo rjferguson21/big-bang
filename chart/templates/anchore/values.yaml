@@ -90,7 +90,7 @@ anchore-ui-redis:
   image:
     pullSecrets:
       - private-registry
-  {{- if .Values.monitoring.enabled }}
+  {{- if and .Values.monitoring.enabled (not .Values.addons.anchore.redis.host) }}
   metrics:
     enabled: true
     image:
@@ -100,7 +100,7 @@ anchore-ui-redis:
       enabled: true
       namespace: anchore
       selector:
-        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/name: anchore-ui-redis
         app.kubernetes.io/instance: anchore
   {{- end }}
 {{- end }}
