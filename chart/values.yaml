@@ -918,8 +918,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      #tag: "1.15.0-bb.0"
-      branch: "redis-metrics"
+      tag: "1.15.0-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
