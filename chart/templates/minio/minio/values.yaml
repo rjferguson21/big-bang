@@ -8,6 +8,11 @@
 hostname: {{ $domainName }}
 domain: {{ $domainName }}
 
+{{- if .Values.istio.enabled }}
+annotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
 istio:
   enabled: {{ .Values.istio.enabled }}
   console:
