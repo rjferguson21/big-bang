@@ -71,7 +71,7 @@ while [ -n "$1" ]; do # while loop starts
       if [[ ! -z "${AWSINSTANCEIDs}" ]]; then 
         echo "aws instances being terminated: ${AWSINSTANCEIDs}"
         
-        read -p "Are you sure you want to delete these instances (y/n)? " -n 1 -r
+        read -p "Are you sure you want to delete these instances (y/n)? " -r
         if [[ ! $REPLY =~ ^[Yy]$ ]]
         then
           echo
