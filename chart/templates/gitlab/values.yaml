@@ -109,8 +109,9 @@ gitlab:
   gitlab-exporter:
     enabled: {{ .Values.monitoring.enabled }}
     {{- if $istioInjection }}
-    annotations:
-      {{ include "istioAnnotation" . }}
+    metrics:
+      annotations:
+        {{ include "istioAnnotation" . }}
     {{- end }}
   {{- if or $iamProfile $istioInjection }}
   webservice:
