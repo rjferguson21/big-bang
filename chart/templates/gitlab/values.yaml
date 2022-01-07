@@ -11,7 +11,7 @@ domain: {{ $domainName }}
 # Define variables to help with conditionals later
 {{- $istioInjectionString := (dig "istio" "injection" "enabled" .Values.addons.gitlab) }}
 {{- $istioInjection := (and (eq $istioInjectionString "enabled") .Values.istio.enabled) }}
-{{- $iamProfileSet := (and (ne .Values.addons.gitlab.objectStorage.iamProfile "") .Values.addons.gitlab.objectStorage.endpoint) }}
+{{- $iamProfile := (and (ne .Values.addons.gitlab.objectStorage.iamProfile "") .Values.addons.gitlab.objectStorage.endpoint) }}
 
 openshift: {{ .Values.openshift }}
 
@@ -76,9 +76,9 @@ registry:
     secret: gitlab-object-storage
     key: registry
   {{- end }}
-  {{- if or $iamProfileSet $istioInjection }}
+  {{- if or $iamProfile $istioInjection }}
   annotations: 
-    {{- if $iamProfileSet }}
+    {{- if $iamProfile }}
     iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
     {{- end }}
     {{- if $istioInjection }}
@@ -97,9 +97,9 @@ gitlab:
           secret: gitlab-object-storage
           key: backups
     {{- end }}
-    {{- if or $iamProfileSet $istioInjection }}
+    {{- if or $iamProfile $istioInjection }}
     annotations:
-      {{- if $iamProfileSet }}
+      {{- if $iamProfile }}
       iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
       {{- end }}
       {{- if $istioInjection }}
@@ -113,10 +113,10 @@ gitlab:
     annotations:
       {{ include "istioAnnotation" . }}
     {{- end }}
-  {{- if or $iamProfileSet $istioInjection }}
+  {{- if or $iamProfile $istioInjection }}
   webservice:
     annotations: 
-      {{- if $iamProfileSet }}
+      {{- if $iamProfile }}
       iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
       {{- end }}
       {{- if $istioInjection }}
@@ -124,7 +124,7 @@ gitlab:
       {{- end }}
   sidekiq:
     annotations: 
-      {{- if $iamProfileSet }}
+      {{- if $iamProfile }}
       iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
       {{- end }}
       {{- if $istioInjection }}
