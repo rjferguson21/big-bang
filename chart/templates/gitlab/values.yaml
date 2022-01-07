@@ -9,8 +9,7 @@ hostname: {{ $domainName }}
 domain: {{ $domainName }}
 
 # Define variables to help with conditionals later
-{{- $istioInjectionString := (dig "istio" "injection" "enabled" .Values.addons.gitlab) }}
-{{- $istioInjection := (and (eq $istioInjectionString "enabled") .Values.istio.enabled) }}
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.gitlab) "enabled") .Values.istio.enabled) }}
 {{- $iamProfile := (and (ne .Values.addons.gitlab.objectStorage.iamProfile "") .Values.addons.gitlab.objectStorage.endpoint) }}
 
 openshift: {{ .Values.openshift }}
