@@ -66,6 +66,14 @@ postgresql:
   service:
     port: {{ .port }}
   {{- else }}
+  {{- if $istioInjection }}
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" $ }}
+  slave:
+    podAnnotations:
+      {{ include "istioAnnotation" $ }}
+  {{- end }}
   # Use internal database, defaults are fine
   enabled: true
   {{- end }}
