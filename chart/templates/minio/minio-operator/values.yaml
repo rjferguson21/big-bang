@@ -29,5 +29,4 @@ annotations:
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
-
 {{- end -}}
