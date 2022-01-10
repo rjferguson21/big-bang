@@ -472,7 +472,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "23.1.6-bb.3"
+    tag: "23.1.6-bb.5"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -602,7 +602,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.19"
+      tag: "0.4.0-bb.20"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -625,7 +625,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
       path: "./chart"
-      tag: "4.2.3-bb.2"
+      tag: "4.2.3-bb.4"
 
     # -- Flux reconciliation overrides specifically for the Minio Operator Package
     flux: {}
@@ -642,7 +642,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.2.3-bb.8"
+      tag: "4.2.3-bb.9"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
