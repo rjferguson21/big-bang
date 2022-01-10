@@ -421,14 +421,14 @@ cd ~
 git clone https://repo1.dso.mil/platform-one/big-bang/bigbang.git
 cd ~/bigbang
 
-# Checkout version 1.17.0 of Big Bang
+# Checkout version 1.24.0 of Big Bang
 # (Pinning to specific version to improve reproducibility)
-git checkout tags/1.17.0
+git checkout tags/1.24.0
 git status
 ```
 
 ```console
-HEAD detached at 1.17.0
+HEAD detached at 1.24.0
 ```
 
 > HEAD is git speak for current context within a tree of commits
