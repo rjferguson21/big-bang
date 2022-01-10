@@ -85,7 +85,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.13.0]
 
-[!1.13.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.13.0); List of Merge Requests in this Release
+- [!1.13.0 Merge Requests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/merge_requests?scope=all&utf8=%E2%9C%93&state=merged&milestone_title=1.13.0); List of Merge Requests in this Release
 
 ## [1.12.1]
 
