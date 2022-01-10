@@ -33,6 +33,9 @@ spec:
     - name: {{ .Release.Name }}-cluster-auditor-values
       kind: Secret
       valuesKey: "defaults"
+    - name: {{ .Release.Name }}-cluster-auditor-values
+      kind: Secret
+      valuesKey: "overlays"
 
   values:
     elasticsearch:
