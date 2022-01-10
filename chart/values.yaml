@@ -918,8 +918,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      branch: "update-anchore-prometheusrules"
-      # tag: "1.15.0-bb.1"
+      tag: "1.15.0-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
