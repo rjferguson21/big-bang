@@ -22,6 +22,9 @@ networkPolicies:
 minioOperator:
   enabled: {{ .Values.addons.minioOperator.enabled }}
   
+gitlabRunner:
+  enabled: {{ .Values.addons.gitlabRunner.enabled }}
+
 istio:
   {{- $monitoringInjection := dig "istio" "injection" "enabled" .Values.monitoring }}
   enabled: {{ .Values.istio.enabled }}
@@ -58,12 +61,18 @@ alertmanager:
         imagePullPolicy: {{ .Values.imagePullPolicy }}
       - name: "config-reloader"
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-    {{- if .Values.monitoring.sso.enabled }}
-    {{- $alertmanagerAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
-    {{- $alertmanagerAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+    {{- if or .Values.monitoring.sso.enabled .Values.istio.enabled }}
     podMetadata:
+      {{- if .Values.monitoring.sso.enabled }}
+      {{- $alertmanagerAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+      {{- $alertmanagerAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
       labels:
         {{ $alertmanagerAuthserviceKey }}: {{ $alertmanagerAuthserviceValue }}
+      {{- end }}
+      {{- if .Values.istio.enabled }}
+      annotations:
+        {{ include "istioAnnotation" . }}
+      {{- end }}
     {{- end }}
 prometheus:
   prometheusSpec:
@@ -74,12 +83,18 @@ prometheus:
         imagePullPolicy: {{ .Values.imagePullPolicy }}
       - name: "config-reloader"
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-    {{- if .Values.monitoring.sso.enabled }}
-    {{- $prometheusAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
-    {{- $prometheusAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+    {{- if or .Values.monitoring.sso.enabled .Values.istio.enabled }}
     podMetadata:
+      {{- if .Values.monitoring.sso.enabled }}
+      {{- $prometheusAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+      {{- $prometheusAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
       labels:
         {{ $prometheusAuthserviceKey }}: {{ $prometheusAuthserviceValue }}
+      {{- end }}
+      {{- if .Values.istio.enabled }}
+      annotations:
+        {{ include "istioAnnotation" . }}
+      {{- end }}
     {{- end }}
 
 anchore:
@@ -105,6 +120,11 @@ grafana:
     - private-registry
   sidecar:
     imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+  {{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
 
   {{- if .Values.loki.enabled }}
   additionalDataSources:
@@ -141,9 +161,14 @@ grafana:
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
     
-  {{- if .Values.loki.enabled }}
+  {{- if or .Values.loki.enabled .Values.addons.gitlabRunner.enabled }}
   plugins:
+  {{- if .Values.loki.enabled }}  
     - grafana-piechart-panel
+  {{- end }}
+  {{- if .Values.addons.gitlabRunner.enabled }}  
+    - grafana-polystat-panel
+  {{- end }}
   {{- end }}
 
 prometheus-node-exporter:
@@ -152,6 +177,11 @@ prometheus-node-exporter:
   serviceAccount:
     imagePullSecrets:
     - name: private-registry
+
+  {{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
 
   {{- if .Values.openshift }}
   service:
@@ -165,6 +195,11 @@ kube-state-metrics:
   imagePullSecrets:
   - name: private-registry
 
+  {{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
+
 prometheusOperator:      
   image:
     pullPolicy: {{ .Values.imagePullPolicy }}      
@@ -175,4 +210,9 @@ prometheusOperator:
     patch:           
       image:            
         pullPolicy: {{ .Values.imagePullPolicy }}
+
+  {{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
 {{- end -}}
