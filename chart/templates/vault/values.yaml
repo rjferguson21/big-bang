@@ -46,4 +46,15 @@ istio:
     gateways:
       - istio-system/{{ default "public" .Values.addons.vault.ingress.gateway }}
 
+
+{{- if .Values.istio.enabled }}
+server:
+  annotations:
+    {{ include "istioAnnotation" . }}
+injector:
+  annotations:
+    {{ include "istioAnnotation" . }}
+{{- end }}
+
+
 {{- end -}}
