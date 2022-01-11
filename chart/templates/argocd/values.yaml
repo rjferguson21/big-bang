@@ -65,6 +65,12 @@ istio:
     gateways:
     - istio-system/{{ default "public" .Values.addons.argocd.ingress.gateway }}
 
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
