@@ -71,8 +71,6 @@ podAnnotations:
   {{ include "istioAnnotation" . }}
 {{- end }}
 
-
-
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
