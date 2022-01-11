@@ -65,10 +65,12 @@ istio:
     gateways:
     - istio-system/{{ default "public" .Values.addons.argocd.ingress.gateway }}
 
-{{- if .Values.istio.enabled }}
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
+{{- if $istioInjection }}
 podAnnotations:
   {{ include "istioAnnotation" . }}
 {{- end }}
+
 
 
 monitoring:
