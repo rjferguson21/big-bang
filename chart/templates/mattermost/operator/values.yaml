@@ -11,7 +11,7 @@ image:
 
 podAnnotations:
   {{- if .Values.istio.enabled }}
-    { include "istioAnnotation" . }}
+    {{ include "istioAnnotation" . }}
   {{- end}}
 
 networkPolicies:
