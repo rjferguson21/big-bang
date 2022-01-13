@@ -1,11 +1,7 @@
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
-<<<<<<< HEAD
   name: default
-=======
-  name: eck-operator
->>>>>>> b581bc17... Added peerauth yaml file to eck operator
   namespace: {{ .Release.Namespace }}
 spec:
   mtls:
