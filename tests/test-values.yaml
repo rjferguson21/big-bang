@@ -116,10 +116,8 @@ clusterAuditor:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_url: 'https://grafana.bigbang.dev/d/YBgRZG6Mz/opa-violations?orgId=1'
-
 
 gatekeeper:
   enabled: true
@@ -252,23 +250,6 @@ logging:
         envs:
           cypress_expect_logs: "true"
           cypress_kibana_url: "https://kibana.bigbang.dev"
-        secretEnvs:
-          - name: cypress_elastic_password
-            valueFrom:
-              secretKeyRef:
-                name: "logging-ek-es-elastic-user"
-                key: elastic
-      scripts:
-        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
-        envs:
-          elasticsearch_host: "https://{{ .Release.Name }}-es-http.{{ .Release.Namespace }}.svc.cluster.local:9200"
-          desired_version: "{{ .Values.elasticsearch.version }}"
-        secretEnvs:
-          - name: ELASTIC_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "logging-ek-es-elastic-user"
-                key: elastic
 
 fluentbit:
   enabled: true
@@ -346,7 +327,6 @@ monitoring:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_prometheus_url: 'https://prometheus.bigbang.dev'
           cypress_grafana_url: 'https://grafana.bigbang.dev'
@@ -506,7 +486,7 @@ addons:
             requests:
               cpu: 10m
             limits: {}
-        task-runner:
+        toolbox:
           persistence:
             size: 256Mi
           resources:
@@ -736,6 +716,7 @@ addons:
           envs:
             ANCHORE_CLI_URL: "https://anchore-api.bigbang.dev/v1"
             ANCHORE_CLI_USER: admin
+            ANCHORE_SCAN_IMAGE: registry.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/centos:latest
           secretEnvs:
             - name: ANCHORE_CLI_PASS
               valueFrom:
