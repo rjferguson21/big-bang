@@ -115,10 +115,8 @@ clusterAuditor:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_url: 'https://grafana.bigbang.dev/d/YBgRZG6Mz/opa-violations?orgId=1'
-
 
 gatekeeper:
   enabled: true
@@ -189,9 +187,7 @@ gatekeeper:
           # Allows k3d load balancer containers to not have readiness/liveness probes
           - istio-system/lb-port-.*
     bbtests:
-      # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
-      # https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/issues/133
-      enabled: false
+      enabled: true
       scripts:
         image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
         additionalVolumeMounts:
@@ -330,7 +326,6 @@ monitoring:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_prometheus_url: 'https://prometheus.bigbang.dev'
           cypress_grafana_url: 'https://grafana.bigbang.dev'
