@@ -67,8 +67,9 @@ istio:
 
 {{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
 {{- if $istioInjection }}
-podAnnotations:
-  {{ include "istioAnnotation" . }}
+global:
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
 {{- end }}
 
 monitoring:
