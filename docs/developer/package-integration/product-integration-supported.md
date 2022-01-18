@@ -175,7 +175,7 @@ hack/remove-ns-finalizer.sh istio-system
 In order to validate that the new package is running as expected, we recommend to check the following things
 
 1. Make sure that the steps from the other documentation in `package-integration` directory has been completed
-1. Deploy the package following the Imperative step described [above](#Imperative)
+1. Deploy the package following the Imperative step described [above](#imperative)
 1. Make sure that a namespace has been created for the package deployed (`kubectl get ns`)
 1. The HR (Helm Release) reconciled successfully for the package (`kubectl get hr -A`)
 1. All the pods and services we expected are up and running (`kubectl get po -n <Package Namespace>`)
