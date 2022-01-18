@@ -28,6 +28,8 @@ After [graduating your package](https://repo1.dso.mil/platform-one/bbtoc/-/tree/
 
 1. Create a directory for your package at `chart/templates/<your-package-name>`
 
+1. This [document](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration/package-integration-flux.md) describes how to generate the necessary yaml files needed to be placed in `chart/templates/<your-package-name>`
+
 1. More details about secret-*.yaml: The secret template is where the code for secrets go. Typically you will see secrets for imagePullSecret, sso, database, and possibly object storage. These secrets are a BigBang chart enhancement. They are created conditionally based on what the user enables in the config. For example if the app supports SSO and will need a Certificate Authority supplied to trust the connection to the IdP there should be a `secret-ca.yaml` template to populate a secret with the `sso.certificate_authority` value in the application namespace.
 
 1. Merge your default package values from `<your-package-git-folder>/flux/values.yaml` into `chart/values.yaml`.  Only the "standard" keys used across packages should be used.  Keep in mind that values can be passed directly to the package using `.Values.<package>.values`
@@ -175,10 +177,17 @@ hack/remove-ns-finalizer.sh istio-system
 In order to validate that the new package is running as expected, we recommend to check the following things
 
 1. Make sure that the steps from the other documentation in `package-integration` directory has been completed
+
 1. Deploy the package following the Imperative step described [above](#imperative)
+
 1. Make sure that a namespace has been created for the package deployed (`kubectl get ns`)
+
 1. The HR (Helm Release) reconciled successfully for the package (`kubectl get hr -A`)
+
 1. All the pods and services we expected are up and running (`kubectl get po -n <Package Namespace>`)
+
 1. Make sure all the pods are in a healthy state and have the right specs
+
 1. Utilize grafana to make sure the pods have the right resources if needed
+
 1. Create an MR and make sure it passes all the automated tests
