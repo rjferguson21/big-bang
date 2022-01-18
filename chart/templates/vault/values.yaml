@@ -14,15 +14,26 @@ prometheus:
   servicemonitor:
     enabled: {{ .Values.monitoring.enabled }}
 
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
 global:
   imagePullSecrets:
   - name: private-registry
 
 injector:
+  {{- if .Values.istio.enabled }}
+  annotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
   image:
     pullPolicy: {{ .Values.imagePullPolicy }}
 
 server:
+  {{- if .Values.istio.enabled }}
+  annotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
   image:
     pullPolicy: {{ .Values.imagePullPolicy }}
 
@@ -36,12 +47,13 @@ networkPolicies:
     {{- $gateway := default "public" .Values.addons.vault.ingress.gateway }}
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
     {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
   nodeCidr: {{ .Values.networkPolicies.nodeCidr }}
+  vpcCidr: {{ .Values.networkPolicies.vpcCidr }}  
 
 istio:
   enabled: {{ .Values.istio.enabled }}
   vault:
     gateways:
       - istio-system/{{ default "public" .Values.addons.vault.ingress.gateway }}
-
 {{- end -}}
