@@ -28,7 +28,7 @@ After [graduating your package](https://repo1.dso.mil/platform-one/bbtoc/-/tree/
 
 1. Create a directory for your package at `chart/templates/<your-package-name>`
 
-1. This [document](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration/package-integration-flux.md) describes how to generate the necessary yaml files needed to be placed in `chart/templates/<your-package-name>`
+1. This [document](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/docs/developer/package-integration/package-integration-flux.md) describes how to generate the necessary yaml files that need to be placed in `chart/templates/<your-package-name>`
 
 1. More details about secret-*.yaml: The secret template is where the code for secrets go. Typically you will see secrets for imagePullSecret, sso, database, and possibly object storage. These secrets are a BigBang chart enhancement. They are created conditionally based on what the user enables in the config. For example if the app supports SSO and will need a Certificate Authority supplied to trust the connection to the IdP there should be a `secret-ca.yaml` template to populate a secret with the `sso.certificate_authority` value in the application namespace.
 
