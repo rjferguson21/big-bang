@@ -92,7 +92,7 @@ registry:
 gitlab:
   {{- if or $iamProfile .Values.addons.gitlab.objectStorage.endpoint $istioInjection $cronEnabled }}
   toolbox:
-    {{- if or (and $cronEnabled $istioInjection) $.Values.addons.gitlab.objectStorage.endpoint }}
+    {{- if or (and $cronEnabled $istioInjection) .Values.addons.gitlab.objectStorage.endpoint }}
     backups:
     {{- end }}
     {{- if and $cronEnabled $istioInjection }}
