@@ -109,7 +109,7 @@ networkPolicies:
   # Must be an IP CIDR range (x.x.x.x/x - ideally a /16 or /24 to include multiple IPs)
   nodeCidr: ""
   # -- VPC CIDR, defaults to 0.0.0.0/0
-  # In a production environment, it is recommended to setup a Private Endpoint for your AWS services like KMS or S3. 
+  # In a production environment, it is recommended to setup a Private Endpoint for your AWS services like KMS or S3.
   # Please review https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html to setup routing to AWS services that never leave the AWS network.
   # Once created update `networkPolicies.vpcCidr` to match the CIDR of your VPC so Vault will be able to reach your VPCs DNS and new KMS endpoint.
   vpcCidr: 0.0.0.0/0
@@ -464,6 +464,28 @@ loki:
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+tempo:
+  # -- Toggle deployment of Loki.
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/tempo.git
+    path: "./chart"
+    # tag: ""
+    branch: "1-finalize-first-tag-of-tempo-for-deployment-into-bigbang"
+
+  # -- Flux reconciliation overrides specifically for the Loki Package
+  flux: {}
+
+  # -- Values to passthrough to the Loki chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/loki.git
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+# ----------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 # Monitoring
 #
 monitoring:
