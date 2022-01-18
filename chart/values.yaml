@@ -768,7 +768,7 @@ addons:
     postRenderers: []
 
   nexus:
-    # -- Toggle deployment of Nexus.
+    # -- Toggle deployment of Nexus. 
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
