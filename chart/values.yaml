@@ -223,7 +223,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.27.0-bb.2"
+    tag: "2.27.0-bb.4"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
@@ -362,7 +362,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.5.0-bb.1"
+    tag: "0.6.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -472,7 +472,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "23.1.6-bb.6"
+    tag: "23.1.6-bb.7"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -768,12 +768,12 @@ addons:
     postRenderers: []
 
   nexus:
-    # -- Toggle deployment of Nexus.
+    # -- Toggle deployment of Nexus. 
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "36.0.0-bb.1"
+      tag: "36.0.0-bb.3"
 
     # -- Base64 encoded license file.
     license_key: ""

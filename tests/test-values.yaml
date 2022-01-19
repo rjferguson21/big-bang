@@ -84,7 +84,6 @@ jaeger:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_url: "https://tracing.bigbang.dev"
 
@@ -331,6 +330,7 @@ monitoring:
           cypress_prometheus_url: 'https://prometheus.bigbang.dev'
           cypress_grafana_url: 'https://grafana.bigbang.dev'
           cypress_alertmanager_url: 'https://alertmanager.bigbang.dev'
+          cypress_check_istio_dashboards: 'true'
 
 twistlock:
   enabled: true
