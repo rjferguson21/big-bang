@@ -11,21 +11,53 @@ domain: {{ $domainName }}
 createNamespace: false
 
 global:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
 
 controller:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
 
 dex:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
 
 redis-bb:
+  image: 
+    pullPolicy: {{ .Values.imagePullPolicy }}
   enabled: true
   auth:
     enabled: false
+  {{- if .Values.monitoring.enabled }}
+  metrics:
+    enabled: true
+    image:
+      pullSecrets:
+        - private-registry
+    serviceMonitor:
+      enabled: true
+      namespace: argocd
+      selector:
+        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/instance: argocd-argocd
+    prometheusRule:
+      enabled: true
+      namespace: monitoring
+  {{- end }}
+
+server:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+repoServer:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}

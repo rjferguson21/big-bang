@@ -1,4 +1,4 @@
-{{- if or .Values.logging.enabled .Values.clusterAuditor.enabled }}
+{{- if .Values.logging.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.logging "name" "ek" "defaults" (include "bigbang.defaults.logging" .)) }}
 {{- end }}
 
@@ -9,6 +9,8 @@ hostname: {{ $domainName }}
 domain: {{ $domainName }}
 
 openshift: {{ .Values.openshift }}
+
+imagePullPolicy: {{ .Values.imagePullPolicy }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
@@ -57,8 +59,29 @@ sso:
 kibana:
   imagePullSecrets:
     - name: private-registry
+{{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+{{- end }}
 
 elasticsearch:
   imagePullSecrets:
     - name: private-registry
+{{- if .Values.istio.enabled }}
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  data:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  ingest:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  ml:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  coord:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+{{- end }}
 {{- end -}}

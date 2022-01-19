@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{- if and .Values.istio.enabled (or .Values.addons.authservice.enabled (and .Values.monitoring.enabled .Values.monitoring.sso.enabled) (and .Values.jaeger.enabled .Values.jaeger.sso.enabled)) }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
 
@@ -6,10 +6,19 @@
 # hostname is deprecated and replaced with domain. But if hostname exists then use it.
 {{- $domainName := default .Values.domain .Values.hostname }}
 
+image: 
+  pullPolicy: {{ .Values.imagePullPolicy }}
+  
 imagePullSecrets:
   - name: private-registry
 
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+
 openshift: {{ .Values.openshift }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
@@ -17,6 +26,24 @@ networkPolicies:
     {{- $gateway := default "public" .Values.addons.haproxy.ingress.gateway }}
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
     {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+
+{{- if and (dig "redis" "enabled" false .Values.addons.authservice.values) .Values.monitoring.enabled }}
+redis-bb:
+  metrics:
+    enabled: true 
+    image:
+      pullSecrets:
+        - private-registry
+    serviceMonitor:
+      enabled: true
+      namespace: authservice
+      selector: 
+        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/instance: authservice-authservice
+    prometheusRule:
+      enabled: true 
+      namespace: monitoring
+{{- end }}
 
 global:
   oidc:
@@ -52,7 +79,7 @@ chains:
   {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
   {{- end }}
 
-  {{- if .Values.jaeger.sso.enabled }}
+  {{- if and .Values.jaeger.enabled .Values.jaeger.sso.enabled }}
   jaeger:
     match:
       header: ":authority"
@@ -70,7 +97,7 @@ chains:
     client_secret: "{{ .Values.jaeger.sso.client_secret }}"
   {{- end }}
 
-  {{- if .Values.monitoring.sso.enabled }}
+  {{- if and .Values.monitoring.enabled .Values.monitoring.sso.enabled }}
   prometheus:
     match:
       header: ":authority"

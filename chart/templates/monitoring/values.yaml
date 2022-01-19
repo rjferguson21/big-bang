@@ -8,11 +8,14 @@
 hostname: {{ $domainName }}
 domain: {{ $domainName }}
 
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.monitoring) "enabled") .Values.istio.enabled) }}
+
 flux:
   enabled: true
 
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
   ingressLabels:
     {{- $gateway := default "public" .Values.monitoring.ingress.gateway }}
     {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
@@ -21,6 +24,9 @@ networkPolicies:
 minioOperator:
   enabled: {{ .Values.addons.minioOperator.enabled }}
   
+gitlabRunner:
+  enabled: {{ .Values.addons.gitlabRunner.enabled }}
+
 istio:
   {{- $monitoringInjection := dig "istio" "injection" "enabled" .Values.monitoring }}
   enabled: {{ .Values.istio.enabled }}
@@ -48,28 +54,59 @@ istio:
     - istio-system/{{ default "public" .Values.monitoring.ingress.gateway }}
   injection: {{ dig "istio" "injection" "enabled" .Values.monitoring }}
 
-{{- if .Values.monitoring.sso.enabled }}
 alertmanager:
   alertmanagerSpec:
-    {{- $alertmanagerAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
-    {{- $alertmanagerAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+    # The operator performs a strategic merge to add our imagePullPolicy definition to the default containers
+    # NOTE: This functionality is not actively maintained upstream and may not work in a future monitoring upgrade
+    containers:
+      - name: "alertmanager"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+      - name: "config-reloader"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+    {{- if or .Values.monitoring.sso.enabled $istioInjection }}
     podMetadata:
+      {{- if .Values.monitoring.sso.enabled }}
+      {{- $alertmanagerAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+      {{- $alertmanagerAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
       labels:
         {{ $alertmanagerAuthserviceKey }}: {{ $alertmanagerAuthserviceValue }}
+      {{- end }}
+      {{- if $istioInjection }}
+      annotations:
+        {{ include "istioAnnotation" . }}
+      {{- end }}
+    {{- end }}
 prometheus:
   prometheusSpec:
-    {{- $prometheusAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
-    {{- $prometheusAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
+    # The operator performs a strategic merge to add our imagePullPolicy definition to the default containers
+    # NOTE: This functionality is not actively maintained upstream and may not work in a future monitoring upgrade
+    containers:
+      - name: "prometheus"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+      - name: "config-reloader"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+    {{- if or .Values.monitoring.sso.enabled $istioInjection }}
     podMetadata:
+      {{- if .Values.monitoring.sso.enabled }}
+      {{- $prometheusAuthserviceKey := (dig "selector" "key" "protect" .Values.addons.authservice.values) }}
+      {{- $prometheusAuthserviceValue := (dig "selector" "value" "keycloak" .Values.addons.authservice.values) }}
       labels:
         {{ $prometheusAuthserviceKey }}: {{ $prometheusAuthserviceValue }}
-{{- end }}
+      {{- end }}
+      {{- if $istioInjection }}
+      annotations:
+        {{ include "istioAnnotation" . }}
+      {{- end }}
+    {{- end }}
 
 anchore:
   enabled: {{ .Values.addons.anchore.enabled }}
 
 kiali:
   enabled: {{ .Values.kiali.enabled }}
+
+loki:
+  enabled: {{ .Values.loki.enabled }}
 
 global:
   imagePullSecrets:
@@ -80,8 +117,24 @@ sso:
 
 grafana:
   image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
     pullSecrets:
     - private-registry
+  sidecar:
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+  {{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
+
+  {{- if .Values.loki.enabled }}
+  additionalDataSources:
+  - name: Loki
+    type: loki
+    url: http://logging-loki.logging.svc.cluster.local:3100
+    access: proxy
+  {{- end }}
 
   grafana.ini:
     {{- if .Values.istio.enabled }}
@@ -109,11 +162,28 @@ grafana:
       {{- list "tls_client_cert" .tls_client_cert | include "bigbang.addValueIfSet" | indent 6 }}
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
+    
+  {{- if or .Values.loki.enabled .Values.addons.gitlabRunner.enabled }}
+  plugins:
+  {{- if .Values.loki.enabled }}  
+    - grafana-piechart-panel
+  {{- end }}
+  {{- if .Values.addons.gitlabRunner.enabled }}  
+    - grafana-polystat-panel
+  {{- end }}
+  {{- end }}
 
 prometheus-node-exporter:
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
   serviceAccount:
     imagePullSecrets:
     - name: private-registry
+
+  {{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
 
   {{- if .Values.openshift }}
   service:
@@ -122,6 +192,29 @@ prometheus-node-exporter:
   {{- end }}
 
 kube-state-metrics:
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
   - name: private-registry
+
+  {{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
+
+prometheusOperator:      
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}      
+  admissionWebhooks:        
+    cleanupProxy:          
+      image:            
+        pullPolicy: {{ .Values.imagePullPolicy }}        
+    patch:           
+      image:            
+        pullPolicy: {{ .Values.imagePullPolicy }}
+
+  {{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
 {{- end -}}

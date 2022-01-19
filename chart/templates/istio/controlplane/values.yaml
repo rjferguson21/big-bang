@@ -25,6 +25,8 @@ networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
+imagePullPolicy: {{ .Values.imagePullPolicy }}
+
 {{- if .Values.istio.ingressGateways }}
 ingressGateways:
   istio-ingressgateway:
@@ -50,8 +52,19 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
+      {{- if ($values.ports) }}
+        {{- range $values.ports }}
     - hosts:
-      {{ tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
+      {{- tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
+      port:
+      {{- tpl ( . | default (list) | toYaml) $ | nindent 8 }}
+      tls:
+        credentialName: {{ $name }}-cert
+        mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+        {{- end }}
+      {{ else }} 
+    - hosts:
+      {{- tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }} 
       port:
         name: https
         number: 8443
@@ -59,6 +72,7 @@ gateways:
       tls:
         credentialName: {{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $values }}
+      {{- end }}  
 {{- end }}
 {{- end }}
 

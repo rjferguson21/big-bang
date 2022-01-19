@@ -11,6 +11,9 @@ elasticsearch:
 imagePullSecrets:
   - name: private-registry
 
+image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
   controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
@@ -35,9 +38,11 @@ dashboards:
 {{- end }}
 
 {{- if .Values.istio.enabled }}
-podLabels:
-  traffic.sidecar.istio.io/excludeOutboundPorts: "443"
+podAnnotations:
+  {{ include "istioAnnotation" . }}
 {{- end }}
+
+openshift: {{ .Values.openshift }}
 
 {{- if .Values.openshift }}
 podSecurityContext:

@@ -10,9 +10,17 @@ domain: {{ $domainName }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
-  virtualService:  # this key is non-standard and needs to be fixed in the package
+  console:
     gateways:
     - istio-system/{{ default "public" .Values.addons.minio.ingress.gateway }}
+  api:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.minio.ingress.gateway }}
+
+{{- if .Values.istio.enabled }}
+annotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
 
 minioRootCreds: minio-root-creds-secret
 
@@ -33,6 +41,8 @@ podAnnotations:
   traffic.sidecar.istio.io/excludeInboundPorts: "9443"
 
 tenants:
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecret:
     name: private-registry
   secrets:

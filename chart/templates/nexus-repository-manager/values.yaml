@@ -14,6 +14,12 @@ istio:
 
 openshift: {{ .Values.openshift }}
 
+image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
+job_image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+  
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
@@ -27,6 +33,10 @@ networkPolicies:
 nexus:
   imagePullSecrets:
     - name: private-registry
+  {{- if .Values.istio.enabled }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+  {{- end }}
   {{- if .Values.addons.nexus.license_key }}
   properties:
     override: true

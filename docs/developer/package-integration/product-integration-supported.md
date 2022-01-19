@@ -184,10 +184,8 @@ In order to validate that the new package is running as expected, we recommend t
 
 1. All the pods and services we expected are up and running (`kubectl get po -n <Package Namespace>`)
 
-1. Make sure all the pods are in a healthy state and have the right specs (e.g. annotations, replica sets, images, etc.)
+1. Make sure all the pods are in a healthy state and have the right specs
 
 1. Utilize grafana to make sure the pods have the right resources if needed
 
-1. Create an MR and make sure it passes all the automated tests in the pipeline
-
-1. Add label `status:review` to your ticket and the MR
+1. Create an MR and make sure it passes all the automated tests

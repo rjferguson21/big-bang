@@ -111,8 +111,13 @@ clusterAuditor:
     resources:
       requests:
         cpu: 100m
-        memory: .5Gi
+        memory: 256Mi
       limits: {}
+    bbtests:
+      enabled: true
+      cypress:
+        envs:
+          cypress_url: 'https://grafana.bigbang.dev/d/YBgRZG6Mz/opa-violations?orgId=1'
 
 gatekeeper:
   enabled: true
@@ -123,6 +128,7 @@ gatekeeper:
         cpu: 100m
         memory: 256Mi
       limits: {}
+
     violations:
       allowedCapabilities:
         parameters:
@@ -134,6 +140,8 @@ gatekeeper:
           excludedResources:
           # Allows k3d load balancer containers to pull from public repos
           - istio-system/lb-port-.*
+          # Allow argocd to deploy a test app in its cypress test
+          - argocd/guestbook-ui.*
       allowedSecCompProfiles:
         parameters:
           excludedResources:
@@ -180,9 +188,7 @@ gatekeeper:
           # Allows k3d load balancer containers to not have readiness/liveness probes
           - istio-system/lb-port-.*
     bbtests:
-      # TODO: Test will need to be refactored at BB level to properly run since we can't turn everything to deny
-      # https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/issues/133
-      enabled: false
+      enabled: true
       scripts:
         image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
         additionalVolumeMounts:
@@ -196,6 +202,13 @@ gatekeeper:
               name: "{{ .Chart.Name }}-test-config"
           - name: "{{ .Chart.Name }}-kube-cache"
             emptyDir: {}
+
+kyverno:
+  enabled: false
+  values:
+    replicaCount: 1
+    bbtests:
+      enabled: true
 
 logging:
   enabled: true
@@ -235,24 +248,8 @@ logging:
       cypress:
         artifacts: true
         envs:
+          cypress_expect_logs: "true"
           cypress_kibana_url: "https://kibana.bigbang.dev"
-        secretEnvs:
-          - name: cypress_elastic_password
-            valueFrom:
-              secretKeyRef:
-                name: "logging-ek-es-elastic-user"
-                key: elastic
-      scripts:
-        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
-        envs:
-          elasticsearch_host: "https://{{ .Release.Name }}-es-http.{{ .Release.Namespace }}.svc.cluster.local:9200"
-          desired_version: "{{ .Values.elasticsearch.version }}"
-        secretEnvs:
-          - name: ELASTIC_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "logging-ek-es-elastic-user"
-                key: elastic
 
 fluentbit:
   enabled: true
@@ -271,7 +268,7 @@ monitoring:
   enabled: true
   sso:
     enabled: false
-    prometheus: 
+    prometheus:
       client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-prometheus
     alertmanager:
       client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-alertmanager
@@ -308,7 +305,7 @@ monitoring:
             revision: 1
             datasource: Prometheus
       downloadDashboards:
-        resources: 
+        resources:
           limits:
             cpu: 20m
             memory: 20Mi
@@ -330,7 +327,6 @@ monitoring:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_prometheus_url: 'https://prometheus.bigbang.dev'
           cypress_grafana_url: 'https://grafana.bigbang.dev'
@@ -384,15 +380,15 @@ addons:
       redis-bb:
         master:
           persistence:
-            size: 256Mi
+            size: 512Mi
         replica:
           persistence:
-            size: 256Mi
+            size: 512Mi
       redis:
         resources:
           requests:
             cpu: 50m
-            memory: 64Mi
+            memory: 256Mi
           limits: {}
       server:
         resources:
@@ -410,9 +406,7 @@ addons:
         secret:
           argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
       bbtests:
-        # TODO: Disabled pending resolution of some "timing?" issues
-        # https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/issues/17
-        enabled: false
+        enabled: true
         cypress:
           artifacts: true
           envs:
@@ -492,7 +486,7 @@ addons:
             requests:
               cpu: 10m
             limits: {}
-        task-runner:
+        toolbox:
           persistence:
             size: 256Mi
           resources:
@@ -682,17 +676,15 @@ addons:
           limits: {}
       anchoreEnterpriseRbac:
         authResources:
-          resources:
-            requests:
-              cpu: 100m
-              memory: 200Mi
-            limits: {}
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
         managerResources:
-          resources:
-            requests:
-              cpu: 100m
-              memory: 200Mi
-            limits: {}
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits: {}
       anchoreEnterpriseReports:
         resources:
           requests:
@@ -724,6 +716,7 @@ addons:
           envs:
             ANCHORE_CLI_URL: "https://anchore-api.bigbang.dev/v1"
             ANCHORE_CLI_USER: admin
+            ANCHORE_SCAN_IMAGE: registry.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/centos:latest
           secretEnvs:
             - name: ANCHORE_CLI_PASS
               valueFrom:
@@ -807,7 +800,7 @@ addons:
         cypress:
           artifacts: true
           envs:
-            cypress_url: 'http://minio.bigbang.dev/login'
+            cypress_url: 'https://minio.bigbang.dev/login'
           secretEnvs:
             - name: cypress_secretkey
               valueFrom:
@@ -822,8 +815,8 @@ addons:
         scripts:
           image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-09-02T09-21-27Z
           envs:
-            MINIO_PORT: '80'
-            MINIO_HOST: 'http://minio'
+            MINIO_PORT: ''
+            MINIO_HOST: 'https://minio-api.bigbang.dev'
           secretEnvs:
             - name: SECRET_KEY
               valueFrom:
@@ -1033,49 +1026,38 @@ addons:
           cpu: 10m
           memory: 16Mi
         limits: {}
+      # Disabling helm tests for keycloak until they are working on rke2
       bbtests:
-        enabled: true
+        enabled: false
         cypress:
           artifacts: true
           envs:
             cypress_url: "https://keycloak.bigbang.dev"
             cypress_username: "admin"
             cypress_password: "password"
-      secrets:
-        env:
-          stringData:
-            CUSTOM_REGISTRATION_CONFIG: /opt/jboss/keycloak/customreg.yaml
-            KEYCLOAK_IMPORT: /opt/jboss/keycloak/realm.json
-            X509_CA_BUNDLE: /etc/x509/https/cas.pem
-        certauthority:
-          stringData:
-            cas.pem: '{{ .Files.Get "resources/dev/dod_cas.pem" }}'
-        customreg:
-          stringData:
-            customreg.yaml: '{{ .Files.Get "resources/dev/baby-yoda.yaml" }}'
-        realm:
-          stringData:
-            realm.json: '{{ .Files.Get "resources/dev/baby-yoda.json" }}'
-      extraVolumes: |-              
-        - name: certauthority
-          secret:
-            secretName: {{ include "keycloak.fullname" . }}-certauthority
-        - name: customreg
-          secret:
-            secretName: {{ include "keycloak.fullname" . }}-customreg
-        - name: realm
-          secret:
-            secretName: {{ include "keycloak.fullname" . }}-realm
-      extraVolumeMounts: |-
-        - name: certauthority
-          mountPath: /etc/x509/https/cas.pem
-          subPath: cas.pem
-          readOnly: true
-        - name: customreg
-          mountPath: /opt/jboss/keycloak/customreg.yaml
-          subPath: customreg.yaml
-          readOnly: true
-        - name: realm
-          mountPath: /opt/jboss/keycloak/realm.json
-          subPath: realm.json
-          readOnly: true
+
+  vault:
+    enabled: false
+    values:
+      server:
+        dataStorage:
+          enabled: true
+      injector:
+        affinity: |
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: {{ template "vault.name" . }}-agent-injector
+                      app.kubernetes.io/instance: "{{ .Release.Name }}"
+                      component: webhook
+                  topologyKey: kubernetes.io/hostname
+ 
+      bbtests:
+        enabled: true
+        cypress:
+          artifacts: true
+          envs:
+            cypress_vault_url: "https://vault.bigbang.dev"

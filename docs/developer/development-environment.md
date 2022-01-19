@@ -22,7 +22,7 @@ This page contains the manual steps to create your k3d dev environment. There is
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/)
 
-> For additional installtion details, see [Software Installation and Verification Commands to run from Bash](https://repo1.dso.mil/platform-one/onboarding/big-bang/engineering-cohort/-/blob/master/lab_guides/01-Preflight-Access-Checks/A-software-check.md)
+> For additional installation details, see [Software Installation and Verification Commands to run from Bash](https://repo1.dso.mil/platform-one/onboarding/big-bang/engineering-cohort/-/blob/master/lab_guides/01-Preflight-Access-Checks/A-software-check.md)
 
 ## Manual Creation of a Development Environment
 
@@ -125,53 +125,6 @@ k3d cluster create \
     --port 443:443@loadbalancer \
     --api-port 6443
 ```
-
-**_Optionally_** you can set your image pull secret on the cluster so that you don't have to put your credentials in the code or in the command line in later steps
-
-```shell
-# Create the directory for the k3s registry config.
-mkdir ~/.k3d/
-
-# Define variables
-YOURUSERNAME="<user_name>"
-YOURCLISECRET="<CLI secret>"
-EC2_PUBLIC_IP=$( curl https://ipinfo.io/ip )
-
-# Create the config file using your registry1 credentials.
-cat << EOF > ~/.k3d/p1-registries.yaml
-configs:
-  "registry1.dso.mil":
-    auth:
-      username: $YOURUSERNAME
-      password: $YOURCLISECRET
-EOF
-
-# Create k3d cluster
-k3d cluster create \
-    --servers 1 \
-    --agents 3 \
-    --volume ~/.k3d/p1-registries.yaml:/etc/rancher/k3s/registries.yaml \
-    --volume /etc/machine-id:/etc/machine-id \
-    --k3s-server-arg "--disable=traefik" \
-    --k3s-server-arg "--disable=metrics-server" \
-    --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
-    --port 80:80@loadbalancer \
-    --port 443:443@loadbalancer \
-    --api-port 6443
-```
-
-Here is an explanation of what we are doing with this command:
-
-- `--servers 1` Creating 1 master/server
-- `--agents 3` Creating 3 agent nodes
-- `--k3s-server-arg "--disable=traefik"` Disable the default Traefik Ingress
-- `--k3s-server-arg "--disable=metrics-server"` Disable default metrics
-- `--k3s-server-arg "--tls-san=<your public ec2 ip>"` This adds the public IP to the kubeapi certificate so that you can access it remotely.
-- `--port 80:80@loadbalancer` Exposes the cluster on the host on port 80
-- `--port 443:443@loadbalancer` Exposes the cluster on the host on port 443
-- `--volume ~/.k3d/p1-registries.yaml:/etc/rancher/k3s/registries.yaml` volume mount image pull secret config for k3d cluster.
-- `--volume /etc/machine-id:/etc/machine-id` volume mount so k3d nodes have a file at /etc/machine-id for fluentbit DaemonSet.
-- `--api-port 6443` port that your k8s api will use. 6443 is the standard default port for k8s api
 
 ### Step 3
 
@@ -463,6 +416,29 @@ sudo vim /etc/hosts
           and select SOCKS v5
       1. Select ```Proxy DNS when using SOCKS v5```
 
+7. To be able to test SSO between BigBang Package apps and your own Keycloak instance deployed in the same cluster you will need to take some extra steps. For SSO OIDC to work the app pod from within the cluster must be able to reach ```keycloak.bigbang.dev```. When using a development k3d environment with the development TLS cert the public DNS for ```keycloak.bigbang.dev``` points to localhost IP 127.0.0.1. This means that from within pod containers your Keycloak deployment can't be found. Therefore the SSO will fail. The development hack to fix this is situation is to edit the cluster coredns configmap and add a NodeHosts entry for Keycloak. 
+    - Edit the coredns configmap
+
+      ```
+      kubectl edit configmap/coredns -n kube-system
+      ```
+    - add NodeHosts entry for Keycloak using using the passthrough-ingressgateway service EXTERNAL-IP
+      ```
+      data:
+        NodeHosts: |
+          172.18.0.2 k3d-k3s-default-server-0
+          172.18.0.3 k3d-k3s-default-agent-0
+          172.18.0.4 k3d-k3s-default-agent-1
+          172.18.0.5 k3d-k3s-default-agent-2
+          172.18.1.242 keycloak.bigbang.dev
+      ```
+    - Restart the coredns pod so it can pick up the new config
+      ```
+      kubectl rollout restart deployment coredns -n kube-system
+      ```
+    - You might also need to restart the Package app pods before they can detect the new coredns config
+    - Deploy Keycloak using the example dev config values ```docs/developer/example_configs/keycloak-dev-values.yaml```
+
 ### Amazon Linux 2
 
 Here are the configuration steps if you want to use a Fedora based instance. All other steps are similar to Ubuntu.
@@ -487,3 +463,54 @@ sudo wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh 
 
 # exit ssh and then reconnect so you can use docker as non-root
 ```
+
+### Setting an imagePullSecret on the cluster with k3d
+
+
+**_This methodology is not recommended_**
+It is possible to set your image pull secret on the cluster so that you don't have to put your credentials in the code or in the command line in later steps
+
+```shell
+# Create the directory for the k3s registry config.
+mkdir ~/.k3d/
+
+# Define variables
+YOURUSERNAME="<user_name>"
+YOURCLISECRET="<CLI secret>"
+EC2_PUBLIC_IP=$( curl https://ipinfo.io/ip )
+
+# Create the config file using your registry1 credentials.
+cat << EOF > ~/.k3d/p1-registries.yaml
+configs:
+  "registry1.dso.mil":
+    auth:
+      username: $YOURUSERNAME
+      password: $YOURCLISECRET
+EOF
+
+# Create k3d cluster
+k3d cluster create \
+    --servers 1 \
+    --agents 3 \
+    --volume ~/.k3d/p1-registries.yaml:/etc/rancher/k3s/registries.yaml \
+    --volume /etc/machine-id:/etc/machine-id \
+    --k3s-server-arg "--disable=traefik" \
+    --k3s-server-arg "--disable=metrics-server" \
+    --k3s-server-arg "--tls-san=$EC2_PUBLIC_IP" \
+    --port 80:80@loadbalancer \
+    --port 443:443@loadbalancer \
+    --api-port 6443
+```
+
+Here is an explanation of what we are doing with this command:
+
+- `--servers 1` Creating 1 master/server
+- `--agents 3` Creating 3 agent nodes
+- `--k3s-server-arg "--disable=traefik"` Disable the default Traefik Ingress
+- `--k3s-server-arg "--disable=metrics-server"` Disable default metrics
+- `--k3s-server-arg "--tls-san=<your public ec2 ip>"` This adds the public IP to the kubeapi certificate so that you can access it remotely.
+- `--port 80:80@loadbalancer` Exposes the cluster on the host on port 80
+- `--port 443:443@loadbalancer` Exposes the cluster on the host on port 443
+- `--volume ~/.k3d/p1-registries.yaml:/etc/rancher/k3s/registries.yaml` volume mount image pull secret config for k3d cluster.
+- `--volume /etc/machine-id:/etc/machine-id` volume mount so k3d nodes have a file at /etc/machine-id for fluentbit DaemonSet.
+- `--api-port 6443` port that your k8s api will use. 6443 is the standard default port for k8s api
