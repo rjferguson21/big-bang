@@ -10,4 +10,10 @@ TBD
 
 ## Integration
 
+#### 1. Deploying a Policy Enforcement Tool (OPA Gatekeeper)  
+#### 2. Identifying Violations Found on Your Application
+#### 3. Fixing Policy Violations
+#### 3. Exemptions to Policy Exceptions
+
+
 ## Validation
