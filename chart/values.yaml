@@ -602,7 +602,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: "0.4.0-bb.20"
+      tag: "0.4.0-bb.21"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
@@ -768,12 +768,12 @@ addons:
     postRenderers: []
 
   nexus:
-    # -- Toggle deployment of Nexus.
+    # -- Toggle deployment of Nexus. 
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
       path: "./chart"
-      tag: "36.0.0-bb.1"
+      tag: "36.0.0-bb.3"
 
     # -- Base64 encoded license file.
     license_key: ""
@@ -1125,7 +1125,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.23.6-bb.3"
+      tag: "2.23.6-bb.4"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
