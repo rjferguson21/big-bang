@@ -11,9 +11,6 @@ domain: {{ $domainName }}
 # Define variables to help with conditionals later
 {{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.gitlab) "enabled") .Values.istio.enabled) }}
 {{- $iamProfile := (and (ne .Values.addons.gitlab.objectStorage.iamProfile "") .Values.addons.gitlab.objectStorage.endpoint) }}
-{{- $cronEnabled := dig "values" "gitlab" "toolbox" "backups" "cron" "enabled" "false" .Values.addons.gitlab }}
-{{- $extraArgs := dig "values" "gitlab" "toolbox" "backups" "cron" "extraArgs" "" .Values.addons.gitlab }}
-{{- $shutdownIstioProxyCmd := "until curl -fsI http://localhost:15021/healthz/ready; do echo \\\"Waiting for Istio sidecar proxy...\\\"; sleep 3; done; sleep 5; echo \\\"Stopping the istio proxy...\\\"; curl -X POST http://localhost:15020/quitquitquit" }}
 
 openshift: {{ .Values.openshift }}
 
@@ -90,21 +87,15 @@ registry:
 {{- end }}
 
 gitlab:
-  {{- if or $iamProfile .Values.addons.gitlab.objectStorage.endpoint $istioInjection $cronEnabled }}
+  {{- if or .Values.addons.gitlab.objectStorage.endpoint $istioInjection }}
   toolbox:
-    {{- if or (and $cronEnabled $istioInjection) .Values.addons.gitlab.objectStorage.endpoint }}
-    backups:
-    {{- end }}
-    {{- if and $cronEnabled $istioInjection }}
-      cron:
-        extraArgs: "{{ $extraArgs }}; {{ $shutdownIstioProxyCmd }}"
-    {{- end }}
     {{- if .Values.addons.gitlab.objectStorage.endpoint }}
+    backups:
       objectStorage:
         config:
           secret: gitlab-object-storage
           key: backups
-    {{- end }}    
+    {{- end }}
     {{- if or $iamProfile $istioInjection }}
     annotations:
       {{- if $iamProfile }}
