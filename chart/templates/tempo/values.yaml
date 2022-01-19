@@ -28,4 +28,7 @@ istio:
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
 
+serviceMonitor:
+  enabled: {{ .Values.monitoring.enabled }}
+
 {{- end -}}
