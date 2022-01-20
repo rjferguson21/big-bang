@@ -157,7 +157,7 @@ watch kubectl get pod,helmrelease -A
 # Tear down
 kubectl delete -f dev/bigbang.yaml
 # Istio namespace will be stuck in "finalizing". So run the script to delete it. You will need 'jq' installed
-hack/remove-ns-finalizer.sh istio-system
+./scripts/remove-ns-finalizer.sh istio-system
 
 # If you have pushed code changes before the tear down, occasionally the bigbang deployments are not terminated because Flux has not had enough time to reconcile the helmreleases
 
