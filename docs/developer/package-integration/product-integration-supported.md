@@ -30,7 +30,7 @@ After [graduating your package](https://repo1.dso.mil/platform-one/bbtoc/-/tree/
 
 1. More details about secret-*.yaml: The secret template is where the code for secrets go. Typically you will see secrets for imagePullSecret, sso, database, and possibly object storage. These secrets are a BigBang chart enhancement. They are created conditionally based on what the user enables in the config. For example if the app supports SSO and will need a Certificate Authority supplied to trust the connection to the IdP there should be a `secret-ca.yaml` template to populate a secret with the `sso.certificate_authority` value in the application namespace.
 
-1. Merge your default package values from `<your-package-git-folder>/flux/values.yaml` into `chart/values.yaml`.  Only the "standard" keys used across packages should be used.  Keep in mind that values can be passed directly to the package using `.Values.<package>.values`
+1. Merge your default package values from `<your-package-git-folder>/bigbang/values.yaml` into `chart/values.yaml`.  Only the "standard" keys used across packages should be used.  Keep in mind that values can be passed directly to the package using `.Values.<package>.values`
 
    > If your package is an `addon`, it falls into a different location than core packages.  In this case, you will need to update all your references from `.Values.<package>` to `.Values.addons.<package>`.
 
