@@ -164,7 +164,7 @@ kubectl delete -f dev/bigbang.yaml
 # Re-deploy bigbang
 kubectl apply -f dev/bigbang.yaml
 # Run the sync script.
-hack/sync.sh
+./scripts/sync.sh
 # Tear down
 kubectl delete -f dev/bigbang.yaml
 hack/remove-ns-finalizer.sh istio-system
