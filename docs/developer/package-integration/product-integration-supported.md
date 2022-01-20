@@ -137,7 +137,7 @@ helm delete bigbang -n bigbang
 # Helm delete will not delete the bigbang namespace
 kubectl delete ns bigbang
 # Istio namespace will be stuck in "finalizing". So run the script to delete it.
-hack/remove-ns-finalizer.sh istio-system
+./scripts/remove-ns-finalizer.sh istio-system
 ```
 
 ### GitOps with Flux
