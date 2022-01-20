@@ -167,7 +167,7 @@ kubectl apply -f dev/bigbang.yaml
 ./scripts/sync.sh
 # Tear down
 kubectl delete -f dev/bigbang.yaml
-hack/remove-ns-finalizer.sh istio-system
+./scripts/remove-ns-finalizer.sh istio-system
 ```
 
 ### Validation
