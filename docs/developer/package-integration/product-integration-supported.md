@@ -64,7 +64,7 @@ After [graduating your package](https://repo1.dso.mil/platform-one/bbtoc/-/tree/
        values: {}
    ```
 
-1. Edit tests/ci/k3d/values.yaml. These are the settings that the CI pipeline uses to run a deployment test.  Set your Package to be enabled and add any other necessary values. Where possible reduce the number of replicas to a minimum to reduce strain on the CI infrastructure. When you commit your code the pipeline will run. You can view the pipeline in the Repo1 Gitlab console. Fix any errors in the pipeline output. The pipeline automatically runs a "smoke" test. It deploys bigbang on a k3d cluster using the test values file.
+1. Edit `tests/test-values.yaml`. These are the settings that the CI pipeline uses to run a deployment test.  Set your Package to be enabled and add any other necessary values. Where possible reduce the number of replicas to a minimum to reduce strain on the CI infrastructure. When you commit your code the pipeline will run. You can view the pipeline in the Repo1 Gitlab console. Fix any errors in the pipeline output. The pipeline automatically runs a "smoke" test. It deploys bigbang on a k3d cluster using the test values file.
 
 1. Add your packages name to the ORDERED_HELMRELEASES list in scripts/deploy/02_wait_for_helmreleases.sh.
 
