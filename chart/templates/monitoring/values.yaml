@@ -162,16 +162,6 @@ grafana:
       {{- list "tls_client_cert" .tls_client_cert | include "bigbang.addValueIfSet" | indent 6 }}
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
-    
-  {{- if or .Values.loki.enabled .Values.addons.gitlabRunner.enabled }}
-  plugins:
-  {{- if .Values.loki.enabled }}  
-    - grafana-piechart-panel
-  {{- end }}
-  {{- if .Values.addons.gitlabRunner.enabled }}  
-    - grafana-polystat-panel
-  {{- end }}
-  {{- end }}
 
 prometheus-node-exporter:
   image:
