@@ -531,7 +531,7 @@ twistlock:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
     path: "./chart"
-    tag: "0.1.0-bb.0"
+    tag: "0.2.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
@@ -673,7 +673,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      tag: "5.6.2-bb.0"
+      tag: "5.6.2-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -921,7 +921,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.15.0-bb.4"
+      tag: "1.15.0-bb.5"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
