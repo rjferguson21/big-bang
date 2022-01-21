@@ -19,13 +19,6 @@ global:
 {{- if $istioInjection }}
   podAnnotations:
     {{ include "istioAnnotation" . }}
-redis:
-  master:
-    podAnnotations:
-      {{ include "istioAnnotation" . }}
-  replica:
-    podAnnotations:
-      {{ include "istioAnnotation" . }}
 {{- end }}
 
 controller:
@@ -62,6 +55,14 @@ redis-bb:
       enabled: true
       namespace: monitoring
   {{- end }}
+{{- if $istioInjection }}  
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  replica:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+{{- end }}
 
 server:
   image: 
@@ -76,20 +77,6 @@ istio:
   argocd:
     gateways:
     - istio-system/{{ default "public" .Values.addons.argocd.ingress.gateway }}
-
-{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
-{{- if $istioInjection }}
-redis:
-  master:
-    podAnnotations:
-      {{ include "istioAnnotation" . }}
-  replica:
-    podAnnotations:
-      {{ include "istioAnnotation" . }}
-global:
-  podAnnotations:
-    {{ include "istioAnnotation" . }}
-{{- end }}
 
 monitoring:
   enabled: {{ .Values.monitoring.enabled }}
