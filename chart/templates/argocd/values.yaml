@@ -15,6 +15,18 @@ global:
     imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
+{{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+redis-bb: # see also https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/blob/main/chart/Chart.yaml#L22
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  replica:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+{{- end }}
 
 controller:
   image: 
@@ -67,6 +79,13 @@ istio:
 
 {{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
 {{- if $istioInjection }}
+redis:
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  replica:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
 global:
   podAnnotations:
     {{ include "istioAnnotation" . }}
