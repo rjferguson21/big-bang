@@ -19,7 +19,7 @@ global:
 {{- if $istioInjection }}
   podAnnotations:
     {{ include "istioAnnotation" . }}
-redis-bb: # see also https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd/-/blob/main/chart/Chart.yaml#L22
+redis:
   master:
     podAnnotations:
       {{ include "istioAnnotation" . }}
