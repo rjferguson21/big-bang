@@ -222,7 +222,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    tag: "2.27.0-bb.4"
+    tag: "2.27.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
@@ -470,7 +470,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "23.1.6-bb.7"
+    tag: "30.0.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
