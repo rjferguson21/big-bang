@@ -7,6 +7,7 @@
 {{- $domainName := default .Values.domain .Values.hostname }}
 domain: {{ $domainName }}
 
+{{- if or .Values.jaeger.enabled .Values.tempo.enabled }}
 tracing:
 {{- if .Values.jaeger.enabled }}
   enabled: {{ .Values.jaeger.enabled }}
@@ -15,6 +16,7 @@ tracing:
   enabled:  {{ .Values.tempo.enabled }}
   address: otel-collector.tempo.svc
   port: 9411
+{{- end }}
 {{- end }}
 
 {{- if .Values.tempo.enabled }}
