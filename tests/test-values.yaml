@@ -188,19 +188,6 @@ gatekeeper:
           - istio-system/lb-port-.*
     bbtests:
       enabled: true
-      scripts:
-        image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
-        additionalVolumeMounts:
-          - name: "{{ .Chart.Name }}-test-config"
-            mountPath: /yaml
-          - name: "{{ .Chart.Name }}-kube-cache"
-            mountPath: /.kube/cache
-        additionalVolumes:
-          - name: "{{ .Chart.Name }}-test-config"
-            configMap:
-              name: "{{ .Chart.Name }}-test-config"
-          - name: "{{ .Chart.Name }}-kube-cache"
-            emptyDir: {}
 
 kyverno:
   enabled: false
@@ -344,14 +331,11 @@ twistlock:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_baseUrl: "https://twistlock.bigbang.dev"
       scripts:
-        image: registry1.dso.mil/ironbank/stedolan/jq:1.6
         envs:
           twistlock_host: "https://twistlock.bigbang.dev"
-          desired_version: "{{ .Values.console.image.tag }}"
 
 # Addons are toggled based on labels in CI
 addons:
@@ -712,18 +696,9 @@ addons:
       bbtests:
         enabled: true
         scripts:
-          image: registry1.dso.mil/ironbank/anchore/cli/cli:0.9.1
           envs:
             ANCHORE_CLI_URL: "https://anchore-api.bigbang.dev/v1"
-            ANCHORE_CLI_USER: admin
-            ANCHORE_SCAN_IMAGE: registry.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise/centos:latest
-          secretEnvs:
-            - name: ANCHORE_CLI_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ template \"anchore-engine.fullname\" . }}-admin-pass"
-                  key: ANCHORE_ADMIN_PASSWORD
-
+ 
   sonarqube:
     enabled: false
     sso:
@@ -758,12 +733,9 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://sonarqube.bigbang.dev"
             cypress_url_setup: "https://sonarqube.bigbang.dev/setup"
-            cypress_user: "admin"
-            cypress_password: "new_admin_password"
       account:
         adminPassword: new_admin_password
         currentAdminPassword: admin
@@ -798,36 +770,12 @@ addons:
         # This issue can be reopened if problems reappear.
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: 'https://minio.bigbang.dev/login'
-          secretEnvs:
-            - name: cypress_secretkey
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: secretkey
-            - name: cypress_accesskey
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: accesskey
         scripts:
-          image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-09-02T09-21-27Z
           envs:
             MINIO_PORT: ''
             MINIO_HOST: 'https://minio-api.bigbang.dev'
-          secretEnvs:
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: secretkey
-            - name: ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: accesskey
 
   mattermostoperator:
     enabled: false
