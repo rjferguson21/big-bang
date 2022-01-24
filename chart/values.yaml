@@ -315,9 +315,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    #tag: "3.7.0-bb.2"
-    tag: ""
-    branch: "149-move-bbtest-values-from-test-values-yaml-to-values-yaml"
+    tag: "3.7.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
