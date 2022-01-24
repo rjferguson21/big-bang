@@ -128,7 +128,7 @@ grafana:
     {{ include "istioAnnotation" . }}
   {{- end }}
 
-  {{- if and .Values.loki.enabled .Values.tempo.enabled }}
+  {{- if or .Values.loki.enabled .Values.tempo.enabled }}
   additionalDataSources:
   {{- if .Values.loki.enabled }}
   - name: Loki
