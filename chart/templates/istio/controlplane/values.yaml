@@ -11,7 +11,7 @@ tracing:
 {{- if .Values.jaeger.enabled }}
   enabled: {{ .Values.jaeger.enabled }}
 {{- end }}
-{{- if .Values.tempo }}
+{{- if .Values.tempo.enabled }}
   enabled:  {{ .Values.tempo.enabled }}
   address: otel-collector.tempo.svc
   port: 9411
