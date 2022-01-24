@@ -8,7 +8,7 @@
 domain: {{ $domainName }}
 
 tracing:
-{{- if .Values.jaeger }}
+{{- if .Values.jaeger.enabled }}
   enabled: {{ .Values.jaeger.enabled }}
 {{- end }}
 {{- if .Values.tempo }}
