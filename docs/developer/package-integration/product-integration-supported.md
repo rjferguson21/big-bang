@@ -66,7 +66,17 @@ After [graduating your package](https://repo1.dso.mil/platform-one/bbtoc/-/tree/
 
 1. Edit `tests/test-values.yaml`. These are the settings that the CI pipeline uses to run a deployment test.  Set your Package to be enabled and add any other necessary values. Where possible reduce the number of replicas to a minimum to reduce strain on the CI infrastructure. When you commit your code the pipeline will run. You can view the pipeline in the Repo1 Gitlab console. Fix any errors in the pipeline output. The pipeline automatically runs a "smoke" test. It deploys bigbang on a k3d cluster using the test values file.
 
-1. Add your packages name to the ORDERED_HELMRELEASES list in scripts/deploy/02_wait_for_helmreleases.sh.
+1. You will also need to create an MR into the pipeline templates to update [02_wait_for_helmreleases.sh](https://repo1.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/-/blob/master/scripts/deploy/02_wait_for_helmreleases.sh) and add your package's HR name to the core or addon lists.
+
+    To test your pipeline changes you can make a draft MR pointing to your pipeline branch in `.gitlab-ci.yml`:
+    ```
+    include:
+      - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
+        ref: your-branch
+        file: '/pipelines/bigbang.yaml'
+    variables:
+      PIPELINE_REPO_BRANCH: 'your-branch'
+    ```
 
 1. Create an overrrides directory as a sibling directory next to the bigbang code directory. Put your override yaml files in this directory. The reason we do this is to avoid modifying the bigbang values.yaml that is under source control. You could accidentally commit it with your secrets. Avoid that mistake and create a local overrides directory. One option is to copy the tests/ci/k3d/values.yaml to make the override-values.yaml and make modifications. The file structure is like this:
 
