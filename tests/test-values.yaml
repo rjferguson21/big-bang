@@ -100,7 +100,6 @@ kiali:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_url: 'https://kiali.bigbang.dev'
 
@@ -188,19 +187,6 @@ gatekeeper:
           - istio-system/lb-port-.*
     bbtests:
       enabled: true
-      scripts:
-        image: registry1.dso.mil/ironbank/opensource/kubernetes-1.21/kubectl:v1.21.1
-        additionalVolumeMounts:
-          - name: "{{ .Chart.Name }}-test-config"
-            mountPath: /yaml
-          - name: "{{ .Chart.Name }}-kube-cache"
-            mountPath: /.kube/cache
-        additionalVolumes:
-          - name: "{{ .Chart.Name }}-test-config"
-            configMap:
-              name: "{{ .Chart.Name }}-test-config"
-          - name: "{{ .Chart.Name }}-kube-cache"
-            emptyDir: {}
 
 kyverno:
   enabled: false
@@ -405,11 +391,8 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://argocd.bigbang.dev"
-            cypress_user: "admin"
-            cypress_password: "Password123"
 
   authservice:
     enabled: false
@@ -746,12 +729,9 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://sonarqube.bigbang.dev"
             cypress_url_setup: "https://sonarqube.bigbang.dev/setup"
-            cypress_user: "admin"
-            cypress_password: "new_admin_password"
       account:
         adminPassword: new_admin_password
         currentAdminPassword: admin
@@ -786,36 +766,12 @@ addons:
         # This issue can be reopened if problems reappear.
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: 'https://minio.bigbang.dev/login'
-          secretEnvs:
-            - name: cypress_secretkey
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: secretkey
-            - name: cypress_accesskey
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: accesskey
         scripts:
-          image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2021-09-02T09-21-27Z
           envs:
             MINIO_PORT: ''
             MINIO_HOST: 'https://minio-api.bigbang.dev'
-          secretEnvs:
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: secretkey
-            - name: ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ .Values.tenants.secrets.name }}"
-                  key: accesskey
 
   mattermostoperator:
     enabled: false

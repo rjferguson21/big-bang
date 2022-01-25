@@ -109,7 +109,7 @@ networkPolicies:
   # Must be an IP CIDR range (x.x.x.x/x - ideally a /16 or /24 to include multiple IPs)
   nodeCidr: ""
   # -- VPC CIDR, defaults to 0.0.0.0/0
-  # In a production environment, it is recommended to setup a Private Endpoint for your AWS services like KMS or S3. 
+  # In a production environment, it is recommended to setup a Private Endpoint for your AWS services like KMS or S3.
   # Please review https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html to setup routing to AWS services that never leave the AWS network.
   # Once created update `networkPolicies.vpcCidr` to match the CIDR of your VPC so Vault will be able to reach your VPCs DNS and new KMS endpoint.
   vpcCidr: 0.0.0.0/0
@@ -117,7 +117,6 @@ networkPolicies:
 # -- Global ImagePullPolicy value for all packages
 # Permitted values are: None, Always, IfNotPresent
 imagePullPolicy: IfNotPresent
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Istio
@@ -128,7 +127,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.11.3-bb.1"
+    tag: "1.11.3-bb.2"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -157,7 +156,7 @@ istio:
     public:
       ingressGateway: "public-ingressgateway"
       hosts:
-      - "*.{{ .Values.domain }}"
+        - "*.{{ .Values.domain }}"
       # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
       autoHttpRedirect:
         enabled: true
@@ -206,7 +205,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.11.3-bb.2"
+    tag: "1.11.3-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -258,7 +257,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.44.0-bb.2"
+    tag: "1.44.0-bb.3"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -294,7 +293,7 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "1.0.3-bb.0"
+    tag: "1.1.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -315,7 +314,7 @@ gatekeeper:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
     path: "./chart"
-    tag: "3.7.0-bb.2"
+    tag: "3.7.0-bb.4"
 
   # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
   flux:
@@ -352,7 +351,6 @@ kyverno:
   postRenderers: []
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # Logging
 #
@@ -362,7 +360,7 @@ logging:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
     path: "./chart"
-    tag: "0.6.0-bb.0"
+    tag: "0.6.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Logging (EFK) Package
   flux:
@@ -402,7 +400,7 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.9.1-bb.0"
+    tag: "1.9.1-bb.1"
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
@@ -416,7 +414,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.19.16-bb.0"
+    tag: "0.19.16-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -464,6 +462,27 @@ loki:
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+tempo:
+  # -- Toggle deployment of Tempo.
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/tempo.git
+    path: "./chart"
+    tag: "0.12.2-bb.0"
+
+  # -- Flux reconciliation overrides specifically for the Tempo Package
+  flux: {}
+
+  # -- Values to passthrough to the Tempo chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/tempo.git
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+# ----------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 # Monitoring
 #
 monitoring:
@@ -472,7 +491,7 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    tag: "23.1.6-bb.7"
+    tag: "30.0.1-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
@@ -558,7 +577,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.27.1-bb.3"
+      tag: "3.27.1-bb.4"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -642,7 +661,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
       path: "./chart"
-      tag: "4.2.3-bb.9"
+      tag: "4.2.3-bb.10"
 
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
@@ -768,7 +787,7 @@ addons:
     postRenderers: []
 
   nexus:
-    # -- Toggle deployment of Nexus. 
+    # -- Toggle deployment of Nexus.
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
@@ -838,7 +857,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
       path: "./chart"
-      tag: "9.6.3-bb.12"
+      tag: "9.6.3-bb.13"
 
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
@@ -896,9 +915,8 @@ addons:
     # -- Post Renderers.  See docs/postrenders.md
     postRenderers: []
 
+  # -- Deployment of HAProxy is automatically toggled depending on Monitoring SSO and Monitoring Istio Injection
   haproxy:
-    # -- Toggle deployment of HAProxy.
-    enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/haproxy
       path: "./chart"
@@ -1148,7 +1166,7 @@ addons:
   keycloak:
     # -- Toggle deployment of Keycloak.
     # if you enable Keycloak you should uncomment the istio passthrough configurations above
-      # istio.ingressGateways.passthrough-ingressgateway and istio.gateways.passthrough
+    # istio.ingressGateways.passthrough-ingressgateway and istio.gateways.passthrough
     enabled: false
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
@@ -1192,9 +1210,9 @@ addons:
     # -- Values to passthrough to the keycloak chart: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
     values: {}
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Vault
-#
+  # ----------------------------------------------------------------------------------------------------------------------
+  # Vault
+  #
   vault:
     # -- Toggle deployment of Vault.
     enabled: false
