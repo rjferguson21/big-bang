@@ -163,7 +163,7 @@ echo -n Checking if ${WorkstationIP} is authorized in security group ...
 aws ec2 describe-security-groups --output json --no-cli-pager --group-names ${SGname} | grep ${WorkstationIP} > /dev/null || ipauth=missing
 if [ "${ipauth}" == "missing" ]; then
   echo -e "missing\nAdding ${WorkstationIP} to security group ${SGname} ..."
-  if [[ "$PRIVATE_IP" == true || "$METAL_LB" == true ]];
+  if [[ "$PRIVATE_IP" == true ]];
 	then
 	  	aws ec2 authorize-security-group-ingress --output json --no-cli-pager --group-name ${SGname} --protocol tcp --port 22 --cidr ${WorkstationIP}/32
 	else  # all protocols to all ports is the default
@@ -374,7 +374,16 @@ then
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
 
 	# create k3d cluster
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+  if [[ "$PRIVATE_IP" == true ]]
+  then
+    echo "using private ip for k3d"
+  	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+  else
+    echo "using public ip for k3d"
+    # default is to use public ip
+	  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+  fi
+
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
@@ -410,10 +419,15 @@ then
 	echo
 	echo "copy kubeconfig"
 	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
-	$sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
-
+  if [[ "$PRIVATE_IP" == true ]]
+  then
+  	$sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+  else  # default is to use public ip
+  	$sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+  fi
 elif [[ "$PRIVATE_IP" == true ]]
 then
+  echo "using private ip for k3d"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
@@ -424,6 +438,7 @@ then
 	$sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 
 else # default is public ip
+  echo "using public ip for k3d"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
 	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
@@ -458,17 +473,28 @@ if [[ "$METAL_LB" == true ]]; then
 fi
 
 echo
+echo "================================================================================"
 echo "====================== DEPLOYMENT FINISHED ====================================="
+echo "================================================================================"
 # ending instructions
+echo
+echo "SAVE THE FOLLOWING INSTRUCTIONS INTO A TEMPORARY TEXT DOCUMENT SO THAT YOU DON'T LOOSE THEM"
+echo "NOTE: The EC2 instance will automatically terminate at 08:00 UTC unless you delete the cron job"
 echo
 echo "ssh to instance:"
 echo "ssh -i ~/.ssh/${KeyName}.pem ubuntu@${PublicIP}"
 echo
 
 if [[ "$METAL_LB" == true ]]
-then	
-	echo "Start sshuttle:"
-	echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem -D 127.0.0.1:12345'"
+then
+  if [[ "$PRIVATE_IP" == true ]]
+  then
+    echo "Start sshuttle:"
+    echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem -D 127.0.0.1:12345'"
+  else  # using metal lb and public ip
+    echo "To access apps from browser start ssh with application-level port forwarding:"
+    echo "ssh -i ~/.ssh/${KeyName}.pem ubuntu@${PublicIP} -D 127.0.0.1:12345"
+  fi
 elif [[ "$PRIVATE_IP" == true ]]
 then	
 	echo "Start sshuttle:"
@@ -480,19 +506,21 @@ echo "To use kubectl from your local workstation you must set the KUBECONFIG env
 echo "export KUBECONFIG=~/.kube/${AWSUSERNAME}-dev-config"
 echo
 
-if [[ "$PRIVATE_IP" == true ]]
+if [[ "$METAL_LB" == true ]]
+then
+  echo "Do not edit /etc/hosts on your local workstation."
+  echo "To access apps from a browser edit /etc/hosts on the EC2 instance. Sample /etc/host entries have already been added there."
+  echo "Manually add more hostnames as needed."
+  echo "The IPs to use come from the istio-system services of type LOADBALANCER EXTERNAL-IP that are created when Istio is deployed."
+ 	echo "You must use Firefox browser with with manual SOCKs v5 proxy configuration to localhost with port 12345."
+  echo "Or, with other browsers like Chrome you could use a browser plugin like foxyproxy to do the same thing as Firefox."
+  echo
+elif [[ "$PRIVATE_IP" == true ]]
 then
 	echo "To access apps from a browser edit your /etc/hosts to add the private IP of your instance with application hostnames. Example:"
 	echo "${PrivateIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
 	echo
-elif [[ "$METAL_LB" == true ]]
-then
-  echo "Do not edit /etc/hosts on your local workstation."
-  echo "To access apps from a browser edit /etc/hosts on the EC2 instance. Sample /etc/host entries have already been added there."
-  echo "The IPs to use come from the istio-system services of type LOADBALANCER EXTERNAL-IP that are created when Istio is deployed."
- 	echo "You must use Firefox browser with with manual SOCKs v5 proxy configuration to localhost with port 12345"
-  echo
-else   #default is to use the public ip
+else   # default is to use the public ip
 	echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames."
   echo "Example:"
 	echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
