@@ -955,10 +955,10 @@ addons:
       # Disabling helm tests for keycloak until they are working on rke2
       bbtests:
         enabled: false
-          cypress:
-            artifacts: true
-            envs:
-              cypress_url: "https://keycloak.bigbang.dev"
+        cypress:
+          artifacts: true
+          envs:
+            cypress_url: "https://keycloak.bigbang.dev"
 
   vault:
     enabled: false
