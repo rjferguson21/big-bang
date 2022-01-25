@@ -956,7 +956,6 @@ addons:
       bbtests:
         enabled: false
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://keycloak.bigbang.dev"
 
