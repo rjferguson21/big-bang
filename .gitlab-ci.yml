@@ -3,4 +3,5 @@ include:
     ref: master
     file: '/pipelines/bigbang.yaml'
 variables:
-  DEBUG_ENABLED: true
+  DEBUG_ENABLED: "true"
+  PIPELINE_REPO_BRANCH: master
