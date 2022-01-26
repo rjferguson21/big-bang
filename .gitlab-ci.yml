@@ -1,7 +1,7 @@
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
-    ref: master
+    ref: BrandenCobb-master-patch-12270
     file: '/pipelines/bigbang.yaml'
 variables:
   DEBUG_ENABLED: "true"
-  PIPELINE_REPO_BRANCH: master
+  PIPELINE_REPO_BRANCH: BrandenCobb-master-patch-12270
