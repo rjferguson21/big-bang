@@ -12,6 +12,8 @@ imagePullSecrets:
 networkPolicies:
   enabled: {{ .Values.networkPolicies.enabled }}
 
+# no longer necessary to directly pass through .Values.monitoring.enabled
+# the package chart uses: .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" to toggle monitoring
 metrics:
   enabled: {{ .Values.monitoring.enabled }}
   serviceMonitor:
