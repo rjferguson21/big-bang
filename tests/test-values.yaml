@@ -100,7 +100,6 @@ kiali:
     bbtests:
       enabled: true
       cypress:
-        artifacts: true
         envs:
           cypress_url: 'https://kiali.bigbang.dev'
 
@@ -392,11 +391,8 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://argocd.bigbang.dev"
-            cypress_user: "admin"
-            cypress_password: "Password123"
 
   authservice:
     enabled: false
@@ -733,12 +729,9 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: "https://sonarqube.bigbang.dev"
             cypress_url_setup: "https://sonarqube.bigbang.dev/setup"
-            cypress_user: "admin"
-            cypress_password: "new_admin_password"
       account:
         adminPassword: new_admin_password
         currentAdminPassword: admin
@@ -821,12 +814,8 @@ addons:
       bbtests:
         enabled: true
         cypress:
-          artifacts: true
           envs:
             cypress_url: https://chat.bigbang.dev
-            cypress_mm_email: "test@bigbang.dev"
-            cypress_mm_user: "bigbang"
-            cypress_mm_password: "Bigbang#123"
 
   nexus:
     enabled: false
