@@ -60,7 +60,7 @@ sso:
   certificate_authority: ""
 
   # -- Keycloak realm's json web key output, obtained at https://<keycloak-server>/auth/realms/<realm>/protocol/openid-connect/certs
-  jwks: ""
+  jwks: ''
 
   # -- OIDC client ID used for packages authenticated through authservice
   client_id: ""
