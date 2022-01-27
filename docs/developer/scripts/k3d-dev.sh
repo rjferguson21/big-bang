@@ -369,32 +369,32 @@ echo "creating k3d cluster"
 
 if [[ "$METAL_LB" == true ]]
 then
-	# create docker network for k3d cluster
-	echo creating docker network for k3d cluster
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
+  # create docker network for k3d cluster
+  echo creating docker network for k3d cluster
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "docker network create k3d-network --driver=bridge --subnet=172.20.0.0/16"
 
-	# create k3d cluster
+  # create k3d cluster
   if [[ "$PRIVATE_IP" == true ]]
   then
     echo "using private ip for k3d"
-  	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+    ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
   else
     echo "using public ip for k3d"
     # default is to use public ip
-	  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+    ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --k3s-arg "--disable=servicelb@server:0" --network k3d-network --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
   fi
 
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
-	# install MetalLB
-	echo installing MetalLB
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml"
+  # install MetalLB
+  echo installing MetalLB
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml"
 
 
-	# create the metalLB config
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+  # create the metalLB config
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
 	#run this command on remote
 	cat << EOF > metallb-config.yaml
 	apiVersion: v1
@@ -412,42 +412,42 @@ then
 	EOF
 	ENDSSH
 
-	# apply the metalLB config
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f metallb-config.yaml"
+  # apply the metalLB config
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl create -f metallb-config.yaml"
 
-	echo
-	echo
-	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+  echo
+  echo
+  echo "copy kubeconfig"
+  scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
   if [[ "$PRIVATE_IP" == true ]]
   then
-  	$sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+    $sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
   else  # default is to use public ip
-  	$sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+    $sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
   fi
 elif [[ "$PRIVATE_IP" == true ]]
 then
   echo "using private ip for k3d"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
-	echo
-	echo
-	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
-	$sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PrivateIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+  echo
+  echo
+  echo "copy kubeconfig"
+  scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+  $sed_gsed -i "s/0\.0\.0\.0/${PrivateIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 
 else # default is public ip
   echo "using public ip for k3d"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "k3d cluster create --servers 1  --agents 3 --volume /etc/machine-id:/etc/machine-id@server:0 --volume /etc/machine-id:/etc/machine-id@agent:0,1,2 --k3s-arg "--disable=traefik@server:0"  --k3s-arg "--disable=metrics-server@server:0" --k3s-arg "--tls-san=${PublicIP}@server:0" --port 80:80@loadbalancer --port 443:443@loadbalancer --api-port 6443"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl config use-context k3d-k3s-default"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} "kubectl cluster-info"
 
-	echo
-	echo
-	echo "copy kubeconfig"
-	scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
-	$sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
+  echo
+  echo
+  echo "copy kubeconfig"
+  scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+  $sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 fi
 
 # add tools
@@ -460,15 +460,15 @@ ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} 'sud
 
 
 if [[ "$METAL_LB" == true ]]; then
-	ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
-	# run this command on remote
-	# fix /etc/hosts for new cluster
-	sudo sed -i '/bigbang.dev/d' /etc/hosts
-	sudo bash -c "echo '## begin bigbang.dev section' >> /etc/hosts"
-	sudo bash -c "echo 172.20.1.240  keycloak.bigbang.dev >> /etc/hosts"
-	sudo bash -c "echo 172.20.1.241  kiali.bigbang.dev >> /etc/hosts"
-	sudo bash -c "echo 172.20.1.242  gitlab.bigbang.dev >> /etc/hosts"
-	sudo bash -c "echo '## end bigbang.dev section' >> /etc/hosts"
+  ssh -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP} <<- 'ENDSSH'
+  # run this command on remote
+  # fix /etc/hosts for new cluster
+  sudo sed -i '/bigbang.dev/d' /etc/hosts
+  sudo bash -c "echo '## begin bigbang.dev section' >> /etc/hosts"
+  sudo bash -c "echo 172.20.1.240  keycloak.bigbang.dev >> /etc/hosts"
+  sudo bash -c "echo 172.20.1.241  kiali.bigbang.dev >> /etc/hosts"
+  sudo bash -c "echo 172.20.1.242  gitlab.bigbang.dev >> /etc/hosts"
+  sudo bash -c "echo '## end bigbang.dev section' >> /etc/hosts"
 	ENDSSH
 fi
 
@@ -497,9 +497,9 @@ then
   fi
 elif [[ "$PRIVATE_IP" == true ]]
 then	
-	echo "Start sshuttle:"
-	echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem'"
-fi	
+  echo "Start sshuttle:"
+  echo "sshuttle --dns -vr ubuntu@${PublicIP} 172.31.0.0/16 --ssh-cmd 'ssh -i ~/.ssh/${KeyName}.pem'"
+fi
 
 echo
 echo "To use kubectl from your local workstation you must set the KUBECONFIG environment variable:"
@@ -512,17 +512,17 @@ then
   echo "To access apps from a browser edit /etc/hosts on the EC2 instance. Sample /etc/host entries have already been added there."
   echo "Manually add more hostnames as needed."
   echo "The IPs to use come from the istio-system services of type LOADBALANCER EXTERNAL-IP that are created when Istio is deployed."
- 	echo "You must use Firefox browser with with manual SOCKs v5 proxy configuration to localhost with port 12345."
+  echo "You must use Firefox browser with with manual SOCKs v5 proxy configuration to localhost with port 12345."
   echo "Or, with other browsers like Chrome you could use a browser plugin like foxyproxy to do the same thing as Firefox."
   echo
 elif [[ "$PRIVATE_IP" == true ]]
 then
-	echo "To access apps from a browser edit your /etc/hosts to add the private IP of your instance with application hostnames. Example:"
-	echo "${PrivateIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
-	echo
+  echo "To access apps from a browser edit your /etc/hosts to add the private IP of your instance with application hostnames. Example:"
+  echo "${PrivateIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
+  echo
 else   # default is to use the public ip
-	echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames."
+  echo "To access apps from a browser edit your /etc/hosts to add the public IP of your instance with application hostnames."
   echo "Example:"
-	echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
-	echo
+  echo "${PublicIP}	gitlab.bigbang.dev logging.bigbang.dev kibana.bigbang.dev"
+  echo
 fi
