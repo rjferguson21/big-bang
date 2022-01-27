@@ -10,9 +10,7 @@ metadata:
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
 spec:
-  releaseName: kyverno
   targetNamespace: kyverno
-
   chart:
     spec:
       chart: {{ .Values.kyverno.git.path }}
