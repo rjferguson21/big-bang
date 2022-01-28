@@ -831,7 +831,7 @@ addons:
 
         # -- IDP SAML Metadata XML as a single line string in single quotes
         # -- this information is public and does not require a secret
-        idpMetadata: ""
+        idpMetadata: ''
 
       # -- NXRM Role
       role:
