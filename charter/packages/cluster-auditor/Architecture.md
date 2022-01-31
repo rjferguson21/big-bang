@@ -31,7 +31,7 @@ CA does not have SSO Integration.
 
 ## Licensing
 
-CA parent image is `opa-exporter` which uses  [Apache License 2.0](https://github.com/mcelep/opa-scorecard/blob/master/LICENSE).
+CA is based off of the OPA Scorecard which uses the [Apache License 2.0](https://github.com/mcelep/opa-scorecard/blob/master/LICENSE).
 
 ## Dependant Packages
 
