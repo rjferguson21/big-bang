@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cluster Auditor(CA) pulls data from the kubernetes API, transforms them and inserts them into Prometheus to be displayed in a Grafana Dashboard. The types of objects are both OPA Gatekeeper CRDs and native kubernetes [objects](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/configMap.yaml).
+Cluster Auditor(CA) pulls contstraints from the kubernetes API, transforms them and inserts them into Prometheus to be displayed in a Grafana Dashboard. Cluster Auditor uses OPA Gatekeeper CRDs and native kubernetes [objects](https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor/-/blob/main/chart/templates/clusterRole.yaml).
 
 ## Big Bang Touch Points
 
