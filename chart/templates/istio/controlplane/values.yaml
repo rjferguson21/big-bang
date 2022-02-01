@@ -79,7 +79,7 @@ gateways:
         mode: {{ dig "tls" "mode" "SIMPLE" $servervalues }}
         {{- end }}
       {{ else }}
-      {{- range $servervalues := $values.servers}}
+      {{- range $index, $servervalues := $values.servers}}
     - hosts:
       {{- tpl ($values.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
@@ -87,7 +87,7 @@ gateways:
         number: 8443
         protocol: HTTPS
       tls:
-        credentialName: {{ $name }}-cert
+        credentialName: {{ $index }}-{{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $values }}
       {{- end }}
       {{- end }}
