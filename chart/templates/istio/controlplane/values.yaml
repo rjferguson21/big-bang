@@ -77,7 +77,7 @@ gateways:
       tls:
         credentialName: {{ $index }}-{{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $servervalues }}
-        {{- end }}
+      {{- end }}
       {{ else }}
       {{- range $index, $servervalues := $values.servers}}
     - hosts:
@@ -91,7 +91,6 @@ gateways:
         mode: {{ dig "tls" "mode" "SIMPLE" $values }}
       {{- end }}
       {{- end }}
-{{- end }}
 {{- end }}
 
 {{- define "istio.ingressgateway.k8s" -}}
