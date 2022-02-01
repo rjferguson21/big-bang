@@ -6,12 +6,19 @@ When integrating your package, you must adhere to the policies that are enforced
 
 ## Prerequisites
 
-TBD
+- a K8s cluster with Big Bang installed
+- cluster admin access to the cluster
 
 ## Integration
 
-#### 1. Deploying a Policy Enforcement Tool (OPA Gatekeeper)  
+#### 1. Deploying a Policy Enforcement Tool (OPA Gatekeeper) 
+
+The policy enforcement tool is deployed as the first package in the default Big Bang configuration. This is so that the enforcement tool can effectively protect the cluster from the start. Your package will be deployed on top of the Big Bang enforcement tool. The policy enforcment tool will control your pacakge's access to the cluster.
+
 #### 2. Identifying Violations Found on Your Application
+
+In the following section, you will be shown how to identify violations found in your package. 
+
 #### 3. Fixing Policy Violations
 #### 3. Exemptions to Policy Exceptions
 
