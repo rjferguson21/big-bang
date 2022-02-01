@@ -69,7 +69,7 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
-      {{- range $index, $servervalues := range $values.servers}}
+      {{- range $index, $servervalues := $values.servers}}
     - hosts:
       {{- tpl ($servervalues.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
