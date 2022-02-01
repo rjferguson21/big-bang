@@ -69,13 +69,13 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
-      {{- range $servervalues := range $values.servers}}
+      {{- range $index, $servervalues := range $values.servers}}
     - hosts:
       {{- tpl ($servervalues.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
       {{- tpl ( $servervalues.port | default (list) | toYaml) $ | nindent 8 }}
       tls:
-        credentialName: {{ $name }}-cert
+        credentialName: {{ $index }}-{{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $servervalues }}
         {{- end }}
       {{ else }}
