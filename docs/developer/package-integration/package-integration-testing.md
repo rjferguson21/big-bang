@@ -11,7 +11,7 @@ Usually, Helm charts come with a set of Helm tests that can be run to test the d
 
 ## Prerequisites
 
-- Package helm chart with CI settings pointing to one of bigbang's package pipelines
+- Package helm chart with CI settings pointing to one of bigbang's [package pipelines](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/ci-integration-doc/docs/developer/package-integration/package-integration-pipeline.md)
 
 ## Integration
 
@@ -40,6 +40,9 @@ bbtests:
     artifacts: true
     envs:
       cypress_url: 'http://{{ template "podinfo.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.externalPort }}'
+  scripts:
+    envs:
+      URL: 'http://{{ template "podinfo.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.externalPort }}'
 ```
 (NOTE: At the package level we are pointing to the service and service port instead of the istio virtual service because istio isn't enabled by default. At the bigbang test level we will point to the virtualservice url because istio will be present.)
 
@@ -48,8 +51,8 @@ We will enable these tests in `tests/test-values.yaml`:
 bbtests:
   enabled: true
 ```
-
-Now we need to add the cypress gluon template yaml to `chart/templates/tests/test-url.yaml`:
+### Cypress test
+Now we need to add the cypress gluon template yaml to `chart/templates/tests/cypress.yaml`:
 ```yaml
 {{- include "gluon.tests.cypress-configmap.base" .}}
 ---
@@ -75,6 +78,23 @@ We also need a cypress.json config file with any cypress configurations we need 
     "fixturesFolder": false
 }  
 ```
+### Script test
+Now we need to add the script gluon template yaml to `chart/templates/tests/script.yaml`:
+```yaml
+{{- include "gluon.tests.script-configmap.base" .}}
+---
+{{- include "gluon.tests.script-runner.base" .}}
+```
+More information on this can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-tests.md)
+
+We need a script to run `chart/tests/scripts/script-test.sh`:
+```bash
+#!/bin/bash
+set -ex
+
+curl -s ${URL}/api/info
+```
+
 ## Validation
 
 To validate these changes and view the cypress test we can create a merge request with these changes and a pipeline will automatically kick off deploying our package and running the helm tests. Artifacts of these tests (screenshots and videos) are stored in the `Clean Install`, `Upgrade`, and `Integration Test` Jobs. Just click one of the jobs and there will be `job artifacts` on the right pane.
