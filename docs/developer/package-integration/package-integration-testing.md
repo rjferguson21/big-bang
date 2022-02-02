@@ -92,7 +92,14 @@ We need a script to run `chart/tests/scripts/script-test.sh`:
 #!/bin/bash
 set -ex
 
-curl -s ${URL}/api/info
+echo "-----------------------------------------"
+echo "BEGIN podinfo jwt test"
+echo "-----------------------------------------"
+TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
+curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
+echo "-----------------------------------------"
+echo "END podinfo jwt test"
+echo "-----------------------------------------"
 ```
 
 More information on cypress tests and creating tests with scripts for testing non-UI portions of an app can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-tests.md)
