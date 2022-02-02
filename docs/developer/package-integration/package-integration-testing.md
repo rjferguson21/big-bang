@@ -52,7 +52,7 @@ bbtests:
   enabled: true
 ```
 ### Cypress test
-Now we need to add the cypress gluon template yaml to `chart/templates/tests/cypress.yaml`:
+Now we need to add the cypress gluon template yaml to `chart/templates/tests/cypress-test.yaml`:
 ```yaml
 {{- include "gluon.tests.cypress-configmap.base" .}}
 ---
@@ -80,7 +80,7 @@ We also need a cypress.json config file with any cypress configurations we need 
 }  
 ```
 ### Script test
-Now we need to add the script gluon template yaml to `chart/templates/tests/script.yaml`:
+Now we need to add the script gluon template yaml to `chart/templates/tests/script-test.yaml`:
 ```yaml
 {{- include "gluon.tests.script-configmap.base" .}}
 ---
