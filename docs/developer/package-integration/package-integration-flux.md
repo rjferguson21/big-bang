@@ -39,6 +39,9 @@ mkdir -p bigbang/templates/$PKGNAME
 # Create values file
 touch bigbang/values.yaml
 
+# Copy helpers from Big Bang
+curl -sL -o bigbang/templates/_helpers.tpl https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/templates/_helpers.tpl
+
 # Create chart file
 cat << EOF >> bigbang/Chart.yaml
 apiVersion: v2
