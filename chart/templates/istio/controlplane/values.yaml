@@ -73,7 +73,7 @@ gateways:
     - hosts:
       {{- tpl ( $hostvalues.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
-      {{- tpl ( $hostvalues.port | default (map) | toYaml) $ | nindent 8 }}
+      {{- tpl ( $hostvalues.port | default (dict) | toYaml) $ | nindent 8 }}
       tls:
         credentialName: {{ $index }}-{{ $name }}-cert
         mode: {{ dig "tls" "mode" "SIMPLE" $hostvalues }}
