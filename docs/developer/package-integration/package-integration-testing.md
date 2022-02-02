@@ -58,9 +58,9 @@ Now we need to add the cypress gluon template yaml to `chart/templates/tests/cyp
 ---
 {{- include "gluon.tests.cypress-runner.base" .}}
 ```
-More information on this can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-tests.md)
 
 We need to add a cypress test to `chart/tests/cypress/podinfo-health.spec.js`:
+
 ```yaml
 describe('Basic Podinfo', function() {
   it('Check Podinfo is accessible', function() {
@@ -71,6 +71,7 @@ describe('Basic Podinfo', function() {
 (NOTE: This is basic cypress test that will visit the `cypress_url` defined in values.yaml. For more information on cypress tests visit [here](https://docs.cypress.io/guides/overview/why-cypress#In-a-nutshell))
 
 We also need a cypress.json config file with any cypress configurations we need placed `chart/tests/cypress/cypress.json`:
+
 ```json
 {
     "pluginsFile": false,
@@ -85,7 +86,6 @@ Now we need to add the script gluon template yaml to `chart/templates/tests/scri
 ---
 {{- include "gluon.tests.script-runner.base" .}}
 ```
-More information on this can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-tests.md)
 
 We need a script to run `chart/tests/scripts/script-test.sh`:
 ```bash
@@ -94,6 +94,8 @@ set -ex
 
 curl -s ${URL}/api/info
 ```
+
+More information on cypress tests and creating tests with scripts for testing non-UI portions of an app can be found [here](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-tests.md)
 
 ## Validation
 
