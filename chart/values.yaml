@@ -1,6 +1,6 @@
 # -- Domain used for BigBang created exposed services, can be overridden by individual packages.
 domain: bigbang.dev
-# hostname: bigbang.dev - delete this line after testing it
+
 # -- (experimental) Toggle sourcing from external repos.
 # All this does right now is toggle GitRepositories, it is _not_ fully functional
 offline: false
@@ -941,8 +941,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      branch: "33-anchore-rename-hostname-to-domain"
-      # tag: "1.15.0-bb.7"
+      tag: "1.15.0-bb.8"
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
