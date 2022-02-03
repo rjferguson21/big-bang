@@ -2,7 +2,7 @@
     "baseBranches": ["master"],
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
-    "dependencyDashboardHeader": "- [ ] Update dependencies.",
+    "dependencyDashboardHeader": "- [ ] If there are Flux updates: Update [Flux manifests](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/base/flux/gotk-components.yaml) to latest version based off available image versions.",
     "dependencyDashboardTitle": "Renovate: Update Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values","regex"],
@@ -15,7 +15,9 @@
         },
         {
             "matchPackagePatterns": ["flux"],
-            "addLabels": ["flux"]
+            "additionalBranchPrefix": "flux-",
+            "addLabels": ["flux"],
+            "groupName": "Flux"
         }
     ],
     "regexManagers": [
