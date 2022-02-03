@@ -69,19 +69,19 @@ gateways:
     autoHttpRedirect:
       enabled: {{ dig "autoHttpRedirect" "enabled" "true" $values }}
     servers:
-      {{- range $index, $hostvalues := $values.servers}}
+      {{- range $index, $servervalues := $values.servers}}
     - hosts:
-      {{- tpl ( $hostvalues.hosts | default (list) | toYaml) $ | nindent 8 }}
+      {{- tpl ( $servervalues.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
-      {{- tpl ( $hostvalues.port | default (dict) | toYaml) $ | nindent 8 }}
+      {{- tpl ( $servervalues.port | default (dict) | toYaml) $ | nindent 8 }}
       tls:
         credentialName: {{ $index }}-{{ $name }}-cert
-        mode: {{ dig "tls" "mode" "SIMPLE" $hostvalues }}
+        mode: {{ dig "tls" "mode" "SIMPLE" $servervalues }}
       {{- end }}
       {{ else }}
-      {{- range $index, $hostvalues := $values.servers}}
+      {{- range $index, $servervalues := $values.servers}}
     - hosts:
-      {{- tpl ( $hostvalues.hosts | default (list) | toYaml) $ | nindent 8 }}
+      {{- tpl ( $servervalues.hosts | default (list) | toYaml) $ | nindent 8 }}
       port:
         name: https
         number: 8443

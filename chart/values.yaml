@@ -155,31 +155,46 @@ istio:
   gateways:
     public:
       ingressGateway: "public-ingressgateway"
-      hosts:
-        - "*.{{ .Values.domain }}"
-      # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-      autoHttpRedirect:
-        enabled: true
-      tls:
-        key: ""
-        cert: ""
+      servers:
+      - hosts:
+          - "*.{{ .Values.domain }}"
+        # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+        autoHttpRedirect:
+          enabled: true
+        port:
+          name: https
+          number: 8443
+          protocol: HTTPS
+        tls:
+          key: ""
+          cert: ""
     # private:
     #   ingressGateway: "private-ingressgateway"
-    #   hosts:
-    #   - "example.bigbang.dev"
-    #   ports:
-    #     - name: tls-2
+    #   servers:
+    #   - hosts:
+    #     - "example.bigbang.dev"
+    #     port:
+    #       name: tls-1
     #       number: 1234
     #       protocol: TCP
-    #     - name: tls
+    #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+    #     autoHttpRedirect:
+    #       enabled: false
+    #     tls:
+    #       key: ""
+    #       cert: ""
+    #   - hosts:
+    #     - "example.bigbang.dev"
+    #     port:
+    #       name: tls-2
     #       number: 5678
     #       protocol: TCP
     #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-    #   autoHttpRedirect:
-    #     enabled: false
-    #   tls:
-    #     key: ""
-    #     cert: ""
+    #     autoHttpRedirect:
+    #       enabled: false
+    #     tls:
+    #       key: ""
+    #       cert: ""
     # passthrough:
     #   ingressGateway: "passthrough-ingressgateway"
     #   hosts:
