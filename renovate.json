@@ -3,7 +3,7 @@
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
     "dependencyDashboardHeader": "- [ ] Update dependencies.",
-    "dependencyDashboardTitle": "Renovate: Upgrade Dependencies",
+    "dependencyDashboardTitle": "Renovate: Update Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values","regex"],
     "labels": ["renovate","kind::chore"],
