@@ -6,16 +6,16 @@ resources:
 images:
 - name: fluxcd/helm-controller
   newName: registry1.dso.mil/ironbank/fluxcd/helm-controller
-  newTag: v0.14.0
+  newTag: v0.16.0
 - name: fluxcd/kustomize-controller
   newName: registry1.dso.mil/ironbank/fluxcd/kustomize-controller
-  newTag: v0.18.1
+  newTag: v0.20.0
 - name: fluxcd/notification-controller
   newName: registry1.dso.mil/ironbank/fluxcd/notification-controller
-  newTag: v0.19.0
+  newTag: v0.21.0
 - name: fluxcd/source-controller
   newName: registry1.dso.mil/ironbank/fluxcd/source-controller
-  newTag: v0.19.1
+  newTag: v0.21.1
 
 patches:
   - target:
