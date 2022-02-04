@@ -257,7 +257,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.45.0-bb.1"
+    tag: "1.45.0-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -339,7 +339,7 @@ kyverno:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno.git
     path: "./chart"
-    tag: "2.1.7-bb.2"
+    tag: "2.1.10-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Kyverno Package
   flux: {}
