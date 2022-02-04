@@ -293,13 +293,9 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-<<<<<<< HEAD
     #tag: "1.2.0-bb.2"
     tag: null
     branch: "50-create-ci-tests-for-cluster-auditor-to-verify-that-the-violations-index-is-present-and-contains"
-=======
-    tag: "1.2.0-bb.1"
->>>>>>> master
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
