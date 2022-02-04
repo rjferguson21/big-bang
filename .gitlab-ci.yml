@@ -2,6 +2,6 @@ include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
     ref: integration-mods
     file: '/pipelines/bigbang.yaml'
-variavbles:
+variables:
   PIPELINE_REPO_BRANCH: integration-mods
   DEBUG_ENABLED: "true"
