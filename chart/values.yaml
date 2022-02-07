@@ -155,19 +155,59 @@ istio:
   gateways:
     public:
       ingressGateway: "public-ingressgateway"
-      servers:
-      - hosts:
-          - "*.{{ .Values.domain }}"
-        # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-        autoHttpRedirect:
-          enabled: true
-        port:
-          name: https
-          number: 8443
+      # DEPCRECATION NOTICE: This method of specifying gateway server configuration (hosts, tls secrets, autoHttpRedirect, etc.) is deprecated in favor of the example below
+      hosts:
+        - "*.{{ .Values.domain }}"
+      # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+      ports:
+        - name: tls-1
+          number: 1234
+          protocol:  TCP
+        - name: https
+          number: 4567
           protocol: HTTPS
-        tls:
-          key: ""
-          cert: ""
+      autoHttpRedirect:
+        enabled: true
+      tls:
+        key: ""
+        cert: ""
+    # private:
+    #   ingressGateway: "private-ingressgateway"
+    #   hosts:
+    #   - "example.bigbang.dev"
+    #   ports:
+    #     - name: tls-2
+    #       number: 1234
+    #       protocol: TCP
+    #     - name: tls
+    #       number: 5678
+    #       protocol: TCP
+    #   # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+    #   autoHttpRedirect:
+    #     enabled: false
+    #   tls:
+    #     key: ""
+    #     cert: ""
+    # passthrough:
+    #   ingressGateway: "passthrough-ingressgateway"
+    #   hosts:
+
+    ####
+    # New server configuration method
+    ####
+    #   servers:
+    #   - hosts:
+    #       - "*.{{ .Values.domain }}"
+    #     # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
+    #     autoHttpRedirect:
+    #       enabled: true
+    #     port:
+    #       name: https
+    #       number: 8443
+    #       protocol: HTTPS
+    #     tls:
+    #       key: ""
+    #       cert: ""
     # private:
     #   ingressGateway: "private-ingressgateway"
     #   servers:
