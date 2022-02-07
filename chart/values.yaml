@@ -159,13 +159,6 @@ istio:
       hosts:
         - "*.{{ .Values.domain }}"
       # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-      ports:
-        - name: tls-1
-          number: 1234
-          protocol:  TCP
-        - name: https
-          number: 4567
-          protocol: HTTPS
       autoHttpRedirect:
         enabled: true
       tls:
