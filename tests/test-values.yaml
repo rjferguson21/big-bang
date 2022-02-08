@@ -115,7 +115,7 @@ clusterAuditor:
       enabled: true
       cypress:
         envs:
-          cypress_url: 'https://grafana.bigbang.dev/d/YBgRZG6Mz/opa-violations?orgId=1'
+          cypress_grafana_url: 'https://grafana.bigbang.dev'
 
 gatekeeper:
   enabled: true
