@@ -116,6 +116,7 @@ clusterAuditor:
       cypress:
         envs:
           cypress_grafana_url: 'https://grafana.bigbang.dev'
+          cypress_url: 'https://grafana.bigbang.dev'
 
 gatekeeper:
   enabled: true
