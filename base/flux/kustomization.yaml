@@ -4,16 +4,16 @@ resources:
 
 # update flux components to use ironbank images
 images:
-- name: fluxcd/helm-controller
+- name: ghcr.io/fluxcd/helm-controller
   newName: registry1.dso.mil/ironbank/fluxcd/helm-controller
   newTag: v0.16.0
-- name: fluxcd/kustomize-controller
+- name: ghcr.io/fluxcd/kustomize-controller
   newName: registry1.dso.mil/ironbank/fluxcd/kustomize-controller
   newTag: v0.20.0
-- name: fluxcd/notification-controller
+- name: ghcr.io/fluxcd/notification-controller
   newName: registry1.dso.mil/ironbank/fluxcd/notification-controller
   newTag: v0.21.0
-- name: fluxcd/source-controller
+- name: ghcr.io/fluxcd/source-controller
   newName: registry1.dso.mil/ironbank/fluxcd/source-controller
   newTag: v0.21.1
 
