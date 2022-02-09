@@ -281,6 +281,9 @@ tempo:
 
 monitoring:
   enabled: true
+  ## delete next 2 lines before finished
+  networkPolicies:
+    enabled: false
   sso:
     enabled: false
     prometheus:
