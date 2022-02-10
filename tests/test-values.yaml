@@ -397,6 +397,12 @@ addons:
         replica:
           persistence:
             size: 512Mi
+      redis:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits: {}
       server:
         resources:
           requests:
