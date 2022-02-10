@@ -578,7 +578,7 @@ addons:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
       #tag: "3.33.5-bb.0"
-      branch: "fix-bad-merge"
+      tag: "3.33.5-bb.1"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
