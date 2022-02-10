@@ -112,7 +112,7 @@ clusterAuditor:
         memory: 256Mi
       limits: {}
     bbtests:
-      enabled: true
+      enabled: false
       cypress:
         envs:
           cypress_grafana_url: 'https://grafana.bigbang.dev'
@@ -351,6 +351,7 @@ monitoring:
           cypress_grafana_url: 'https://grafana.bigbang.dev'
           cypress_alertmanager_url: 'https://alertmanager.bigbang.dev'
           cypress_check_istio_dashboards: 'true'
+          cypress_check_clusterauditor_dashboards: 'true'
 
 twistlock:
   enabled: true
