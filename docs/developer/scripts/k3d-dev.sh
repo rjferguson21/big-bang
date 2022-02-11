@@ -238,6 +238,7 @@ EOF
 
 #### Request a Spot Instance
 # Location of your private SSH key created during setup
+mkdir -p ~/.ssh/
 PEM=~/.ssh/${KeyName}.pem
 
 # Request a spot instance with our launch spec for the max. of 6 hours
@@ -447,6 +448,7 @@ else # default is public ip
   echo
   echo "copy kubeconfig"
   scp -i ~/.ssh/${KeyName}.pem -o StrictHostKeyChecking=no ubuntu@${PublicIP}:/home/ubuntu/.kube/config ~/.kube/${AWSUSERNAME}-dev-config
+  mkdir -p ~/.kube
   $sed_gsed -i "s/0\.0\.0\.0/${PublicIP}/g" ~/.kube/${AWSUSERNAME}-dev-config
 fi
 
