@@ -124,6 +124,7 @@ fi
 
 #### SSH Key Pair
 # Create SSH key if it doesn't exist
+mkdir -p ~/.ssh/
 echo -n Checking if key pair ${KeyName} exists ...
 aws ec2 describe-key-pairs --output json --no-cli-pager --key-names ${KeyName} > /dev/null 2>&1 || keypair=missing
 if [ "${keypair}" == "missing" ]; then
@@ -238,7 +239,6 @@ EOF
 
 #### Request a Spot Instance
 # Location of your private SSH key created during setup
-mkdir -p ~/.ssh/
 PEM=~/.ssh/${KeyName}.pem
 
 # Request a spot instance with our launch spec for the max. of 6 hours
