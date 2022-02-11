@@ -1,7 +1,4 @@
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
-    ref: micah.nagel-master-patch-99036
+    ref: master
     file: '/pipelines/bigbang.yaml'
-variables:
-    DEBUG_ENABLED: "true"
-    PIPELINE_REPO_BRANCH: micah.nagel-master-patch-99036
