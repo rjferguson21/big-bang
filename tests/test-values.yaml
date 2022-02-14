@@ -305,14 +305,14 @@ monitoring:
     kube-state-metrics:
       resources:
         requests:
-          cpu: 10m
-          memory: 32Mi
+          cpu: 20m
+          memory: 64Mi
         limits: {}
     prometheus-node-exporter:
       resources:
         requests:
           cpu: 100m
-          memory: 30Mi
+          memory: 60Mi
         limits: {}
     grafana:
       testFramework:
@@ -326,11 +326,11 @@ monitoring:
       downloadDashboards:
         resources:
           limits:
-            cpu: 20m
-            memory: 20Mi
+            cpu: 40m
+            memory: 40Mi
           requests:
-            cpu: 20m
-            memory: 20Mi
+            cpu: 40m
+            memory: 40Mi
       dashboardProviders:
         dashboardproviders.yaml:
           apiVersion: 1
