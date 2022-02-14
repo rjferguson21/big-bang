@@ -149,7 +149,7 @@ fi
 #
 
 echo "Installing flux from kustomization"
-kustomize build "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
+kubectl kustomize "$FLUX_KUSTOMIZATION" | sed "s/registry1.dso.mil/${REGISTRY_URL}/g" | kubectl apply -f -
 
 #
 # verify flux
