@@ -10,6 +10,9 @@ domain: {{ $domainName }}
 # Define variables to help with conditionals later
 {{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.sonarqube) "enabled") .Values.istio.enabled) }}
 
+openshift:
+  enabled: {{ .Values.openshift }}
+
 istio:
   enabled: {{ .Values.istio.enabled }}
   sonarqube:
