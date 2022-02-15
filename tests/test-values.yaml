@@ -312,7 +312,7 @@ monitoring:
       resources:
         requests:
           cpu: 100m
-          memory: 60Mi
+          memory: 120Mi
         limits: {}
     grafana:
       testFramework:
