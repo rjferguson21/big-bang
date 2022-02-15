@@ -38,7 +38,7 @@ Everything looks good with the deployment, but upon further inspection we can se
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 flux-podinfo   0/1     0            0           5m
 ```
-To see why your pods haven't spun up we can check the logs of the Gatekeeper manager pods using the label selector. By default the logs command grabs only 10 lines of logs. To grab all of the logs we can add the `tail` flag and set the value to `-1`.
+To see why your pods haven't spun up we can check the logs of the Gatekeeper manager pods using the label selector. By default the logs command outputs only 10 lines. To output all of the logs we can add the `--tail` flag and set the value to `-1`.
 ```
 k logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1
 ```
