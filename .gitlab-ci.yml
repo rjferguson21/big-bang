@@ -1,5 +1,6 @@
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
-    ref: master
+    ref: BrandenCobb-master-patch-84140
     file: '/pipelines/bigbang.yaml'
-
+variables:
+  PIPELINE_REPO_BRANCH: BrandenCobb-master-patch-84140
