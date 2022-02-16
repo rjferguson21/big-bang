@@ -4,4 +4,3 @@ include:
     file: '/pipelines/bigbang.yaml'
 variables:
   PIPELINE_REPO_BRANCH: BrandenCobb-master-patch-84140
-
