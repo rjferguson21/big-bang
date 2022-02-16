@@ -76,6 +76,10 @@ minio:
   secretKey: {{ .secretKey | default "BigBangDEVONLY" }}
   imagePullSecrets:
     - name: private-registry
+  {{- if $.Values.istio.enabled }}
+  annotations:
+    {{ include "istioAnnotation" $ }}
+  {{- end }}    
 {{- end }}
 {{- end }}
 
