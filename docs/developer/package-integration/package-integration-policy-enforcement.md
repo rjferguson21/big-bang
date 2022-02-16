@@ -42,7 +42,33 @@ To see why your pods haven't spun up we can check the logs of the Gatekeeper man
 ```
 k logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1
 ```
+This is going to output a lot of logs to sift through so we can do a simple `grep` command looking for the resource that you deployed, in this case flux-podinfo.
 
+```
+kubectl logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1 | grep "flux-podinfo"
+```
+And we'll see one of the log lines will looks something like the following:
+```json
+{
+  "level": "info",
+  "ts": 1645018228.7589638,
+  "logger": "webhook",
+  "msg": "denied admission",
+  "process": "admission",
+  "event_type": "violation",
+  "constraint_name": "no-privileged-containers",
+  "constraint_group": "constraints.gatekeeper.sh",
+  "constraint_api_version": "v1beta1",
+  "constraint_kind": "K8sPSPPrivilegedContainer2",
+  "constraint_action": "deny",
+  "resource_group": "",
+  "resource_api_version": "v1",
+  "resource_kind": "Pod",
+  "resource_namespace": "default",
+  "resource_name": "flux-podinfo-84d5bccfd6-4l6tq",
+  "request_username": "system:serviceaccount:kube-system:replicaset-controller"
+}
+```
 
 
 #### 3. Fixing Policy Violations
