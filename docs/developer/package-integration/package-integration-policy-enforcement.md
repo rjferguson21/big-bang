@@ -69,9 +69,12 @@ And we'll see one of the log lines will looks something like the following:
   "request_username": "system:serviceaccount:kube-system:replicaset-controller"
 }
 ```
-
+We can see the `constraint_action: deny` indidicated that our resource was denied access to the cluster. The `contstraint_name` tells us the reason for the denial, in our case PodInfo is running with privileged containers.
 
 #### 3. Fixing Policy Violations
+
+
+
 #### 3. Exemptions to Policy Exceptions
 
 
