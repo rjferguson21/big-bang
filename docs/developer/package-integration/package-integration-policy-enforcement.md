@@ -69,13 +69,19 @@ And we'll see one of the log lines will looks something like the following:
   "request_username": "system:serviceaccount:kube-system:replicaset-controller"
 }
 ```
-We can see the `constraint_action: deny` indidicated that our resource was denied access to the cluster. The `contstraint_name` tells us the reason for the denial, in our case PodInfo is running with privileged containers.
+We can see the `constraint_action: deny` indidicates that our resource was denied access to the cluster. The `contstraint_name` tells us the reason for the denial, in our case PodInfo is running with privileged containers.
 
 #### 3. Fixing Policy Violations
 
+Running a container as privileged is something we want to avoid. See [this reference](https://kubesec.io/basics/containers-securitycontext-privileged-true/) for more info.
 
+To fix this issue, navigate to your package's `chart/values.yaml` or `deployment.yaml` and removing `privileged: true` or explicitly setting it to `false`.  
+Now we can run `helm upgrade flux-podinfo chart` and our pods spin up as intended.
 
 #### 3. Exemptions to Policy Exceptions
 
+If you require an exception to a policy, please reference our [exception doc](https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/blob/main/docs/exceptions.md) for more information.
+
 
 ## Validation
+TBD - maybe not needed as pods spinning up is validation enough
