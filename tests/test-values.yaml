@@ -143,7 +143,7 @@ gatekeeper:
       allowedHostFilesystem:
         parameters:
           excludedResources:
-          - nexus/nexus-repository-manager-cypress-test
+          - nexus-repository-manager/nexus-repository-manager-cypress-test
       allowedSecCompProfiles:
         parameters:
           excludedResources:
@@ -192,7 +192,7 @@ gatekeeper:
       volumeTypes:
         parameters:
           excludedResources:
-          - nexus/nexus-repository-manager-cypress-test
+          - nexus-repository-manager/nexus-repository-manager-cypress-test
     bbtests:
       enabled: true
 
