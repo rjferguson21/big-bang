@@ -1,0 +1,44 @@
+{{- $fluxSettingspodinfo := merge .Values.podinfo.flux .Values.flux -}}
+{{- if .Values.podinfo.enabled }}
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: podinfo
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
+spec:
+  targetNamespace: podinfo
+  chart:
+    spec:
+      chart: {{ .Values.podinfo.git.path }}
+      interval: 5m
+      sourceRef:
+        kind: GitRepository
+        name: podinfo
+        namespace: {{ .Release.Namespace }}
+
+  {{- toYaml $fluxSettingspodinfo | nindent 2 }}
+
+  {{- if .Values.podinfo.postRenderers }}
+  postRenderers:
+  {{ toYaml .Values.podinfo.postRenderers | nindent 4 }}
+  {{- end }}
+  valuesFrom:
+    - name: {{ .Release.Name }}-podinfo-values
+      kind: Secret
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-podinfo-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-podinfo-values
+      kind: Secret
+      valuesKey: "overlays"
+  {{- if .Values.gatekeeper.enabled }}
+  dependsOn:
+    - name: gatekeeper
+      namespace: {{ .Release.Namespace }}
+  {{- end }}
+{{- end }}

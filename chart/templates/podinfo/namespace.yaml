@@ -1,0 +1,11 @@
+{{- if .Values.podinfo.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: podinfo
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
+    istio-injection: disabled
+  name: podinfo
+{{- end }}

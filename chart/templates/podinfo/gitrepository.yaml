@@ -1,0 +1,18 @@
+{{- if and (not .Values.offline) .Values.podinfo.enabled }}
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: podinfo
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: podinfo
+    app.kubernetes.io/component: "core"
+    {{- include "commonLabels" . | nindent 4}}
+spec:
+  interval: {{ .Values.flux.interval }}
+  url: {{ .Values.podinfo.git.repo }}
+  ref:
+    {{- include "validRef" .Values.podinfo.git | nindent 4 }}
+  {{ include "gitIgnore" . }}
+  {{- include "gitCreds" . | nindent 2 }}
+{{- end }}
