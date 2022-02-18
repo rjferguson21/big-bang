@@ -1,3 +1,4 @@
+{{- if .Values.podinfo.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.podinfo "name" "podinfo" "defaults" (include "bigbang.defaults.podinfo" .)) }}
 {{- end }}
 
