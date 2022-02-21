@@ -34,10 +34,18 @@ NOTES:
 ```
 Everything looks good with the deployment, but upon further inspection we can see that our app hasn't deployed properly.
 ```bash
-➜ kubectl get deployments
-NAME           READY   UP-TO-DATE   AVAILABLE   AGE
-flux-podinfo   0/1     0            0           5m
+➜ kubectl get all -n default
+NAME                   TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)             AGE
+service/kubernetes     ClusterIP   10.43.0.1    <none>        443/TCP             52m
+service/flux-podinfo   ClusterIP   10.43.39.6   <none>        9898/TCP,9999/TCP   20s
+
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/flux-podinfo   0/1     0            0           19s
+
+NAME                                      DESIRED   CURRENT   READY   AGE
+replicaset.apps/flux-podinfo-84d5bccfd6   1         0         0       19s
 ```
+
 To see why your pods haven't spun up we can check the logs of the Gatekeeper manager pods using the label selector. By default the logs command outputs only 10 lines. To output all of the logs we can add the `--tail` flag and set the value to `-1`.
 ```bash
 kubectl logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1
