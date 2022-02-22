@@ -155,7 +155,6 @@ istio:
   gateways:
     public:
       ingressGateway: "public-ingressgateway"
-      # DEPCRECATION NOTICE: This method of specifying gateway server configuration (hosts, tls secrets, autoHttpRedirect, etc.) is deprecated in favor of the example below
       hosts:
         - "*.{{ .Values.domain }}"
       # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
@@ -186,21 +185,8 @@ istio:
     #   hosts:
 
     ####
-    # New server configuration method
+    # Alternate multi-server configuration method
     ####
-    #   servers:
-    #   - hosts:
-    #       - "*.{{ .Values.domain }}"
-    #     # -- Controls default HTTP/8080 server entry with HTTP to HTTPS Redirect.
-    #     autoHttpRedirect:
-    #       enabled: true
-    #     port:
-    #       name: https
-    #       number: 8443
-    #       protocol: HTTPS
-    #     tls:
-    #       key: ""
-    #       cert: ""
     # private:
     #   ingressGateway: "private-ingressgateway"
     #   servers:
