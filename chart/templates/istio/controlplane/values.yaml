@@ -102,6 +102,9 @@ gateways:
         name: https
         number: 8443
         protocol: HTTPS
+      tls:
+        credentialName: {{ $name }}-cert
+        mode: {{ dig "tls" "mode" "SIMPLE" $values }}
     {{- end }}
     {{- end }}
 
