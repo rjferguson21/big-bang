@@ -112,7 +112,7 @@ clusterAuditor:
         memory: 256Mi
       limits: {}
     bbtests:
-      enabled: false
+      enabled: true
       cypress:
         envs:
           cypress_grafana_url: 'https://grafana.bigbang.dev'

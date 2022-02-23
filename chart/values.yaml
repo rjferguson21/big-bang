@@ -293,10 +293,10 @@ clusterAuditor:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
     path: "./chart"
-    tag: "1.2.0-bb.1"
+    #tag: "1.2.0-bb.1"
     #tag: "1.2.0-bb.2"
     #tag: null
-    #branch: "50-create-ci-tests-for-cluster-auditor-to-verify-that-the-violations-index-is-present-and-contains"
+    branch: "50-create-ci-tests-for-cluster-auditor-to-verify-that-the-violations-index-is-present-and-contains"
 
   # -- Flux reconciliation overrides specifically for the Cluster Auditor Package
   flux: {}
@@ -494,9 +494,9 @@ monitoring:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
     path: "./chart"
-    #tag: "30.0.1-bb.9"
-    tag: null
-    branch: "cluster-auditor-50-ci-tests"
+    tag: "30.0.1-bb.8"
+    #tag: null
+    #branch: "cluster-auditor-50-ci-tests"
 
   # -- Flux reconciliation overrides specifically for the Monitoring Package
   flux:
