@@ -45,15 +45,21 @@ deployment.apps/flux-podinfo   0/1     0            0           19s
 NAME                                      DESIRED   CURRENT   READY   AGE
 replicaset.apps/flux-podinfo-84d5bccfd6   1         0         0       19s
 ```
+In order to get more information on why our deployment isn't avaialable, we can check the events of the K8s cluster. This will show us if there are policy violations, but will also reveal any other issues in our cluster.
 
-To see why your pods haven't spun up we can check the logs of the Gatekeeper manager pods using the label selector. By default the logs command outputs only 10 lines. To output all of the logs we can add the `--tail` flag and set the value to `-1`.
 ```bash
-kubectl logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1
+➜  kubectl get events -n default
+NAMESPACE  LAST SEEN  TYPE     REASON        OBJECT                              MESSAGE
+default    31s        Warning  FailedCreate  replicaset/flux-podinfo-84d5bccfd6  Error creating: admission webhook "validation.gatekeeper.sh" denied the request: [no-privileged-containers] Privileged container is not allowed: podinfo, securityContext: {"privileged": true}
 ```
-This is going to output a lot of logs to sift through so we can do a simple `grep` command looking for the resource that you deployed, in this case flux-podinfo.
+We can see that the issue in our example is that our PodInfo application is running containers as privileged. 
+
+To get more information as to how to fix this issue we can get the logs of the gatekeeper control plane
+
+This is going to output a lot of logs to sift through so we can do a simple `grep` command looking for the specific policy denial, in this case no-privileged-containers.
 
 ```bash
-kubectl logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1 | grep "flux-podinfo"
+kubectl logs -l control-plane=controller-manager -n gatekeeper-system --tail=-1 | grep "no-privileged-containers"
 ```
 And we'll see one of the log lines will looks something like the following:
 ```json
@@ -77,30 +83,41 @@ And we'll see one of the log lines will looks something like the following:
   "request_username": "system:serviceaccount:kube-system:replicaset-controller"
 }
 ```
-We can see the `constraint_action: deny` indidicates that our resource was denied access to the cluster. The `contstraint_name` and `constraint_kind` can provide us a way to get more information as to why our resource was denied. Running the following command will help you do so.
-
-```bash
-kubectl get <constraint_kind.constraints.gatekeeper.sh/<constraint_name> -o json | jq '.status.violations | map(select(.namespace==<resource_namespace>))'
-```
-Replacing the command with our information give us the following:
-```bash
-kubectl get K8sPSPPrivilegedContainer2.constraints.gatekeeper.sh/no-privileged-containers -o json | jq '.status.violations | map(select(.namespace=="default"))'
-```
 
 #### 3. Fixing Policy Violations
 
-Running a container as privileged is something we want to avoid. See [this reference](https://kubesec.io/basics/containers-securitycontext-privileged-true/) for more info.
+We can see the `constraint_action: deny` indicates that our resource was denied access to the cluster. The `contstraint_name` and `constraint_kind` can provide us a way to get more information as to why our resource was denied. Running the following command will help you do so.
 
-To fix this issue, navigate to your package's `chart/values.yaml` or `deployment.yaml` and removing `privileged: true` or explicitly setting it to `false`.  
+```bash
+kubectl get <constraint_kind>.constraints.gatekeeper.sh/<constraint_name> -o json | jq '.metadata.annotations'
+```
+Replacing the command with our information give us the following:
+```bash
+kubectl get K8sPSPPrivilegedContainer2.constraints.gatekeeper.sh/no-privileged-containers -o json | jq '.metadata.annotations'
+```
+```json
+{
+  "constraints.gatekeeper/description": "Containers must not run as privileged.",
+  "constraints.gatekeeper/docs": "https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers",
+  "constraints.gatekeeper/name": "Privilged Containers",
+  "constraints.gatekeeper/source": "https://github.com/open-policy-agent/gatekeeper-library/tree/master/library/pod-security-policy/privileged-containers",
+  "helm.sh/hook": "post-install,post-upgrade"
+}
+```
+The annotations provide us documentation information for specific policies as well as the source code to view that policy.  
+
+To fix this issue, navigate to your package's `chart/values.yaml` or `deployment.yaml` and remove `privileged: true` or explicitly set it to `false`.  
 
 #### 3. Exemptions to Policy Exceptions
+
+Fixing the violation in the application is preferred, but sometimes we need to make an exception to the policy and leave the violation in place.  
 
 If you require an exception to a policy, please reference our [exception doc](https://repo1.dso.mil/platform-one/big-bang/apps/core/policy/-/blob/main/docs/exceptions.md) for more information.
 
 
 ## Validation
 
-After we fixed the violation, we can run `helm upgrade flux-podinfo chart` and check that our pods spin up.
+After we fixed the violation, we can run `helm upgrade flux-podinfo chart`. We can now check all the events in our cluster. This will show us if we've fixed our policy violation, but will also reveal non-policy related issues.
 
 ```bash
 kubectl get all -n default
