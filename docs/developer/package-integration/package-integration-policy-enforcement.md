@@ -108,7 +108,7 @@ The annotations provide us documentation information for specific policies as we
 
 To fix this issue, navigate to your package's `chart/values.yaml` or `deployment.yaml` and remove `privileged: true` or explicitly set it to `false`.  
 
-#### 3. Exemptions to Policy Exceptions
+#### 4. Exemptions to Policy Exceptions
 
 Fixing the violation in the application is preferred, but sometimes we need to make an exception to the policy and leave the violation in place.  
 
