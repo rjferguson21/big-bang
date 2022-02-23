@@ -104,6 +104,8 @@ kiali:
           cypress_url: 'https://kiali.bigbang.dev'
 
 clusterAuditor:
+  networkPolicies:
+    enabled: false
   enabled: true
   values:
     resources:
