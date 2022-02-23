@@ -938,19 +938,29 @@ addons:
     plugins:
     - aws
     values:
+      initContainers: 
+      - name: velero-plugin-for-aws
+        image: registry1.dso.mil/ironbank/opensource/velero/velero-plugin-for-aws:v1.3.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 100m
+          limits: {}
       serviceAccount:
         server:
           name: velero
       configuration:
-        # minio uses s3 provider
         provider: aws
         backupStorageLocation:
           bucket: velero
-          config: &minio-config
+          config:
             region: velero
-            insecureSkipTLSVerify: "true"
             s3ForcePathStyle: "true"
-            s3Url: &minio-address https://minio.bigbang.dev
+            s3Url: https://minio.bigbang.dev
         volumeSnapshotLocation:
           provider: aws
           config:
@@ -962,10 +972,11 @@ addons:
             [default]
             aws_access_key_id = minio
             aws_secret_access_key = minio123
+      cleanUpCRDs: true
       bbtests:
         # TODO: Velero test is messy and times out running in BB CI
         # https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/issues/9
-        enabled: false
+        enabled: true
         scripts:
           secretEnvs:
             - name: NAMESPACE
