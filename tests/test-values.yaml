@@ -290,6 +290,8 @@ tempo:
 
 monitoring:
   enabled: true
+  networkPolicies:
+    enabled: false
   sso:
     enabled: false
     prometheus:
