@@ -1,15 +1,5 @@
 Thank you for supporting PlatformOne!
 
-{{ if $.Values.istio.gateways }}
-{{ range $name, $gatewayvalues := $.Values.istio.gateways }}
-{{ if $gatewayvalues.hosts }}
-DEPRECATION NOTICE:
-  You are currently defining istio gateway server configuration using {{ printf "istio.gateways.%s.hosts" $name }} and {{ printf "istio.gateways.%s.ports"  $name }}, which is deprecated.
-  Please update your global istio values to define Gateway server configuration using {{ printf "istio.gateways.%s.servers" $name }}.
-{{ end }}
-{{ end }}
-{{ end }}
-
 {{ if $.Values.addons.gitlab.enabled }}
 Gitlab is enabled.
 Please follow the Gitlab online documentation for proper configuration.
