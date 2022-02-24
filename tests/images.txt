@@ -9,15 +9,3 @@ registry.il2.dso.mil/platform-one/devops/pipeline-templates/pipeline-job/kaniko-
 registry.il2.dso.mil/platform-one/devops/pipeline-templates/pipeline-job/skopeo-bash-git-lfs-kustomize:1.0
 registry.il2.dso.mil/platform-one/devops/pipeline-templates/pipeline-job/anchore:0.8.2
 registry.il2.dso.mil/platform-one/devops/pipeline-templates/pipeline-job/test:gcc
-
-
-
-
-
-
-
-
-
-
-
-
