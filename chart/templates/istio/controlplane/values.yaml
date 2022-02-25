@@ -14,8 +14,7 @@ tracing:
 {{- end }}
 {{- if .Values.tempo.enabled }}
   enabled:  {{ .Values.tempo.enabled }}
-  zipkin:
-    address: 'tempo-tempo.tempo.svc'
+  address: 'tempo-tempo.tempo.svc'
   sampling: 100
   max_path_tag_length: 99999
 {{- end }}
