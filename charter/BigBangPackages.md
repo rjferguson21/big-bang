@@ -100,6 +100,7 @@ Repository:
 Dependency: None
 
 Owners:
+
 * [CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator/-/blob/main/CODEOWNERS)
 
 ### Auth Service
@@ -117,6 +118,7 @@ Repository:
 Dependency: None
 
 Owners:
+
 * [CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice/-/blob/main/CODEOWNERS)
 
 ### Logging
@@ -142,6 +144,7 @@ Dependencies:
 * RWO StorageClass
 
 Owners:
+
 * [Elasticsearch-kibana CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana/-/blob/main/CODEOWNERS)
 * [Fluentbit CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit/-/blob/main/CODEOWNERS)
 * [Eck-operator CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator/-/blob/main/CODEOWNERS)
@@ -493,7 +496,7 @@ Product:
 
 * [MinIO](https://min.io/)
 
-Repository: 
+Repository:
 
 * [Minio Package](https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio/)
 
@@ -537,7 +540,6 @@ Owners:
 
 * [CODEOWNERS](https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/blob/main/CODEOWNERS)
 
-
-### BB Technical Oversight Committee (BB TOC) 
+### BB Technical Oversight Committee (BB TOC)
 
 [Process](https://repo1.dso.mil/platform-one/bbtoc/-/tree/master/process)
