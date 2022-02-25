@@ -102,6 +102,7 @@ kiali:
       cypress:
         envs:
           cypress_url: 'https://kiali.bigbang.dev'
+          cypress_check_data: 'true'
 
 clusterAuditor:
   enabled: true
