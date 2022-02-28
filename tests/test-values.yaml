@@ -960,7 +960,7 @@ addons:
           config:
             region: velero
             s3ForcePathStyle: "true"
-            s3Url: https://minio.bigbang.dev
+            s3Url: https://minio-api.bigbang.dev
         volumeSnapshotLocation:
           provider: aws
           config:
@@ -977,7 +977,7 @@ addons:
         enabled: true
         scripts:
           envs:
-            MINIO_HOST: https://minio.bigbang.dev
+            MINIO_HOST: https://minio-api.bigbang.dev
           secretEnvs:
             - name: NAMESPACE
               valueFrom:
