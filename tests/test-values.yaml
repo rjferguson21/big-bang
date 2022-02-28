@@ -974,10 +974,10 @@ addons:
             aws_secret_access_key = minio123
       cleanUpCRDs: true
       bbtests:
-        # TODO: Velero test is messy and times out running in BB CI
-        # https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero/-/issues/9
         enabled: true
         scripts:
+          envs:
+            MINIO_HOST: https://minio.bigbang.dev
           secretEnvs:
             - name: NAMESPACE
               valueFrom:
