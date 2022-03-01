@@ -483,7 +483,7 @@ loki:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/loki.git
     path: "./chart"
-    tag: "2.5.1-bb.3"
+    tag: "2.10.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Loki Package
   flux: {}
@@ -750,6 +750,18 @@ addons:
 
       # -- Gitlab SSO login button label
       label: ""
+
+      # -- Gitlab SSO Scopes, default is ["Gitlab"]
+      scopes:
+      - Gitlab
+
+      # -- GitLab SSO URIs
+      # Only needed if your SSO is non-Keycloak
+      #issuer_uri:
+      #end_session_uri:
+
+      # -- Gitlab SSO UID field
+      uid_field: preferred_username
 
     database:
       # -- Hostname of a pre-existing PostgreSQL database to use for Gitlab.
