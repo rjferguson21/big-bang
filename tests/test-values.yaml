@@ -533,14 +533,9 @@ addons:
             requests:
               cpu: 10m
             limits: {}
-        postgresqlConfiguration: {"password_encryption": "scram-sha-256"}
+        postgresqlConfiguration: {"passwordEncryption": "scram-sha-256"}
         pgHbaConfiguration: |-
           local all all scram-sha-256
-          host all all localhost scram-sha-256
-        initdbScripts:
-          my_init_script.sh: |
-             #!/bin/sh
-             SET password_encryption  = 'scram-sha-256'; 
       minio:
         persistence:
           size: 256Mi
