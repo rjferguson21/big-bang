@@ -533,10 +533,7 @@ addons:
             requests:
               cpu: 10m
             limits: {}
-        primary:
-          configuration:
-            pgHbaConfiguration: |-
-              local all all scram-sha-256
+        postgresqlConfiguration: {"password_encryption": "scram-sha-256"}
       minio:
         persistence:
           size: 256Mi
