@@ -3,7 +3,7 @@
 {{- end }}
 
 {{- define "bigbang.defaults.fluentbit" -}}
-{{- $disableDefault := dig "additionalOutputs" "disableDefault" false .Values.fluentbit }}
+{{- $disableDefault := dig "additionalOutputs" "disableDefault" false .Values.fluentbit.values }}
 
 {{- if and (not $disableDefault) .Values.logging.enabled }}
 env:
