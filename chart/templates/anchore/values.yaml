@@ -9,6 +9,7 @@ domain: {{ $domainName }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  injection: {{ and (dig "istio" "injection" true .Values.addons.anchore) .Values.istio.enabled }}
   ui:
     gateways:
     - istio-system/{{ default "public" .Values.addons.anchore.ingress.gateway }}
