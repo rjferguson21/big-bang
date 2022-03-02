@@ -537,6 +537,10 @@ addons:
           set_encryption.sh: |
              #!/bin/sh
              SET password_encryption  = 'scram-sha-256';
+        primary:
+          configuration:
+            pgHbaConfiguration: |-
+              local all all scram-sha-256
       minio:
         persistence:
           size: 256Mi
