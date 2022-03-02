@@ -102,6 +102,7 @@ kiali:
       cypress:
         envs:
           cypress_url: 'https://kiali.bigbang.dev'
+          cypress_check_data: 'true'
 
 clusterAuditor:
   enabled: true
@@ -144,6 +145,9 @@ gatekeeper:
         parameters:
           excludedResources:
           - nexus-repository-manager/nexus-repository-manager-cypress-test
+          - gitlab/gitlab-cypress-test
+          - gitlab/gitlab-runner-cypress-test
+          - kiali/kiali-operator-cypress-test
       allowedSecCompProfiles:
         parameters:
           excludedResources:
@@ -193,6 +197,9 @@ gatekeeper:
         parameters:
           excludedResources:
           - nexus-repository-manager/nexus-repository-manager-cypress-test
+          - gitlab/gitlab-cypress-test
+          - gitlab/gitlab-runner-cypress-test
+          - kiali/kiali-operator-cypress-test
     bbtests:
       enabled: true
 
@@ -250,6 +257,12 @@ fluentbit:
     securityContext:
       privileged: true
     bbtests:
+      enabled: true
+
+loki:
+  enabled: false
+  values:
+    persistence:
       enabled: true
 
 tempo:
@@ -999,10 +1012,48 @@ addons:
         limits: {}
       # Disabling helm tests for keycloak until they are working on rke2
       bbtests:
-        enabled: false
+        enabled: true
         cypress:
           envs:
             cypress_url: "https://keycloak.bigbang.dev"
+      secrets:
+        env:
+          stringData:
+            CUSTOM_REGISTRATION_CONFIG: /opt/jboss/keycloak/customreg.yaml
+            KEYCLOAK_IMPORT: /opt/jboss/keycloak/realm.json
+            X509_CA_BUNDLE: /etc/x509/https/cas.pem
+        certauthority:
+          stringData:
+            cas.pem: '{{ .Files.Get "resources/dev/dod_cas.pem" }}'
+        customreg:
+          stringData:
+            customreg.yaml: '{{ .Files.Get "resources/dev/baby-yoda.yaml" }}'
+        realm:
+          stringData:
+            realm.json: '{{ .Files.Get "resources/dev/baby-yoda.json" }}'
+      extraVolumes: |-              
+        - name: certauthority
+          secret:
+            secretName: {{ include "keycloak.fullname" . }}-certauthority
+        - name: customreg
+          secret:
+            secretName: {{ include "keycloak.fullname" . }}-customreg
+        - name: realm
+          secret:
+            secretName: {{ include "keycloak.fullname" . }}-realm
+      extraVolumeMounts: |-
+        - name: certauthority
+          mountPath: /etc/x509/https/cas.pem
+          subPath: cas.pem
+          readOnly: true
+        - name: customreg
+          mountPath: /opt/jboss/keycloak/customreg.yaml
+          subPath: customreg.yaml
+          readOnly: true
+        - name: realm
+          mountPath: /opt/jboss/keycloak/realm.json
+          subPath: realm.json
+          readOnly: true
 
   vault:
     enabled: false
