@@ -448,7 +448,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.19.19-bb.0"
+    tag: "0.19.19-bb.2"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -1187,7 +1187,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.27.3-bb.2"
+      tag: "2.27.3-bb.3"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
