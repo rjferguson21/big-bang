@@ -4,4 +4,4 @@ include:
     file: '/pipelines/bigbang.yaml'
 variables:
   PIPELINE_REPO_BRANCH: 23-pluto-ver-bump
-  DEBUG_ENABLED: true
+  DEBUG_ENABLED: "true"
