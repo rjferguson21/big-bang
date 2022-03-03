@@ -535,9 +535,6 @@ addons:
             limits: {}
         postgresqlExtendedConf:
           passwordEncryption: "scram-sha-256"
-        pgHbaConfiguration: |-
-          local all all trust
-          host all all all trust
       minio:
         persistence:
           size: 256Mi
