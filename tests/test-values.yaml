@@ -991,11 +991,6 @@ addons:
         scripts:
           envs:
             MINIO_HOST: https://minio-api.bigbang.dev
-          secretEnvs:
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
 
   keycloak:
     enabled: false
