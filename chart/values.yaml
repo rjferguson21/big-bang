@@ -291,7 +291,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.45.0-bb.3"
+    tag: "1.47.0-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -611,7 +611,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.33.5-bb.3"
+      tag: "3.33.5-bb.4"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -750,18 +750,6 @@ addons:
 
       # -- Gitlab SSO login button label
       label: ""
-
-      # -- Gitlab SSO Scopes, default is ["Gitlab"]
-      scopes:
-      - Gitlab
-
-      # -- GitLab SSO URIs
-      # Only needed if your SSO is non-Keycloak
-      #issuer_uri:
-      #end_session_uri:
-
-      # -- Gitlab SSO UID field
-      uid_field: preferred_username
 
     database:
       # -- Hostname of a pre-existing PostgreSQL database to use for Gitlab.
@@ -1189,7 +1177,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/cluster-utilities/velero.git
       path: "./chart"
-      tag: "2.27.3-bb.1"
+      tag: "2.27.3-bb.2"
 
     # -- Flux reconciliation overrides specifically for the Velero Package
     flux: {}
