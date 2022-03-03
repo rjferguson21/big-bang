@@ -69,7 +69,7 @@ The `kind` label shows the type of work that needs to be accomplished.
 `kind::bug`
 : Issues related to BigBang not functioning as expected.
 
-`kind::chore`
+`kind::maintenance`
 : Catch all kind that captures administrative tasking for the BigBang project
 
 `kind::ci`
@@ -87,17 +87,6 @@ The `kind` label shows the type of work that needs to be accomplished.
 `kind::test`
 : Improvements on testing for individual packages or Big Bang.  Does not change the actual CI/CD pipelines, just enhances the test suite.
 
-### Issue Label `priority`
-
-`priority::high`
-: Issues are causing runtime issues in production environments. These issues justify a patch of a release.
-
-`priority:: medium`
-: Issues are defined by bugs that degrade system performance, but workarounds are available.  
-
-`priority::low`
-: Issues are superficial and do not have any impact on the functioning of production systems
-
 ### Issue Label `status`
 
 Status captures the state of the issue
@@ -110,9 +99,6 @@ Status captures the state of the issue
 
 `status::review`
 : The issue is ready to be reviewed by a Maintainer
-
-`status::to-do`
-: This Issue has not been started.
 
 ### Issue Package Labels
 
@@ -127,10 +113,6 @@ Merge Requests are required to have `status` and `kind` labels.
 ### Merge Requests Label `status`
 
 Status captures the state of the Merge Request
-
-#### `status::to-do`
-
-This Epic is being identified and worked on by the Maintainers.
 
 #### `status::review`
 
