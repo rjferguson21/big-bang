@@ -111,6 +111,11 @@ kiali:
 loki:
   enabled: {{ .Values.loki.enabled }}
 
+{{- if or $gitlabRedis $authserviceRedisEnabled $redisDatasource }}
+redis:
+  enabled: true
+{{- end }} 
+
 global:
   imagePullSecrets:
   - name: private-registry
