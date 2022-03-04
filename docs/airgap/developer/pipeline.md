@@ -44,6 +44,7 @@
     1. **airgap/rke2/cluster up**
 
         Stands up an RKE2 cluster for BB in an airgapped network. \*\* Uses terraform ./gitlab-ci/jobs/rke2/dependencies/terraform/
+
         Both this and the non-airgapped use the same image registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates/k3d-builder:0.0.1
 
 1. **bigbang up**
