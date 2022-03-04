@@ -1,7 +1,7 @@
 include:
   - project: 'platform-one/big-bang/pipeline-templates/pipeline-templates'
-    ref: 23-pluto-ver-bump
+    ref: BrandenCobb-master-patch-03894
     file: '/pipelines/bigbang.yaml'
 variables:
-  PIPELINE_REPO_BRANCH: 23-pluto-ver-bump
+  PIPELINE_REPO_BRANCH: BrandenCobb-master-patch-03894
   DEBUG_ENABLED: "true"
