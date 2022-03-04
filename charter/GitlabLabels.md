@@ -170,8 +170,11 @@ Sufficiently small enough to be completed by an engineer in a two week period
 
 The package label controls which addons are deployed as part of CI. If a label is present for an addon, the GitLab testing framework will enable this addon and ensure its tested as part
 
-`ci::test-infra`
-: The CI label for a Merge Request causes the full e2e CI job to run, which includes provisioning Kubernetes clusters in AWS.
+`test-ci::infra`
+: The test CI `infra` label for a Merge Request causes the full e2e CI job to run, which includes provisioning Kubernetes clusters in AWS.
+
+`test-ci::release`
+: The test CI `release` label for a Merge Request causes all release CI jobs to run, including bundling of airgap artifacts.
 
 `charter`
 : This Merge Request has a proposed change to the Charter
