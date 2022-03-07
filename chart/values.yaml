@@ -975,7 +975,8 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
       path: "./chart"
-      tag: "1.15.0-bb.9"
+      # tag: "1.15.0-bb.9"
+      branch: brandtkeller_injection_datatype
 
     # -- Flux reconciliation overrides specifically for the Anchore Package
     flux:
