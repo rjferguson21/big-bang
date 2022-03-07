@@ -434,7 +434,8 @@ eckoperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
     path: "./chart"
-    tag: "1.9.1-bb.4"
+    branch: "renovate/ironbank"
+    tag: ""
 
   # -- Flux reconciliation overrides specifically for the ECK Operator Package
   flux: {}
