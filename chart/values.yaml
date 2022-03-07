@@ -620,6 +620,9 @@ addons:
     ingress:
       gateway: ""
 
+    redis:
+      host: Null
+      port: Null
     sso:
       # -- Toggle SSO for ArgoCD on and off
       enabled: false
