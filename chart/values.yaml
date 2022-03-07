@@ -127,7 +127,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.11.5-bb.2"
+    tag: "1.13.1-bb.0"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -239,7 +239,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.11.5-bb.1"
+    tag: "1.13.1-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -383,6 +383,25 @@ kyverno:
 
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
+
+
+kyvernopolicies:
+  # -- Toggle deployment of Kyverno policies
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno-policies.git
+    path: ./chart
+    tag: "1.0.0-bb.7"
+
+  # -- Flux reconciliation overrides specifically for the Kyverno Package
+  flux: {}
+
+  # -- Values to passthrough to the kyverno policies chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno-policies.git
+  values: {}
+
+  # -- Post Renderers.  See docs/postrenders.md
+  postRenderers: []
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -611,8 +630,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: null
-      branch: "redis-datasource"
+      tag: "3.33.5-bb.5"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
@@ -729,10 +747,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
       path: "./chart"
-      #tag: "5.7.1-bb.0"
-      tag: null
-      branch: "redis-datasource-with-dashboards"
-      
+      tag: "5.8.2-bb.1"
 
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
@@ -754,6 +769,21 @@ addons:
 
       # -- Gitlab SSO login button label
       label: ""
+
+      # -- Gitlab SSO Scopes, default is ["Gitlab"]
+      scopes:
+      - Gitlab
+
+      # -- GitLab SSO Issuer URI,
+      # Only needed if your SSO is non-Keycloak
+      issuer_uri: ""
+
+      # -- GitLab SSO End Session URI,
+      # Only needed if your SSO is non-Keycloak
+      end_session_uri: ""
+
+      # -- Gitlab SSO UID field
+      uid_field: preferred_username
 
     database:
       # -- Hostname of a pre-existing PostgreSQL database to use for Gitlab.
@@ -1089,7 +1119,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
       path: "./chart"
-      tag: "0.6.0-bb.1"
+      tag: "0.7.0-bb.0"
 
     # -- Flux reconciliation overrides specifically for the Mattermost Package
     flux: {}
