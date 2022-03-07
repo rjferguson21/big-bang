@@ -1,0 +1,481 @@
+domain: bigbang.dev
+offline: false
+
+registryCredentials:
+  registry: registry1.dso.mil
+  username: "Tawsif_Siddiqui"
+  password: "5tmAr2W0n"
+  email: "trafid@oteemo.com"
+
+sso:
+  oidc:
+    host: login.dso.mil
+    realm: baby-yoda
+  certificate_authority: |
+    -----BEGIN CERTIFICATE-----
+    MIIH0zCCBrugAwIBAgIQHeg1retyhPnWuzryBJeBvTANBgkqhkiG9w0BAQsFADCB
+    ujELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUVudHJ1c3QsIEluYy4xKDAmBgNVBAsT
+    H1NlZSB3d3cuZW50cnVzdC5uZXQvbGVnYWwtdGVybXMxOTA3BgNVBAsTMChjKSAy
+    MDEyIEVudHJ1c3QsIEluYy4gLSBmb3IgYXV0aG9yaXplZCB1c2Ugb25seTEuMCwG
+    A1UEAxMlRW50cnVzdCBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSAtIEwxSzAeFw0y
+    MDEyMTUwMzE1MDJaFw0yMjAxMTQwMzE1MDJaMHMxCzAJBgNVBAYTAlVTMREwDwYD
+    VQQIEwhDb2xvcmFkbzEZMBcGA1UEBxMQQ29sb3JhZG8gU3ByaW5nczEeMBwGA1UE
+    ChMVRGVwYXJ0bWVudCBvZiBEZWZlbnNlMRYwFAYDVQQDEw1sb2dpbi5kc28ubWls
+    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAymUXk7STDlepS5HJu0ca
+    B57S5dfLp7zxYmcsGjo10YkHy3m9LASQCTyiioDrlwo2b+n8oZ7esGLv3RgggMwf
+    xvLVyx1+lZDswxdQoXmjArTdbqpcSoq3Y1rvVp33/jGb3slBjQtcMt2QvaFv3fxy
+    cwwINvJFEqsQS7zGUgpolJ3smKdcVpUSGZmzpYposuDlPUGeOJaQRMAACW5arWiT
+    VkDhJD+OVOYEHW8uCQfghD3JJXu6Xp9SwlWe6UNOdxo9cq3s/XE4ZwEgffdLXP2A
+    wuJF/7B7CFdZjIMptmOODyCeatC344iyubU0MiGCOm4W4wn0pQ0XJtAzWeYFKATL
+    9BquNOzPUR6pMSFMvIEiS96zbVFuOYt2XKgPryWEYji3Oky082WWYOcXt0NnqnCj
+    SafVU+2fQi4jQ0att5YXagEEPz83lQZdSKb2+grDeFg78VrEZAe+Y0mVu4/G93he
+    UOqfZ9jdCnFXq8sEMG9bJJFKeOXkb1Da8Y0amfOw4hFd4UslrbvC5ZCUZNh6roOk
+    8kast9QWtWFIGPC3f+Uq3gvx3GBHzIG9QPOq1CjSSAF3tWKuMTxK4zaS33mriJo0
+    Dv1CMX3FCmjT/qG3422guBL02hbGHveDSWk0/saY7ZWFifxnvKEdOi4ItnpMuQhE
+    zx6/+t7FWuzBTPAeVqV1l2sCAwEAAaOCAxkwggMVMAwGA1UdEwEB/wQCMAAwHQYD
+    VR0OBBYEFCLwpnkje7QKLWok+nWIeBEnIGfmMB8GA1UdIwQYMBaAFIKicHTdvFM/
+    z3vU981/p2DGCky/MGgGCCsGAQUFBwEBBFwwWjAjBggrBgEFBQcwAYYXaHR0cDov
+    L29jc3AuZW50cnVzdC5uZXQwMwYIKwYBBQUHMAKGJ2h0dHA6Ly9haWEuZW50cnVz
+    dC5uZXQvbDFrLWNoYWluMjU2LmNlcjAzBgNVHR8ELDAqMCigJqAkhiJodHRwOi8v
+    Y3JsLmVudHJ1c3QubmV0L2xldmVsMWsuY3JsMCcGA1UdEQQgMB6CDWxvZ2luLmRz
+    by5taWyCDWxvZ2luLmRzb3AuaW8wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQG
+    CCsGAQUFBwMBBggrBgEFBQcDAjBMBgNVHSAERTBDMDcGCmCGSAGG+mwKAQUwKTAn
+    BggrBgEFBQcCARYbaHR0cHM6Ly93d3cuZW50cnVzdC5uZXQvcnBhMAgGBmeBDAEC
+    AjCCAX4GCisGAQQB1nkCBAIEggFuBIIBagFoAHUAVhQGmi/XwuzT9eG9RLI+x0Z2
+    ubyZEVzA75SYVdaJ0N0AAAF2ZGTpIwAABAMARjBEAiAK+W9ukx92DJPFV87LexEg
+    /qDFTjtkiLh/z+mLmDtOwQIgUD4YrMuo22sV9MeJ8JmzraCQVdUUIprw4K4HN+eO
+    6W0AdwDfpV6raIJPH2yt7rhfTj5a6s2iEqRqXo47EsAgRFwqcwAAAXZkZOlKAAAE
+    AwBIMEYCIQDRpvbR/GroWSGlCIh1q0RUITb8RfI4skqqBa/FeU811AIhAPlRY4lv
+    DC2u9MFSEiCVeaFYJRU0xvAwmHQMtrl+IE4iAHYARqVV63X6kSAwtaKJafTzfREs
+    QXS+/Um4havy/HD+bUcAAAF2ZGTrYAAABAMARzBFAiEAifP8Y0nXFBykaTyzpWpv
+    E3FDi8NCQeJFRMJqD7loTjMCIHVDio7r+zANTbIdRLRRzHoNzo//xfJ0JUqejNRA
+    aCpZMA0GCSqGSIb3DQEBCwUAA4IBAQB/wtYjDQiPLe99tZq98IyxOSJCli2mtlV9
+    gSC67aj4rgW6g+C8P1bSoB5PamMq6rON5q0SXL3CQiQ7vegxCQnleDh0LWeKPFS2
+    jjSIl3CvrYfBlNBzw4H1uAa/yw+enr0So8oX8kdSTBFGnU4KoK646lFZRXSifFIU
+    zzQ9QYYedmiP0iKs5LDYGAOsB/w/O94+zv6qGKXA1fVzBXAD54MddqGk9mHZTSyL
+    6nsSTx4r8vCGQir7d2QuIGLD48zaYQz0TFcGKnBV3/9CB27RxJkRdMwUbMvNdp3C
+    V+C2+jdR8xA/0qCnvSxHc1lTZgXxVkcu/wpqIBn3af5Ha8ddd0DU
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIFDjCCA/agAwIBAgIMDulMwwAAAABR03eFMA0GCSqGSIb3DQEBCwUAMIG+MQsw
+    CQYDVQQGEwJVUzEWMBQGA1UEChMNRW50cnVzdCwgSW5jLjEoMCYGA1UECxMfU2Vl
+    IHd3dy5lbnRydXN0Lm5ldC9sZWdhbC10ZXJtczE5MDcGA1UECxMwKGMpIDIwMDkg
+    RW50cnVzdCwgSW5jLiAtIGZvciBhdXRob3JpemVkIHVzZSBvbmx5MTIwMAYDVQQD
+    EylFbnRydXN0IFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgLSBHMjAeFw0x
+    NTEwMDUxOTEzNTZaFw0zMDEyMDUxOTQzNTZaMIG6MQswCQYDVQQGEwJVUzEWMBQG
+    A1UEChMNRW50cnVzdCwgSW5jLjEoMCYGA1UECxMfU2VlIHd3dy5lbnRydXN0Lm5l
+    dC9sZWdhbC10ZXJtczE5MDcGA1UECxMwKGMpIDIwMTIgRW50cnVzdCwgSW5jLiAt
+    IGZvciBhdXRob3JpemVkIHVzZSBvbmx5MS4wLAYDVQQDEyVFbnRydXN0IENlcnRp
+    ZmljYXRpb24gQXV0aG9yaXR5IC0gTDFLMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+    MIIBCgKCAQEA2j+W0E25L0Tn2zlem1DuXKVh2kFnUwmqAJqOV38pa9vH4SEkqjrQ
+    jUcj0u1yFvCRIdJdt7hLqIOPt5EyaM/OJZMssn2XyP7BtBe6CZ4DkJN7fEmDImiK
+    m95HwzGYei59QAvS7z7Tsoyqj0ip/wDoKVgG97aTWpRzJiatWA7lQrjV6nN5ZGhT
+    JbiEz5R6rgZFDKNrTdDGvuoYpDbwkrK6HIiPOlJ/915tgxyd8B/lw9bdpXiSPbBt
+    LOrJz5RBGXFEaLpHPATpXbo+8DX3Fbae8i4VHj9HyMg4p3NFXU2wO7GOFyk36t0F
+    ASK7lDYqjVs1/lMZLwhGwSqzGmIdTivZGwIDAQABo4IBDDCCAQgwDgYDVR0PAQH/
+    BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwMwYIKwYBBQUHAQEEJzAlMCMGCCsG
+    AQUFBzABhhdodHRwOi8vb2NzcC5lbnRydXN0Lm5ldDAwBgNVHR8EKTAnMCWgI6Ah
+    hh9odHRwOi8vY3JsLmVudHJ1c3QubmV0L2cyY2EuY3JsMDsGA1UdIAQ0MDIwMAYE
+    VR0gADAoMCYGCCsGAQUFBwIBFhpodHRwOi8vd3d3LmVudHJ1c3QubmV0L3JwYTAd
+    BgNVHQ4EFgQUgqJwdN28Uz/Pe9T3zX+nYMYKTL8wHwYDVR0jBBgwFoAUanImetAe
+    733nO2lR1GyNn5ASZqswDQYJKoZIhvcNAQELBQADggEBADnVjpiDYcgsY9NwHRkw
+    y/YJrMxp1cncN0HyMg/vdMNY9ngnCTQIlZIv19+4o/0OgemknNM/TWgrFTEKFcxS
+    BJPok1DD2bHi4Wi3Ogl08TRYCj93mEC45mj/XeTIRsXsgdfJghhcg85x2Ly/rJkC
+    k9uUmITSnKa1/ly78EqvIazCP0kkZ9Yujs+szGQVGHLlbHfTUqi53Y2sAEo1GdRv
+    c6N172tkw+CNgxKhiucOhk3YtCAbvmqljEtoZuMrx1gL+1YQ1JH7HdMxWBCMRON1
+    exCdtTix9qrKgWRs6PLigVWXUX/hwidQosk8WwBD9lu51aX8/wdQQGcHsFXwt35u
+    Lcw=
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIEPjCCAyagAwIBAgIESlOMKDANBgkqhkiG9w0BAQsFADCBvjELMAkGA1UEBhMC
+    VVMxFjAUBgNVBAoTDUVudHJ1c3QsIEluYy4xKDAmBgNVBAsTH1NlZSB3d3cuZW50
+    cnVzdC5uZXQvbGVnYWwtdGVybXMxOTA3BgNVBAsTMChjKSAyMDA5IEVudHJ1c3Qs
+    IEluYy4gLSBmb3IgYXV0aG9yaXplZCB1c2Ugb25seTEyMDAGA1UEAxMpRW50cnVz
+    dCBSb290IENlcnRpZmljYXRpb24gQXV0aG9yaXR5IC0gRzIwHhcNMDkwNzA3MTcy
+    NTU0WhcNMzAxMjA3MTc1NTU0WjCBvjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUVu
+    dHJ1c3QsIEluYy4xKDAmBgNVBAsTH1NlZSB3d3cuZW50cnVzdC5uZXQvbGVnYWwt
+    dGVybXMxOTA3BgNVBAsTMChjKSAyMDA5IEVudHJ1c3QsIEluYy4gLSBmb3IgYXV0
+    aG9yaXplZCB1c2Ugb25seTEyMDAGA1UEAxMpRW50cnVzdCBSb290IENlcnRpZmlj
+    YXRpb24gQXV0aG9yaXR5IC0gRzIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+    AoIBAQC6hLZy254Ma+KZ6TABp3bqMriVQRrJ2mFOWHLP/vaCeb9zYQYKpSfYs1/T
+    RU4cctZOMvJyig/3gxnQaoCAAEUesMfnmr8SVycco2gvCoe9amsOXmXzHHfV1IWN
+    cCG0szLni6LVhjkCsbjSR87kyUnEO6fe+1R9V77w6G7CebI6C1XiUJgWMhNcL3hW
+    wcKUs/Ja5CeanyTXxuzQmyWC48zCxEXFjJd6BmsqEZ+pCm5IO2/b1BEZQvePB7/1
+    U1+cPvQXLOZprE4yTGJ36rfo5bs0vBmLrpxR57d+tVOxMyLlbc9wPBr64ptntoP0
+    jaWvYkxN4FisZDQSA/i2jZRjJKRxAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAP
+    BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBRqciZ60B7vfec7aVHUbI2fkBJmqzAN
+    BgkqhkiG9w0BAQsFAAOCAQEAeZ8dlsa2eT8ijYfThwMEYGprmi5ZiXMRrEPR9RP/
+    jTkrwPK9T3CMqS/qF8QLVJ7UG5aYMzyorWKiAHarWWluBh1+xLlEjZivEtRh2woZ
+    Rkfz6/djwUAFQKXSt/S1mja/qYh2iARVBCuch38aNzx+LaUa2NSJXsq9rD1s2G2v
+    1fN2D807iDginWyTmsQ9v4IbZT+mD12q/OWyFcq1rca8PdCE6OoGcrBNOTJ4vz4R
+    nAuknZoh8/CbCzB428Hch0P+vGOaysXCHMnHjf87ElgI5rY97HosTvuDls4MPGmH
+    VHOkc8KT/1EQrBVUAdj8BbGJoX90g5pJ19xOe4pIb4tF9g==
+    -----END CERTIFICATE-----
+  jwks: ""
+  client_id: ""
+  client_secret: ""
+  token_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/token"
+  auth_url: "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/auth"
+
+flux:
+  timeout: 10m
+  interval: 2m
+  test:
+    enable: false
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
+      remediateLastFailure: true
+    cleanupOnFail: true
+  rollback:
+    timeout: 10m
+    cleanupOnFail: true
+
+networkPolicies:
+  enabled: true
+  controlPlaneCidr: 0.0.0.0/0
+
+istio:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values:
+    imagePullPolicy: Always
+
+istiooperator:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values:
+    imagePullPolicy: Always
+
+jaeger:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values: {}
+
+kiali:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
+    path: "./chart"
+    # tag: ""
+    # branch: "update-kiali-1.40.1"
+  sso:
+    enabled: false
+    client_id: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-kiali
+  values: {}
+
+clusterAuditor:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/cluster-auditor.git
+    path: "./chart"
+    tag: "1.4.0-bb.0"
+    #branch: ""
+  values: {}
+
+gatekeeper:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/policy.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values:
+    violations:
+      allowedCapabilities:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to not drop capabilities
+          - istio-system/lb-port-.*
+      allowedDockerRegistries:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to pull from public repos
+          - istio-system/lb-port-.*
+      allowedSecCompProfiles:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have an undefined defined seccomp
+          - istio-system/lb-port-.*
+      allowedUsers:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to run as any user/group
+          - istio-system/lb-port-.*
+      containerRatio:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined limits/requests
+          - istio-system/lb-port-.*
+      hostNetworking:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to mount host ports
+          - istio-system/lb-port-.*
+      noBigContainers:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined limits/requests
+          - istio-system/lb-port-.*
+      noPrivilegedEscalation:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to have undefined security context
+          - istio-system/lb-port-.*
+      readOnlyRoot:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to mount filesystems read/write
+          - istio-system/lb-port-.*
+      requiredLabels:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer pods to not have required labels
+          - istio-system/svclb-.*
+      requiredProbes:
+        parameters:
+          excludedResources:
+          # Allows k3d load balancer containers to not have readiness/liveness probes
+          - istio-system/lb-port-.*
+
+
+logging:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/elasticsearch-kibana.git
+    path: "./chart"
+    # tag: ""
+    # branch: "28-upgrade-to-work-with-istio-inject"
+  values: {}
+
+eckoperator:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/eck-operator.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values: {}
+
+fluentbit:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values: {}
+
+monitoring:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/monitoring.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values: {}
+
+twistlock:
+  enabled: false
+  git:
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/twistlock.git
+    path: "./chart"
+    #tag: ""
+    #branch: ""
+  values: {}
+
+addons:
+  argocd:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  authservice:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
+      path: "./chart"
+      #tag: ""
+      #branch: "resource-limits-ncostello"
+    values: {}
+
+  minioOperator:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio-operator.git
+      path: "./chart"
+      # tag: ""
+      # branch: "update-4.2.3"
+    values: {}
+
+  minio:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/minio.git
+      path: "./chart"
+      # tag: ""
+      # branch: "update-to-RELEASE.2021-08-31T05-46-54Z"
+    values: {}
+
+  gitlab:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  gitlabRunner:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab-runner.git
+      path: "./chart"
+      # tag: ""
+      # branch: ""
+    values: {}
+
+  nexus:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  sonarqube:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  haproxy:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/haproxy
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  anchore:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/anchore-enterprise.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  mattermostoperator:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost-operator.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
+
+  # mattermost:
+  #   enabled: true
+  #   git:
+  #     repo: https://repo1.dso.mil/platform-one/big-bang/apps/collaboration-tools/mattermost.git
+  #     path: "./chart"
+  #     #tag: ""
+  #     #branch: ""
+  #   values: {
+
+  #   }
+
+  mattermost:
+    enabled: false
+    sso:
+      enabled: true
+      client_id: "platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-mattermost"
+      client_secret: "no-secret"
+    enterprise:
+      enabled: true
+      # Micah's trial, no promises it'll work for everyone, but feel free to try
+      license: "eyJpZCI6Imo2b2hvZmhtNzdmeHRxemJrcmVzNzNlcDloIiwiaXNzdWVkX2F0IjoxNjM1NDM5OTAxNjYyLCJzdGFydHNfYXQiOjE2MzU0MTExMDE2NjIsImV4cGlyZXNfYXQiOjE2MzgwMzE5MDE2NjIsInNrdV9uYW1lIjoiRW50ZXJwcmlzZSIsInNrdV9zaG9ydF9uYW1lIjoiZW50ZXJwcmlzZSIsImN1c3RvbWVyIjp7ImlkIjoiajZvaG9maG03N2Z4dHF6YmtyZXM3M2VwOWgiLCJuYW1lIjoiTWljYWggTmFnZWwiLCJlbWFpbCI6Im1pY2FoLm5hZ2VsQHBhcnNvbnMuY29tIiwiY29tcGFueSI6Imh0dHBzOi8vY2hhdC5iaWdiYW5nLmRldiJ9LCJmZWF0dXJlcyI6eyJ1c2VycyI6MzYsImxkYXAiOnRydWUsImxkYXBfZ3JvdXBzIjp0cnVlLCJtZmEiOnRydWUsImdvb2dsZV9vYXV0aCI6dHJ1ZSwib2ZmaWNlMzY1X29hdXRoIjp0cnVlLCJjb21wbGlhbmNlIjp0cnVlLCJjbHVzdGVyIjp0cnVlLCJtZXRyaWNzIjp0cnVlLCJtaHBucyI6dHJ1ZSwic2FtbCI6dHJ1ZSwiZWxhc3RpY19zZWFyY2giOnRydWUsImFubm91bmNlbWVudCI6dHJ1ZSwidGhlbWVfbWFuYWdlbWVudCI6dHJ1ZSwiZW1haWxfbm90aWZpY2F0aW9uX2NvbnRlbnRzIjp0cnVlLCJkYXRhX3JldGVudGlvbiI6dHJ1ZSwibWVzc2FnZV9leHBvcnQiOnRydWUsImN1c3RvbV9wZXJtaXNzaW9uc19zY2hlbWVzIjp0cnVlLCJjdXN0b21fdGVybXNfb2Zfc2VydmljZSI6dHJ1ZSwiZ3Vlc3RfYWNjb3VudHMiOnRydWUsImd1ZXN0X2FjY291bnRzX3Blcm1pc3Npb25zIjp0cnVlLCJpZF9sb2FkZWQiOnRydWUsImxvY2tfdGVhbW1hdGVfbmFtZV9kaXNwbGF5Ijp0cnVlLCJjbG91ZCI6ZmFsc2UsInNoYXJlZF9jaGFubmVscyI6dHJ1ZSwicmVtb3RlX2NsdXN0ZXJfc2VydmljZSI6dHJ1ZSwib3BlbmlkIjp0cnVlLCJlbnRlcnByaXNlX3BsdWdpbnMiOnRydWUsImFkdmFuY2VkX2xvZ2dpbmciOnRydWUsImZ1dHVyZV9mZWF0dXJlcyI6dHJ1ZX0sImlzX3RyaWFsIjp0cnVlfXo8sRS3BZrLcf1HdVmHBRXk9l3JuHLr9ZQo9s5AOGKrto4Y4+KMLKZNVMS2P7LlRMrFsjueqHCtqNgyaG5sxqdcgw3tGGkSfyZ6wIuZ1JV1IWWaPZ3POFkAVJh0haexdy2oSj/kEnDHaE56PsLRmMQVrltPABgSLb05PN8oPkLA33i//PW08zNlZxRurBdiFLPxwAWqUz2WG94QKyZNUNEFl+WQMON7uy2nR9JbIeN4L2uEL+ATzbLGBKgmkApdVQj6onxxbQx8+y05u/MpQYmGJWjBWJsAAJG3jztp9q3wfRD5PM+/mKFFlxq87W9Kds5Q8z4JdDJrHTTOdahB+RA="
+    elasticsearch:
+      enabled: false
+    # Uncomment if you want to override and disable injection
+    istio:
+      injection: disabled
+    values:
+      # Reminder: you need to have a license to do > 1 replica, so change this to 1 if you want to get your own license first
+      replicaCount: 3
+      minio:
+        tenants:
+          pools:
+            - servers: 1
+              volumesPerServer: 4
+              size: 256Mi
+              securityContext:
+                runAsUser: 1001
+                runAsGroup: 1001
+                fsGroup: 1001
+
+  velero:
+    enabled: false
+    values:
+      serviceAccount:
+        server:
+          name: velero
+      configuration:
+        # minio uses s3 provider
+        provider: aws
+        backupStorageLocation:
+          bucket: velero
+          config: &minio-config
+            region: velero
+            insecureSkipTLSVerify: "true"
+            s3ForcePathStyle: "true"
+            s3Url: &minio-address http://minio.minio.svc
+        volumeSnapshotLocation:
+          provider: aws
+          config:
+            region: velero
+      credentials:
+        useSecret: true
+        secretContents:
+          cloud: |
+            [default]
+            aws_access_key_id = minio
+            aws_secret_access_key = minio123
+      # image:
+      #   pullPolicy: Always
+    plugins: 
+      - aws
+
+  keycloak:
+    enabled: false
+    git:
+      repo: https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak.git
+      path: "./chart"
+      #tag: ""
+      #branch: ""
+    values: {}
