@@ -640,8 +640,13 @@ addons:
       gateway: ""
 
     redis:
-      host: Null
-      port: Null
+      # -- Hostname of a pre-existing Redis to use for ArgoCD.
+      # Entering connection info will enable external Redis and will auto-create any required secrets.
+      host: ""
+
+      # -- Port of a pre-existing Redis to use for ArgoCD.
+      port: ""
+
     sso:
       # -- Toggle SSO for ArgoCD on and off
       enabled: false
