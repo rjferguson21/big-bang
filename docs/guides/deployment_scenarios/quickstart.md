@@ -87,30 +87,30 @@ The following requirements are recommended for Demonstration Purposes:
 
 1. Setup SSH
 
-  ```shell
-  # [admin@Unix_Laptop:~]
-  mkdir -p ~/.ssh
-  chmod 700 ~/.ssh
-  touch ~/.ssh/config
-  chmod 600 ~/.ssh/config
-  temp="""##########################
-  Host k3d
-    Hostname x.x.x.x  #IP Address of k3d node
-    IdentityFile ~/.ssh/bb-onboarding-attendees.ssh.privatekey   #ssh key authorized to access k3d node
-    User ubuntu
-    StrictHostKeyChecking no   #Useful for vagrant where you'd reuse IP from repeated tear downs
-  #########################"""
-  echo "$temp" | sudo tee -a ~/.ssh/config  #tee -a, appends to preexisting config file
-  ```
+    ```shell
+    # [admin@Unix_Laptop:~]
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    touch ~/.ssh/config
+    chmod 600 ~/.ssh/config
+    temp="""##########################
+    Host k3d
+      Hostname x.x.x.x  #IP Address of k3d node
+      IdentityFile ~/.ssh/bb-onboarding-attendees.ssh.privatekey   #ssh key authorized to access k3d node
+      User ubuntu
+      StrictHostKeyChecking no   #Useful for vagrant where you'd reuse IP from repeated tear downs
+    #########################"""
+    echo "$temp" | sudo tee -a ~/.ssh/config  #tee -a, appends to preexisting config file
+    ```
 
 1. SSH to instance
 
-  ```shell
-  # [admin@Laptop:~]
-  ssh k3d
+      ```shell
+      # [admin@Laptop:~]
+      ssh k3d
 
-  # [ubuntu@Ubuntu_VM:~]
-  ```
+      # [ubuntu@Ubuntu_VM:~]
+      ```
 
 ## Step 3: Install Prerequisite Software
 
@@ -118,167 +118,167 @@ Note: This guide follows the DevOps best practice of left-shifting feedback on m
 
 1. Install Git
 
-  ```shell
-  sudo apt install git -y
-  ```
+    ```shell
+    sudo apt install git -y
+    ```
 
 1. Install Docker and add $USER to Docker group.
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker $USER
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update -y && sudo apt install docker-ce docker-ce-cli containerd.io -y && sudo usermod --append --groups docker $USER
 
 
-  # Alternative command (less safe due to curl | bash, but more generic):
-  # curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
-  ```
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # curl -fsSL https://get.docker.com | bash && sudo usermod --append --groups docker $USER
+    ```
 
 1. Logout and login to allow the `usermod` change to take effect.
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  exit
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    exit
+    ```
 
-  ```shell
-  # [admin@Laptop:~]
-  ssh k3d
-  ```
+    ```shell
+    # [admin@Laptop:~]
+    ssh k3d
+    ```
 
 1. Verify Docker Installation
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  docker run hello-world
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    docker run hello-world
+    ```
 
-  ```console
-  Hello from Docker!
-  ```
+    ```console
+    Hello from Docker!
+    ```
 
 1. Install k3d
 
-  > Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
+    > Note: k3d v4.4.8 has integration issues with Big Bang, v4.4.7 is known to work.
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  # The following downloads the 64 bit linux version of k3d v4.4.7, checks it
-  # against a copy of the sha256 checksum, if they match k3d gets installed
-  wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # The following downloads the 64 bit linux version of k3d v4.4.7, checks it
+    # against a copy of the sha256 checksum, if they match k3d gets installed
+    wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/k3d-linux-amd64 > k3d
 
-  echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 k3d | sha256sum -c | grep OK
-  # 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 came from
-  # wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1
+    echo 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 k3d | sha256sum -c | grep OK
+    # 51731ffb2938c32c86b2de817c7fbec8a8b05a55f2e4ab229ba094f5740a0f60 came from
+    # wget -q -O - https://github.com/rancher/k3d/releases/download/v4.4.7/sha256sum.txt | grep k3d-linux-amd64 | cut -d ' ' -f 1
 
-  if [ $? == 0 ]; then chmod +x k3d && sudo mv k3d /usr/local/bin/k3d; fi
+    if [ $? == 0 ]; then chmod +x k3d && sudo mv k3d /usr/local/bin/k3d; fi
 
 
-  # Alternative command (less safe due to curl | bash, but more generic):
-  # wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash
-  ```
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v4.4.7 bash
+    ```
 
 1. Verify k3d installation
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  k3d --version
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    k3d --version
+    ```
 
-  ```console
-  k3d version v4.4.7
-  k3s version v1.21.2-k3s1 (default)
-  ```
+    ```console
+    k3d version v4.4.7
+    k3s version v1.21.2-k3s1 (default)
+    ```
 
 1. Install kubectl
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  # The following downloads the 64 bit linux version of kubectl v1.22.1, checks it
-  # against a copy of the sha256 checksum, if they match kubectl gets installed
-  wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # The following downloads the 64 bit linux version of kubectl v1.22.1, checks it
+    # against a copy of the sha256 checksum, if they match kubectl gets installed
+    wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl > kubectl
 
-  echo 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 kubectl | sha256sum -c | grep OK
-  # 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 came from
-  # wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl.sha256
+    echo 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 kubectl | sha256sum -c | grep OK
+    # 78178a8337fc6c76780f60541fca7199f0f1a2e9c41806bded280a4a5ef665c9 came from
+    # wget -q -O - https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl.sha256
 
-  if [ $? == 0 ]; then chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl; fi
+    if [ $? == 0 ]; then chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl; fi
 
-  # Create a symbolic link from k to kubectl
-  sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k
-  ```
+    # Create a symbolic link from k to kubectl
+    sudo ln -s /usr/local/bin/kubectl /usr/local/bin/k
+    ```
 
 1. Verify kubectl installation
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  kubectl version --client
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    kubectl version --client
+    ```
 
-  ```console
-  Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:45:37Z", GoVersion:"go1.16.7", Compiler:"gc", Platform:"linux/amd64"}
-  ```
+    ```console
+    Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:45:37Z", GoVersion:"go1.16.7", Compiler:"gc", Platform:"linux/amd64"}
+    ```
 
 1. Install Kustomize
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it
-  # against a copy of the sha256 checksum, if they match kustomize gets installed
-  wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # The following downloads the 64 bit linux version of kustomize v4.3.0, checks it
+    # against a copy of the sha256 checksum, if they match kustomize gets installed
+    wget -q -O - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/kustomize_v4.3.0_linux_amd64.tar.gz > kustomize.tar.gz
 
-  echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
-  # d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319
-  # came from https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/checksums.txt
+    echo d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319 kustomize.tar.gz | sha256sum -c | grep OK
+    # d34818d2b5d52c2688bce0e10f7965aea1a362611c4f1ddafd95c4d90cb63319
+    # came from https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.3.0/checksums.txt
 
-  if [ $? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv kustomize /usr/local/bin/kustomize && rm kustomize.tar.gz ; fi  
+    if [ $? == 0 ]; then tar -xvf kustomize.tar.gz && chmod +x kustomize && sudo mv kustomize /usr/local/bin/kustomize && rm kustomize.tar.gz ; fi  
 
 
-  # Alternative commands (less safe due to curl | bash, but more generic):
-  # curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-  # chmod +x kustomize
-  # sudo mv kustomize /usr/bin/kustomize
-  ```
+    # Alternative commands (less safe due to curl | bash, but more generic):
+    # curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+    # chmod +x kustomize
+    # sudo mv kustomize /usr/bin/kustomize
+    ```
 
 1. Verify Kustomize installation
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  kustomize version
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    kustomize version
+    ```
 
-  ```console
-  {Version:kustomize/v4.3.0 GitCommit:cd17338759ef64c14307991fd25d52259697f1fb BuildDate:2021-08-24T19:24:28Z GoOs:linux GoArch:amd64}
-  ```
+    ```console
+    {Version:kustomize/v4.3.0 GitCommit:cd17338759ef64c14307991fd25d52259697f1fb BuildDate:2021-08-24T19:24:28Z GoOs:linux GoArch:amd64}
+    ```
 
 1. Install Helm
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  # The following downloads the 64 bit linux version of helm v3.6.3, checks it
-  # against a copy of the sha256 checksum, if they match helm gets installed
-  wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # The following downloads the 64 bit linux version of helm v3.6.3, checks it
+    # against a copy of the sha256 checksum, if they match helm gets installed
+    wget -q -O - https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz > helm.tar.gz
 
-  echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
-  # 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262
-  # came from https://github.com/helm/helm/releases/tag/v3.6.3
+    echo 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262 helm.tar.gz | sha256sum -c | grep OK
+    # 07c100849925623dc1913209cd1a30f0a9b80a5b4d6ff2153c609d11b043e262
+    # came from https://github.com/helm/helm/releases/tag/v3.6.3
 
-  if [ $? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi  
+    if [ $? == 0 ]; then tar -xvf helm.tar.gz && chmod +x linux-amd64/helm && sudo mv linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64 && rm helm.tar.gz ; fi  
 
 
-  # Alternative command (less safe due to curl | bash, but more generic):
-  # curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-  ```
+    # Alternative command (less safe due to curl | bash, but more generic):
+    # curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+    ```
 
 1. Verify Helm installation
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  helm version
-  ```
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    helm version
+    ```
 
-  ```console
-  version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
-  ```
+    ```console
+    version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.5"}
+    ```
 
 ## Step 4: Configure Host Operating System Prerequisites
 
@@ -407,18 +407,18 @@ k3d-k3s-default-server-0   Ready  control-plane,master   11m   v1.21.3+k3s1
 
 1. Verify your credentials work
 
-  ```shell
-  # [ubuntu@Ubuntu_VM:~]
-  # Turn off bash history
-  set +o history
+    ```shell
+    # [ubuntu@Ubuntu_VM:~]
+    # Turn off bash history
+    set +o history
 
-  export REGISTRY1_USERNAME=<REPLACE_ME>
-  export REGISTRY1_PASSWORD=<REPLACE_ME>
-  echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
+    export REGISTRY1_USERNAME=<REPLACE_ME>
+    export REGISTRY1_PASSWORD=<REPLACE_ME>
+    echo $REGISTRY1_PASSWORD | docker login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
 
-  # Turn on bash history
-  set -o history
-  ```
+    # Turn on bash history
+    set -o history
+    ```
 
 ## Step 7: Clone Your Desired Version of the Big Bang Umbrella Helm Chart
 
@@ -441,7 +441,7 @@ HEAD detached at (latest version)
 
 ## Step 8: Install Flux
 
-* The `echo $REGISTRY1_USERNAME` is there to verify that the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
+The `echo $REGISTRY1_USERNAME` is there to verify that the value of your environmental variable is still populated. If you switch terminals or re-login, you may need to reestablish these variables.
 
   ```shell
   # [ubuntu@Ubuntu_VM:~]
