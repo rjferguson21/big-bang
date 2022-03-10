@@ -140,7 +140,7 @@ grafana:
   podAnnotations:
     {{ include "istioAnnotation" . }}
     {{- if $gitlabRedis }}
-    gitlabRedisPassword: {{ sha256sum .Values.addons.gitlab.redis.password }}
+    checksum/gitlabRedisPassword: {{ sha256sum .Values.addons.gitlab.redis.password }}
     {{- end }}    
   {{- end }}
 
