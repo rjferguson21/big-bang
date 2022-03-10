@@ -6,7 +6,6 @@
 
 Imagine <https://authdemo.bigbang.dev> represents a mock-up of a custom-built mission application that doesn't have SSO, Authentication, or Authorization built-in. Auth Service can add those to it which creates layers of defense/defense in depth in the form only allowing authenticated users the ability to even see the page, enforcing MFA of authenticated users, and requiring that authenticated users are authorized to access that service (they must be in the correct group of their Identity Provider, and this means you can safely enable self-registration of users without hurting security. Auth Service's Authentication Proxy has an additional benefit in regards to defense in depth. You can add it in front of most frontend applications to create an additional layer of defense. Example: Grafana, Kibana, ArgoCD, and others have baked in support for OIDC/SSO and AuthN/AuthZ functionality, so you may think what benefit could be had from adding an authentication proxy in front of them (it seems redundant at first glance). Let's say that a frontend service was reachable from the public internet and it had some zero-day vulnerability that allowed authentication bypass or unauthenticated remote code execution to occur via a network-level exploit / uniquely crafted packet. Well someone on the internet wouldn't even be able to exploit these hypothetical zero-day vulnerabilities since it'd be behind an AuthN/AuthZ proxy layer of defense which would prevent them from even touching the frontend. Bonus: Istio, AuthService, and Keycloak are all Free Open Source Software (FOSS) solutions and they work in internet disconnect environments, we'll even demonstrate it working using only Kubernetes DNS and workstation hostfile edits / without needing to configure LAN/Internet DNS.
 
-
 ## Overview
 
 This SSO Quick Start Guide explains how to set up an SSO demo environment, from scratch within two hours, that will allow you to demo Auth Service's functionality. You'll gain hands-on configuration experience with Auth Service, Keycloak, and a Mock Mission Application.
@@ -27,20 +26,22 @@ Why 2 VMs? 2 reasons:
    * Deploy a mock mission application
    * Protect the mock mission application, by deploying and configuring auth service to interface with Keycloak and require users to log in to Keycloak and be in the correct authorization group before being able to access the mock mission application.
 
-### Differences between this and the generic quick start
+### Differences Between This and the Generic Quick Start
+
 * Topics explained in previous quick start guides won't have notes or they will be less detailed.
 * The previous quick start supported deploying k3d to either localhost or remote VM, this quick start only supports deployment to remote VMs.
 * The previous quick start supported multiple Linux distributions, this one requires Ubuntu 20.04, and it must be configured for passwordless sudo (this guide has more automation of prerequisites, so we needed a standard to automate against.)
 * The automation also assumes Admin's Laptop has a Unix Shell. (Mac, Linux, or Windows Subsystem for Linux)
 * This quick start assumes you have kubectl installed on your Administrator Workstation
 
-### Additional Auth Service and Keycloak documentation can be found in these locations
+### Additional Auth Service and Keycloak Documentation Can Be Found in These Locations
+
 * <https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice>
 * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/authservice/Architecture.md>
 * <https://repo1.dso.mil/platform-one/big-bang/apps/security-tools/keycloak>
 * <https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/charter/packages/keycloak/Architecture.md>
 
-## Step 1: Provision 2 Virtual Machines
+## Step 1: Provision Two Virtual Machines
 
 * 2 Virtual Machines each with 32GB RAM, 8-Core CPU (t3a.2xlarge for AWS users), and 100GB of disk space should be sufficient.
 
@@ -87,7 +88,7 @@ Why 2 VMs? 2 reasons:
     # [admin@Laptop:~]
     ```
 
-## Step 3: Prep work - Install dependencies and configure both VMs
+## Step 3: Prep Work – Install Dependencies and Configure Both VMs
 
 1. Set some Variables and push them to each VM
    * We'll pass some environment variables into the VMs that will help with automation
@@ -245,7 +246,7 @@ Why 2 VMs? 2 reasons:
     ssh workload-cluster < ~/qs/shared-k3d-prepwork-verification-commands.txt
     ```
 
-## Step 4: Create k3d cluster on both VMs and make sure you have access to both
+## Step 4: Create k3d Cluster on Both VMs and Make Sure You Have Access to Both
 
 ```shell
 # [admin@Laptop:~]
@@ -292,7 +293,7 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 k get node
 ```
 
-## Step 5: Clone Big Bang and Install Flux on both Clusters
+## Step 5: Clone Big Bang and Install Flux on Both Clusters
 
 ```shell
 # [admin@Laptop:~]
@@ -494,7 +495,7 @@ EOFdeploy-keycloakEOF
 ssh keycloak-cluster < ~/qs/deploy-keycloak.txt 
 ```
 
-## Step 8: Edit your workstation's Hosts file to access the web pages hosted on the Big Bang Clusters
+## Step 8: Edit Your Workstation’s Hosts File To Access the Web Pages Hosted on the Big Bang Clusters
 
 ### Linux/Mac Users
 
@@ -520,7 +521,7 @@ cat /etc/hosts
 
 * Edit similarly using method mentioned in the generic quickstart
 
-## Step 9: Make sure the clusters had enough time to finish deployment
+## Step 9: Make Sure the Clusters Had Enough Time To Finish Deployment
 
 ```shell
 # [admin@Laptop:~]
@@ -537,13 +538,13 @@ kubectl get hr -A
 kubectl get svc -n=istio-system # verify EXTERNAL-IP isn't stuck in pending
 ```
 
-## Step 10: Verify that you can access websites hosted in both clusters
+## Step 10: Verify That You Can Access Websites Hosted in Both Clusters
 
 * In a Web Browser visit the following 2 webpages
-  * https://keycloak.bigbang.dev
-  * https://grafana.bigbang.dev
+  * <https://keycloak.bigbang.dev>
+  * <https://grafana.bigbang.dev>
 
-## Step 11: Deploy a mock mission application to the workload cluster
+## Step 11: Deploy a Mock Mission Application to the Workload Cluster
 
 ```shell
 # [admin@Laptop:~]
@@ -588,20 +589,20 @@ export KUBECONFIG=$HOME/.kube/workload-cluster
 kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-mission-app
 ```
 
-## Step 12: Visit the newly added webpage
+## Step 12: Visit the Newly Added Webpage
 
-* In a browser navigate to https://authdemo.bigbang.dev
+* In a browser navigate to <https://authdemo.bigbang.dev>
 * Note: authdemo currently isn't protected by the authservice AuthN/AuthZ proxy, the next steps configure that protection.
 
 ## Step 13: Create a Human User Account in Keycloak
 
-1. Visit https://keycloak.bigbang.dev
-1. Follow the self-registration link or visit it directly https://keycloak.bigbang.dev/register
+1. Visit <https://keycloak.bigbang.dev>
+1. Follow the self-registration link or visit it directly <https://keycloak.bigbang.dev/register>
 1. Create a demo account, the email you specify doesn't have to exist for demo purposes, make sure you write down the demo username and password.
 1. Create an MFA device.
 1. It'll say "You need to verify your email address to activate your account" (You can ignore that and close the page.)
-1. Visit https://keycloak.bigbang.dev/auth/admin
-1. Log in as a keycloak admin, using the default creds of admin:password
+1. Visit <https://keycloak.bigbang.dev/auth/admin>
+1. Log in as a keycloak admin, using the default credentials of admin:password
   (Note: The admin's initial default credentials can be specified in code, by updating helm values.)
 1. In the GUI:
    1. Navigate to: Manage/Users > [View all users] > [Edit] (your demo user)
@@ -609,30 +610,30 @@ kubectl wait --for=condition=available deployment/podinfo --timeout=3m -n=mock-m
    1. Under "Email Verified": Toggle Off to On
    1. Click Save
 
-## Step 14: Create an Application Identity / Service Account / Non-Person Entity in Keycloak for the authdemo webpage
+## Step 14: Create an Application Identity / Service Account / Non-Person Entity in Keycloak for the Authdemo Webpage
 
-1. Visit https://keycloak.bigbang.dev/auth/admin
-1. log in as a keycloak admin, using the default creds of admin:password
+1. Visit <https://keycloak.bigbang.dev/auth/admin>
+1. log in as a keycloak admin, using the default credentials of admin:password
 1. In the GUI:
-   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)     
+   1. Navigate to: Manage/Groups > Impact Level 2 Authorized (double click)
       Notice the group UUID in the URL: 00eb8904-5b88-4c68-ad67-cec0d2e07aa6
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Create]
-   1. Set:    
-      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"    
-      Client Protocol = openid-connect    
+   1. Set:
+      Client ID = "demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo"
+      Client Protocol = openid-connect
       Root URL = (blank)
    1. Save
 1. In the GUI:
    1. Navigate to: Configure/Clients > [Edit] demo-env_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_authdemo
    1. Under "Access Type": Change Public to Confidential
-   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/login/generic_oauth"      
+   1. Under "Valid Redirect URIs": Add "https://authdemo.bigbang.dev/login/generic_oauth"
       Note: /login/generic_oauth comes from auth service
    1. Save
    1. Scroll up to the top of the page and you'll see a newly added [Credentials] tab, click it.
    1. Copy the secret for the authdemo Client Application Identity, you'll paste it into the next step
 
-## Step 15: Deploy auth service to the workload cluster and use it to protect the mock mission app
+## Step 15: Deploy Auth Service to the Workload Cluster and Use It To Protect the Mock Mission App
 
 ```shell
 # [admin@Laptop:~]
@@ -714,15 +715,15 @@ ssh workload-cluster 'helm get values bigbang -n=bigbang' # You can eyeball this
 
 ## Step 16: Revisit authdemo.bigbang.dev
 
-* Go to https://authdemo.bigbang.dev
+* Go to <https://authdemo.bigbang.dev>
 * Before we were taken straight to the mock mission app webpage
 * Now this URL immediately redirects to a KeyCloak Log in Prompt and if you log in with your demo user, you'll see the following message
 
 > Your account has not been granted access to this application group yet.
 
-## Step 17: Update the group membership of the user
+## Step 17: Update the Group Membership of the User
 
-1. Go to https://keycloak.bigbang.dev/auth/admin
+1. Go to <https://keycloak.bigbang.dev/auth/admin>
 1. Login with admin:password
 1. In the GUI:
    1. Navigate to: Manage/Users > [View all users] > [Edit] (your Demo user)
@@ -782,6 +783,6 @@ kubectl exec -it test -- ping authdemo.bigbang.dev -c 1 | head -n 1
 
 ## Step 19: Revisit authdemo.bigbang.dev
 
-1. Visit https://authdemo.bigbang.dev
+1. Visit <https://authdemo.bigbang.dev>
 1. You'll get redirected to keycloak.bigbang.dev
 1. Log in to keycloak, and afterwords you'll get redirected to authdemo.bigbang.dev
