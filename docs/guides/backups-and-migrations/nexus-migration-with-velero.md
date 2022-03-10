@@ -126,7 +126,7 @@ Also ensure an EBS volume snapshot has been created and the Snapshot status is `
     docker run -p 8000:8000 nexus-docker.bigbang.dev/repository/nexus-docker/doom-dos:latest
     ```
 
-    ![doom](images/doom.png "doom") { width: 750px; }
+    ![doom](images/doom.png "doom")
 
 ## Appendix
 
