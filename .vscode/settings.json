@@ -2,6 +2,9 @@
     "cSpell.words": [
         "CNAP",
         "istio",
-        "Kubernetes"
+        "kubectl",
+        "Kubernetes",
+        "kustomization",
+        "swappable"
     ]
 }
