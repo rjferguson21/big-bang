@@ -63,12 +63,17 @@ This guide demonstrates how to perform a migration of Nexus repositories and art
 
 In the cluster containing the Nexus repositories to migrate, running the following command will create a backup called `nexus-ns-backup` and will backup all resources in the `nexus-repository-manager` namespace, including the associated PersistentVolume:
 
-`velero backup create nexus-ns-backup --include-namespaces nexus-repository-manager --include-cluster-resources=true`
+```shell
+velero backup create nexus-ns-backup --include-namespaces nexus-repository-manager --include-cluster-resources=true
+```
 
 Specifically, this will backup all Nexus resources to the S3 bucket `configuration.backupStorageLocation.bucket` specified above and will create a volume snapshot of the Nexus EBS volume.
 
  **Double-check** AWS to make sure this is the case by reviewing the contents of the S3 bucket:
- `aws s3 ls s3://nexus-velero-backup --recursive --human-readable --summarize`
+
+ ```shell
+ aws s3 ls s3://nexus-velero-backup --recursive --human-readable --summarize
+ ```
 
 Expected output:  
 
