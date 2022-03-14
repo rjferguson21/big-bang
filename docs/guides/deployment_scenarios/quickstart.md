@@ -15,7 +15,7 @@ This quick start guide explains in beginner-friendly terminology how to complete
 
 ## Important Security Notice
 
-All Developer and Quick Start Guides in this repo are intended to deploy environments for development, demo, and learning purposes. There are practices that are bad for security, but make perfect sense for these use cases: using of default values, minimal configuration, tinkering with new functionality that could introduce a security misconfiguration, and even purposefully using insecure passwords and disabling security measures like Open Policy Agent Gatekeeper for convenience. Many applications have default username and passwords combinations stored in the public git repo, these insecure default credentials and configurations are intended to be overridden during production deployments.  
+All Developer and Quick Start Guides in this repo are intended to deploy environments for development, demo, and learning purposes. There are practices that are bad for security, but make perfect sense for these use cases: using of default values, minimal configuration, tinkering with new functionality that could introduce a security misconfiguration, and even purposefully using insecure passwords and disabling security measures like Open Policy Agent Gatekeeper for convenience. Many applications have default username and passwords combinations stored in the public git repo, these insecure default credentials and configurations are intended to be overridden during production deployments.
 
 When deploying a dev / demo environment there is a high chance of deploying Big Bang in an insecure configuration. Such deployments should be treated as if they could become easily compromised if made publicly accessible.
 
@@ -25,10 +25,10 @@ When deploying a dev / demo environment there is a high chance of deploying Big 
 * DO NOT deploy publicly routable dev / demo clusters into shared VPCs (like a shared dev environment VPCs) or on VMs with IAM Roles attached. If the demo cluster were compromised, an adversary might be able to use it as a stepping stone to move deeper into an environment.
 * If you want to safely demo on Cloud Provider VMs with public IPs you must follow these guidelines:
   * Prevent Compromise:
-  * Use firewalls that only allow the 2 VMs to talk to each other and your whitelisted IP.
+    * Use firewalls that only allow the 2 VMs to talk to each other and your whitelisted IP.
   * Limit Blast Radius of Potential Compromise:
-  * Only deploy to an isolated VPC, not a shared VPC.
-  * Only deploy to VMs with no IAM roles/rights attached.
+    * Only deploy to an isolated VPC, not a shared VPC.
+    * Only deploy to VMs with no IAM roles/rights attached.
 
 ## Important Background Contextual Information
 
@@ -50,7 +50,7 @@ Important limitations of this quick start guide's implementation of k3d to be aw
 * Customer Controlled Private Git Repo Prerequisite isn't required due to substituting declarative git ops installation of the Big Bang Helm chart with an imperative helm cli based installation.
 * Encrypting Secrets as code Prerequisite is substituted with clear text secrets on your local machine.
 * Installing and Configuring Flux Prerequisite: Not using GitOps for the quick start eliminates the need to configure flux, and installation is covered within this guide.
-* HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for _.bigbang.dev,_.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
+* HTTPS Certificate and hostname configuration Prerequisites: Are satisfied by leveraging default hostname values and the demo HTTPS wildcard certificate that's uploaded to the Big Bang repo, which is valid for *.bigbang.dev, *.admin.bigbang.dev, and a few others. The demo HTTPS wildcard certificate is signed by the Lets Encrypt Free, a Certificate Authority trusted on the public internet, so demo sites like grafana.bigbang.dev will show a trusted HTTPS certificate.
 * DNS Prerequisite: is substituted by making use of your workstation's Hosts file.
 
 ## Step 1: Provision a Virtual Machine
