@@ -47,6 +47,7 @@ jaeger:
       annotations:
         {{ include "istioAnnotation" . }}
       {{- end }}
+      imagePullPolicy: {{ .Values.imagePullPolicy }}
     query:
       {{- if .Values.jaeger.sso.enabled }}
       labels:
@@ -56,17 +57,25 @@ jaeger:
       annotations:
         {{ include "istioAnnotation" . }}
       {{- end }}
-    {{- if .Values.istio.enabled }}
+      imagePullPolicy: {{ .Values.imagePullPolicy }}
     agent:
+      {{- if .Values.istio.enabled }}
       annotations:
         {{ include "istioAnnotation" . }}
+      {{- end }}
+      imagePullPolicy: {{ .Values.imagePullPolicy }}
     ingester:
+      {{- if .Values.istio.enabled }}
       annotations:
         {{ include "istioAnnotation" . }}
+      {{- end }}
+      imagePullPolicy: {{ .Values.imagePullPolicy }}
     collector:
+      {{- if .Values.istio.enabled }}
       annotations:
         {{ include "istioAnnotation" . }}
-    {{- end }}
+      {{- end }}
+      imagePullPolicy: {{ .Values.imagePullPolicy }}
 {{- end }}
 openshift:
   enabled: {{ .Values.openshift }}
