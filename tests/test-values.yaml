@@ -239,6 +239,7 @@ gatekeeper:
           - gitlab/gitlab-runner-cypress-test
           - kiali/kiali-operator-cypress-test
           - mattermost/mattermost-cypress-test
+          - keycloak/keycloak-cypress-test
           # Allow kyverno test vectors for Helm test
           - default/restrict-host-path-mount-.?
           - default/restrict-host-path-write-.?
@@ -341,6 +342,7 @@ kyvernopolicies:
               - kiali
               - mattermost
               - nexus-repository-manager
+              - keycloak
               names:
               - "*-cypress-test*"
         parameters:
@@ -355,6 +357,7 @@ kyvernopolicies:
               - kiali
               - mattermost
               - nexus-repository-manager
+              - keycloak
               names:
               - "*-cypress-test*"
         parameters:
@@ -384,6 +387,7 @@ kyvernopolicies:
               - kiali
               - mattermost
               - nexus-repository-manager
+              - keycloak
               names:
               - "*-cypress-test*"
       update-image-pull-policy:
