@@ -256,7 +256,7 @@ jaeger:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/jaeger.git
     path: "./chart"
-    branch: "micah-chart-compare"
+    branch: "23-update2"
 
   # -- Flux reconciliation overrides specifically for the Jaeger Package
   flux:
