@@ -459,6 +459,13 @@ loki:
 
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
+
+  # -- Grafana Enterprise Logging functionality.
+  enterprise:
+    enabled: false
+
+    licenseContents: |
+      FULL LICENSE
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------

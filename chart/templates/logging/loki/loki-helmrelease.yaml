@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
 spec:
+  releaseName: defense-unicorns-gel
   targetNamespace: logging
   chart:
     spec:
@@ -24,6 +25,20 @@ spec:
 
   {{- if .Values.loki.postRenderers }}
   postRenderers:
+    - kustomize:
+        patchesStrategicMerge:
+          - kind: StatefulSet
+            apiVersion: apps/v1
+            metadata:
+              name: defense-unicorns-gel-loki 
+              namespace: logging
+            spec:
+              template:
+                containers:
+                  - name: loki
+                    volumeMounts:
+                      - name: storage
+                        mountPath: "/var"
   {{ toYaml .Values.loki.postRenderers | nindent 4 }}
   {{- end }}
   valuesFrom:

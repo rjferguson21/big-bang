@@ -3,27 +3,20 @@
 {{- end }}
 
 {{- define "bigbang.defaults.loki" -}}
-hostname: {{ .Values.hostname }}
+loki:
+  enabled: false
 
-openshift: {{ .Values.openshift }}
+loki-simple-scalable:
+  enabled: true
 
-istio:
-  enabled: {{ .Values.istio.enabled }}
+gel:
+  enabled: true
+  tokengen:
+    annotations:
+      sidecar.istio.io/inject: "false"
 
-imagePullSecrets:
-  - name: private-registry
-
-image:
-  pullPolicy: {{ .Values.imagePullPolicy }}
-
-networkPolicies:
-  enabled: {{ .Values.networkPolicies.enabled }}  
-  
-monitoring:
-  enabled: {{ .Values.monitoring.enabled }}   
-
-{{- if .Values.istio.enabled }}
-podAnnotations:
-  {{ include "istioAnnotation" . }}
-{{- end }}
+minio:
+  makeBucketJob:
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
 {{- end -}}
