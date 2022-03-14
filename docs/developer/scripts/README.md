@@ -31,7 +31,7 @@ The instance will automatically terminate in the middle of the night at 08:00 UT
       aws configure list
       ```
 
-1. Install jq
+1. Install jq  
       Follow jq installation instructions for your workstation operating system.  
       <https://stedolan.github.io/jq/download/>
 
