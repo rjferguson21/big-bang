@@ -65,7 +65,7 @@ This section provides suggested settings for Gitlab operational/production envir
 
 ### Use external database service
 For production deployments you must externalize the database service. BigBang will pass through the most common value overrides to the Gitlab Package chart.   
-Disable the internal postgres by configuring an external database in the BigBang vaules.
+Disable the internal postgres by configuring an external database in the BigBang values.
 ```
 addons:
   gitlab: 
