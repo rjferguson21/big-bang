@@ -127,7 +127,7 @@ istio:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.13.1-bb.1"
+    tag: "1.13.1-bb.2"
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -291,7 +291,7 @@ kiali:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/kiali.git
     path: "./chart"
-    tag: "1.47.0-bb.0"
+    tag: "1.47.0-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
@@ -630,7 +630,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
       path: "./chart"
-      tag: "3.33.5-bb.7"
+      tag: "3.33.5-bb.8"
 
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
