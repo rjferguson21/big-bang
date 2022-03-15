@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## Gatekeepr
+## Gatekeeper
 The gatekeeper `values` section should resemble below when deploying to production.
 
 ```yaml
