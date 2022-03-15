@@ -1,9 +1,8 @@
-# Big Bang Production
+# Big Bang Production Configuration
 
 [[_TOC_]]
 
-## Production Deployment
-
+## Gatekeepr
 The gatekeeper `values` section should resemble below when deploying to production.
 
 ```yaml
@@ -60,3 +59,88 @@ spec:
     - registry1.dso.mil
     - registry.dso.mil
 ```
+
+## Gitlab
+This section provides suggested settings for Gitlab operational/production environments.
+
+### Use external database service
+For production deployments you must externalize the database service. BigBang will pass through the most common value overrides to the Gitlab Package chart.   
+Disable the internal postgres by configuring an external database in the BigBang vaules.
+```
+addons:
+  gitlab: 
+    database:
+      host:
+      port:
+      database:
+      username:
+      password:
+```
+
+### Use external object storage 
+For production deployments you must externalize object storage service. BigBang will pass through the most common value overrides to the Gitlab Package chart.  
+Disable the internal MinIO instance by configuring an external object storage service
+```
+addons:
+  gitlab:
+    objectStorage:
+      type:
+      endpoint:
+      region:
+      accessKey:
+      accessSecret:
+      bucketPrefix:
+      iamProfile:
+```
+
+### Flux settings
+Large Gitlab installations should increase the Flux timeout in the BigBang value (addons.gitlab.flux.timeout) to around 30m to 45m. And the BigBang Flux retries value (addons.gitlab.flux.upgrade.retries) should be adjusted to around 8 to 10.
+
+### Kubernetes resource request/limit settings
+K8s resource requests/limits for webservice and gitaly workloads should be increased from the defaults. Gitlab engineers state predicting Gitaly's resource consumption is very difficult, and will require testing to find the applicable limits/requests for each individual installation. See this [Gitlab Epic](https://gitlab.com/groups/gitlab-org/-/epics/6127) for more information. See the [gitlab/docs/k8s-resources.md](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/blob/main/docs/k8s-resources.md) for a list of all possible configuration values. Use BigBang values overrides to change the Gitlab resource settings.  
+Recommended starting point:
+```
+addons:
+  gitlab:
+    values:
+      gitlab:
+        webservice:
+          resources:
+            limits:
+              cpu: 2
+              memory: 4G
+            requests:
+              cpu: 2
+              memory: 4G
+        gitaly:
+          resources:
+            limits:
+              cpu: 2
+              memory: 4G
+            requests:
+              cpu: 2
+              memory: 4G
+```
+
+### Backup and rename gitlab-rails-secret
+If the Kubernetes gitlab-rails-secret happens to get overwritten Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
+```
+OpenSSL::Cipher::CipherError ()
+```
+Many things break when this happens and the recovery is ugly with serious user impacts.  
+
+At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere secure outside the cluster.
+```
+kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
+```
+Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
+```
+addons:
+  gitlab:
+    values:
+      global:
+        railsSecrets:
+          secret:  my-gitlab-rails-secret
+```
+This secret should be backed up somewhere secure outside the cluster.
+
