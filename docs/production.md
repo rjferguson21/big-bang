@@ -94,7 +94,17 @@ addons:
 ```
 
 ### Flux settings
-Large Gitlab installations should increase the Flux timeout in the BigBang value (addons.gitlab.flux.timeout) to around 30m to 45m. And the BigBang Flux retries value (addons.gitlab.flux.upgrade.retries) should be adjusted to around 8 to 10.
+Large Gitlab installations should increase the Gitlab specific HelmRelease timeout value to around 30m to 45m. And the Gitlab specific HelmRelease the Gitlab specific HelmRelease retries value should be adjusted to around 8 to 10.
+```
+addons:
+  gitlab:
+    flux:
+      timeout: 30m
+      upgrade:
+        remediation:
+          retries: 8
+
+```
 
 ### Kubernetes resource request/limit settings
 K8s resource requests/limits for webservice and gitaly workloads should be increased from the defaults. Gitlab engineers state predicting Gitaly's resource consumption is very difficult, and will require testing to find the applicable limits/requests for each individual installation. See this [Gitlab Epic](https://gitlab.com/groups/gitlab-org/-/epics/6127) for more information. See the [gitlab/docs/k8s-resources.md](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/-/blob/main/docs/k8s-resources.md) for a list of all possible configuration values. Use BigBang values overrides to change the Gitlab resource settings.  
@@ -147,7 +157,9 @@ addons:
 ```
 The custom rails secret should be backed up somewhere secure outside the cluster if not included in your GitOps code repository.
 
-If the Kubernetes gitlab-rails-secret happens to get overwritten Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
+**If the Kubernetes gitlab-rails-secret happens to get overwritten Gitlab will no longer be able to access the encrypted data in the database.**
+
+You will get errors like this in the logs.
 ```
 OpenSSL::Cipher::CipherError ()
 ```
