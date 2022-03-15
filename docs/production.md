@@ -94,7 +94,7 @@ addons:
 ```
 
 ### Flux settings
-Large Gitlab installations should increase the Gitlab specific HelmRelease timeout value to around 30m to 45m. And the Gitlab specific HelmRelease the Gitlab specific HelmRelease retries value should be adjusted to around 8 to 10.
+Large Gitlab installations should increase the Gitlab specific HelmRelease timeout value to around 30m to 45m and the Gitlab specific HelmRelease retries value should be adjusted to around 8 to 10.
 ```
 addons:
   gitlab:
