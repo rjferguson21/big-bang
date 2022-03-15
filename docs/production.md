@@ -133,14 +133,26 @@ At a minimum an operational deployment of Gitlab should export and save the gitl
 ```
 kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
 ```
-Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
+Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). Using a custom secret name can help prevent accidental overwriting. 
+To make the secret creation easier, the existing secret can be copied and modified with a different name.
+```
+kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > gitlab-rails-custom-secret.yaml
+```
+Edit the file and change the name of the secret. Example:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitlab-rails-custom-secret
+```
+Use GitOps configuration as code (CAC) and commit the custom rails secret to your GitOps repository. You should encrypt the custom rails secret keys in the GitOps repository to preserve security. 
+The Gitlab helm chart value ```global.railsSecrets.secret``` can be overridden to point to the custom rails secret.
 ```
 addons:
   gitlab:
     values:
       global:
         railsSecrets:
-          secret:  my-gitlab-rails-secret
+          secret:  gitlab-rails-custom-secret
 ```
-This secret should be backed up somewhere secure outside the cluster.
-
+The custom rails secret should be backed up somewhere secure outside the cluster if not included in your GitOps code repository.
