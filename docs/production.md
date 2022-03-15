@@ -79,7 +79,7 @@ addons:
 
 ### Use external object storage 
 For production deployments you must externalize object storage service. BigBang will pass through the most common value overrides to the Gitlab Package chart.  
-Disable the internal MinIO instance by configuring an external object storage service
+Disable the internal MinIO instance by configuring an external object storage service.
 ```
 addons:
   gitlab:
