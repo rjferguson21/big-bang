@@ -123,17 +123,7 @@ addons:
 ```
 
 ### Backup and rename gitlab-rails-secret
-If the Kubernetes gitlab-rails-secret happens to get overwritten Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
-```
-OpenSSL::Cipher::CipherError ()
-```
-Many things break when this happens and the recovery is ugly with serious user impacts.  
-
-At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere secure outside the cluster.
-```
-kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
-```
-Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). Using a custom secret name can help prevent accidental overwriting. 
+An operational deployment of Gitlab should backup and re-create the Gitlab Rails Encryption information as a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). Using a custom secret name can help prevent accidental overwriting. 
 To make the secret creation easier, the existing secret can be copied and modified with a different name.
 ```
 kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > gitlab-rails-custom-secret.yaml
@@ -145,8 +135,8 @@ kind: Secret
 metadata:
   name: gitlab-rails-custom-secret
 ```
-Use GitOps configuration as code (CAC) and commit the custom rails secret to your GitOps repository. You should encrypt the custom rails secret keys in the GitOps repository to preserve security. 
-The Gitlab helm chart value ```global.railsSecrets.secret``` can be overridden to point to the custom rails secret.
+Use GitOps configuration as code (CaC) and commit the custom rails secret to your GitOps repository. You should encrypt the custom rails secret keys in the GitOps repository to preserve security. 
+Then the following Gitlab helm chart value `global.railsSecrets.secret` can be overridden to point to the custom rails secret.
 ```
 addons:
   gitlab:
@@ -156,3 +146,15 @@ addons:
           secret:  gitlab-rails-custom-secret
 ```
 The custom rails secret should be backed up somewhere secure outside the cluster if not included in your GitOps code repository.
+
+If the Kubernetes gitlab-rails-secret happens to get overwritten Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
+```
+OpenSSL::Cipher::CipherError ()
+```
+Many things break when this happens and the recovery is ugly with serious user impacts.  
+
+At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere secure outside the cluster.
+```
+kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
+```
+
