@@ -103,7 +103,6 @@ addons:
       upgrade:
         remediation:
           retries: 8
-
 ```
 
 ### Kubernetes resource request/limit settings
