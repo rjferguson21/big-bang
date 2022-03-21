@@ -6,7 +6,7 @@
     "dependencyDashboardTitle": "Renovate: Update Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values","regex"],
-    "labels": ["renovate","kind::chore"],
+    "labels": ["renovate","kind::maintenance"],
     "packageRules": [
         {
             "matchDatasources": ["docker"],
@@ -26,6 +26,13 @@
             "matchStrings": [
                 "newName\\S*:\\s*(?<depName>\\S+).*\n\\s+newTag:\\s*(?<currentValue>.+)"
               ],
+            "datasourceTemplate": "docker"
+        },
+        {
+            "fileMatch": ["^tests/images\\.txt$"],
+            "matchStrings": [
+              "s*(?<depName>.+):(?<currentValue>.+)"
+            ],
             "datasourceTemplate": "docker"
         }
     ],
