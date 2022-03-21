@@ -1,4 +1,6 @@
-# ImagePullPolicy at Big Bang Level
+# ImagePullPolicy for Big Bang
+
+## Setting ImagePullPolicy at the Big Bang Level
 
 Big Bang is currently working to standardize the adoption of a global image pull policy so that customers can set a single value and have it passed to all packages.
 
