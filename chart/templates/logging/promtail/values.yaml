@@ -1,3 +1,4 @@
+
 {{- if .Values.promtail.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.promtail "name" "promtail" "defaults" (include "bigbang.defaults.promtail" .)) }}
 {{- end }}
