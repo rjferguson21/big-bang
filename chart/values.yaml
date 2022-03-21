@@ -124,10 +124,15 @@ imagePullPolicy: IfNotPresent
 istio:
   # -- Toggle deployment of Istio.
   enabled: true
+
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-controlplane.git
     path: "./chart"
-    tag: "1.13.1-bb.2"
+    tag: "1.13.2-bb.0"
+
+  # -- Tetrate Istio Distribution - Tetrate provides FIPs verified Istio and Envoy software and support,
+  # validated through the FIPs Boring Crypto module. Find out more from Tetrate - https://www.tetrate.io/tetrate-istio-subscription
+  enterprise: false
 
   # Ingress gateways are created based on the key name.  Adding more keys will add ingress gateways.
   # Ingress gateways are setup in a Horizontal Pod Autoscaler with 1 to 5 replicas
@@ -239,7 +244,7 @@ istiooperator:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/istio-operator.git
     path: "./chart"
-    tag: "1.13.1-bb.0"
+    tag: "1.13.2-bb.0"
 
   # -- Flux reconciliation overrides specifically for the Istio Operator Package
   flux: {}
@@ -265,7 +270,7 @@ jaeger:
     upgrade:
       crds: CreateReplace
 
-  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
   ingress:
     gateway: ""
 
@@ -296,7 +301,7 @@ kiali:
   # -- Flux reconciliation overrides specifically for the Kiali Package
   flux: {}
 
-  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
   ingress:
     gateway: ""
 
@@ -419,7 +424,7 @@ logging:
   flux:
     timeout: 20m
 
-  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
   ingress:
     gateway: ""
 
@@ -467,7 +472,7 @@ fluentbit:
   git:
     repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/fluentbit.git
     path: "./chart"
-    tag: "0.19.19-bb.3"
+    tag: "0.19.20-bb.1"
 
   # -- Flux reconciliation overrides specifically for the Fluent-Bit Package
   flux: {}
@@ -555,7 +560,7 @@ monitoring:
     upgrade:
       crds: CreateReplace
 
-  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
   ingress:
     gateway: ""
 
@@ -612,7 +617,7 @@ twistlock:
   # -- Flux reconciliation overrides specifically for the Twistlock Package
   flux: {}
 
-  # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+  # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
   ingress:
     gateway: ""
 
@@ -637,7 +642,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the ArgoCD Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -729,7 +734,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the Minio Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -762,7 +767,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the Gitlab Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -881,7 +886,7 @@ addons:
     # -- Base64 encoded license file.
     license_key: ""
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -946,7 +951,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the Sonarqube Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -1045,7 +1050,7 @@ addons:
       licenseYaml: |
         FULL LICENSE
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -1143,7 +1148,7 @@ addons:
       # license: "eyJpZCI6InIxM205bjR3eTdkYjludG95Z3RiOD---REST---IS---HIDDEN
       license: ""
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
@@ -1280,7 +1285,7 @@ addons:
     # -- Flux reconciliation overrides specifically for the OPA Gatekeeper Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       # the istio gateway for keycloak must have tls.mode: PASSTHROUGH
       gateway: "passthrough"
@@ -1301,14 +1306,14 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/vault.git
       path: "./chart"
-      #tag: "0.19.0-bb.3"
+      #tag: "0.19.0-bb.5"
       tag: null
       branch: "prometheus_metrics_scraping"  
 
     # -- Flux reconciliation overrides specifically for the Vault Package
     flux: {}
 
-    # Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
+    # -- Redirect the package ingress to a specific Istio Gateway (listed in `istio.gateways`).  The default is "public".
     ingress:
       gateway: ""
 
