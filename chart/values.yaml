@@ -687,8 +687,7 @@ addons:
     git:
       repo: https://repo1.dso.mil/platform-one/big-bang/apps/core/authservice.git
       path: "./chart"
-      tag: ""
-      branch: "37-session"
+      tag: "0.4.0-bb.26"
 
     # -- Flux reconciliation overrides specifically for the Authservice Package
     flux: {}
