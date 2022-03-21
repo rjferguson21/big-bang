@@ -1,3 +1,4 @@
+
 {{- if or .Values.addons.minioOperator.enabled .Values.addons.minio.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.minioOperator "name" "minio-operator" "defaults" (include "bigbang.defaults.minio-operator" .)) }}
 {{- end }}
