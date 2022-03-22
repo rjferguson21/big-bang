@@ -511,6 +511,12 @@ monitoring:
   ingress:
     gateway: ""
 
+  grafana:
+    enterprise:
+      enabled: false
+      licenseContents: |
+        FULL LICENSE
+
   sso:
     # -- Toggle SSO for monitoring components on and off
     enabled: false

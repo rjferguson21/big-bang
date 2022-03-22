@@ -117,6 +117,10 @@ sso:
 
 grafana:
   image:
+    {{- if .Values.monitoring.grafana.enterprise.enabled }}
+    repository: registry1.dso.mil/ironbank/grafana/grafana-enterprise
+    tag: 8.4.3
+    {{- end }}
     pullPolicy: {{ .Values.imagePullPolicy }}
     pullSecrets:
     - private-registry
@@ -163,6 +167,11 @@ grafana:
       root_url: https://grafana.{{ $domainName }}/
     {{- end }}
 
+    {{- if .Values.monitoring.grafana.enterprise.enabled }}
+    enterprise:
+      license_text: {{ .Values.monitoring.grafana.enterprise.licenseContents }}
+    {{- end }}
+
     auth:
       signout_redirect_url: {{ .Values.monitoring.sso.grafana.signout_redirect_url | default (tpl "https://{{ .Values.sso.oidc.host }}/auth/realms/{{ .Values.sso.oidc.realm }}/protocol/openid-connect/logout" .) }}
 
@@ -184,13 +193,16 @@ grafana:
       {{- list "tls_client_key" .tls_client_key | include "bigbang.addValueIfSet" | indent 6 }}
     {{- end }}
 
-  {{- if or .Values.loki.enabled .Values.addons.gitlabRunner.enabled }}
+  {{- if or .Values.loki.enabled .Values.addons.gitlabRunner.enabled .Values.monitoring.grafana.enterprise.enabled }}
   plugins:
   {{- if .Values.loki.enabled }}
     - grafana-piechart-panel
   {{- end }}
   {{- if .Values.addons.gitlabRunner.enabled }}
     - grafana-polystat-panel
+  {{- end }}
+  {{- if .Values.monitoring.grafana.enterprise.enabled }}
+    - grafana-enterprise-logs-app
   {{- end }}
   {{- end }}
 
