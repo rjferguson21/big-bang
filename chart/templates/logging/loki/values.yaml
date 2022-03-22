@@ -4,16 +4,68 @@
 
 {{- define "bigbang.defaults.loki" -}}
 loki:
-  enabled: false
+  enabled: {{ eq .Values.loki.strategy "monolith" }}
+  readinessProbe:
+    initialDelaySeconds: 60
+  livenessProbe:
+    initialDelaySeconds: 60
+  extraVolumeMounts:
+    - name: storage
+      mountPath: "/var"
+  replicas: 1
+{{- if .Values.loki.enterprise.enabled }}
+  image:
+    registry: docker.io
+    repository: grafana/enterprise-logs
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+  config: 
+    existingSecret: enterprise-logs-config
+  podLabels:
+    app.kubernetes.io/part-of: memberlist
+  extraPorts:
+    - name: grpc
+      port: 9095
+      targetPort: grpc
+      protocol: TCP
+    - name: tcp-memberlist
+      port: 7946
+      protocol: TCP
+{{- end }}
 
 loki-simple-scalable:
-  enabled: true
+  enabled: {{ eq .Values.loki.strategy "scalable" }}
+
+  imagePullSecrets:
+    - name: private-registry
+
+  gateway:
+    affinity: ""
+
+  {{- if .Values.loki.enterprise.enabled }}
+  nameOverride: loki
+
+  gateway:
+    enabled: true
+    service:
+      port: 3100
+  loki:
+    image:
+      registry: docker.io
+      repository: grafana/enterprise-logs
+      tag: v1.3.0
+      pullPolicy: IfNotPresent
+
+    existingSecretForConfig: enterprise-logs-config
+  {{- end }}
 
 gel:
-  enabled: true
+  enabled: {{ .Values.loki.enterprise.enabled }}
   tokengen:
     annotations:
       sidecar.istio.io/inject: "false"
+  license:
+    contents: {{ .Values.loki.enterprise.licenseContents }}
 
 minio:
   makeBucketJob:

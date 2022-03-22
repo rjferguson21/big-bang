@@ -460,6 +460,9 @@ loki:
   # -- Post Renderers.  See docs/postrenders.md
   postRenderers: []
 
+  # -- Loki architecture.  Options are monolith | scalable | distributed
+  strategy: monolith
+
   # -- Grafana Enterprise Logging functionality.
   enterprise:
     enabled: false
